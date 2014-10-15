@@ -1,0 +1,16 @@
+[
+{
+  "modid": "ocglasses",
+  "name": "OC Glasses",
+  "description": "Addon for Open Computers",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["marcin212","magik6000"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
