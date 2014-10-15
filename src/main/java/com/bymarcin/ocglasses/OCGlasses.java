@@ -1,10 +1,12 @@
 package com.bymarcin.ocglasses;
 
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.common.config.Configuration;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.bymarcin.ocglasses.item.OCGlassesItem;
 import com.bymarcin.ocglasses.network.NetworkRegistry;
 import com.bymarcin.ocglasses.proxy.CommonProxy;
 
@@ -15,6 +17,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 @Mod(modid = OCGlasses.MODID, version = OCGlasses.VERSION)
 public class OCGlasses
@@ -31,6 +34,8 @@ public class OCGlasses
 	@Instance(value = OCGlasses.MODID)
 	public static OCGlasses instance;
 
+	public static CreativeTabs creativeTab = CreativeTabs.tabRedstone;
+	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
@@ -42,7 +47,7 @@ public class OCGlasses
 	@EventHandler
 	public void init(FMLInitializationEvent event)
 	{
-
+		GameRegistry.registerItem(new OCGlassesItem(), "ocglasses");
 		proxy.init();
 	}
 
