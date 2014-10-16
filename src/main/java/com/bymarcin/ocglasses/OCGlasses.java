@@ -1,12 +1,14 @@
 package com.bymarcin.ocglasses;
 
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.bymarcin.ocglasses.block.OCGlassesTerminalBlock;
+import com.bymarcin.ocglasses.event.EVENTTEST;
 import com.bymarcin.ocglasses.item.OCGlassesItem;
 import com.bymarcin.ocglasses.network.NetworkRegistry;
 import com.bymarcin.ocglasses.proxy.CommonProxy;
@@ -49,6 +51,7 @@ public class OCGlasses
 	@EventHandler
 	public void init(FMLInitializationEvent event)
 	{
+		MinecraftForge.EVENT_BUS.register(new EVENTTEST());
 		GameRegistry.registerBlock(new OCGlassesTerminalBlock(), "ocglassesterminal");
 		GameRegistry.registerTileEntity(OCGlassesTerminalTileEntity.class, "ocglassesterminal");
 		GameRegistry.registerItem(new OCGlassesItem(), "ocglasses");
