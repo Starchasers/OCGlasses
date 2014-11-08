@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.bymarcin.ocglasses.block.OCGlassesTerminalBlock;
 import com.bymarcin.ocglasses.event.EVENTTEST;
+import com.bymarcin.ocglasses.event.GlassesEventPacket;
 import com.bymarcin.ocglasses.item.OCGlassesItem;
 import com.bymarcin.ocglasses.network.NetworkRegistry;
 import com.bymarcin.ocglasses.proxy.CommonProxy;
@@ -22,6 +23,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid = OCGlasses.MODID, version = OCGlasses.VERSION)
 public class OCGlasses
@@ -51,6 +53,7 @@ public class OCGlasses
 	@EventHandler
 	public void init(FMLInitializationEvent event)
 	{
+		NetworkRegistry.registerPacket(0, GlassesEventPacket.class, Side.SERVER);
 		MinecraftForge.EVENT_BUS.register(new EVENTTEST());
 		GameRegistry.registerBlock(new OCGlassesTerminalBlock(), "ocglassesterminal");
 		GameRegistry.registerTileEntity(OCGlassesTerminalTileEntity.class, "ocglassesterminal");

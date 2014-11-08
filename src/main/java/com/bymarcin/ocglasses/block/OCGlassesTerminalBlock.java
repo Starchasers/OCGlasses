@@ -14,6 +14,7 @@ import net.minecraft.world.World;
 import com.bymarcin.ocglasses.OCGlasses;
 import com.bymarcin.ocglasses.item.OCGlassesItem;
 import com.bymarcin.ocglasses.tileentity.OCGlassesTerminalTileEntity;
+import com.bymarcin.ocglasses.utils.Vec3;
 
 public class OCGlassesTerminalBlock extends BlockContainer {
 
@@ -59,7 +60,7 @@ public class OCGlassesTerminalBlock extends BlockContainer {
 		if (glassesStack != null) {
 			Item item = glassesStack.getItem();
 			if (item instanceof OCGlassesItem) {
-				((OCGlassesItem) item).bindToTerminal(glassesStack, te.getTerminalUUID());
+				((OCGlassesItem) item).bindToTerminal(glassesStack, new Vec3(x,y,z));
 				return true;
 			}
 		}

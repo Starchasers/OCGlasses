@@ -9,11 +9,6 @@ import org.lwjgl.opengl.GL11;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class EVENTTEST {
-
-	@SubscribeEvent
-	public void onTerminalRegister(OCGlassesRegisterEvent evt) {
-		System.out.println("EVENTUUID: "+evt.terminalId);
-	}
 	
 	@SubscribeEvent
 	public void onRenderGameOverlay(RenderGameOverlayEvent evt) {

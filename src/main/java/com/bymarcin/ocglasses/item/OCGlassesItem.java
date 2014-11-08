@@ -1,7 +1,6 @@
 package com.bymarcin.ocglasses.item;
 
 import java.util.List;
-import java.util.UUID;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,17 +8,14 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
-import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 
 import com.bymarcin.ocglasses.OCGlasses;
-import com.bymarcin.ocglasses.event.OCGlassesRegisterEvent;
+import com.bymarcin.ocglasses.utils.Vec3;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class OCGlassesItem extends ItemArmor {
-	public final static String GLASS_TAG = "GLASSUUID";
 
 	public OCGlassesItem() {
 		super(ArmorMaterial.CHAIN, 0, 0);
@@ -40,17 +36,10 @@ public class OCGlassesItem extends ItemArmor {
 		return itemIcon;
 	}
 
-	@Override
-	public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
-		UUID id = getUUID(itemStack);
-		if (id != null) MinecraftForge.EVENT_BUS.post(new OCGlassesRegisterEvent(player, id));
-	}
-
-	public static UUID getUUID(ItemStack itemStack){
+	public static Vec3 getUUID(ItemStack itemStack){
 		NBTTagCompound tag = getItemTag(itemStack);
-		if (!tag.hasKey(GLASS_TAG)) return null;
-		String uuid = tag.getString(GLASS_TAG);
-		return UUID.fromString(uuid);
+		if (!tag.hasKey("X") || !tag.hasKey("Y") || ! tag.hasKey("Z")) return null;
+		return new Vec3(tag.getInteger("X"),tag.getInteger("Y"),tag.getInteger("Z"));
 	}
 	
 	@Override
@@ -58,9 +47,9 @@ public class OCGlassesItem extends ItemArmor {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean par4) {
 		super.addInformation(itemStack, player, list, par4);
-		UUID uuid = getUUID(itemStack);
+		Vec3 uuid = getUUID(itemStack);
 		if (uuid != null)
-			list.add("UUID: " + uuid.toString());
+			list.add("Link to: " + uuid.toString());
 	}
 
 	public static NBTTagCompound getItemTag(ItemStack stack) {
@@ -69,9 +58,11 @@ public class OCGlassesItem extends ItemArmor {
 		return stack.stackTagCompound;
 	}
 
-	public void bindToTerminal(ItemStack glass, UUID uuid) {
+	public void bindToTerminal(ItemStack glass, Vec3 uuid) {
 		NBTTagCompound tag = getItemTag(glass);
-		tag.setString(GLASS_TAG, uuid.toString());
+		tag.setInteger("X", uuid.x);
+		tag.setInteger("Y", uuid.y);
+		tag.setInteger("Z", uuid.z);
 	}
 
 }
