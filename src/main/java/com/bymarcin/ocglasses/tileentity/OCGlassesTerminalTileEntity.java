@@ -1,6 +1,6 @@
 package com.bymarcin.ocglasses.tileentity;
 
-import java.util.UUID;
+import com.bymarcin.ocglasses.utils.Vec3;
 
 import li.cil.oc.api.Network;
 import li.cil.oc.api.machine.Arguments;
@@ -14,7 +14,6 @@ import cpw.mods.fml.common.Optional;
 @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers")
 public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	implements SimpleComponent{
-	UUID terminalUUID = UUID.randomUUID();
 	
 	
 	public OCGlassesTerminalTileEntity() {
@@ -26,9 +25,8 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 		return "glasses";
 	}
 	
-	public UUID getTerminalUUID(){
-		//TODO 
-		return terminalUUID;
+	public Vec3 getTerminalUUID(){
+		return new Vec3(xCoord, yCoord, zCoord);
 	}
 	
 	public void onGlassesPutOff(String user){

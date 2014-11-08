@@ -13,7 +13,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void init() {
 		FMLCommonHandler.instance().bus().register(new ClientEventHandler());
-		MinecraftForge.EVENT_BUS.register(new ClientSurface());
+		MinecraftForge.EVENT_BUS.register(ClientSurface.instances);
 	}
 
 	@Override

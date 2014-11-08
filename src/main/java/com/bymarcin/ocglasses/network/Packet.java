@@ -17,8 +17,8 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.relauncher.Side;
 
 public abstract class Packet<T extends Packet<T, RES>, RES extends IMessage> implements IMessage, IMessageHandler<T, RES> {
-	private final ByteBuf write;
-	private ByteBuf read;
+	protected final ByteBuf write;
+	protected ByteBuf read;
 	private final Gson gson = new Gson();
 
 	abstract protected void read() throws IOException;

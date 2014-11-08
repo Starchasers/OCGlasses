@@ -11,8 +11,16 @@ import org.lwjgl.opengl.GL11;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class ClientSurface {
+	public static ClientSurface instances = new ClientSurface();
 	public LinkedList<Widgets> storage = new LinkedList<Widgets>();
 
+	private ClientSurface() {}
+	
+	
+	public void addWiget(IWiget wiget){
+		
+	}
+	
 	@SubscribeEvent
 	public void onRenderGameOverlay(RenderGameOverlayEvent evt) {
 		if (evt.type == ElementType.HELMET && evt instanceof RenderGameOverlayEvent.Post) {
