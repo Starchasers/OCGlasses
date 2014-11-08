@@ -2,8 +2,11 @@ package com.bymarcin.ocglasses.event;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.Level;
+
 import net.minecraft.entity.player.EntityPlayer;
 
+import com.bymarcin.ocglasses.OCGlasses;
 import com.bymarcin.ocglasses.network.Packet;
 import com.bymarcin.ocglasses.utils.Vec3;
 
@@ -55,7 +58,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 
 	@Override
 	protected IMessage executeOnServer() {
-		System.out.println("PACKET:" + eventType);
+		OCGlasses.logger.log(Level.INFO,"PACKET:" + eventType);
 		return null;
 	}
 

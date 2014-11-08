@@ -26,7 +26,6 @@ public class ClientEventHandler {
 				haveGlasses = false;
 				NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.UNEQUIPED_GLASSES,null, e.player));
 			}
-			
 		}else if(haveGlasses == true){
 			haveGlasses = false;
 			NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.UNEQUIPED_GLASSES,null, e.player));
