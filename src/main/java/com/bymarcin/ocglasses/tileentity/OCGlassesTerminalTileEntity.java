@@ -13,6 +13,7 @@ import li.cil.oc.api.prefab.TileEntityEnvironment;
 
 import com.bymarcin.ocglasses.surface.IWidget;
 import com.bymarcin.ocglasses.surface.ServerSurface;
+import com.bymarcin.ocglasses.surface.Widgets;
 import com.bymarcin.ocglasses.surface.WigetUpdatePacket;
 import com.bymarcin.ocglasses.surface.widgets.SquareWidget;
 import com.bymarcin.ocglasses.utils.Vec3;
@@ -22,7 +23,7 @@ import cpw.mods.fml.common.Optional;
 @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers")
 public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	implements SimpleComponent{
-	public ArrayList<IWidget> wigetList = new ArrayList<IWidget>();
+	public ArrayList<IWidget> widgetList = new ArrayList<IWidget>();
 	
 	public OCGlassesTerminalTileEntity() {
 		node = Network.newNode(this, Visibility.Network).create();
@@ -105,9 +106,9 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addBox(Context context, Arguments args){
 		IWidget w = new SquareWidget(args.checkDouble(0),args.checkDouble(1),args.checkDouble(2),args.checkDouble(3),args.checkDouble(4));
-		wigetList.add(w);
+		widgetList.add(w);
 		ServerSurface.instance.sendToUUID(new WigetUpdatePacket(w, WigetUpdatePacket.Action.AddWigets), getTerminalUUID());
-		return new Object[]{wigetList.indexOf(w)};
+		return new Object[]{widgetList.indexOf(w)};
 	}
 
 	
@@ -127,28 +128,45 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	public Object[] getUserLookingAt(Context context, Arguments args){
 		return new Object[]{};
 	}
-	
-	
-	
-	
+
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 		NBTTagCompound tag = new NBTTagCompound();
-		int size = wigetList.size();
+		int size = widgetList.size();
 		nbt.setInteger("listSize", size);
 		
 		for (int i=0; i< size; i++) {
+			NBTTagCompound widget = new NBTTagCompound();
+			widget.setString("widgetType", widgetList.get(i).getType().name());
+			
 			NBTTagCompound wNBT = new NBTTagCompound();
-			wigetList.get(i).writeToNBT(wNBT);
-			tag.setTag(String.valueOf(i), wNBT);
+			widgetList.get(i).writeToNBT(wNBT);
+			widget.setTag("widget", wNBT);
+			tag.setTag(String.valueOf(i), widget);
 		}
-		nbt.setTag("wigetList", tag);
+		nbt.setTag("widgetList", tag);
 	}
 	
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
+		widgetList.clear();
+		if(nbt.hasKey("widgetList") && nbt.hasKey("listSize")){
+			NBTTagCompound list = (NBTTagCompound) nbt.getTag("widgetList");
+			int size = nbt.getInteger("listSize");
+			for(int i=0;i<size;i++){
+				if(list.hasKey(String.valueOf(i))){
+					NBTTagCompound wiget = (NBTTagCompound) list.getTag(String.valueOf(i));
+					if(wiget.hasKey("widgetType") && wiget.hasKey("widget")){
+						Widgets type = Widgets.valueOf(wiget.getString(("widgetType")));
+						IWidget w = type.getNewInstance();
+						w.readFromNBT((NBTTagCompound) wiget.getTag("widget"));
+					    widgetList.add(w);
+					}
+				}
+			}
+		}
 	}
 	
 }

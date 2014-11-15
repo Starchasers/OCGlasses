@@ -32,7 +32,7 @@ public class ServerSurface {
 	public void sendSync(EntityPlayer p,Vec3 coords){
 		TileEntity t = p.worldObj.getTileEntity(coords.x, coords.y, coords.z);
 		if(t instanceof OCGlassesTerminalTileEntity){
-			WigetUpdatePacket packet = new WigetUpdatePacket( ((OCGlassesTerminalTileEntity)t).wigetList, WigetUpdatePacket.Action.AddWigets );
+			WigetUpdatePacket packet = new WigetUpdatePacket( ((OCGlassesTerminalTileEntity)t).widgetList, WigetUpdatePacket.Action.AddWigets );
 			NetworkRegistry.packetHandler.sendTo(packet, (EntityPlayerMP) p);
 		}
 	}
