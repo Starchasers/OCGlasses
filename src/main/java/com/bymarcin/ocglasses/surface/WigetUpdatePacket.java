@@ -31,7 +31,8 @@ public class WigetUpdatePacket extends Packet<WigetUpdatePacket, IMessage>{
 	protected void read() throws IOException {
 		wigetList = new ArrayList<IWidget>();
 		type = Action.values()[readInt()];
-		for(int i=0; i< readInt();i++){
+		int size =  readInt();
+		for(int i=0; i<size ;i++){
 			Widgets wigetType = Widgets.values()[readInt()];
 			IWidget w = wigetType.getNewInstance();
 			w.read(read);
@@ -57,7 +58,6 @@ public class WigetUpdatePacket extends Packet<WigetUpdatePacket, IMessage>{
 		default:
 			break;
 		}
-		
 		return null;
 	}
 

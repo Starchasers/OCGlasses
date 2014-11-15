@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import com.bymarcin.ocglasses.OCGlasses;
 import com.bymarcin.ocglasses.network.Packet;
+import com.bymarcin.ocglasses.surface.ServerSurface;
 import com.bymarcin.ocglasses.utils.Vec3;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -59,6 +60,15 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	@Override
 	protected IMessage executeOnServer() {
 		OCGlasses.logger.log(Level.INFO,"PACKET:" + eventType);
+		switch(eventType){
+		case EQUIPED_GLASSES: ServerSurface.instance.subscribePlayer(player, UUID);
+			break;
+		case UNEQUIPED_GLASSES: ServerSurface.instance.unsubscribePlayer(player);
+			break;
+		default:
+			break;
+		
+		}
 		return null;
 	}
 
