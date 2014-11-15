@@ -18,7 +18,7 @@ public class ClientSurface {
 	private ClientSurface() {}
 	
 	
-	public void addWiget(IWiget wiget){
+	public void addWiget(IWidget widget){
 		
 	}
 	
