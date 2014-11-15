@@ -2,6 +2,9 @@ package com.bymarcin.ocglasses.surface;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
 
 import com.bymarcin.ocglasses.network.Packet;
 
@@ -10,51 +13,113 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class WidgetUpdatePacket extends Packet<WidgetUpdatePacket, IMessage>{
-	ArrayList<IWidget> wigetList;
+	HashMap<Integer, IWidget> widgetList;
+	List<Integer> ids;
 	Action type;
 	
 	public WidgetUpdatePacket() {
+		type = Action.RemoveAllWidgets;
 	}
 	
-	public WidgetUpdatePacket(ArrayList<IWidget> wigetList, Action type) {
-		this.wigetList = wigetList;
-		this.type = type;
+	public WidgetUpdatePacket(HashMap<Integer, IWidget> widgetList) {
+		this.widgetList = widgetList;
+		type = Action.AddWigets;
 	}
 	
-	public WidgetUpdatePacket(IWidget wiget, Action type) {
-		this.wigetList = new ArrayList<IWidget>();
-		wigetList.add(wiget);
-		this.type = type;
+	public WidgetUpdatePacket(List<Integer> l){
+		ids = l;
+		type = Action.RemoveWidgets;
+	}
+	
+	public WidgetUpdatePacket(int id){
+		ids = new ArrayList<Integer>();
+		ids.add(id);
+		type = Action.RemoveWidgets;
+	}
+	
+	public WidgetUpdatePacket(int id, IWidget widget) {
+		this.widgetList = new HashMap<Integer,IWidget>();
+		widgetList.put(id,widget);
+		this.type = Action.AddWigets;
 	}
 	
 	@Override
 	protected void read() throws IOException {
-		wigetList = new ArrayList<IWidget>();
 		type = Action.values()[readInt()];
+		switch (type) {
+		case AddWigets: readOnAddAction();
+			break;
+		case RemoveWidgets: readOnRemoveAction();
+			break;
+		case RemoveAllWidgets: ;
+			break;
+		default:
+			break;
+
+		}
+	}
+	
+	@Override
+	protected void write() throws IOException {
+		writeInt(type.ordinal());
+		switch (type) {
+		case AddWigets: writeOnAddAction();
+			break;
+		case RemoveWidgets: writeOnRemoveAction();
+			break;
+		case RemoveAllWidgets: ;
+			break;
+		default:
+			break;
+
+		}
+	}
+
+	private void readOnAddAction() throws IOException{
+		widgetList = new HashMap<Integer,IWidget>();
 		int size =  readInt();
 		for(int i=0; i<size ;i++){
 			Widgets wigetType = Widgets.values()[readInt()];
 			IWidget w = wigetType.getNewInstance();
 			w.read(read);
-			wigetList.add(w);
+			widgetList.put(readInt(),w);
+		}
+	}
+	
+	private void readOnRemoveAction() throws IOException{
+		ids = new ArrayList<Integer>();
+		int size = readInt();
+		for(int i = 0; i<size; i++){
+			ids.add(readInt());
 		}
 	}
 
-	@Override
-	protected void write() throws IOException {
-		writeInt(type.ordinal());
-		writeInt(wigetList.size());
-		for(IWidget w : wigetList){
-			writeInt(w.getType().ordinal());
-			w.write(write);
-		}	
+	private void writeOnAddAction() throws IOException{
+		writeInt(widgetList.size());
+		for(Entry<Integer, IWidget> w : widgetList.entrySet()){
+			writeInt(w.getValue().getType().ordinal());
+			w.getValue().write(write);
+			writeInt(w.getKey());
+		}
 	}
-
+	
+	private void writeOnRemoveAction() throws IOException{
+		writeInt(ids.size());
+		for(Integer i: ids){
+			writeInt(i);
+		}
+	}
+	
 	@SideOnly(Side.CLIENT)
 	@Override
 	protected IMessage executeOnClient() {
 		switch(type){
-		case AddWigets: ClientSurface.instances.addWiget(wigetList);
+		case AddWigets: ClientSurface.instances.updateWigets(widgetList.entrySet());
+			break;
+		case RemoveWidgets: ClientSurface.instances.removeWidgets(ids);
+			break;
+		case RemoveAllWidgets: ClientSurface.instances.removeAllWidgets();
+			break;
 		default:
 			break;
 		}
@@ -63,12 +128,11 @@ public class WidgetUpdatePacket extends Packet<WidgetUpdatePacket, IMessage>{
 
 	@Override
 	protected IMessage executeOnServer() {
-		// TODO Auto-generated method stuba
 		return null;
 	}
 
 	public enum Action{
-		AddWigets,RemoveWigets;
+		AddWigets,RemoveWidgets,RemoveAllWidgets;
 	}
 	
 }
