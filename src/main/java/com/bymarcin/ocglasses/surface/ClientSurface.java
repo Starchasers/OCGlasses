@@ -28,6 +28,10 @@ public class ClientSurface {
 		
 	}
 	
+	public void removeAllWidgets(){
+		renderables.clear();
+	}
+	
 	@SubscribeEvent
 	public void onRenderGameOverlay(RenderGameOverlayEvent evt) {
 		if (evt.type == ElementType.HELMET && evt instanceof RenderGameOverlayEvent.Post) {
