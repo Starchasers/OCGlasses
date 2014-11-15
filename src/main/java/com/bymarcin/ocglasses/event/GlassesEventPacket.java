@@ -9,7 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import com.bymarcin.ocglasses.OCGlasses;
 import com.bymarcin.ocglasses.network.Packet;
 import com.bymarcin.ocglasses.surface.ServerSurface;
-import com.bymarcin.ocglasses.utils.Vec3;
+import com.bymarcin.ocglasses.utils.Location;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 
@@ -21,10 +21,10 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	}
 	
 	EventType eventType;
-	Vec3 UUID;
+	Location UUID;
 	String player;
 	
-	public GlassesEventPacket(EventType eventType, Vec3 UUID, EntityPlayer player) {
+	public GlassesEventPacket(EventType eventType, Location UUID, EntityPlayer player) {
 		this.player = player.getGameProfile().getId().toString();
 		this.eventType = eventType;
 		this.UUID = UUID;
@@ -38,7 +38,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		this.player = readString();
 		this.eventType = EventType.values()[readInt()];
 		if(EventType.UNEQUIPED_GLASSES == eventType) return;
-		this.UUID = new Vec3(readInt(), readInt(), readInt());
+		this.UUID = new Location(readInt(), readInt(), readInt(), readInt());
 	}
 
 	@Override
@@ -49,6 +49,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	    writeInt(UUID.x);	
 	    writeInt(UUID.y);
 	    writeInt(UUID.z);
+	    writeInt(UUID.dimID);
 	}
 
 	@Override

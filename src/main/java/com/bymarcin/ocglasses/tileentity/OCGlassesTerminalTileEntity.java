@@ -17,7 +17,7 @@ import com.bymarcin.ocglasses.surface.ServerSurface;
 import com.bymarcin.ocglasses.surface.WidgetUpdatePacket;
 import com.bymarcin.ocglasses.surface.Widgets;
 import com.bymarcin.ocglasses.surface.widgets.SquareWidget;
-import com.bymarcin.ocglasses.utils.Vec3;
+import com.bymarcin.ocglasses.utils.Location;
 
 import cpw.mods.fml.common.Optional;
 
@@ -37,8 +37,8 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 		return "glasses";
 	}
 	
-	public Vec3 getTerminalUUID(){
-		return new Vec3(xCoord, yCoord, zCoord);
+	public Location getTerminalUUID(){
+		return new Location(xCoord, yCoord, zCoord, worldObj.provider.dimensionId);
 	}
 	
 	public void onGlassesPutOff(String user){

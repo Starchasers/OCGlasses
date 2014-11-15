@@ -7,17 +7,18 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 import com.bymarcin.ocglasses.network.NetworkRegistry;
 import com.bymarcin.ocglasses.tileentity.OCGlassesTerminalTileEntity;
-import com.bymarcin.ocglasses.utils.Vec3;
+import com.bymarcin.ocglasses.utils.Location;
 
 public class ServerSurface {
 	public static ServerSurface instance  = new ServerSurface();
 	
-	HashMap<EntityPlayer,Vec3> players = new HashMap<EntityPlayer, Vec3>();
+	HashMap<EntityPlayer,Location> players = new HashMap<EntityPlayer, Location>();
 	
-	public void subscribePlayer(String playerUUID, Vec3 UUID){
+	public void subscribePlayer(String playerUUID, Location UUID){
 		EntityPlayerMP player = checkUUID(playerUUID);
 		if(player!=null){
 			players.put(player, UUID);
@@ -29,16 +30,18 @@ public class ServerSurface {
 		players.remove(playerUUID);
 	}
 	
-	public void sendSync(EntityPlayer p,Vec3 coords){
-		TileEntity t = p.worldObj.getTileEntity(coords.x, coords.y, coords.z);
+	public void sendSync(EntityPlayer p,Location coords){
+		World w  = MinecraftServer.getServer().worldServerForDimension(coords.dimID);
+		if(w==null) return;
+		TileEntity t = w.getTileEntity(coords.x, coords.y, coords.z);
 		if(t instanceof OCGlassesTerminalTileEntity){
 			WidgetUpdatePacket packet = new WidgetUpdatePacket( ((OCGlassesTerminalTileEntity)t).widgetList);
 			NetworkRegistry.packetHandler.sendTo(packet, (EntityPlayerMP) p);
 		}
 	}
 	
-	public void sendToUUID(WidgetUpdatePacket packet, Vec3 UUID){
-		for(Entry<EntityPlayer, Vec3> e :players.entrySet()){
+	public void sendToUUID(WidgetUpdatePacket packet, Location UUID){
+		for(Entry<EntityPlayer, Location> e :players.entrySet()){
 			if(e.getValue().equals(UUID)){
 				NetworkRegistry.packetHandler.sendTo(packet, (EntityPlayerMP) e.getKey());
 			}

@@ -4,7 +4,7 @@ import com.bymarcin.ocglasses.event.GlassesEventPacket.EventType;
 import com.bymarcin.ocglasses.item.OCGlassesItem;
 import com.bymarcin.ocglasses.network.NetworkRegistry;
 import com.bymarcin.ocglasses.surface.ClientSurface;
-import com.bymarcin.ocglasses.utils.Vec3;
+import com.bymarcin.ocglasses.utils.Location;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -21,7 +21,7 @@ public class ClientEventHandler {
 		ItemStack glassesStack= e.player.inventory.armorInventory[3];
 		Item glasses = glassesStack!=null?glassesStack.getItem():null;
 		if(glasses instanceof OCGlassesItem){
-			Vec3 uuid  = OCGlassesItem.getUUID(glassesStack);
+			Location uuid  = OCGlassesItem.getUUID(glassesStack);
 			if(uuid!=null && haveGlasses==false){
 				equiped(e, uuid);
 			}else if(haveGlasses == true && uuid ==null){
@@ -46,7 +46,7 @@ public class ClientEventHandler {
 		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.UNEQUIPED_GLASSES,null, e.player));
 	}
 	
-	private void equiped(PlayerTickEvent e, Vec3 uuid){
+	private void equiped(PlayerTickEvent e, Location uuid){
 		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.EQUIPED_GLASSES, uuid, e.player));
 		haveGlasses = true;
 	}

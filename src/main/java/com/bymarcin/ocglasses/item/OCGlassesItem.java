@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 
 import com.bymarcin.ocglasses.OCGlasses;
 import com.bymarcin.ocglasses.surface.ClientSurface;
-import com.bymarcin.ocglasses.utils.Vec3;
+import com.bymarcin.ocglasses.utils.Location;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -48,10 +48,10 @@ public class OCGlassesItem extends ItemArmor {
 		return itemIcon;
 	}
 
-	public static Vec3 getUUID(ItemStack itemStack){
+	public static Location getUUID(ItemStack itemStack){
 		NBTTagCompound tag = getItemTag(itemStack);
 		if (!tag.hasKey("X") || !tag.hasKey("Y") || ! tag.hasKey("Z")) return null;
-		return new Vec3(tag.getInteger("X"),tag.getInteger("Y"),tag.getInteger("Z"));
+		return new Location(tag.getInteger("X"),tag.getInteger("Y"),tag.getInteger("Z"),tag.getInteger("DIM"));
 	}
 	
 	@Override
@@ -59,7 +59,7 @@ public class OCGlassesItem extends ItemArmor {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean par4) {
 		super.addInformation(itemStack, player, list, par4);
-		Vec3 uuid = getUUID(itemStack);
+		Location uuid = getUUID(itemStack);
 		if (uuid != null)
 			list.add("Link to: " + uuid.toString());
 	}
@@ -70,11 +70,12 @@ public class OCGlassesItem extends ItemArmor {
 		return stack.stackTagCompound;
 	}
 
-	public void bindToTerminal(ItemStack glass, Vec3 uuid) {
+	public void bindToTerminal(ItemStack glass, Location uuid) {
 		NBTTagCompound tag = getItemTag(glass);
 		tag.setInteger("X", uuid.x);
 		tag.setInteger("Y", uuid.y);
 		tag.setInteger("Z", uuid.z);
+		tag.setInteger("DIM", uuid.dimID);
 	}
 	
 	private MovingObjectPosition getBlockCoordsLookingAt(EntityPlayer player){
