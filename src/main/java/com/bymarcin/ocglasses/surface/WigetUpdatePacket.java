@@ -63,7 +63,7 @@ public class WigetUpdatePacket extends Packet<WigetUpdatePacket, IMessage>{
 
 	@Override
 	protected IMessage executeOnServer() {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stuba
 		return null;
 	}
 

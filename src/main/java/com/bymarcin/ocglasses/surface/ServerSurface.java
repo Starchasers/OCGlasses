@@ -15,7 +15,7 @@ import com.bymarcin.ocglasses.utils.Vec3;
 public class ServerSurface {
 	public static ServerSurface instance  = new ServerSurface();
 	
-	HashMap<EntityPlayer,Vec3> players;
+	HashMap<EntityPlayer,Vec3> players = new HashMap<EntityPlayer, Vec3>();
 	
 	public void subscribePlayer(String playerUUID, Vec3 UUID){
 		EntityPlayerMP player = checkUUID(playerUUID);
