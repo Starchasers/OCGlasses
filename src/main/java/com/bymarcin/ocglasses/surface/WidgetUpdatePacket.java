@@ -9,19 +9,19 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class WigetUpdatePacket extends Packet<WigetUpdatePacket, IMessage>{
+public class WidgetUpdatePacket extends Packet<WidgetUpdatePacket, IMessage>{
 	ArrayList<IWidget> wigetList;
 	Action type;
 	
-	public WigetUpdatePacket() {
+	public WidgetUpdatePacket() {
 	}
 	
-	public WigetUpdatePacket(ArrayList<IWidget> wigetList, Action type) {
+	public WidgetUpdatePacket(ArrayList<IWidget> wigetList, Action type) {
 		this.wigetList = wigetList;
 		this.type = type;
 	}
 	
-	public WigetUpdatePacket(IWidget wiget, Action type) {
+	public WidgetUpdatePacket(IWidget wiget, Action type) {
 		this.wigetList = new ArrayList<IWidget>();
 		wigetList.add(wiget);
 		this.type = type;

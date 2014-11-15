@@ -32,12 +32,12 @@ public class ServerSurface {
 	public void sendSync(EntityPlayer p,Vec3 coords){
 		TileEntity t = p.worldObj.getTileEntity(coords.x, coords.y, coords.z);
 		if(t instanceof OCGlassesTerminalTileEntity){
-			WigetUpdatePacket packet = new WigetUpdatePacket( ((OCGlassesTerminalTileEntity)t).wigetList, WigetUpdatePacket.Action.AddWigets );
+			WidgetUpdatePacket packet = new WidgetUpdatePacket( ((OCGlassesTerminalTileEntity)t).widgetList, WidgetUpdatePacket.Action.AddWigets );
 			NetworkRegistry.packetHandler.sendTo(packet, (EntityPlayerMP) p);
 		}
 	}
 	
-	public void sendToUUID(WigetUpdatePacket packet, Vec3 UUID){
+	public void sendToUUID(WidgetUpdatePacket packet, Vec3 UUID){
 		for(Entry<EntityPlayer, Vec3> e :players.entrySet()){
 			if(e.getValue().equals(UUID)){
 				NetworkRegistry.packetHandler.sendTo(packet, (EntityPlayerMP) e.getKey());

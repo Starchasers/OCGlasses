@@ -90,14 +90,20 @@ public class SquareWidget implements IWidget{
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
-		// TODO Auto-generated method stub
-		
+		nbt.setFloat("x", x);
+		nbt.setFloat("y", y);
+		nbt.setFloat("r", r);
+		nbt.setFloat("g", g);
+		nbt.setFloat("b", b);	
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
-		// TODO Auto-generated method stub
-		
+		x = nbt.getFloat("x");
+		y = nbt.getFloat("y");
+		r = nbt.getFloat("r");
+		g = nbt.getFloat("g");
+		b = nbt.getFloat("b");	
 	}
 	
 }
