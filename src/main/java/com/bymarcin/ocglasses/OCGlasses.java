@@ -7,11 +7,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.bymarcin.ocglasses.block.OCGlassesTerminalBlock;
-import com.bymarcin.ocglasses.event.GlassesEventPacket;
 import com.bymarcin.ocglasses.item.OCGlassesItem;
 import com.bymarcin.ocglasses.network.NetworkRegistry;
+import com.bymarcin.ocglasses.network.packet.GlassesEventPacket;
+import com.bymarcin.ocglasses.network.packet.WidgetUpdatePacket;
 import com.bymarcin.ocglasses.proxy.CommonProxy;
-import com.bymarcin.ocglasses.surface.WidgetUpdatePacket;
 import com.bymarcin.ocglasses.tileentity.OCGlassesTerminalTileEntity;
 
 import cpw.mods.fml.common.Mod;

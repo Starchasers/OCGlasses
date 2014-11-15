@@ -1,8 +1,9 @@
 package com.bymarcin.ocglasses.event;
 
-import com.bymarcin.ocglasses.event.GlassesEventPacket.EventType;
 import com.bymarcin.ocglasses.item.OCGlassesItem;
 import com.bymarcin.ocglasses.network.NetworkRegistry;
+import com.bymarcin.ocglasses.network.packet.GlassesEventPacket;
+import com.bymarcin.ocglasses.network.packet.GlassesEventPacket.EventType;
 import com.bymarcin.ocglasses.surface.ClientSurface;
 import com.bymarcin.ocglasses.utils.Location;
 

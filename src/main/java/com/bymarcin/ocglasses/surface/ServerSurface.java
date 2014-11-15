@@ -10,6 +10,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import com.bymarcin.ocglasses.network.NetworkRegistry;
+import com.bymarcin.ocglasses.network.packet.WidgetUpdatePacket;
 import com.bymarcin.ocglasses.tileentity.OCGlassesTerminalTileEntity;
 import com.bymarcin.ocglasses.utils.Location;
 

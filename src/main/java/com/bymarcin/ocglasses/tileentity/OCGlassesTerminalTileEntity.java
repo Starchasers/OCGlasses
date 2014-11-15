@@ -12,9 +12,9 @@ import li.cil.oc.api.network.Visibility;
 import li.cil.oc.api.prefab.TileEntityEnvironment;
 import net.minecraft.nbt.NBTTagCompound;
 
+import com.bymarcin.ocglasses.network.packet.WidgetUpdatePacket;
 import com.bymarcin.ocglasses.surface.IWidget;
 import com.bymarcin.ocglasses.surface.ServerSurface;
-import com.bymarcin.ocglasses.surface.WidgetUpdatePacket;
 import com.bymarcin.ocglasses.surface.Widgets;
 import com.bymarcin.ocglasses.surface.widgets.SquareWidget;
 import com.bymarcin.ocglasses.utils.Location;
@@ -126,13 +126,6 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 		return new Object[]{addWidget(w)};
 	}
 
-	private int addWidget(IWidget w){
-		widgetList.put(currID,w);
-		ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(currID, w), getTerminalUUID());
-		int t = currID;
-		currID++;
-		return t;
-	}
 	/* User interaction */
 	
 	/**
@@ -150,6 +143,13 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 //		return new Object[]{};
 //	}
 
+	private int addWidget(IWidget w){
+		widgetList.put(currID,w);
+		ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(currID, w), getTerminalUUID());
+		int t = currID;
+		currID++;
+		return t;
+	}
 	
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {

@@ -1,4 +1,4 @@
-package com.bymarcin.ocglasses.event;
+package com.bymarcin.ocglasses.network.packet;
 
 import java.io.IOException;
 

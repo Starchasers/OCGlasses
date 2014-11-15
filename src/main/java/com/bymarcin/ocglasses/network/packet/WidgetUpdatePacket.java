@@ -1,4 +1,4 @@
-package com.bymarcin.ocglasses.surface;
+package com.bymarcin.ocglasses.network.packet;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import com.bymarcin.ocglasses.network.Packet;
+import com.bymarcin.ocglasses.surface.ClientSurface;
+import com.bymarcin.ocglasses.surface.IWidget;
+import com.bymarcin.ocglasses.surface.Widgets;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.relauncher.Side;
