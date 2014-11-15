@@ -1,5 +1,6 @@
 package com.bymarcin.ocglasses.surface;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import net.minecraft.client.renderer.Tessellator;
@@ -18,7 +19,7 @@ public class ClientSurface {
 	private ClientSurface() {}
 	
 	
-	public void addWiget(IWidget widget){
+	public void addWiget(ArrayList<IWidget> widget){
 		
 	}
 	

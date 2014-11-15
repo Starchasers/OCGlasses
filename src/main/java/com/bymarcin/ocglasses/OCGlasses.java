@@ -11,6 +11,7 @@ import com.bymarcin.ocglasses.event.GlassesEventPacket;
 import com.bymarcin.ocglasses.item.OCGlassesItem;
 import com.bymarcin.ocglasses.network.NetworkRegistry;
 import com.bymarcin.ocglasses.proxy.CommonProxy;
+import com.bymarcin.ocglasses.surface.WigetUpdatePacket;
 import com.bymarcin.ocglasses.tileentity.OCGlassesTerminalTileEntity;
 
 import cpw.mods.fml.common.Mod;
@@ -52,6 +53,8 @@ public class OCGlasses
 	public void init(FMLInitializationEvent event)
 	{
 		NetworkRegistry.registerPacket(0, GlassesEventPacket.class, Side.SERVER);
+		NetworkRegistry.registerPacket(1, WigetUpdatePacket.class, Side.CLIENT);
+		
 		GameRegistry.registerBlock(new OCGlassesTerminalBlock(), "ocglassesterminal");
 		GameRegistry.registerTileEntity(OCGlassesTerminalTileEntity.class, "ocglassesterminal");
 		GameRegistry.registerItem(new OCGlassesItem(), "ocglasses");

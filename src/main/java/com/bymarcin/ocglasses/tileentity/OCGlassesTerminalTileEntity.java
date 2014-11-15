@@ -2,12 +2,6 @@ package com.bymarcin.ocglasses.tileentity;
 
 import java.util.ArrayList;
 
-import scala.Array;
-
-import com.bymarcin.ocglasses.surface.IWidget;
-import com.bymarcin.ocglasses.surface.widgets.SquareWidget;
-import com.bymarcin.ocglasses.utils.Vec3;
-
 import li.cil.oc.api.Network;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
@@ -15,12 +9,19 @@ import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.SimpleComponent;
 import li.cil.oc.api.network.Visibility;
 import li.cil.oc.api.prefab.TileEntityEnvironment;
+
+import com.bymarcin.ocglasses.surface.IWidget;
+import com.bymarcin.ocglasses.surface.ServerSurface;
+import com.bymarcin.ocglasses.surface.WigetUpdatePacket;
+import com.bymarcin.ocglasses.surface.widgets.SquareWidget;
+import com.bymarcin.ocglasses.utils.Vec3;
+
 import cpw.mods.fml.common.Optional;
 
 @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers")
 public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	implements SimpleComponent{
-	ArrayList list = new ArrayList<IWidget>();
+	public ArrayList<IWidget> wigetList = new ArrayList<IWidget>();
 	
 	public OCGlassesTerminalTileEntity() {
 		node = Network.newNode(this, Visibility.Network).create();
@@ -102,8 +103,10 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	@Callback
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addBox(Context context, Arguments args){
-		new SquareWidget();
-		return new Object[]{};
+		IWidget w = new SquareWidget(args.checkDouble(0),args.checkDouble(1),args.checkDouble(2),args.checkDouble(3),args.checkDouble(4),args.checkDouble(5));
+		wigetList.add(w);
+		ServerSurface.instance.sendToUUID(new WigetUpdatePacket(new ArrayList<IWidget>(), WigetUpdatePacket.Action.AddWigets), getTerminalUUID());
+		return new Object[]{wigetList.indexOf(w)};
 	}
 
 	
