@@ -38,20 +38,20 @@ public class SquareWidget implements IWidget{
 	
 	@Override
 	public void write(ByteBuf buff) {
-		x = buff.readFloat();
-		y = buff.readFloat();
-		r = buff.readFloat();
-		g = buff.readFloat();
-		b = buff.readFloat();
-	}
-
-	@Override
-	public void read(ByteBuf buff) {
 		buff.writeFloat(x);
 		buff.writeFloat(y);
 		buff.writeFloat(r);
 		buff.writeFloat(g);
 		buff.writeFloat(b);
+	}
+
+	@Override
+	public void read(ByteBuf buff) {
+		x = buff.readFloat();
+		y = buff.readFloat();
+		r = buff.readFloat();
+		g = buff.readFloat();
+		b = buff.readFloat();
 	}
 	
 	@Override
