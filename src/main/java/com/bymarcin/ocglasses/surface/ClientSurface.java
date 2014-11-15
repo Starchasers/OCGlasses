@@ -1,7 +1,10 @@
 package com.bymarcin.ocglasses.surface;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -13,19 +16,22 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class ClientSurface {
 	public static ClientSurface instances = new ClientSurface();
-	public LinkedList<IRenderableWidget> renderables = new LinkedList<IRenderableWidget>();
+	public Map<Integer, IRenderableWidget> renderables = new HashMap<Integer, IRenderableWidget>();
 
+	
 	private ClientSurface() {}
 	
 	
-	public void addWiget(ArrayList<IWidget> widgets){
-		for(IWidget widget : widgets){
-			renderables.add(widget.getRenderable());
+	public void updateWigets(Set<Entry<Integer, IWidget>> widgets){
+		for(Entry<Integer, IWidget> widget : widgets){
+			renderables.put(widget.getKey(), widget.getValue().getRenderable());
 		}
 	}
 	
-	public void removeWidget(){
-		
+	public void removeWidgets(List<Integer> ids){
+		for(Integer id : ids){
+			renderables.remove(id);
+		}
 	}
 	
 	public void removeAllWidgets(){
@@ -35,7 +41,7 @@ public class ClientSurface {
 	@SubscribeEvent
 	public void onRenderGameOverlay(RenderGameOverlayEvent evt) {
 		if (evt.type == ElementType.HELMET && evt instanceof RenderGameOverlayEvent.Post) {
-			for(IRenderableWidget renderable : renderables){
+			for(IRenderableWidget renderable : renderables.values()){
 				renderable.render();
 			}
 		}
