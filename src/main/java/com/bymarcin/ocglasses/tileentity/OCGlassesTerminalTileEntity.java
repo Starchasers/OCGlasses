@@ -123,14 +123,16 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addBox(Context context, Arguments args){
 		IWidget w = new SquareWidget(args.checkDouble(0),args.checkDouble(1),args.checkDouble(2),args.checkDouble(3),args.checkDouble(4));
-		widgetList.put(currID,w);
-		Object[] ret = new Object[]{currID};
-		ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(currID, w), getTerminalUUID());
-		currID++;
-		return ret;
+		return new Object[]{addWidget(w)};
 	}
 
-	
+	private int addWidget(IWidget w){
+		widgetList.put(currID,w);
+		ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(currID, w), getTerminalUUID());
+		int t = currID;
+		currID++;
+		return t;
+	}
 	/* User interaction */
 	
 	/**
