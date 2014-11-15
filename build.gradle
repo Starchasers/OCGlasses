@@ -30,9 +30,11 @@ minecraft {
 	}
 }
 
+repositories {
+    maven { url = "http://maven.cil.li/" }
+}
 dependencies {
-	compile files("OpenComponents-MC1.7.10-0.2.1.25-deobf.jar")
-	compile files("OpenComputers-MC1.7.10-1.4.0.185-dev-dev.jar")
+    compile "li.cil.oc:OpenComputers:MC1.7.10-1.4.+:api"
 }
 
 processResources
