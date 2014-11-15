@@ -14,7 +14,7 @@ import li.cil.oc.api.prefab.TileEntityEnvironment;
 import com.bymarcin.ocglasses.surface.IWidget;
 import com.bymarcin.ocglasses.surface.ServerSurface;
 import com.bymarcin.ocglasses.surface.Widgets;
-import com.bymarcin.ocglasses.surface.WigetUpdatePacket;
+import com.bymarcin.ocglasses.surface.WidgetUpdatePacket;
 import com.bymarcin.ocglasses.surface.widgets.SquareWidget;
 import com.bymarcin.ocglasses.utils.Vec3;
 
@@ -107,7 +107,7 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	public Object[] addBox(Context context, Arguments args){
 		IWidget w = new SquareWidget(args.checkDouble(0),args.checkDouble(1),args.checkDouble(2),args.checkDouble(3),args.checkDouble(4));
 		widgetList.add(w);
-		ServerSurface.instance.sendToUUID(new WigetUpdatePacket(w, WigetUpdatePacket.Action.AddWigets), getTerminalUUID());
+		ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(w, WidgetUpdatePacket.Action.AddWigets), getTerminalUUID());
 		return new Object[]{widgetList.indexOf(w)};
 	}
 
