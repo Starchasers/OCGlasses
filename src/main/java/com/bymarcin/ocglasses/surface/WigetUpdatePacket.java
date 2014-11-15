@@ -21,6 +21,12 @@ public class WigetUpdatePacket extends Packet<WigetUpdatePacket, IMessage>{
 		this.type = type;
 	}
 	
+	public WigetUpdatePacket(IWidget wiget, Action type) {
+		this.wigetList = new ArrayList<IWidget>();
+		wigetList.add(wiget);
+		this.type = type;
+	}
+	
 	@Override
 	protected void read() throws IOException {
 		wigetList = new ArrayList<IWidget>();

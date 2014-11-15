@@ -105,7 +105,7 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	public Object[] addBox(Context context, Arguments args){
 		IWidget w = new SquareWidget(args.checkDouble(0),args.checkDouble(1),args.checkDouble(2),args.checkDouble(3),args.checkDouble(4),args.checkDouble(5));
 		wigetList.add(w);
-		ServerSurface.instance.sendToUUID(new WigetUpdatePacket(new ArrayList<IWidget>(), WigetUpdatePacket.Action.AddWigets), getTerminalUUID());
+		ServerSurface.instance.sendToUUID(new WigetUpdatePacket(w, WigetUpdatePacket.Action.AddWigets), getTerminalUUID());
 		return new Object[]{wigetList.indexOf(w)};
 	}
 
