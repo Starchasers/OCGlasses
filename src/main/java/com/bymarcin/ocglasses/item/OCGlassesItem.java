@@ -8,8 +8,12 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.MovingObjectPosition.MovingObjectType;
+import net.minecraft.world.World;
 
 import com.bymarcin.ocglasses.OCGlasses;
+import com.bymarcin.ocglasses.surface.ClientSurface;
 import com.bymarcin.ocglasses.utils.Vec3;
 
 import cpw.mods.fml.relauncher.Side;
@@ -25,7 +29,15 @@ public class OCGlassesItem extends ItemArmor {
 		setCreativeTab(OCGlasses.creativeTab);
 		setUnlocalizedName("ocglasses");
 	}
-
+	
+	@Override
+	public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
+		MovingObjectPosition coords = getBlockCoordsLookingAt(player);
+		if(coords!=null){
+			ClientSurface.instances.onLookingAt(world, coords.blockX, coords.blockY, coords.blockZ);
+		}
+	}
+	
 	@Override
 	public void registerIcons(IIconRegister register) {
 		itemIcon = register.registerIcon(OCGlasses.MODID + ":glasses");
@@ -63,6 +75,16 @@ public class OCGlassesItem extends ItemArmor {
 		tag.setInteger("X", uuid.x);
 		tag.setInteger("Y", uuid.y);
 		tag.setInteger("Z", uuid.z);
+	}
+	
+	private MovingObjectPosition getBlockCoordsLookingAt(EntityPlayer player){
+		MovingObjectPosition objectMouseOver;
+		objectMouseOver = player.rayTrace(200, 1);	
+		if(objectMouseOver != null && objectMouseOver.typeOfHit == MovingObjectType.BLOCK)
+		{
+			return objectMouseOver;
+		}
+		return null;
 	}
 
 }

@@ -3,6 +3,7 @@ package com.bymarcin.ocglasses.surface;
 import java.util.LinkedList;
 
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 
@@ -40,5 +41,9 @@ public class ClientSurface {
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 			GL11.glEnable(GL11.GL_ALPHA_TEST);
 		}
+	}
+	
+	public void onLookingAt(World world, int x, int y, int z){
+		//System.out.println(world.getBlock(x, y, z));
 	}
 }
