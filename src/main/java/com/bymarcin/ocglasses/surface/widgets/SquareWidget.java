@@ -13,6 +13,15 @@ public class SquareWidget implements IWidget{
 	private float g;
 	private float b;
 	
+	public SquareWidget(float x, float y, float z, float r, float g, float b) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.r = r;
+		this.g = g;
+		this.b = b;
+	}
+	
 	@Override
 	public void write(ByteBuf buff) {
 		x = buff.readFloat();

@@ -1,5 +1,11 @@
 package com.bymarcin.ocglasses.tileentity;
 
+import java.util.ArrayList;
+
+import scala.Array;
+
+import com.bymarcin.ocglasses.surface.IWidget;
+import com.bymarcin.ocglasses.surface.widgets.SquareWidget;
 import com.bymarcin.ocglasses.utils.Vec3;
 
 import li.cil.oc.api.Network;
@@ -14,7 +20,7 @@ import cpw.mods.fml.common.Optional;
 @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers")
 public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	implements SimpleComponent{
-	
+	ArrayList list = new ArrayList<IWidget>();
 	
 	public OCGlassesTerminalTileEntity() {
 		node = Network.newNode(this, Visibility.Network).create();
@@ -96,6 +102,7 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	@Callback
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addBox(Context context, Arguments args){
+		new SquareWidget();
 		return new Object[]{};
 	}
 
