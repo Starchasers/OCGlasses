@@ -2,6 +2,7 @@ package com.bymarcin.ocglasses.tileentity;
 
 import java.util.ArrayList;
 
+import net.minecraft.nbt.NBTTagCompound;
 import li.cil.oc.api.Network;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
@@ -125,6 +126,29 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] getUserLookingAt(Context context, Arguments args){
 		return new Object[]{};
+	}
+	
+	
+	
+	
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
+		NBTTagCompound tag = new NBTTagCompound();
+		int size = wigetList.size();
+		nbt.setInteger("listSize", size);
+		
+		for (int i=0; i< size; i++) {
+			NBTTagCompound wNBT = new NBTTagCompound();
+			wigetList.get(i).writeToNBT(wNBT);
+			tag.setTag(String.valueOf(i), wNBT);
+		}
+		nbt.setTag("wigetList", tag);
+	}
+	
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
 	}
 	
 }

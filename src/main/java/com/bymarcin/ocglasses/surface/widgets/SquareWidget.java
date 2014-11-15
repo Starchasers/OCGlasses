@@ -1,6 +1,7 @@
 package com.bymarcin.ocglasses.surface.widgets;
 
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.nbt.NBTTagCompound;
 
 import org.lwjgl.opengl.GL11;
 
@@ -85,6 +86,18 @@ public class SquareWidget implements IWidget{
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 			GL11.glEnable(GL11.GL_ALPHA_TEST);
 		}
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
