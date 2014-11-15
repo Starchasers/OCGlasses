@@ -24,6 +24,10 @@ public class ClientSurface {
 		}
 	}
 	
+	public void removeWidget(){
+		
+	}
+	
 	@SubscribeEvent
 	public void onRenderGameOverlay(RenderGameOverlayEvent evt) {
 		if (evt.type == ElementType.HELMET && evt instanceof RenderGameOverlayEvent.Post) {
