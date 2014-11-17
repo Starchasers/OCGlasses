@@ -25,9 +25,10 @@ import cpw.mods.fml.common.Optional;
 @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers")
 public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	implements SimpleComponent{
+	
 	public HashMap<Integer,IWidget> widgetList = new HashMap<Integer,IWidget>();
 	int currID=0;
-	
+	Location loc;
 	
 	public OCGlassesTerminalTileEntity() {
 		node = Network.newNode(this, Visibility.Network).create();
@@ -39,7 +40,10 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	}
 	
 	public Location getTerminalUUID(){
-		return new Location(xCoord, yCoord, zCoord, worldObj.provider.dimensionId);
+		if(loc!=null){
+			return loc;
+		}
+		return loc = new Location(xCoord, yCoord, zCoord, worldObj.provider.dimensionId);
 	}
 	
 	public void onGlassesPutOff(String user){
