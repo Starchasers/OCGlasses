@@ -15,7 +15,8 @@ public class SetPosition extends LuaFunction{
 			if(widget instanceof IPositionable){
 				((IPositionable) widget).setPos(arguments.checkDouble(0), arguments.checkDouble(1));
 				getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());	
+				return null;
 			}
-		return null;	
+			throw new RuntimeException("Component does not exists!");
 	}
 }
