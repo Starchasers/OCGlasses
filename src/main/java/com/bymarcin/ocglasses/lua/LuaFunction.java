@@ -1,39 +1,51 @@
 package com.bymarcin.ocglasses.lua;
 
+import com.bymarcin.ocglasses.utils.Location;
+
 import net.minecraft.nbt.NBTTagCompound;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.machine.Value;
 
 public abstract class LuaFunction implements Value{
-
+	LuaReference ref;
+	public LuaFunction() {}
+	
+	LuaFunction(int id, Location loc) {
+		ref = new LuaReference(id, loc);
+	}
+	
+	void setRef(LuaReference ref){
+		this.ref = ref;
+	}
+	
+	public LuaReference getSelf(){
+		return ref;
+	}
+	
 	@Override
 	public void load(NBTTagCompound nbt) {
-		// TODO Auto-generated method stub
-		
+		ref = new LuaReference().readFromNBT(nbt.getCompoundTag("ref"));
 	}
-
+	
 	@Override
 	public void save(NBTTagCompound nbt) {
-		// TODO Auto-generated method stub
-		
+		NBTTagCompound refTag = new NBTTagCompound();
+		ref.writeToNBT(refTag);
+		nbt.setTag("ref", refTag);	
 	}
 
 	@Override
 	public Object apply(Context context, Arguments arguments) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("You can't replace this function");
 	}
 
 	@Override
 	public void unapply(Context context, Arguments arguments) {
-		// TODO Auto-generated method stub
-		
+		throw new RuntimeException("You can't replace this function");	
 	}
 
 	@Override
-	public void dispose(Context context) {
-		// TODO Auto-generated method stub
-	}
+	public void dispose(Context context) {}
 
 }

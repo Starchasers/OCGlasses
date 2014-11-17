@@ -9,15 +9,14 @@ import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.SimpleComponent;
 import li.cil.oc.api.network.Visibility;
-import li.cil.oc.api.prefab.AbstractValue;
 import li.cil.oc.api.prefab.TileEntityEnvironment;
 import net.minecraft.nbt.NBTTagCompound;
 
+import com.bymarcin.ocglasses.lua.LuaObjectBuilder;
 import com.bymarcin.ocglasses.network.packet.WidgetUpdatePacket;
 import com.bymarcin.ocglasses.surface.IWidget;
 import com.bymarcin.ocglasses.surface.ServerSurface;
 import com.bymarcin.ocglasses.surface.Widgets;
-import com.bymarcin.ocglasses.surface.widgets.square.SquareLuaObject;
 import com.bymarcin.ocglasses.surface.widgets.square.SquareWidget;
 import com.bymarcin.ocglasses.utils.Location;
 
@@ -122,7 +121,7 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	public Object[] addBox(Context context, Arguments args){
 		IWidget w = new SquareWidget(args.checkDouble(0),args.checkDouble(1),args.checkDouble(2),args.checkDouble(3),args.checkDouble(4));
 		int id = addWidget(w);
-		return new Object[]{new SquareLuaObject(getTerminalUUID(),id)};
+		return w.getLuaObject(new LuaObjectBuilder(id, getTerminalUUID()));
 	}
 
 	/* User interaction */
@@ -156,6 +155,16 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 		int t = currID;
 		currID++;
 		return t;
+	}
+	
+	public void updateWidget(int id){
+		IWidget w = widgetList.get(id);
+		if(w!=null)
+			ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(id, w), getTerminalUUID());
+	}
+	
+	public IWidget getWidget(int id){
+		return widgetList.get(id);
 	}
 	
 	@Override

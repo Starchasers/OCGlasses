@@ -7,20 +7,23 @@ import org.lwjgl.opengl.GL11;
 
 import io.netty.buffer.ByteBuf;
 
+import com.bymarcin.ocglasses.lua.LuaObjectBuilder;
 import com.bymarcin.ocglasses.surface.IRenderableWidget;
 import com.bymarcin.ocglasses.surface.IWidget;
 import com.bymarcin.ocglasses.surface.Widgets;
+import com.bymarcin.ocglasses.surface.widgets.atribute.IPositionable;
+import com.bymarcin.ocglasses.surface.widgets.luafunction.SetPosition;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class SquareWidget implements IWidget{
+public class SquareWidget implements IWidget,IPositionable{
 
-	public float x;
-	public float y;
-	public float r;
-	public float g;
-	public float b;
+	float x;
+	float y;
+	float r;
+	float g;
+	float b;
 	
 	public SquareWidget() {
 	}
@@ -104,6 +107,28 @@ public class SquareWidget implements IWidget{
 		r = nbt.getFloat("r");
 		g = nbt.getFloat("g");
 		b = nbt.getFloat("b");	
+	}
+
+	@Override
+	public Object[] getLuaObject(LuaObjectBuilder builder) {
+		builder.addFunction("setPosition", new SetPosition());
+		return builder.createLuaObject();
+	}
+
+	@Override
+	public double getPosX() {
+		return x;
+	}
+
+	@Override
+	public double getPosY() {
+		return y;
+	}
+
+	@Override
+	public void setPos(double x, double y) {
+		this.x = (float) x;
+		this.y = (float) y;
 	}
 	
 }

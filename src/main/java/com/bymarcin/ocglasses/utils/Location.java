@@ -1,5 +1,7 @@
 package com.bymarcin.ocglasses.utils;
 
+import net.minecraft.nbt.NBTTagCompound;
+
 public class Location {
 	public int x,y,z,dimID;
 	public Location(int x, int y, int z, int dimID) {
@@ -9,6 +11,10 @@ public class Location {
 		this.dimID = dimID;
 	}
 	
+	
+	public Location() {}
+
+
 	@Override
 	public boolean equals(Object arg0) {
 		if(arg0 instanceof Location){
@@ -22,5 +28,21 @@ public class Location {
 	@Override
 	public String toString() {
 		return "X:" +x +" Y:" + y + " Z:" + z + " DIM:"+dimID;
+	}
+	
+	public Location readFromNBT(NBTTagCompound nbt) {
+		x = nbt.getInteger("locX");
+		y = nbt.getInteger("locY");
+		z = nbt.getInteger("locZ");
+		dimID = nbt.getInteger("locDim");
+		return this;
+	}
+
+	public Location writeToNBT(NBTTagCompound nbt) {
+		nbt.setInteger("locX", x);
+		nbt.setInteger("locY", y);
+		nbt.setInteger("locZ", z);
+		nbt.setInteger("locDIM", dimID);
+		return this;
 	}
 }
