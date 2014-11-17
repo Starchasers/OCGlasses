@@ -1,6 +1,6 @@
 package com.bymarcin.ocglasses.surface;
 
-import com.bymarcin.ocglasses.surface.widgets.SquareWidget;
+import com.bymarcin.ocglasses.surface.widgets.square.SquareWidget;
 
 public enum Widgets {
 	//TRIANGLE("Triangle", 6),

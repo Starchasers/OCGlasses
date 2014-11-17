@@ -9,6 +9,7 @@ import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.SimpleComponent;
 import li.cil.oc.api.network.Visibility;
+import li.cil.oc.api.prefab.AbstractValue;
 import li.cil.oc.api.prefab.TileEntityEnvironment;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -16,7 +17,8 @@ import com.bymarcin.ocglasses.network.packet.WidgetUpdatePacket;
 import com.bymarcin.ocglasses.surface.IWidget;
 import com.bymarcin.ocglasses.surface.ServerSurface;
 import com.bymarcin.ocglasses.surface.Widgets;
-import com.bymarcin.ocglasses.surface.widgets.SquareWidget;
+import com.bymarcin.ocglasses.surface.widgets.square.SquareLuaObject;
+import com.bymarcin.ocglasses.surface.widgets.square.SquareWidget;
 import com.bymarcin.ocglasses.utils.Location;
 
 import cpw.mods.fml.common.Optional;
@@ -95,11 +97,7 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] removeObject(Context context, Arguments args){
 		int id = args.checkInteger(0);
-		if(widgetList.containsKey(id) && widgetList.remove(id)!=null){
-			ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(id), getTerminalUUID());
-			return new Object[]{true};
-		}
-		return new Object[]{false};
+		return new Object[]{removeWidget(id)};
 	}
 	
 	@Callback
@@ -123,7 +121,8 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addBox(Context context, Arguments args){
 		IWidget w = new SquareWidget(args.checkDouble(0),args.checkDouble(1),args.checkDouble(2),args.checkDouble(3),args.checkDouble(4));
-		return new Object[]{addWidget(w)};
+		int id = addWidget(w);
+		return new Object[]{new SquareLuaObject(getTerminalUUID(),id)};
 	}
 
 	/* User interaction */
@@ -143,7 +142,15 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 //		return new Object[]{};
 //	}
 
-	private int addWidget(IWidget w){
+	public boolean removeWidget(int id){
+		if(widgetList.containsKey(id) && widgetList.remove(id)!=null){
+			ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(id), getTerminalUUID());
+			return true;
+		}
+		return false;
+	}
+	
+	public int addWidget(IWidget w){
 		widgetList.put(currID,w);
 		ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(currID, w), getTerminalUUID());
 		int t = currID;

@@ -1,4 +1,4 @@
-package com.bymarcin.ocglasses.surface.widgets;
+package com.bymarcin.ocglasses.surface.widgets.square;
 
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,11 +16,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class SquareWidget implements IWidget{
 
-	private float x;
-	private float y;
-	private float r;
-	private float g;
-	private float b;
+	public float x;
+	public float y;
+	public float r;
+	public float g;
+	public float b;
 	
 	public SquareWidget() {
 	}
