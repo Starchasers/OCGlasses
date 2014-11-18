@@ -132,9 +132,9 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	@Callback
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addTriangle(Context context, Arguments args){
-		IWidget w = new TriangleWidget(args.checkDouble(0),args.checkDouble(1),args.checkDouble(2),args.checkDouble(3),args.checkDouble(4), args.checkDouble(5), args.checkDouble(6), args.checkDouble(7), args.checkDouble(8));
+		Widget w = new TriangleWidget(args.checkDouble(0),args.checkDouble(1),args.checkDouble(2),args.checkDouble(3),args.checkDouble(4), args.checkDouble(5), args.checkDouble(6), args.checkDouble(7), args.checkDouble(8));
 		int id = addWidget(w);
-		return w.getLuaObject(new LuaObjectBuilder(id, getTerminalUUID()));
+		return w.getLuaObject(new LuaReference(id, getTerminalUUID()));
 	}
 
 	/* User interaction */

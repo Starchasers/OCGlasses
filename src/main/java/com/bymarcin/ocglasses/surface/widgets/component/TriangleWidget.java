@@ -6,23 +6,16 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import org.lwjgl.opengl.GL11;
 
-import com.bymarcin.ocglasses.lua.LuaObjectBuilder;
 import com.bymarcin.ocglasses.surface.IRenderableWidget;
-import com.bymarcin.ocglasses.surface.IWidget;
+import com.bymarcin.ocglasses.surface.Widget;
 import com.bymarcin.ocglasses.surface.Widgets;
-import com.bymarcin.ocglasses.surface.widgets.atribute.IAlpha;
-import com.bymarcin.ocglasses.surface.widgets.atribute.IColorizable;
-import com.bymarcin.ocglasses.surface.widgets.luafunction.GetAlpha;
-import com.bymarcin.ocglasses.surface.widgets.luafunction.GetColor;
-import com.bymarcin.ocglasses.surface.widgets.luafunction.GetSize;
-import com.bymarcin.ocglasses.surface.widgets.luafunction.SetAlpha;
-import com.bymarcin.ocglasses.surface.widgets.luafunction.SetColor;
-import com.bymarcin.ocglasses.surface.widgets.luafunction.SetSize;
+import com.bymarcin.ocglasses.surface.widgets.core.attribute.IAlpha;
+import com.bymarcin.ocglasses.surface.widgets.core.attribute.IColorizable;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class TriangleWidget implements IWidget,IColorizable,IAlpha{
+public class TriangleWidget extends Widget implements IColorizable,IAlpha{
 	float x1, x2, x3;
 	float y1, y2, y3;
 	float alpha = 1;
@@ -135,13 +128,6 @@ public class TriangleWidget implements IWidget,IColorizable,IAlpha{
 		g = nbt.getFloat("g");
 		b = nbt.getFloat("b");
 		alpha = nbt.getFloat("alpha");
-	}
-
-	@Override
-	public Object[] getLuaObject(LuaObjectBuilder builder) {
-		builder.addFunction("setColor", new SetColor());
-		builder.addFunction("getColor", new GetColor());
-		return builder.createLuaObject();
 	}
 
 	@Override
