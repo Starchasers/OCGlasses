@@ -11,16 +11,28 @@ import com.bymarcin.ocglasses.lua.LuaObjectBuilder;
 import com.bymarcin.ocglasses.surface.IRenderableWidget;
 import com.bymarcin.ocglasses.surface.IWidget;
 import com.bymarcin.ocglasses.surface.Widgets;
+import com.bymarcin.ocglasses.surface.widgets.atribute.IColorizable;
 import com.bymarcin.ocglasses.surface.widgets.atribute.IPositionable;
+import com.bymarcin.ocglasses.surface.widgets.atribute.IResizable;
+import com.bymarcin.ocglasses.surface.widgets.luafunction.GetAlpha;
+import com.bymarcin.ocglasses.surface.widgets.luafunction.GetColor;
+import com.bymarcin.ocglasses.surface.widgets.luafunction.GetPosition;
+import com.bymarcin.ocglasses.surface.widgets.luafunction.GetSize;
+import com.bymarcin.ocglasses.surface.widgets.luafunction.SetAlpha;
+import com.bymarcin.ocglasses.surface.widgets.luafunction.SetColor;
 import com.bymarcin.ocglasses.surface.widgets.luafunction.SetPosition;
+import com.bymarcin.ocglasses.surface.widgets.luafunction.SetSize;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class SquareWidget implements IWidget,IPositionable{
+public class SquareWidget implements IWidget,IPositionable,IResizable,IColorizable{
 
 	float x;
 	float y;
+	float width;
+	float height;
+	float alpha;
 	float r;
 	float g;
 	float b;
@@ -47,6 +59,9 @@ public class SquareWidget implements IWidget,IPositionable{
 		buff.writeFloat(r);
 		buff.writeFloat(g);
 		buff.writeFloat(b);
+		buff.writeFloat(height);
+		buff.writeFloat(width);
+		buff.writeFloat(alpha);
 	}
 
 	@Override
@@ -56,6 +71,9 @@ public class SquareWidget implements IWidget,IPositionable{
 		r = buff.readFloat();
 		g = buff.readFloat();
 		b = buff.readFloat();
+		height = buff.readFloat();
+		width = buff.readFloat();
+		alpha = buff.readFloat();
 	}
 	
 	@Override
@@ -79,11 +97,11 @@ public class SquareWidget implements IWidget,IPositionable{
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			Tessellator tessellator = Tessellator.instance;
 			tessellator.startDrawingQuads();
-			tessellator.setColorRGBA_I(0/* col */, 128);
+			tessellator.setColorRGBA_F(r, g, b, alpha);
 			tessellator.addVertex(x, y, 0);
-			tessellator.addVertex(x, y+32, 0);
-			tessellator.addVertex(x+32, y+32, 0);
-			tessellator.addVertex(x+32, y+0, 0);
+			tessellator.addVertex(x, y+width, 0);
+			tessellator.addVertex(x+height, y+width, 0);
+			tessellator.addVertex(x+height, y+0, 0);
 			tessellator.draw();
 			GL11.glDisable(GL11.GL_BLEND);
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
@@ -98,6 +116,9 @@ public class SquareWidget implements IWidget,IPositionable{
 		nbt.setFloat("r", r);
 		nbt.setFloat("g", g);
 		nbt.setFloat("b", b);	
+		nbt.setFloat("width", width);
+		nbt.setFloat("height", height);
+		nbt.setFloat("alpha", alpha);
 	}
 
 	@Override
@@ -106,12 +127,22 @@ public class SquareWidget implements IWidget,IPositionable{
 		y = nbt.getFloat("y");
 		r = nbt.getFloat("r");
 		g = nbt.getFloat("g");
-		b = nbt.getFloat("b");	
+		b = nbt.getFloat("b");
+		width = nbt.getFloat("width");
+		height = nbt.getFloat("height");
+		alpha = nbt.getFloat("alpha");
 	}
 
 	@Override
 	public Object[] getLuaObject(LuaObjectBuilder builder) {
 		builder.addFunction("setPosition", new SetPosition());
+		builder.addFunction("getPosition", new GetPosition());
+		builder.addFunction("setSize", new SetSize());
+		builder.addFunction("getSize", new GetSize());
+		builder.addFunction("setAlpha", new SetAlpha());
+		builder.addFunction("getAlpha", new GetAlpha());
+		builder.addFunction("setColor", new SetColor());
+		builder.addFunction("getColor", new GetColor());
 		return builder.createLuaObject();
 	}
 
@@ -129,6 +160,44 @@ public class SquareWidget implements IWidget,IPositionable{
 	public void setPos(double x, double y) {
 		this.x = (float) x;
 		this.y = (float) y;
+	}
+
+	@Override
+	public void setSize(double width, double height) {
+		this.height = (float) height;
+		this.width = (float) width;
+	}
+
+	@Override
+	public double getWidth() {
+		return width;
+	}
+
+	@Override
+	public double getHeight() {
+		return height;
+	}
+
+	@Override
+	public void setColor(double r, double g, double b) {
+		this.r = (float) r;
+		this.g = (float) g;
+		this.b = (float) b;
+	}
+
+	@Override
+	public float getColorR() {
+		return r;
+	}
+
+	@Override
+	public float getColorG() {
+		return g;
+	}
+
+	@Override
+	public float getColorB() {
+		return b;
 	}
 	
 }
