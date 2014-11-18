@@ -1,6 +1,6 @@
-package com.bymarcin.ocglasses.surface.widgets.atribute;
+package com.bymarcin.ocglasses.surface.widgets.core.attribute;
 
-public interface IColorizable {
+public interface IColorizable extends IAttribute{
 	public void setColor(double d, double e, double f);
 	public float getColorR();
 	public float getColorG();

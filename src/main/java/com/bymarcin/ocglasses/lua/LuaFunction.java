@@ -9,13 +9,16 @@ import li.cil.oc.api.machine.Value;
 
 public abstract class LuaFunction implements Value{
 	LuaReference ref;
+
 	public LuaFunction() {}
 	
 	LuaFunction(int id, Location loc) {
 		ref = new LuaReference(id, loc);
 	}
 	
-	void setRef(LuaReference ref){
+	public abstract String getName();
+	
+	public void setRef(LuaReference ref){
 		this.ref = ref;
 	}
 	

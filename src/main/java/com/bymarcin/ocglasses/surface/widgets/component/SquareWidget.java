@@ -7,27 +7,20 @@ import org.lwjgl.opengl.GL11;
 
 import io.netty.buffer.ByteBuf;
 
-import com.bymarcin.ocglasses.lua.LuaObjectBuilder;
 import com.bymarcin.ocglasses.surface.IRenderableWidget;
-import com.bymarcin.ocglasses.surface.IWidget;
+import com.bymarcin.ocglasses.surface.Widget;
 import com.bymarcin.ocglasses.surface.Widgets;
-import com.bymarcin.ocglasses.surface.widgets.atribute.IAlpha;
-import com.bymarcin.ocglasses.surface.widgets.atribute.IColorizable;
-import com.bymarcin.ocglasses.surface.widgets.atribute.IPositionable;
-import com.bymarcin.ocglasses.surface.widgets.atribute.IResizable;
-import com.bymarcin.ocglasses.surface.widgets.luafunction.GetAlpha;
-import com.bymarcin.ocglasses.surface.widgets.luafunction.GetColor;
-import com.bymarcin.ocglasses.surface.widgets.luafunction.GetPosition;
-import com.bymarcin.ocglasses.surface.widgets.luafunction.GetSize;
-import com.bymarcin.ocglasses.surface.widgets.luafunction.SetAlpha;
-import com.bymarcin.ocglasses.surface.widgets.luafunction.SetColor;
-import com.bymarcin.ocglasses.surface.widgets.luafunction.SetPosition;
-import com.bymarcin.ocglasses.surface.widgets.luafunction.SetSize;
+
+
+import com.bymarcin.ocglasses.surface.widgets.core.attribute.IAlpha;
+import com.bymarcin.ocglasses.surface.widgets.core.attribute.IColorizable;
+import com.bymarcin.ocglasses.surface.widgets.core.attribute.IPositionable;
+import com.bymarcin.ocglasses.surface.widgets.core.attribute.IResizable;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class SquareWidget implements IWidget,IPositionable,IResizable,IColorizable,IAlpha{
+public class SquareWidget extends Widget implements IPositionable,IResizable,IColorizable,IAlpha{
 
 	float x;
 	float y;
@@ -132,19 +125,6 @@ public class SquareWidget implements IWidget,IPositionable,IResizable,IColorizab
 		width = nbt.getFloat("width");
 		height = nbt.getFloat("height");
 		alpha = nbt.getFloat("alpha");
-	}
-
-	@Override
-	public Object[] getLuaObject(LuaObjectBuilder builder) {
-		builder.addFunction("setPosition", new SetPosition());
-		builder.addFunction("getPosition", new GetPosition());
-		builder.addFunction("setSize", new SetSize());
-		builder.addFunction("getSize", new GetSize());
-		builder.addFunction("setAlpha", new SetAlpha());
-		builder.addFunction("getAlpha", new GetAlpha());
-		builder.addFunction("setColor", new SetColor());
-		builder.addFunction("getColor", new GetColor());
-		return builder.createLuaObject();
 	}
 
 	@Override

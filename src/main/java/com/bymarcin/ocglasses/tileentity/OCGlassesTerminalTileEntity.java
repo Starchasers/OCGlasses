@@ -12,9 +12,9 @@ import li.cil.oc.api.network.Visibility;
 import li.cil.oc.api.prefab.TileEntityEnvironment;
 import net.minecraft.nbt.NBTTagCompound;
 
-import com.bymarcin.ocglasses.lua.LuaObjectBuilder;
+import com.bymarcin.ocglasses.lua.LuaReference;
 import com.bymarcin.ocglasses.network.packet.WidgetUpdatePacket;
-import com.bymarcin.ocglasses.surface.IWidget;
+import com.bymarcin.ocglasses.surface.Widget;
 import com.bymarcin.ocglasses.surface.ServerSurface;
 import com.bymarcin.ocglasses.surface.Widgets;
 import com.bymarcin.ocglasses.surface.widgets.component.SquareWidget;
@@ -26,7 +26,7 @@ import cpw.mods.fml.common.Optional;
 public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	implements SimpleComponent{
 	
-	public HashMap<Integer,IWidget> widgetList = new HashMap<Integer,IWidget>();
+	public HashMap<Integer,Widget> widgetList = new HashMap<Integer,Widget>();
 	int currID=0;
 	Location loc;
 	
@@ -123,9 +123,9 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	@Callback
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addBox(Context context, Arguments args){
-		IWidget w = new SquareWidget(args.checkDouble(0),args.checkDouble(1),args.checkDouble(2),args.checkDouble(3),args.checkDouble(4));
+		Widget w = new SquareWidget(args.checkDouble(0),args.checkDouble(1),args.checkDouble(2),args.checkDouble(3),args.checkDouble(4));
 		int id = addWidget(w);
-		return w.getLuaObject(new LuaObjectBuilder(id, getTerminalUUID()));
+		return w.getLuaObject(new LuaReference(id, getTerminalUUID()));
 	}
 
 	/* User interaction */
@@ -153,7 +153,7 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 		return false;
 	}
 	
-	public int addWidget(IWidget w){
+	public int addWidget(Widget w){
 		widgetList.put(currID,w);
 		ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(currID, w), getTerminalUUID());
 		int t = currID;
@@ -162,12 +162,12 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	}
 	
 	public void updateWidget(int id){
-		IWidget w = widgetList.get(id);
+		Widget w = widgetList.get(id);
 		if(w!=null)
 			ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(id, w), getTerminalUUID());
 	}
 	
-	public IWidget getWidget(int id){
+	public Widget getWidget(int id){
 		return widgetList.get(id);
 	}
 	
@@ -179,7 +179,7 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 		int size = widgetList.size();
 		nbt.setInteger("listSize", size);
 		int i=0;
-		for (Entry<Integer, IWidget> e: widgetList.entrySet()) {
+		for (Entry<Integer, Widget> e: widgetList.entrySet()) {
 			NBTTagCompound widget = new NBTTagCompound();
 			widget.setString("widgetType", e.getValue().getType().name());
 			widget.setInteger("ID", e.getKey());
@@ -208,7 +208,7 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 					NBTTagCompound wiget = (NBTTagCompound) list.getTag(String.valueOf(i));
 					if(wiget.hasKey("widgetType") && wiget.hasKey("widget")&& wiget.hasKey("ID")){
 						Widgets type = Widgets.valueOf(wiget.getString(("widgetType")));
-						IWidget w = type.getNewInstance();
+						Widget w = type.getNewInstance();
 						w.readFromNBT((NBTTagCompound) wiget.getTag("widget"));
 					    widgetList.put(wiget.getInteger("ID"),w);
 					}

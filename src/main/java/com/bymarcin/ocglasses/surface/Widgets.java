@@ -6,12 +6,12 @@ public enum Widgets {
 	//TRIANGLE("Triangle", 6),
 	QUAD(SquareWidget.class);
 	
-	Class<? extends IWidget> clazz;
-	private Widgets(Class<? extends IWidget> cl) {
+	Class<? extends Widget> clazz;
+	private Widgets(Class<? extends Widget> cl) {
 		clazz = cl;
 	}
 	
-	public IWidget getNewInstance(){
+	public Widget getNewInstance(){
 		try {
 			return this.clazz.newInstance();
 		} catch (InstantiationException e) {

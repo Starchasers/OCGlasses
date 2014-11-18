@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 
 import com.bymarcin.ocglasses.network.Packet;
 import com.bymarcin.ocglasses.surface.ClientSurface;
-import com.bymarcin.ocglasses.surface.IWidget;
+import com.bymarcin.ocglasses.surface.Widget;
 import com.bymarcin.ocglasses.surface.Widgets;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -16,7 +16,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class WidgetUpdatePacket extends Packet<WidgetUpdatePacket, IMessage>{
-	HashMap<Integer, IWidget> widgetList;
+	HashMap<Integer, Widget> widgetList;
 	List<Integer> ids;
 	Action type;
 	
@@ -24,7 +24,7 @@ public class WidgetUpdatePacket extends Packet<WidgetUpdatePacket, IMessage>{
 		type = Action.RemoveAllWidgets;
 	}
 	
-	public WidgetUpdatePacket(HashMap<Integer, IWidget> widgetList) {
+	public WidgetUpdatePacket(HashMap<Integer, Widget> widgetList) {
 		this.widgetList = widgetList;
 		type = Action.AddWigets;
 	}
@@ -40,8 +40,8 @@ public class WidgetUpdatePacket extends Packet<WidgetUpdatePacket, IMessage>{
 		type = Action.RemoveWidgets;
 	}
 	
-	public WidgetUpdatePacket(int id, IWidget widget) {
-		this.widgetList = new HashMap<Integer,IWidget>();
+	public WidgetUpdatePacket(int id, Widget widget) {
+		this.widgetList = new HashMap<Integer,Widget>();
 		widgetList.put(id,widget);
 		this.type = Action.AddWigets;
 	}
@@ -79,11 +79,11 @@ public class WidgetUpdatePacket extends Packet<WidgetUpdatePacket, IMessage>{
 	}
 
 	private void readOnAddAction() throws IOException{
-		widgetList = new HashMap<Integer,IWidget>();
+		widgetList = new HashMap<Integer,Widget>();
 		int size =  readInt();
 		for(int i=0; i<size ;i++){
 			Widgets wigetType = Widgets.values()[readInt()];
-			IWidget w = wigetType.getNewInstance();
+			Widget w = wigetType.getNewInstance();
 			w.read(read);
 			widgetList.put(readInt(),w);
 		}
@@ -99,7 +99,7 @@ public class WidgetUpdatePacket extends Packet<WidgetUpdatePacket, IMessage>{
 
 	private void writeOnAddAction() throws IOException{
 		writeInt(widgetList.size());
-		for(Entry<Integer, IWidget> w : widgetList.entrySet()){
+		for(Entry<Integer, Widget> w : widgetList.entrySet()){
 			writeInt(w.getValue().getType().ordinal());
 			w.getValue().write(write);
 			writeInt(w.getKey());

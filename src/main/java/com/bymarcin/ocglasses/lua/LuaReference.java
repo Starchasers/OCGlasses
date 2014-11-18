@@ -5,7 +5,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import com.bymarcin.ocglasses.surface.IWidget;
+import com.bymarcin.ocglasses.surface.Widget;
 import com.bymarcin.ocglasses.tileentity.OCGlassesTerminalTileEntity;
 import com.bymarcin.ocglasses.utils.Location;
 
@@ -41,7 +41,7 @@ public class LuaReference {
 		return null;
 	}
 	
-	public IWidget getWidget(){
+	public Widget getWidget(){
 		OCGlassesTerminalTileEntity terminal = getTerminal();
 		if(terminal!=null){
 			return terminal.getWidget(widgetRef);

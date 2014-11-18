@@ -24,8 +24,8 @@ public class ClientSurface {
 	private ClientSurface() {}
 	
 	
-	public void updateWigets(Set<Entry<Integer, IWidget>> widgets){
-		for(Entry<Integer, IWidget> widget : widgets){
+	public void updateWigets(Set<Entry<Integer, Widget>> widgets){
+		for(Entry<Integer, Widget> widget : widgets){
 			renderables.put(widget.getKey(), widget.getValue().getRenderable());
 		}
 	}
