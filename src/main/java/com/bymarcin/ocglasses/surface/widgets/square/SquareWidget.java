@@ -11,6 +11,7 @@ import com.bymarcin.ocglasses.lua.LuaObjectBuilder;
 import com.bymarcin.ocglasses.surface.IRenderableWidget;
 import com.bymarcin.ocglasses.surface.IWidget;
 import com.bymarcin.ocglasses.surface.Widgets;
+import com.bymarcin.ocglasses.surface.widgets.atribute.IAlpha;
 import com.bymarcin.ocglasses.surface.widgets.atribute.IColorizable;
 import com.bymarcin.ocglasses.surface.widgets.atribute.IPositionable;
 import com.bymarcin.ocglasses.surface.widgets.atribute.IResizable;
@@ -26,7 +27,7 @@ import com.bymarcin.ocglasses.surface.widgets.luafunction.SetSize;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class SquareWidget implements IWidget,IPositionable,IResizable,IColorizable{
+public class SquareWidget implements IWidget,IPositionable,IResizable,IColorizable,IAlpha{
 
 	float x;
 	float y;
@@ -198,6 +199,16 @@ public class SquareWidget implements IWidget,IPositionable,IResizable,IColorizab
 	@Override
 	public float getColorB() {
 		return b;
+	}
+
+	@Override
+	public float getAlpha() {
+		return alpha;
+	}
+
+	@Override
+	public void setAlpha(double alpha) {
+		this.alpha = (float) alpha;
 	}
 	
 }
