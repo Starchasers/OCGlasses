@@ -125,16 +125,14 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addBox(Context context, Arguments args){
 		Widget w = new SquareWidget(args.checkDouble(0),args.checkDouble(1),args.checkDouble(2),args.checkDouble(3),args.checkDouble(4));
-		int id = addWidget(w);
-		return w.getLuaObject(new LuaReference(id, getTerminalUUID()));
+		return addWidget(w);
 	}
 	
 	@Callback
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addTriangle(Context context, Arguments args){
 		Widget w = new TriangleWidget(args.checkDouble(0),args.checkDouble(1),args.checkDouble(2),args.checkDouble(3),args.checkDouble(4), args.checkDouble(5), args.checkDouble(6), args.checkDouble(7), args.checkDouble(8));
-		int id = addWidget(w);
-		return w.getLuaObject(new LuaReference(id, getTerminalUUID()));
+		return addWidget(w);
 	}
 
 	/* User interaction */
@@ -162,12 +160,12 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 		return false;
 	}
 	
-	public int addWidget(Widget w){
+	public Object[] addWidget(Widget w){
 		widgetList.put(currID,w);
 		ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(currID, w), getTerminalUUID());
 		int t = currID;
 		currID++;
-		return t;
+		return w.getLuaObject(new LuaReference(t, getTerminalUUID()));
 	}
 	
 	public void updateWidget(int id){
