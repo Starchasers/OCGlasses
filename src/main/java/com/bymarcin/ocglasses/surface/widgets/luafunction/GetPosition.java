@@ -13,7 +13,7 @@ public class GetPosition extends LuaFunction{
 	public Object[] call(Context context, Arguments arguments) {
 		IWidget widget = getSelf().getWidget(); 
 		if(widget instanceof IPositionable){
-			return new Object[]{((IPositionable) widget).getPosX(), ((IPositionable) widget).getPosX()};
+			return new Object[]{((IPositionable) widget).getPosX(), ((IPositionable) widget).getPosY()};
 		}
 		throw new RuntimeException("Component does not exists!");
 	}
