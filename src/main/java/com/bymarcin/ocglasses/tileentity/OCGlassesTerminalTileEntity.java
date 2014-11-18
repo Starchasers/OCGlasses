@@ -17,7 +17,7 @@ import com.bymarcin.ocglasses.network.packet.WidgetUpdatePacket;
 import com.bymarcin.ocglasses.surface.IWidget;
 import com.bymarcin.ocglasses.surface.ServerSurface;
 import com.bymarcin.ocglasses.surface.Widgets;
-import com.bymarcin.ocglasses.surface.widgets.square.SquareWidget;
+import com.bymarcin.ocglasses.surface.widgets.component.SquareWidget;
 import com.bymarcin.ocglasses.utils.Location;
 
 import cpw.mods.fml.common.Optional;

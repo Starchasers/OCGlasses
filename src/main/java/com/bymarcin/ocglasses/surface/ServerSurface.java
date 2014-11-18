@@ -28,7 +28,7 @@ public class ServerSurface {
 	}
 	
 	public void unsubscribePlayer(String playerUUID){
-		players.remove(playerUUID);
+		players.remove( checkUUID(playerUUID) );
 	}
 	
 	public void sendSync(EntityPlayer p,Location coords){
