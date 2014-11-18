@@ -1,10 +1,12 @@
 package com.bymarcin.ocglasses.surface;
 
 import com.bymarcin.ocglasses.surface.widgets.component.SquareWidget;
+import com.bymarcin.ocglasses.surface.widgets.component.TriangleWidget;
 
 public enum Widgets {
-	//TRIANGLE("Triangle", 6),
-	QUAD(SquareWidget.class);
+	QUAD(SquareWidget.class),
+	TRIANGLE(TriangleWidget.class)
+	;
 	
 	Class<? extends Widget> clazz;
 	private Widgets(Class<? extends Widget> cl) {
