@@ -106,17 +106,12 @@ public class Triangle3d extends Widget implements IAlpha {
 			GL11.glPushMatrix();
 			//System.out.printf("%f;%f,%f\n",x[0],y[0],z[0]);
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
-			GL11.glBegin(GL11.GL_TRIANGLES);
+			GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 			GL11.glColor4f(0.0f,1.0f,0.0f,0.5f);
 			GL11.glVertex3f(x[0], y[0], z[0]);
-			GL11.glColor4f(0.0f,1.0f,0.0f,0.5f);
 			GL11.glVertex3f(x[1], y[1], z[1]);
-			GL11.glColor4f(0.0f,1.0f,0.0f,0.5f);
 			GL11.glVertex3f(x[2], y[2], z[2]);
-			
-			//GL11.glVertex3f(x[2], y[2], z[2]);
-			//GL11.glVertex3f(x[1], y[1], z[1]);
-			//GL11.glVertex3f(x[0], y[0], z[0]);
+			GL11.glVertex3f(x[0], y[0], z[0]);
 			GL11.glEnd();
 			GL11.glPopMatrix();
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
