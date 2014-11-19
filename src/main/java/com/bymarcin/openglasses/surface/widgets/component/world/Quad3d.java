@@ -105,6 +105,7 @@ public class Quad3d extends Widget implements IAlpha {
 		return WidgetType.QUAD3D;
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public IRenderableWidget getRenderable() {
 		return new RenderTriangle3d();
