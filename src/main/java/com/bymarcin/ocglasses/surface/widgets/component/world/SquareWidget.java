@@ -1,4 +1,4 @@
-package com.bymarcin.ocglasses.surface.widgets.component;
+package com.bymarcin.ocglasses.surface.widgets.component.world;
 
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.nbt.NBTTagCompound;

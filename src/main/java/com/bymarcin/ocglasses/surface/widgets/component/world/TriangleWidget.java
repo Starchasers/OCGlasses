@@ -1,4 +1,4 @@
-package com.bymarcin.ocglasses.surface.widgets.component;
+package com.bymarcin.ocglasses.surface.widgets.component.world;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.renderer.Tessellator;

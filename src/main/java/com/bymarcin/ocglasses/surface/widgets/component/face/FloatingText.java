@@ -1,4 +1,4 @@
-package com.bymarcin.ocglasses.surface.widgets.component;
+package com.bymarcin.ocglasses.surface.widgets.component.face;
 
 import org.lwjgl.opengl.GL11;
 
@@ -15,7 +15,7 @@ import com.bymarcin.ocglasses.surface.WidgetType;
 import com.bymarcin.ocglasses.surface.widgets.core.attribute.I3DPositionable;
 import com.bymarcin.ocglasses.surface.widgets.core.attribute.ITextable;
 
-public class FlowingText extends Widget implements I3DPositionable, ITextable{
+public class FloatingText extends Widget implements I3DPositionable, ITextable{
 	float x;
 	float y;
 	float z;
@@ -84,7 +84,7 @@ public class FlowingText extends Widget implements I3DPositionable, ITextable{
 	
 	@Override
 	public WidgetType getType() {
-		return WidgetType.FLOWINGTEXT;
+		return WidgetType.FLOATINGTEXT;
 	}
 	
 	@Override

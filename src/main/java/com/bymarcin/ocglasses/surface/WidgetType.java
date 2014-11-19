@@ -1,15 +1,15 @@
 package com.bymarcin.ocglasses.surface;
 
-import com.bymarcin.ocglasses.surface.widgets.component.Cube3d;
-import com.bymarcin.ocglasses.surface.widgets.component.FlowingText;
-import com.bymarcin.ocglasses.surface.widgets.component.SquareWidget;
-import com.bymarcin.ocglasses.surface.widgets.component.TriangleWidget;
+import com.bymarcin.ocglasses.surface.widgets.component.face.Cube3d;
+import com.bymarcin.ocglasses.surface.widgets.component.face.FloatingText;
+import com.bymarcin.ocglasses.surface.widgets.component.world.SquareWidget;
+import com.bymarcin.ocglasses.surface.widgets.component.world.TriangleWidget;
 
 public enum WidgetType {
 	QUAD(SquareWidget.class),
 	TRIANGLE(TriangleWidget.class),
 	CUBE3D(Cube3d.class),
-	FLOWINGTEXT(FlowingText.class)
+	FLOATINGTEXT(FloatingText.class)
 	;
 	
 	Class<? extends Widget> clazz;
