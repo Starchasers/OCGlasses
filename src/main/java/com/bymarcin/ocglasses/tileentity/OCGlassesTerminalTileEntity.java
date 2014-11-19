@@ -18,6 +18,7 @@ import com.bymarcin.ocglasses.surface.ServerSurface;
 import com.bymarcin.ocglasses.surface.WidgetType;
 import com.bymarcin.ocglasses.surface.widgets.component.face.Cube3d;
 import com.bymarcin.ocglasses.surface.widgets.component.face.FloatingText;
+import com.bymarcin.ocglasses.surface.widgets.component.face.Triangle3d;
 import com.bymarcin.ocglasses.surface.widgets.component.world.SquareWidget;
 import com.bymarcin.ocglasses.surface.widgets.component.world.TriangleWidget;
 import com.bymarcin.ocglasses.utils.Location;
@@ -129,6 +130,16 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment{
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addTriangle(Context context, Arguments args){
 		Widget w = new TriangleWidget(args.checkDouble(0),args.checkDouble(1),args.checkDouble(2),args.checkDouble(3),args.checkDouble(4), args.checkDouble(5), args.checkDouble(6), args.checkDouble(7), args.checkDouble(8));
+		return addWidget(w);
+	}
+	
+	@Callback
+	@Optional.Method(modid = "OpenComputers")
+	public Object[] addTriangle3D(Context context, Arguments args){
+		Widget w = new Triangle3d(
+				new float[]	{(float)args.checkDouble(0),(float)args.checkDouble(1),(float)args.checkDouble(2)},
+				new float[] {(float)args.checkDouble(3),(float)args.checkDouble(4),(float)args.checkDouble(5)},
+				new float[] {(float)args.checkDouble(6),(float)args.checkDouble(7),(float)args.checkDouble(8)});
 		return addWidget(w);
 	}
 

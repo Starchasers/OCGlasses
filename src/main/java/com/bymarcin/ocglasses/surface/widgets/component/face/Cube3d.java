@@ -107,8 +107,8 @@ public class Cube3d extends Widget implements I3DPositionable, IAlpha{
 			    GL11.glVertex3f( 1.0f, 1.0f, 1.0f);    // Top Left Of The Quad (Right)
 			    GL11.glVertex3f( 1.0f,0f, 1.0f);    // Bottom Left Of The Quad (Right)
 			    GL11.glVertex3f( 1.0f,0f,0f);    // Bottom Right Of The Quad (Right)
-			    GL11.glEnd();            // End Drawing The Cube 
-			    GL11.glTranslated(-posX, -posY, -PosZ);
+		    GL11.glEnd();            // End Drawing The Cube 
+		    GL11.glTranslated(-posX, -posY, -PosZ);
 		}
 		
 		@Override
