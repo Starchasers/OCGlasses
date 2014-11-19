@@ -8,7 +8,8 @@ import java.util.Set;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -93,10 +94,13 @@ public class ClientSurface {
 		GL11.glPopMatrix();
 	}
 	
-
-	
-	
-	public void onLookingAt(World world, int x, int y, int z){
-		//System.out.println(world.getBlock(x, y, z));
+	MovingObjectPosition getBlockCoordsLookingAt(EntityPlayer player){
+		MovingObjectPosition objectMouseOver;
+		objectMouseOver = player.rayTrace(200, 1);	
+		if(objectMouseOver != null && objectMouseOver.typeOfHit == MovingObjectType.BLOCK)
+		{
+			return objectMouseOver;
+		}
+		return null;
 	}
 }
