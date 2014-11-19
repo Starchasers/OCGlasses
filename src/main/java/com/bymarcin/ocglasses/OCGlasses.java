@@ -28,7 +28,7 @@ import cpw.mods.fml.relauncher.Side;
 public class OCGlasses
 {
 	public static final String MODID = "ocglasses";
-	public static final String VERSION = "0.1";
+	public static final String VERSION = "@VERSION@";
 
 	public Configuration config;
 	public static Logger logger = LogManager.getLogger(OCGlasses.MODID);
