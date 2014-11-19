@@ -101,9 +101,6 @@ public class Dot3d extends Widget implements IAlpha {
 			
 			GL11.glVertex3f(-size/2, size/2, 0);
 			
-			
-			
-			
 			GL11.glEnd();
 			GL11.glPopMatrix();
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
