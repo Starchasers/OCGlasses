@@ -1,9 +1,6 @@
 package com.bymarcin.ocglasses.lua;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 import com.bymarcin.ocglasses.surface.Widget;
 import com.bymarcin.ocglasses.tileentity.OCGlassesTerminalTileEntity;
@@ -26,19 +23,8 @@ public class LuaReference {
 		return widgetRef;
 	}
 	
-	private TileEntity getTileEntity(){
-		World world  = MinecraftServer.getServer().worldServerForDimension(blockRef.dimID);
-		if(world==null) 
-			return null;
-		return world.getTileEntity(blockRef.x, blockRef.y, blockRef.z);
-	}
-	
 	public OCGlassesTerminalTileEntity getTerminal(){
-		TileEntity te = getTileEntity();
-		if(te instanceof OCGlassesTerminalTileEntity){
-			return (OCGlassesTerminalTileEntity) te;
-		}
-		return null;
+		return blockRef.getTerminal();
 	}
 	
 	public Widget getWidget(){

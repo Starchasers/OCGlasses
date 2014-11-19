@@ -1,6 +1,11 @@
 package com.bymarcin.ocglasses.utils;
 
+import com.bymarcin.ocglasses.tileentity.OCGlassesTerminalTileEntity;
+
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 public class Location {
 	public int x,y,z,dimID;
@@ -28,6 +33,21 @@ public class Location {
 	@Override
 	public String toString() {
 		return "X:" +x +" Y:" + y + " Z:" + z + " DIM:"+dimID;
+	}
+	
+	public TileEntity getTileEntity(){
+		World world  = MinecraftServer.getServer().worldServerForDimension(dimID);
+		if(world==null) 
+			return null;
+		return world.getTileEntity(x, y, z);
+	}
+	
+	public OCGlassesTerminalTileEntity getTerminal(){
+		TileEntity te = getTileEntity();
+		if(te instanceof OCGlassesTerminalTileEntity){
+			return (OCGlassesTerminalTileEntity) te;
+		}
+		return null;
 	}
 	
 	public Location readFromNBT(NBTTagCompound nbt) {

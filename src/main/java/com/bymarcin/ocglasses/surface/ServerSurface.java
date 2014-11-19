@@ -1,6 +1,7 @@
 package com.bymarcin.ocglasses.surface;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map.Entry;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,11 +25,32 @@ public class ServerSurface {
 		if(player!=null){
 			players.put(player, UUID);
 			sendSync(player, UUID);
+			OCGlassesTerminalTileEntity terminal = UUID.getTerminal();
+			if(terminal != null){
+				terminal.onGlassesPutOn(player.getDisplayName());
+			}
 		}
 	}
 	
 	public void unsubscribePlayer(String playerUUID){
-		players.remove( checkUUID(playerUUID) );
+		EntityPlayerMP p = checkUUID(playerUUID);
+		Location l = players.remove( p );
+		if(l!=null){
+			OCGlassesTerminalTileEntity terminal = l.getTerminal();
+			if(terminal!=null){
+				terminal.onGlassesPutOff(p.getDisplayName());
+			}
+		}
+	}
+	
+	public String[] getActivePlayers(Location l){
+		LinkedList<String> players = new LinkedList<String>();
+		for(Entry<EntityPlayer, Location> p: this.players.entrySet()){
+			if(p.getValue().equals(l)){
+				players.add(p.getKey().getDisplayName());
+			}
+		}
+		return players.toArray(new String[]{});
 	}
 	
 	public void sendSync(EntityPlayer p,Location coords){

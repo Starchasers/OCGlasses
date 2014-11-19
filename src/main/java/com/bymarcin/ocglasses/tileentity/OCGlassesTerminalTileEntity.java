@@ -3,11 +3,10 @@ package com.bymarcin.ocglasses.tileentity;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import li.cil.oc.api.Network;
+import li.cil.oc.api.API;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
-import li.cil.oc.api.network.SimpleComponent;
 import li.cil.oc.api.network.Visibility;
 import li.cil.oc.api.prefab.TileEntityEnvironment;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,18 +23,16 @@ import com.bymarcin.ocglasses.utils.Location;
 import cpw.mods.fml.common.Optional;
 
 @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers")
-public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
-	implements SimpleComponent{
+public class OCGlassesTerminalTileEntity extends TileEntityEnvironment{
 	
 	public HashMap<Integer,Widget> widgetList = new HashMap<Integer,Widget>();
 	int currID=0;
 	Location loc;
 	
 	public OCGlassesTerminalTileEntity() {
-		node = Network.newNode(this, Visibility.Network).create();
+		node = API.network.newNode(this, Visibility.Network).withComponent(getComponentName()).create();
 	}
 	
-	@Override
 	public String getComponentName() {
 		return "glasses";
 	}
@@ -47,30 +44,31 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 		return loc = new Location(xCoord, yCoord, zCoord, worldObj.provider.dimensionId);
 	}
 	
+	public void onGlassesPutOn(String user){
+		if(node!=null){
+			System.out.println("JEJEON:" + user);
+			node.sendToReachable("computer.signal","glasses_on",user);
+		}
+	}
+	
 	public void onGlassesPutOff(String user){
 		if(node!=null){
-		node.sendToReachable("computer.signal","glasses_off",user);
+			System.out.println("JEJEOFF:" + user);
+			node.sendToReachable("computer.signal","glasses_off",user);
 		}
 	}
-	
-	public void onGlassesPutLinked(String user){
-		if(node!=null){
-		node.sendToReachable("computer.signal","glasses_linked",user);
-		}
-	}
-	
-	
+
 //	@Callback
 //    @Optional.Method(modid = "OpenComputers")
 //    public Object[] greet(Context context, Arguments args) {
 //		return new Object[]{String.format("Hello, %s!", args.checkString(0))};
 //    }
 	
-//	@Callback
-//	@Optional.Method(modid = "OpenComputers")
-//	public Object[] getLinkedGlasses(Context context, Arguments args) {
-//		return new Object[]{"uu-id-sdds-v-df-dsfg-ds"};
-//	}
+	@Callback
+	@Optional.Method(modid = "OpenComputers")
+	public Object[] getActivePlayers(Context context, Arguments args) {
+		return ServerSurface.instance.getActivePlayers(getTerminalUUID());
+	}
 //	
 //	@Callback
 //	@Optional.Method(modid = "OpenComputers")
@@ -84,18 +82,6 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 	public Object[] getObjectCount(Context context, Arguments args){
 		return new Object[]{widgetList.size()};
 	}
-	
-//	@Callback
-//	@Optional.Method(modid = "OpenComputers")
-//	public Object[] getObject(Context context, Arguments args){
-//		return new Object[]{};
-//	}
-//	
-//	@Callback
-//	@Optional.Method(modid = "OpenComputers")
-//	public Object[] setCurrentDisplay(Context context, Arguments args){
-//		return new Object[]{};
-//	}
 	
 	@Callback
 	@Optional.Method(modid = "OpenComputers")
@@ -112,12 +98,7 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment
 		ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(), getTerminalUUID());
 		return new Object[]{};
 	}
-	
-	public void onGlassesPutOn(String user){
-		if(node!=null){
-		node.sendToReachable("computer.signal","glasses_on",user);
-		}
-	}
+
 	
 	/* Object manipulation */
 	
