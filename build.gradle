@@ -18,7 +18,7 @@ buildscript {
 apply plugin: 'forge'
 
 
-def simpleVersion = "0.2"
+def simpleVersion = "0.1"
 if (System.getenv("BUILD_NUMBER") != null)
 	simpleVersion += ".${System.getenv("BUILD_NUMBER")}"
 
@@ -30,7 +30,7 @@ minecraft {
 	 replaceIn "com/bymarcin/openglasses/OpenGlasses.java"
 		replace "@VERSION@", simpleVersion
 	
-	version = "1.7.10-10.13.1.1225"
+	version = "1.7.10-10.13.2.1236"
 	if (file('../run').exists()){
 		assetDir = "../run/assets"
 	}else{
