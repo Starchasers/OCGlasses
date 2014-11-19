@@ -62,15 +62,15 @@ public class Triangle3d extends Widget implements IAlpha {
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
-		nbt.setFloat("x1", x[0]);
-		nbt.setFloat("x2", x[1]);
-		nbt.setFloat("x3", x[2]);
-		nbt.setFloat("y1", x[0]);
-		nbt.setFloat("y2", x[1]);
-		nbt.setFloat("y3", x[2]);
-		nbt.setFloat("y1", x[0]);
-		nbt.setFloat("y2", x[1]);
-		nbt.setFloat("y3", x[2]);
+		nbt.setFloat("x0", x[0]);
+		nbt.setFloat("x1", x[1]);
+		nbt.setFloat("x2", x[2]);
+		nbt.setFloat("y0", y[0]);
+		nbt.setFloat("y1", y[1]);
+		nbt.setFloat("y2", y[2]);
+		nbt.setFloat("z0", z[0]);
+		nbt.setFloat("z1", z[1]);
+		nbt.setFloat("z2", z[2]);
 		nbt.setFloat("alpha", alpha);
 	}
 
