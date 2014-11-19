@@ -13,6 +13,8 @@ import net.minecraft.world.World;
 
 import com.bymarcin.ocglasses.OCGlasses;
 import com.bymarcin.ocglasses.item.OCGlassesItem;
+import com.bymarcin.ocglasses.network.packet.WidgetUpdatePacket;
+import com.bymarcin.ocglasses.surface.ServerSurface;
 import com.bymarcin.ocglasses.tileentity.OCGlassesTerminalTileEntity;
 import com.bymarcin.ocglasses.utils.Location;
 
@@ -66,4 +68,10 @@ public class OCGlassesTerminalBlock extends BlockContainer {
 		}
 		return false;
 	}
+
+	@Override
+	public void onBlockPreDestroy(World world, int x, int y, int z, int m) {
+		ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(), new Location(x, y, z, world.provider.dimensionId));
+	}
+	
 }

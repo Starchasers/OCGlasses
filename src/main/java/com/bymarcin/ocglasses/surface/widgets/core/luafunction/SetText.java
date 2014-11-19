@@ -15,7 +15,6 @@ public class SetText extends LuaFunction{
 		if(widget instanceof ITextable){
 			((ITextable) widget).setText(arguments.checkString(0));
 			getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());	
-			System.out.println(arguments.checkString(0));
 			return null;
 		}
 		throw new RuntimeException("Component does not exists!");
