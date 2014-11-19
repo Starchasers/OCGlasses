@@ -20,6 +20,7 @@ import com.bymarcin.openglasses.surface.widgets.component.face.SquareWidget;
 import com.bymarcin.openglasses.surface.widgets.component.face.TriangleWidget;
 import com.bymarcin.openglasses.surface.widgets.component.world.Cube3d;
 import com.bymarcin.openglasses.surface.widgets.component.world.FloatingText;
+import com.bymarcin.openglasses.surface.widgets.component.world.Quad3d;
 import com.bymarcin.openglasses.surface.widgets.component.world.Triangle3d;
 import com.bymarcin.openglasses.utils.Location;
 
@@ -140,6 +141,16 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 				new float[]	{(float)args.checkDouble(0),(float)args.checkDouble(1),(float)args.checkDouble(2)},
 				new float[] {(float)args.checkDouble(3),(float)args.checkDouble(4),(float)args.checkDouble(5)},
 				new float[] {(float)args.checkDouble(6),(float)args.checkDouble(7),(float)args.checkDouble(8)});
+		return addWidget(w);
+	}
+	
+	@Callback
+	@Optional.Method(modid = "OpenComputers")
+	public Object[] addQuad3D(Context context, Arguments args){
+		Widget w = new Quad3d(
+				new float[]	{(float)args.checkDouble(0),(float)args.checkDouble(1),(float)args.checkDouble(2),(float)args.checkDouble(3)},
+				new float[] {(float)args.checkDouble(4),(float)args.checkDouble(5),(float)args.checkDouble(6),(float)args.checkDouble(7)},
+				new float[] {(float)args.checkDouble(8),(float)args.checkDouble(9),(float)args.checkDouble(10),(float)args.checkDouble(11)});
 		return addWidget(w);
 	}
 
