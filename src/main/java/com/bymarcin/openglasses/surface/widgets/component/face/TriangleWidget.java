@@ -79,7 +79,7 @@ public class TriangleWidget extends Widget implements IColorizable,IAlpha{
 	@SideOnly(Side.CLIENT)
 	@Override
 	public IRenderableWidget getRenderable() {
-		return this.new RenderableSquareWidget();
+		return new RenderableSquareWidget();
 	}
 	
 	@SideOnly(Side.CLIENT)

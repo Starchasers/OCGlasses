@@ -92,7 +92,8 @@ public class Triangle3d extends Widget implements IAlpha {
 	public WidgetType getType() {
 		return WidgetType.TRIANGLE3D;
 	}
-
+	
+	@SideOnly(Side.CLIENT)
 	@Override
 	public IRenderableWidget getRenderable() {
 		return new RenderTriangle3d();
