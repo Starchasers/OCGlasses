@@ -61,6 +61,7 @@ public class Cube3d extends Widget implements I3DPositionable, IAlpha{
 		return WidgetType.CUBE3D;
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public IRenderableWidget getRenderable() {
 		return new RenderCube3d();

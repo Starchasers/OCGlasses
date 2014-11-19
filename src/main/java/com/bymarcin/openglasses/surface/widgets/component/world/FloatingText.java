@@ -15,6 +15,9 @@ import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DPositionable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.ITextable;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class FloatingText extends Widget implements I3DPositionable, ITextable{
 	float x;
 	float y;
@@ -87,12 +90,14 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable{
 		return WidgetType.FLOATINGTEXT;
 	}
 	
+	@SideOnly(Side.CLIENT)
 	@Override
 	public IRenderableWidget getRenderable() {
-		return new FlowText();
+		return new RenderableFloatingText();
 	}
 	
-	class FlowText implements IRenderableWidget{
+	@SideOnly(Side.CLIENT)
+	class RenderableFloatingText implements IRenderableWidget{
 		FontRenderer fontRender = Minecraft.getMinecraft().fontRenderer;
 		double offsetX = fontRender.getStringWidth(text)/2D;
 		double offsetY = fontRender.FONT_HEIGHT/2D;
