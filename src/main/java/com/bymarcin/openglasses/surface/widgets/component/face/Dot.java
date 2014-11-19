@@ -13,11 +13,12 @@ import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IPositionable;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class Dot extends Widget implements IPositionable,IColorizable,IAlpha{
+public class Dot extends Widget implements IPositionable, IColorizable, IAlpha, IScalable{
 	float x;
 	float y;
 	float size = 2;
@@ -169,5 +170,16 @@ public class Dot extends Widget implements IPositionable,IColorizable,IAlpha{
 	@Override
 	public void setAlpha(double alpha) {
 		this.alpha = (float) alpha;
+	}
+
+	@Override
+	public void setScale(double scale) {
+		size = (float) scale;
+		
+	}
+
+	@Override
+	public double getScale() {
+		return size;
 	}
 }
