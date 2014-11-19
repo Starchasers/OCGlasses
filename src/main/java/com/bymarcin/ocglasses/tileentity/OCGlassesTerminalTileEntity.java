@@ -16,11 +16,11 @@ import com.bymarcin.ocglasses.network.packet.WidgetUpdatePacket;
 import com.bymarcin.ocglasses.surface.Widget;
 import com.bymarcin.ocglasses.surface.ServerSurface;
 import com.bymarcin.ocglasses.surface.WidgetType;
-import com.bymarcin.ocglasses.surface.widgets.component.face.Cube3d;
-import com.bymarcin.ocglasses.surface.widgets.component.face.FloatingText;
-import com.bymarcin.ocglasses.surface.widgets.component.face.Triangle3d;
-import com.bymarcin.ocglasses.surface.widgets.component.world.SquareWidget;
-import com.bymarcin.ocglasses.surface.widgets.component.world.TriangleWidget;
+import com.bymarcin.ocglasses.surface.widgets.component.face.SquareWidget;
+import com.bymarcin.ocglasses.surface.widgets.component.face.TriangleWidget;
+import com.bymarcin.ocglasses.surface.widgets.component.world.Cube3d;
+import com.bymarcin.ocglasses.surface.widgets.component.world.FloatingText;
+import com.bymarcin.ocglasses.surface.widgets.component.world.Triangle3d;
 import com.bymarcin.ocglasses.utils.Location;
 
 import cpw.mods.fml.common.Optional;

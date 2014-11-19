@@ -1,4 +1,4 @@
-package com.bymarcin.ocglasses.surface.widgets.component.face;
+package com.bymarcin.ocglasses.surface.widgets.component.world;
 
 import org.lwjgl.opengl.GL11;
 
