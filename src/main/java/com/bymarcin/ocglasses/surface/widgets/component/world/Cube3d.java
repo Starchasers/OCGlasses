@@ -76,6 +76,7 @@ public class Cube3d extends Widget implements I3DPositionable, IAlpha{
 		
 		public void drawQuad(float posX, float posY, float PosZ, float alpha){
 			GL11.glTranslated(posX, posY, PosZ);
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			GL11.glBegin(GL11.GL_QUADS);        // Draw The Cube Using quads
 			 	GL11.glColor4f(0.0f,1.0f,0.0f,alpha);    // Color Blue
 			 	GL11.glVertex3f( 1.0f, 1.0f,0f);    // Top Right Of The Quad (Top)
@@ -107,7 +108,8 @@ public class Cube3d extends Widget implements I3DPositionable, IAlpha{
 			    GL11.glVertex3f( 1.0f, 1.0f, 1.0f);    // Top Left Of The Quad (Right)
 			    GL11.glVertex3f( 1.0f,0f, 1.0f);    // Bottom Left Of The Quad (Right)
 			    GL11.glVertex3f( 1.0f,0f,0f);    // Bottom Right Of The Quad (Right)
-		    GL11.glEnd();            // End Drawing The Cube 
+		    GL11.glEnd();            // End Drawing The Cube
+		    GL11.glEnable(GL11.GL_TEXTURE_2D);
 		    GL11.glTranslated(-posX, -posY, -PosZ);
 		}
 		

@@ -74,8 +74,8 @@ public class ClientSurface {
 		double playerZ = player.prevPosZ + (player.posZ - player.prevPosZ) * event.partialTicks;
 		GL11.glTranslated(-playerX, -playerY, -playerZ);
 		
-		GL11.glDisable(GL11.GL_LIGHTING);
-		//GL11.glDisable(GL11.GL_TEXTURE_2D);
+	//	GL11.glDisable(GL11.GL_LIGHTING);
+		
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_BLEND);
 		//Start Drawing In World
@@ -87,8 +87,7 @@ public class ClientSurface {
 		
 		
 		//Stop Drawing In World
-		GL11.glEnable(GL11.GL_LIGHTING);
-		//GL11.glEnable(GL11.GL_TEXTURE_2D);
+		//GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glPopMatrix();
