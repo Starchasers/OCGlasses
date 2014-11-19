@@ -27,7 +27,7 @@ public class OpenGlassesItem extends ItemArmor {
 		setMaxStackSize(1);
 		setHasSubtypes(true);
 		setCreativeTab(OpenGlasses.creativeTab);
-		setUnlocalizedName("ocglasses");
+		setUnlocalizedName("openglasses");
 	}
 	
 	@Override
