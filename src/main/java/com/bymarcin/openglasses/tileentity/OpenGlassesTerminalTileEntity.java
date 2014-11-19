@@ -50,14 +50,12 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 	
 	public void onGlassesPutOn(String user){
 		if(node!=null){
-			System.out.println("JEJEON:" + user);
 			node.sendToReachable("computer.signal","glasses_on",user);
 		}
 	}
 	
 	public void onGlassesPutOff(String user){
 		if(node!=null){
-			System.out.println("JEJEOFF:" + user);
 			node.sendToReachable("computer.signal","glasses_off",user);
 		}
 	}
