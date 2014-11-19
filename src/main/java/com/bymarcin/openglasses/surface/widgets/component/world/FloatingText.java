@@ -101,7 +101,7 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable{
 		FontRenderer fontRender = Minecraft.getMinecraft().fontRenderer;
 		double offsetX = fontRender.getStringWidth(text)/2D;
 		double offsetY = fontRender.FONT_HEIGHT/2D;
-		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+		final EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 		@Override
 		public void render() {
 			GL11.glPushMatrix();
