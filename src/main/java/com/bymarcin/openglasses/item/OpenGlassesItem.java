@@ -8,12 +8,8 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.MovingObjectPosition.MovingObjectType;
-import net.minecraft.world.World;
 
 import com.bymarcin.openglasses.OpenGlasses;
-import com.bymarcin.openglasses.surface.ClientSurface;
 import com.bymarcin.openglasses.utils.Location;
 
 import cpw.mods.fml.relauncher.Side;
@@ -27,15 +23,7 @@ public class OpenGlassesItem extends ItemArmor {
 		setMaxStackSize(1);
 		setHasSubtypes(true);
 		setCreativeTab(OpenGlasses.creativeTab);
-		setUnlocalizedName("ocglasses");
-	}
-	
-	@Override
-	public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
-		MovingObjectPosition coords = getBlockCoordsLookingAt(player);
-		if(coords!=null){
-			ClientSurface.instances.onLookingAt(world, coords.blockX, coords.blockY, coords.blockZ);
-		}
+		setUnlocalizedName("openglasses");
 	}
 	
 	@Override
@@ -77,15 +65,4 @@ public class OpenGlassesItem extends ItemArmor {
 		tag.setInteger("Z", uuid.z);
 		tag.setInteger("DIM", uuid.dimID);
 	}
-	
-	private MovingObjectPosition getBlockCoordsLookingAt(EntityPlayer player){
-		MovingObjectPosition objectMouseOver;
-		objectMouseOver = player.rayTrace(200, 1);	
-		if(objectMouseOver != null && objectMouseOver.typeOfHit == MovingObjectType.BLOCK)
-		{
-			return objectMouseOver;
-		}
-		return null;
-	}
-
 }
