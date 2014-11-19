@@ -8,7 +8,8 @@ import org.lwjgl.opengl.GL11;
 
 import com.bymarcin.ocglasses.surface.IRenderableWidget;
 import com.bymarcin.ocglasses.surface.Widget;
-import com.bymarcin.ocglasses.surface.Widgets;
+import com.bymarcin.ocglasses.surface.RenderType;
+import com.bymarcin.ocglasses.surface.WidgetType;
 import com.bymarcin.ocglasses.surface.widgets.core.attribute.IAlpha;
 import com.bymarcin.ocglasses.surface.widgets.core.attribute.IColorizable;
 
@@ -71,8 +72,8 @@ public class TriangleWidget extends Widget implements IColorizable,IAlpha{
 	}
 	
 	@Override
-	public Widgets getType() {
-		return Widgets.TRIANGLE;
+	public WidgetType getType() {
+		return WidgetType.TRIANGLE;
 	}
 	
 	@SideOnly(Side.CLIENT)
@@ -99,6 +100,11 @@ public class TriangleWidget extends Widget implements IColorizable,IAlpha{
 			GL11.glDisable(GL11.GL_BLEND);
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 			GL11.glEnable(GL11.GL_ALPHA_TEST);
+		}
+
+		@Override
+		public RenderType getRenderType() {
+			return RenderType.GameOverlayLocated;
 		}
 	}
 
@@ -161,4 +167,5 @@ public class TriangleWidget extends Widget implements IColorizable,IAlpha{
 	public void setAlpha(double alpha) {
 		this.alpha = (float) alpha;
 	}
+	
 }

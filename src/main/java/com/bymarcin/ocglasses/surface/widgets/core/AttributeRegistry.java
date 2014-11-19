@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.bymarcin.ocglasses.lua.LuaFunction;
 import com.bymarcin.ocglasses.lua.LuaReference;
+import com.bymarcin.ocglasses.surface.widgets.core.attribute.I3DPositionable;
 import com.bymarcin.ocglasses.surface.widgets.core.attribute.IAlpha;
 import com.bymarcin.ocglasses.surface.widgets.core.attribute.IAttribute;
 import com.bymarcin.ocglasses.surface.widgets.core.attribute.IColorizable;
@@ -12,16 +13,20 @@ import com.bymarcin.ocglasses.surface.widgets.core.attribute.IPositionable;
 import com.bymarcin.ocglasses.surface.widgets.core.attribute.IResizable;
 import com.bymarcin.ocglasses.surface.widgets.core.luafunction.GetAlpha;
 import com.bymarcin.ocglasses.surface.widgets.core.luafunction.GetColor;
+import com.bymarcin.ocglasses.surface.widgets.core.luafunction.GetID;
 import com.bymarcin.ocglasses.surface.widgets.core.luafunction.GetPosition;
 import com.bymarcin.ocglasses.surface.widgets.core.luafunction.GetSize;
 import com.bymarcin.ocglasses.surface.widgets.core.luafunction.SetAlpha;
 import com.bymarcin.ocglasses.surface.widgets.core.luafunction.SetColor;
 import com.bymarcin.ocglasses.surface.widgets.core.luafunction.SetPosition;
+import com.bymarcin.ocglasses.surface.widgets.core.luafunction.SetPosition3D;
 import com.bymarcin.ocglasses.surface.widgets.core.luafunction.SetSize;
 
 public class AttributeRegistry {
 	static{
 		attributes = new HashMap<Class<? extends IAttribute>, LinkedList<Class<? extends LuaFunction>>>();
+		
+		addAtribute(IAttribute.class, GetID.class);
 		
 		addAtribute(IAlpha.class, GetAlpha.class);
 		addAtribute(IAlpha.class, SetAlpha.class);
@@ -34,6 +39,8 @@ public class AttributeRegistry {
 		
 		addAtribute(IResizable.class, GetSize.class);
 		addAtribute(IResizable.class, SetSize.class);
+		
+		addAtribute(I3DPositionable.class, SetPosition3D.class);
 		
 	}
 	

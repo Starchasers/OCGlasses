@@ -11,7 +11,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 
-public abstract class Widget {
+public abstract class Widget implements IAttribute{
 	public abstract void write(ByteBuf buff);
 
 	public abstract void read(ByteBuf buff);
@@ -24,7 +24,7 @@ public abstract class Widget {
 		HashMap<String, Object> luaObject = new HashMap<String, Object>();
 		Class<?> current = getClass();
 		do {
-			for (Class<?> a : getClass().getInterfaces()) {
+			for (Class<?> a : current.getInterfaces()) {
 				if (IAttribute.class.isAssignableFrom(a)) {
 					luaObject.putAll(AttributeRegistry.getFunctions(a.asSubclass(IAttribute.class), ref));
 				}
@@ -35,8 +35,8 @@ public abstract class Widget {
 		return new Object[] { luaObject };
 	}
 
-	public abstract Widgets getType();
-
+	public abstract WidgetType getType();
+	
 	@SideOnly(Side.CLIENT)
 	public abstract IRenderableWidget getRenderable();
 }

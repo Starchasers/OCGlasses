@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 import com.bymarcin.ocglasses.network.Packet;
 import com.bymarcin.ocglasses.surface.ClientSurface;
 import com.bymarcin.ocglasses.surface.Widget;
-import com.bymarcin.ocglasses.surface.Widgets;
+import com.bymarcin.ocglasses.surface.WidgetType;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.relauncher.Side;
@@ -82,7 +82,7 @@ public class WidgetUpdatePacket extends Packet<WidgetUpdatePacket, IMessage>{
 		widgetList = new HashMap<Integer,Widget>();
 		int size =  readInt();
 		for(int i=0; i<size ;i++){
-			Widgets wigetType = Widgets.values()[readInt()];
+			WidgetType wigetType = WidgetType.values()[readInt()];
 			Widget w = wigetType.getNewInstance();
 			w.read(read);
 			widgetList.put(readInt(),w);

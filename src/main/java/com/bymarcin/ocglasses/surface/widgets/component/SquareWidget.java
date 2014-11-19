@@ -9,7 +9,8 @@ import io.netty.buffer.ByteBuf;
 
 import com.bymarcin.ocglasses.surface.IRenderableWidget;
 import com.bymarcin.ocglasses.surface.Widget;
-import com.bymarcin.ocglasses.surface.Widgets;
+import com.bymarcin.ocglasses.surface.RenderType;
+import com.bymarcin.ocglasses.surface.WidgetType;
 
 
 import com.bymarcin.ocglasses.surface.widgets.core.attribute.IAlpha;
@@ -71,8 +72,8 @@ public class SquareWidget extends Widget implements IPositionable,IResizable,ICo
 	}
 	
 	@Override
-	public Widgets getType() {
-		return Widgets.QUAD;
+	public WidgetType getType() {
+		return WidgetType.QUAD;
 	}
 	
 	@SideOnly(Side.CLIENT)
@@ -100,6 +101,11 @@ public class SquareWidget extends Widget implements IPositionable,IResizable,ICo
 			GL11.glDisable(GL11.GL_BLEND);
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 			GL11.glEnable(GL11.GL_ALPHA_TEST);
+		}
+		
+		@Override
+		public RenderType getRenderType() {
+			return RenderType.GameOverlayLocated;
 		}
 	}
 
@@ -190,5 +196,5 @@ public class SquareWidget extends Widget implements IPositionable,IResizable,ICo
 	public void setAlpha(double alpha) {
 		this.alpha = (float) alpha;
 	}
-	
+
 }

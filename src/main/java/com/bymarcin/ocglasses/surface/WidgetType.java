@@ -1,15 +1,17 @@
 package com.bymarcin.ocglasses.surface;
 
+import com.bymarcin.ocglasses.surface.widgets.component.Cube3d;
 import com.bymarcin.ocglasses.surface.widgets.component.SquareWidget;
 import com.bymarcin.ocglasses.surface.widgets.component.TriangleWidget;
 
-public enum Widgets {
+public enum WidgetType {
 	QUAD(SquareWidget.class),
-	TRIANGLE(TriangleWidget.class)
+	TRIANGLE(TriangleWidget.class),
+	CUBE3D(Cube3d.class)
 	;
 	
 	Class<? extends Widget> clazz;
-	private Widgets(Class<? extends Widget> cl) {
+	private WidgetType(Class<? extends Widget> cl) {
 		clazz = cl;
 	}
 	

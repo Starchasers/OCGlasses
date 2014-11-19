@@ -15,7 +15,8 @@ import com.bymarcin.ocglasses.lua.LuaReference;
 import com.bymarcin.ocglasses.network.packet.WidgetUpdatePacket;
 import com.bymarcin.ocglasses.surface.Widget;
 import com.bymarcin.ocglasses.surface.ServerSurface;
-import com.bymarcin.ocglasses.surface.Widgets;
+import com.bymarcin.ocglasses.surface.WidgetType;
+import com.bymarcin.ocglasses.surface.widgets.component.Cube3d;
 import com.bymarcin.ocglasses.surface.widgets.component.SquareWidget;
 import com.bymarcin.ocglasses.surface.widgets.component.TriangleWidget;
 import com.bymarcin.ocglasses.utils.Location;
@@ -111,6 +112,13 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment{
 	
 	@Callback
 	@Optional.Method(modid = "OpenComputers")
+	public Object[] addCube3D(Context context, Arguments args){
+		Widget w = new Cube3d();
+		return addWidget(w);
+	}
+	
+	@Callback
+	@Optional.Method(modid = "OpenComputers")
 	public Object[] addTriangle(Context context, Arguments args){
 		Widget w = new TriangleWidget(args.checkDouble(0),args.checkDouble(1),args.checkDouble(2),args.checkDouble(3),args.checkDouble(4), args.checkDouble(5), args.checkDouble(6), args.checkDouble(7), args.checkDouble(8));
 		return addWidget(w);
@@ -195,7 +203,7 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment{
 				if(list.hasKey(String.valueOf(i))){
 					NBTTagCompound wiget = (NBTTagCompound) list.getTag(String.valueOf(i));
 					if(wiget.hasKey("widgetType") && wiget.hasKey("widget")&& wiget.hasKey("ID")){
-						Widgets type = Widgets.valueOf(wiget.getString(("widgetType")));
+						WidgetType type = WidgetType.valueOf(wiget.getString(("widgetType")));
 						Widget w = type.getNewInstance();
 						w.readFromNBT((NBTTagCompound) wiget.getTag("widget"));
 					    widgetList.put(wiget.getInteger("ID"),w);
