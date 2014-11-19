@@ -11,6 +11,7 @@ import com.bymarcin.ocglasses.surface.widgets.core.attribute.IAttribute;
 import com.bymarcin.ocglasses.surface.widgets.core.attribute.IColorizable;
 import com.bymarcin.ocglasses.surface.widgets.core.attribute.IPositionable;
 import com.bymarcin.ocglasses.surface.widgets.core.attribute.IResizable;
+import com.bymarcin.ocglasses.surface.widgets.core.attribute.ITextable;
 import com.bymarcin.ocglasses.surface.widgets.core.luafunction.GetAlpha;
 import com.bymarcin.ocglasses.surface.widgets.core.luafunction.GetColor;
 import com.bymarcin.ocglasses.surface.widgets.core.luafunction.GetID;
@@ -21,6 +22,7 @@ import com.bymarcin.ocglasses.surface.widgets.core.luafunction.SetColor;
 import com.bymarcin.ocglasses.surface.widgets.core.luafunction.SetPosition;
 import com.bymarcin.ocglasses.surface.widgets.core.luafunction.SetPosition3D;
 import com.bymarcin.ocglasses.surface.widgets.core.luafunction.SetSize;
+import com.bymarcin.ocglasses.surface.widgets.core.luafunction.SetText;
 
 public class AttributeRegistry {
 	static{
@@ -41,6 +43,7 @@ public class AttributeRegistry {
 		addAtribute(IResizable.class, SetSize.class);
 		
 		addAtribute(I3DPositionable.class, SetPosition3D.class);
+		addAtribute(ITextable.class, SetText.class);
 		
 	}
 	

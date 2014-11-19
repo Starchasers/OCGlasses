@@ -17,6 +17,7 @@ import com.bymarcin.ocglasses.surface.Widget;
 import com.bymarcin.ocglasses.surface.ServerSurface;
 import com.bymarcin.ocglasses.surface.WidgetType;
 import com.bymarcin.ocglasses.surface.widgets.component.Cube3d;
+import com.bymarcin.ocglasses.surface.widgets.component.FlowingText;
 import com.bymarcin.ocglasses.surface.widgets.component.SquareWidget;
 import com.bymarcin.ocglasses.surface.widgets.component.TriangleWidget;
 import com.bymarcin.ocglasses.utils.Location;
@@ -114,6 +115,13 @@ public class OCGlassesTerminalTileEntity extends TileEntityEnvironment{
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addCube3D(Context context, Arguments args){
 		Widget w = new Cube3d();
+		return addWidget(w);
+	}
+	
+	@Callback
+	@Optional.Method(modid = "OpenComputers")
+	public Object[] addFlowText(Context context, Arguments args){
+		Widget w = new FlowingText();
 		return addWidget(w);
 	}
 	
