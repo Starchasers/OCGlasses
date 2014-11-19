@@ -22,12 +22,12 @@ def simpleVersion = "0.2"
 if (System.getenv("BUILD_NUMBER") != null)
 	simpleVersion += ".${System.getenv("BUILD_NUMBER")}"
 
-group= "com.bymarcin.ocglasses" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "ocglasses"
+group= "com.bymarcin.openglasses" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "OpenGlasses"
 version = simpleVersion
 
 minecraft {
-	 replaceIn "com/bymarcin/ocglasses/OCGlasses.java"
+	 replaceIn "com/bymarcin/openglasses/OpenGlasses.java"
 		replace "@VERSION@", simpleVersion
 	
 	version = "1.7.10-10.13.1.1225"
