@@ -19,7 +19,7 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class Dot3d extends Widget implements IAlpha, IScalable, IColorizable, I3DPositionable {
+public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3DPositionable {
 	float x;
 	float y;
 	float z;
@@ -31,13 +31,13 @@ public class Dot3d extends Widget implements IAlpha, IScalable, IColorizable, I3
 	float size = 0.2F;
 	float alpha = 0.5F;
 	
-	public Dot3d() {
+	public Dot3D() {
 		x = 0;
 		y = 0;
 		z = 0;
 	}
 	
-	public Dot3d(float x, float y, float z) {
+	public Dot3D(float x, float y, float z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -49,6 +49,9 @@ public class Dot3d extends Widget implements IAlpha, IScalable, IColorizable, I3
 		buff.writeFloat(y);
 		buff.writeFloat(z);
 		buff.writeFloat(alpha);
+		buff.writeFloat(r);
+		buff.writeFloat(g);
+		buff.writeFloat(b);
 	}
 
 	@Override
@@ -79,9 +82,9 @@ public class Dot3d extends Widget implements IAlpha, IScalable, IColorizable, I3
 		y = nbt.getFloat("y0");
 		z = nbt.getFloat("z0");
 		alpha = nbt.getFloat("alpha");
-		r = nbt.getFloat("r0");
-		g = nbt.getFloat("g0");
-		b = nbt.getFloat("b0");
+		r = nbt.getFloat("r");
+		g = nbt.getFloat("g");
+		b = nbt.getFloat("b");
 		
 	}
 

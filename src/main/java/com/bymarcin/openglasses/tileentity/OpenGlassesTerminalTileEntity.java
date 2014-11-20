@@ -19,9 +19,10 @@ import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.component.face.Dot;
 import com.bymarcin.openglasses.surface.widgets.component.face.SquareWidget;
 import com.bymarcin.openglasses.surface.widgets.component.face.TriangleWidget;
-import com.bymarcin.openglasses.surface.widgets.component.world.Cube3d;
-import com.bymarcin.openglasses.surface.widgets.component.world.Dot3d;
+import com.bymarcin.openglasses.surface.widgets.component.world.Cube3D;
+import com.bymarcin.openglasses.surface.widgets.component.world.Dot3D;
 import com.bymarcin.openglasses.surface.widgets.component.world.FloatingText;
+import com.bymarcin.openglasses.surface.widgets.component.world.Line3D;
 import com.bymarcin.openglasses.surface.widgets.component.world.Quad3d;
 import com.bymarcin.openglasses.surface.widgets.component.world.Triangle3d;
 import com.bymarcin.openglasses.utils.Location;
@@ -123,7 +124,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 	@Callback
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addCube3D(Context context, Arguments args){
-		Widget w = new Cube3d();
+		Widget w = new Cube3D();
 		return addWidget(w);
 	}
 	
@@ -144,7 +145,17 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 	@Callback
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addDot3D(Context context, Arguments args){
-		Widget w = new Dot3d((float)args.checkDouble(0),(float)args.checkDouble(1),(float)args.checkDouble(2));
+		Widget w = new Dot3D((float)args.checkDouble(0),(float)args.checkDouble(1),(float)args.checkDouble(2));
+		return addWidget(w);
+	}
+	
+	@Callback
+	@Optional.Method(modid = "OpenComputers")
+	public Object[] addLine3D(Context context, Arguments args){
+		Widget w = new Line3D(
+				new float[]	{(float)args.checkDouble(0),(float)args.checkDouble(1)},
+				new float[] {(float)args.checkDouble(2),(float)args.checkDouble(3)},
+				new float[] {(float)args.checkDouble(4),(float)args.checkDouble(5)});
 		return addWidget(w);
 	}
 	

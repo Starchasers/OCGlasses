@@ -15,14 +15,14 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class Cube3d extends Widget implements I3DPositionable, IAlpha{
+public class Cube3D extends Widget implements I3DPositionable, IAlpha{
 
 	float x;
 	float y;
 	float z;
 	float alpha = 0.5f;
 	
-	public Cube3d() {}
+	public Cube3D() {}
 	
 	@Override
 	public void write(ByteBuf buff) {
