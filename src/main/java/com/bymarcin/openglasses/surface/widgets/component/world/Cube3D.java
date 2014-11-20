@@ -11,15 +11,23 @@ import com.bymarcin.openglasses.surface.Widget;
 import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DPositionable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class Cube3D extends Widget implements I3DPositionable, IAlpha{
+public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughVisibility, IColorizable{
 
 	float x;
 	float y;
 	float z;
+	
+	boolean isThroughVisibility;
+	float r;
+	float g;
+	float b;
+	
 	float alpha = 0.5f;
 	
 	public Cube3D() {}
@@ -30,6 +38,10 @@ public class Cube3D extends Widget implements I3DPositionable, IAlpha{
 		buff.writeFloat(y);
 		buff.writeFloat(z);
 		buff.writeFloat(alpha);
+		buff.writeFloat(r);
+		buff.writeFloat(g);
+		buff.writeFloat(b);
+		buff.writeBoolean(isThroughVisibility);
 	}
 
 	@Override
@@ -38,6 +50,10 @@ public class Cube3D extends Widget implements I3DPositionable, IAlpha{
 		y = buff.readFloat();
 		z = buff.readFloat();
 		alpha = buff.readFloat();
+		r = buff.readFloat();
+		g = buff.readFloat();
+		b = buff.readFloat();
+		isThroughVisibility = buff.readBoolean();
 	}
 
 	@Override
@@ -46,6 +62,10 @@ public class Cube3D extends Widget implements I3DPositionable, IAlpha{
 		nbt.setFloat("y", y);
 		nbt.setFloat("z", z);
 		nbt.setFloat("alpha", alpha);
+		nbt.setFloat("r", r);
+		nbt.setFloat("g", g);
+		nbt.setFloat("b", b);
+		nbt.setBoolean("isThroughVisibility", isThroughVisibility);
 	}
 
 	@Override
@@ -54,6 +74,10 @@ public class Cube3D extends Widget implements I3DPositionable, IAlpha{
 		y = nbt.getFloat("y");
 		z = nbt.getFloat("z");
 		alpha = nbt.getFloat("alpha");
+		r = nbt.getFloat("r");
+		g = nbt.getFloat("g");
+		b = nbt.getFloat("b");
+		isThroughVisibility = nbt.getBoolean("isThroughVisibility");
 	}
 
 	@Override
@@ -151,6 +175,40 @@ public class Cube3D extends Widget implements I3DPositionable, IAlpha{
 		this.x = (float) x;
 		this.y = (float) y;
 		this.z = (float) z;
+	}
+
+	@Override
+	public void setColor(double d, double e, double f) {
+		r = (float) d;
+		g = (float) e;
+		b = (float) f;
+		
+	}
+
+	@Override
+	public float getColorR() {
+		return r;
+	}
+
+	@Override
+	public float getColorG() {
+		return g;
+	}
+
+	@Override
+	public float getColorB() {
+		return b;
+	}
+
+	@Override
+	public boolean isVisibleThroughObjects() {
+		return isThroughVisibility;
+	}
+
+	@Override
+	public void setVisibleThroughObjects(boolean visible) {
+		isThroughVisibility = visible;
+		
 	}
 
 }
