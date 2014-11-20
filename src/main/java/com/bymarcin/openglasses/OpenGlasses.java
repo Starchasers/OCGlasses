@@ -1,6 +1,8 @@
 package com.bymarcin.openglasses;
 
+import li.cil.oc.api.Items;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.config.Configuration;
 
 import org.apache.logging.log4j.LogManager;
@@ -41,6 +43,9 @@ public class OpenGlasses
 
 	public static CreativeTabs creativeTab = CreativeTabs.tabRedstone;
 	
+	public static OpenGlassesItem openGlasses;
+	public static OpenGlassesTerminalBlock openTerminal;
+	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
@@ -55,15 +60,25 @@ public class OpenGlasses
 		NetworkRegistry.registerPacket(0, GlassesEventPacket.class, Side.SERVER);
 		NetworkRegistry.registerPacket(1, WidgetUpdatePacket.class, Side.CLIENT);
 		
-		GameRegistry.registerBlock(new OpenGlassesTerminalBlock(), "openglassesterminal");
+		GameRegistry.registerBlock(openTerminal = new OpenGlassesTerminalBlock(), "openglassesterminal");
 		GameRegistry.registerTileEntity(OpenGlassesTerminalTileEntity.class, "openglassesterminal");
-		GameRegistry.registerItem(new OpenGlassesItem(), "openglasses");
+		GameRegistry.registerItem(openGlasses = new OpenGlassesItem(), "openglasses");
 		proxy.init();
 	}
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{
+		ItemStack ram= Items.get("ram5").createItemStack(1);
+		ItemStack graphics = Items.get("graphicsCard3").createItemStack(1);
+		ItemStack wlanCard = Items.get("wlanCard").createItemStack(1);
+		ItemStack server = Items.get("geolyzer").createItemStack(1);
+		ItemStack screen = Items.get("screen3").createItemStack(1);
+		ItemStack cpu = Items.get("cpu3").createItemStack(1);
+		
+		GameRegistry.addRecipe(new ItemStack(openGlasses),"SCS"," W ","   ", 'S', screen, 'W', wlanCard, 'C', graphics);
+		GameRegistry.addRecipe(new ItemStack(openTerminal),"R  ","S  ","M  ", 'S', server, 'R', ram, 'M', cpu);
+		
 		config.save();
 	}
 }
