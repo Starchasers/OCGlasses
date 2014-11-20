@@ -20,8 +20,7 @@ public class GetPosition3D extends LuaFunction{
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "get3Dpos";
 	}
 
 }
