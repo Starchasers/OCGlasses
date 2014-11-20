@@ -17,12 +17,13 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.ITextable;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
 import com.bymarcin.openglasses.utils.OGUtils;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class FloatingText extends Widget implements I3DPositionable, ITextable, IColorizable, IScalable, IAlpha{
+public class FloatingText extends Widget implements I3DPositionable, ITextable, IColorizable, IScalable, IAlpha, IThroughVisibility{
 	float x;
 	float y;
 	float z;
@@ -32,6 +33,7 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable, 
 	float b;
 	float alpha = 1f;
 	
+	boolean isThroughVisibility = true;
 	float scale = 0.05f;
 	String text ="";
 	
@@ -71,6 +73,7 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable, 
 		buff.writeFloat(b);
 		buff.writeFloat(scale);
 		buff.writeFloat(alpha);
+		buff.writeBoolean(isThroughVisibility);
 	}
 
 	@Override
@@ -89,6 +92,7 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable, 
 		b = buff.readFloat();
 		scale = buff.readFloat();	
 		alpha = buff.readFloat();
+		isThroughVisibility = buff.readBoolean();
 	}
 
 	@Override
@@ -102,6 +106,7 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable, 
 		nbt.setFloat("b", b);
 		nbt.setFloat("scale", scale);
 		nbt.setFloat("alpha", alpha);
+		nbt.setBoolean("isThroughVisibility", isThroughVisibility);
 	}
 
 	@Override
@@ -115,6 +120,7 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable, 
 		b = nbt.getFloat("b");
 		scale = nbt.getFloat("scale");
 		alpha = nbt.getFloat("alpha");
+		isThroughVisibility = nbt.getBoolean("isThroughVisibility");
 	}
 	
 	@Override
@@ -139,6 +145,11 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable, 
 		@Override
 		public void render() {
 			GL11.glPushMatrix();
+			if(isThroughVisibility){
+				GL11.glDisable(GL11.GL_DEPTH_TEST);
+			}else{
+				GL11.glEnable(GL11.GL_DEPTH_TEST);
+			}
 			GL11.glTranslated(x, y , z);
 			GL11.glScaled(scale, scale, scale);
 			GL11.glTranslated(offsetX, offsetY,0);
@@ -155,6 +166,7 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable, 
 			fontRender.drawString(text, 0, 0, color);
 			GL11.glPopMatrix();
 			GL11.glPopMatrix();
+			GL11.glEnable(GL11.GL_DEPTH_TEST);
 		}
 
 		@Override
@@ -212,6 +224,16 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable, 
 	@Override
 	public void setAlpha(double alpha) {
 		this.alpha = (float) alpha;
+	}
+
+	@Override
+	public boolean isVisibleThroughObjects() {
+		return isThroughVisibility;
+	}
+
+	@Override
+	public void setVisibleThroughObjects(boolean visible) {
+		isThroughVisibility = visible;
 	}
 	
 }
