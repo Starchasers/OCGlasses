@@ -88,11 +88,11 @@ public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughV
 	@SideOnly(Side.CLIENT)
 	@Override
 	public IRenderableWidget getRenderable() {
-		return new RenderCube3d();
+		return new RenderCube3D();
 	}
 	
 	@SideOnly(Side.CLIENT)
-	class RenderCube3d implements IRenderableWidget{
+	class RenderCube3D implements IRenderableWidget{
 
 		@Override
 		public void render() {

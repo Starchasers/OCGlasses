@@ -23,8 +23,8 @@ import com.bymarcin.openglasses.surface.widgets.component.world.Cube3D;
 import com.bymarcin.openglasses.surface.widgets.component.world.Dot3D;
 import com.bymarcin.openglasses.surface.widgets.component.world.FloatingText;
 import com.bymarcin.openglasses.surface.widgets.component.world.Line3D;
-import com.bymarcin.openglasses.surface.widgets.component.world.Quad3d;
-import com.bymarcin.openglasses.surface.widgets.component.world.Triangle3d;
+import com.bymarcin.openglasses.surface.widgets.component.world.Quad3D;
+import com.bymarcin.openglasses.surface.widgets.component.world.Triangle3D;
 import com.bymarcin.openglasses.utils.Location;
 
 import cpw.mods.fml.common.Optional;
@@ -162,7 +162,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 	@Callback
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addTriangle3D(Context context, Arguments args){
-		Widget w = new Triangle3d(
+		Widget w = new Triangle3D(
 				new float[]	{(float)args.checkDouble(0),(float)args.checkDouble(1),(float)args.checkDouble(2)},
 				new float[] {(float)args.checkDouble(3),(float)args.checkDouble(4),(float)args.checkDouble(5)},
 				new float[] {(float)args.checkDouble(6),(float)args.checkDouble(7),(float)args.checkDouble(8)});
@@ -172,7 +172,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 	@Callback
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addQuad3D(Context context, Arguments args){
-		Widget w = new Quad3d(
+		Widget w = new Quad3D(
 				new float[]	{(float)args.checkDouble(0),(float)args.checkDouble(1),(float)args.checkDouble(2),(float)args.checkDouble(3)},
 				new float[] {(float)args.checkDouble(4),(float)args.checkDouble(5),(float)args.checkDouble(6),(float)args.checkDouble(7)},
 				new float[] {(float)args.checkDouble(8),(float)args.checkDouble(9),(float)args.checkDouble(10),(float)args.checkDouble(11)});

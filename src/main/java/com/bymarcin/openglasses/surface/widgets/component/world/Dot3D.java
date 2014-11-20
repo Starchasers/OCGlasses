@@ -101,11 +101,11 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 	@SideOnly(Side.CLIENT)
 	@Override
 	public IRenderableWidget getRenderable() {
-		return new RenderDot3d();
+		return new RenderDot3D();
 	}
 	
 	@SideOnly(Side.CLIENT)
-	class RenderDot3d implements IRenderableWidget{
+	class RenderDot3D implements IRenderableWidget{
 		final EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 		@Override
 		public void render() {

@@ -7,8 +7,8 @@ import com.bymarcin.openglasses.surface.widgets.component.world.Cube3D;
 import com.bymarcin.openglasses.surface.widgets.component.world.Dot3D;
 import com.bymarcin.openglasses.surface.widgets.component.world.FloatingText;
 import com.bymarcin.openglasses.surface.widgets.component.world.Line3D;
-import com.bymarcin.openglasses.surface.widgets.component.world.Quad3d;
-import com.bymarcin.openglasses.surface.widgets.component.world.Triangle3d;
+import com.bymarcin.openglasses.surface.widgets.component.world.Quad3D;
+import com.bymarcin.openglasses.surface.widgets.component.world.Triangle3D;
 
 public enum WidgetType {
 	QUAD(SquareWidget.class),
@@ -16,8 +16,8 @@ public enum WidgetType {
 	DOT(Dot.class),
 	CUBE3D(Cube3D.class),
 	FLOATINGTEXT(FloatingText.class),
-	TRIANGLE3D(Triangle3d.class),
-	QUAD3D(Quad3d.class),
+	TRIANGLE3D(Triangle3D.class),
+	QUAD3D(Quad3D.class),
 	DOT3D(Dot3D.class),
 	LINE3D(Line3D.class)
 	;

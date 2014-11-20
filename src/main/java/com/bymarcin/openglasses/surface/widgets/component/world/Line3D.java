@@ -85,11 +85,11 @@ public class Line3D extends Widget implements IAlpha{
 	@SideOnly(Side.CLIENT)
 	@Override
 	public IRenderableWidget getRenderable() {
-		return new RenderLine3d();
+		return new RenderLine3D();
 	}
 	
 	@SideOnly(Side.CLIENT)
-	class RenderLine3d implements IRenderableWidget{
+	class RenderLine3D implements IRenderableWidget{
 
 		@Override
 		public void render() {

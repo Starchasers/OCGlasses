@@ -72,11 +72,11 @@ public class Dot extends Widget implements IPositionable, IColorizable, IAlpha, 
 	@SideOnly(Side.CLIENT)
 	@Override
 	public IRenderableWidget getRenderable() {
-		return this.new RenderableSquareWidget();
+		return this.new RenderableDot();
 	}
 	
 	@SideOnly(Side.CLIENT)
-	public class RenderableSquareWidget implements IRenderableWidget{
+	public class RenderableDot implements IRenderableWidget{
 		@Override
 		public void render() {
 			GL11.glEnable(GL11.GL_BLEND);
