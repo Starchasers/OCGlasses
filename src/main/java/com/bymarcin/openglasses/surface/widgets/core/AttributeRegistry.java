@@ -13,6 +13,7 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IPositionable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IResizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.ITextable;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetColor;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetID;
@@ -21,6 +22,7 @@ import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetPosition3D;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetScale;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetSize;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetText;
+import com.bymarcin.openglasses.surface.widgets.core.luafunction.IsVisibleThroughObjects;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetColor;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetPosition;
@@ -28,6 +30,7 @@ import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetPosition3D;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetScale;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetSize;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetText;
+import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetVisibleThroughObjects;
 
 public class AttributeRegistry {
 	static{
@@ -56,6 +59,8 @@ public class AttributeRegistry {
 		addAtribute(IScalable.class, SetScale.class);
 		addAtribute(IScalable.class, GetScale.class);
 		
+		addAtribute(IThroughVisibility.class, SetVisibleThroughObjects.class);
+		addAtribute(IThroughVisibility.class, IsVisibleThroughObjects.class);
 	}
 	
 	static HashMap<Class<? extends IAttribute>, LinkedList<Class<? extends LuaFunction>>> attributes;
