@@ -23,7 +23,7 @@ public class SetScale extends LuaFunction{
 	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
-		return null;
+		return "setScale";
 	}
 
 }
