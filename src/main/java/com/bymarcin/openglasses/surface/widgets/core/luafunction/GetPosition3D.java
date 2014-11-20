@@ -20,7 +20,7 @@ public class GetPosition3D extends LuaFunction{
 
 	@Override
 	public String getName() {
-		return "get3Dpos";
+		return "get3DPos";
 	}
 
 }
