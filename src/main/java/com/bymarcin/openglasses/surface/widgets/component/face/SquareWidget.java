@@ -21,7 +21,7 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IResizable;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class SquareWidget extends Widget implements IPositionable,IResizable,IColorizable,IAlpha{
+public class SquareWidget extends Widget implements IPositionable, IResizable, IColorizable, IAlpha{
 
 	float x;
 	float y;
