@@ -15,11 +15,12 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DPositionable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class Dot3d extends Widget implements IAlpha, IScalable, IColorizable, I3DPositionable {
+public class Dot3d extends Widget implements IAlpha, IScalable, IColorizable, I3DPositionable, IThroughVisibility {
 	float x;
 	float y;
 	float z;
@@ -27,6 +28,7 @@ public class Dot3d extends Widget implements IAlpha, IScalable, IColorizable, I3
 	float r;
 	float g;
 	float b;
+	boolean isThroughVisibility = true;
 	
 	float size = 0.2F;
 	float alpha = 0.5F;
@@ -49,6 +51,7 @@ public class Dot3d extends Widget implements IAlpha, IScalable, IColorizable, I3
 		buff.writeFloat(y);
 		buff.writeFloat(z);
 		buff.writeFloat(alpha);
+		buff.writeBoolean(isThroughVisibility);
 	}
 
 	@Override
@@ -60,6 +63,7 @@ public class Dot3d extends Widget implements IAlpha, IScalable, IColorizable, I3
 		r = buff.readFloat();
 		g = buff.readFloat();
 		b = buff.readFloat();
+		isThroughVisibility = buff.readBoolean();
 	}
 
 	@Override
@@ -71,6 +75,7 @@ public class Dot3d extends Widget implements IAlpha, IScalable, IColorizable, I3
 		nbt.setFloat("r", r);
 		nbt.setFloat("g", g);
 		nbt.setFloat("b", b);
+		nbt.setBoolean("isThroughVisibility", isThroughVisibility);
 	}
 
 	@Override
@@ -82,6 +87,7 @@ public class Dot3d extends Widget implements IAlpha, IScalable, IColorizable, I3
 		r = nbt.getFloat("r0");
 		g = nbt.getFloat("g0");
 		b = nbt.getFloat("b0");
+		isThroughVisibility = nbt.getBoolean("isThroughVisibility");
 		
 	}
 
@@ -102,6 +108,11 @@ public class Dot3d extends Widget implements IAlpha, IScalable, IColorizable, I3
 		@Override
 		public void render() {
 			GL11.glPushMatrix();
+			if(isThroughVisibility){
+				GL11.glDisable(GL11.GL_DEPTH_TEST);
+			}else{
+				GL11.glEnable(GL11.GL_DEPTH_TEST);
+			}
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			GL11.glTranslated(x, y, z);
 			
@@ -120,6 +131,7 @@ public class Dot3d extends Widget implements IAlpha, IScalable, IColorizable, I3
 			GL11.glEnd();
 			GL11.glPopMatrix();
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			GL11.glEnable(GL11.GL_DEPTH_TEST);
 		}
 
 		@Override
@@ -192,5 +204,15 @@ public class Dot3d extends Widget implements IAlpha, IScalable, IColorizable, I3
 		this.x = (float) x;
 		this.y = (float) y;
 		this.z = (float) z;	
+	}
+
+	@Override
+	public boolean isVisibleThroughObjects() {
+		return isThroughVisibility;
+	}
+
+	@Override
+	public void setVisibleThroughObjects(boolean visible) {
+		isThroughVisibility = visible;
 	}
 }
