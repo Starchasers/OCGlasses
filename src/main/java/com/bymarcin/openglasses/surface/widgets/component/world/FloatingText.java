@@ -1,42 +1,55 @@
 package com.bymarcin.openglasses.surface.widgets.component.world;
 
-import org.lwjgl.opengl.GL11;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
+import org.lwjgl.opengl.GL11;
+
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.RenderType;
 import com.bymarcin.openglasses.surface.Widget;
 import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DPositionable;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.ITextable;
+import com.bymarcin.openglasses.utils.OGUtils;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class FloatingText extends Widget implements I3DPositionable, ITextable{
+public class FloatingText extends Widget implements I3DPositionable, ITextable, IColorizable, IScalable, IAlpha{
 	float x;
 	float y;
 	float z;
-	String text ="";
 	
+	float r;
+	float g;
+	float b;
+	float alpha = 1f;
+	
+	float scale = 0.05f;
+	String text ="";
 	
 	@Override
 	public double getPosX() {
 		return x;
 	}
+	
 	@Override
 	public double getPosY() {
 		return y;
 	}
+	
 	@Override
 	public double getPosZ() {
 		return z;
 	}
+	
 	@Override
 	public void setPos(double x, double y, double z) {
 		this.x = (float) x;
@@ -53,6 +66,11 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable{
 		for(char s: text.toCharArray()){
 			buff.writeChar(s);
 		}
+		buff.writeFloat(r);
+		buff.writeFloat(g);
+		buff.writeFloat(b);
+		buff.writeFloat(scale);
+		buff.writeFloat(alpha);
 	}
 
 	@Override
@@ -65,8 +83,12 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable{
 		for(int i=0;i<size;i++){
 			sb.append(buff.readChar());
 		}
-		
 		text = sb.toString();
+		r = buff.readFloat();
+		g = buff.readFloat();
+		b = buff.readFloat();
+		scale = buff.readFloat();	
+		alpha = buff.readFloat();
 	}
 
 	@Override
@@ -75,6 +97,11 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable{
 		nbt.setFloat("y", y);
 		nbt.setFloat("z", z);
 		nbt.setString("text", text);
+		nbt.setFloat("r", r);
+		nbt.setFloat("g", g);
+		nbt.setFloat("b", b);
+		nbt.setFloat("scale", scale);
+		nbt.setFloat("alpha", alpha);
 	}
 
 	@Override
@@ -83,6 +110,11 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable{
 		y = nbt.getFloat("y");
 		z = nbt.getFloat("z");
 		text = nbt.getString("text");
+		r = nbt.getFloat("r");
+		g = nbt.getFloat("g");
+		b = nbt.getFloat("b");
+		scale = nbt.getFloat("scale");
+		alpha = nbt.getFloat("alpha");
 	}
 	
 	@Override
@@ -102,11 +134,13 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable{
 		double offsetX = fontRender.getStringWidth(text)/2D;
 		double offsetY = fontRender.FONT_HEIGHT/2D;
 		final EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+		int color = OGUtils.getIntFromColor(r, g, b, alpha);
+		
 		@Override
 		public void render() {
 			GL11.glPushMatrix();
 			GL11.glTranslated(x, y , z);
-			GL11.glScaled(0.05, 0.05, 0.05);
+			GL11.glScaled(scale, scale, scale);
 			GL11.glTranslated(offsetX, offsetY,0);
 			GL11.glPushMatrix();
 			GL11.glRotated(180, 0, 0, 1);
@@ -118,10 +152,9 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable{
 			
 			GL11.glTranslated(-offsetX, -fontRender.FONT_HEIGHT/2D , 0);
 			
-			fontRender.drawString(text, 0, 0, 0xFF0000);
+			fontRender.drawString(text, 0, 0, color);
 			GL11.glPopMatrix();
 			GL11.glPopMatrix();
-			
 		}
 
 		@Override
@@ -138,6 +171,47 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable{
 	@Override
 	public String getText() {
 		return text;
+	}
+	@Override
+	public void setColor(double d, double e, double f) {
+		r = (float) d;
+		g = (float) e;
+		b = (float) f;
+	}
+	
+	@Override
+	public float getColorR() {
+		return r;
+	}
+	
+	@Override
+	public float getColorG() {
+		return g;
+	}
+	
+	@Override
+	public float getColorB() {
+		return b;
+	}
+	
+	@Override
+	public void setScale(double scale) {
+		this.scale = (float) scale;
+	}
+	
+	@Override
+	public double getScale() {
+		return scale;
+	}
+
+	@Override
+	public float getAlpha() {
+		return alpha;
+	}
+
+	@Override
+	public void setAlpha(double alpha) {
+		this.alpha = (float) alpha;
 	}
 	
 }
