@@ -38,6 +38,7 @@ public class TriangleWidget extends Widget implements IColorizable,IAlpha{
 		this.g = g;
 		this.b = b;
 	}
+	
 	public TriangleWidget(double x1, double x2, double x3, double y1, double y2, double y3, double r, double g, double b){
 		this((float) x1, (float) x2, (float) x3, (float) y1, (float) y2, (float) y3, (float) r, (float) g, (float) b);
 	}
