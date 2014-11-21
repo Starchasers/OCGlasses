@@ -18,7 +18,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class Text extends Dot implements ITextable{
-	String text;
+	String text="";
 	
 	public Text() {}
 
