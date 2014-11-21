@@ -19,6 +19,7 @@ import com.bymarcin.openglasses.surface.ServerSurface;
 import com.bymarcin.openglasses.surface.Widget;
 import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.component.face.Dot;
+import com.bymarcin.openglasses.surface.widgets.component.face.Quad;
 import com.bymarcin.openglasses.surface.widgets.component.face.SquareWidget;
 import com.bymarcin.openglasses.surface.widgets.component.face.Text;
 import com.bymarcin.openglasses.surface.widgets.component.face.TriangleWidget;
@@ -178,6 +179,13 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addQuad3D(Context context, Arguments args){
 		Widget w = new Quad3D();
+		return addWidget(w);
+	}
+	
+	@Callback(direct = true)
+	@Optional.Method(modid = "OpenComputers")
+	public Object[] addQuad(Context context, Arguments args){
+		Widget w = new Quad();
 		return addWidget(w);
 	}
 
