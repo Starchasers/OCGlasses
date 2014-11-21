@@ -14,6 +14,7 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IResizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.ITextable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IVertex;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetColor;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetID;
@@ -22,6 +23,7 @@ import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetPosition3D;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetScale;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetSize;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetText;
+import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetVertexCount;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.IsVisibleThroughObjects;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetColor;
@@ -30,6 +32,7 @@ import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetPosition3D;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetScale;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetSize;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetText;
+import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetVertex;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetVisibleThroughObjects;
 
 public class AttributeRegistry {
@@ -61,6 +64,9 @@ public class AttributeRegistry {
 		
 		addAtribute(IThroughVisibility.class, SetVisibleThroughObjects.class);
 		addAtribute(IThroughVisibility.class, IsVisibleThroughObjects.class);
+		
+		addAtribute(IVertex.class, SetVertex.class);
+		addAtribute(IVertex.class, GetVertexCount.class);
 	}
 	
 	static HashMap<Class<? extends IAttribute>, LinkedList<Class<? extends LuaFunction>>> attributes;
