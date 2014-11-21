@@ -7,25 +7,12 @@ import org.lwjgl.opengl.GL11;
 
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.RenderType;
-import com.bymarcin.openglasses.surface.Widget;
 import com.bymarcin.openglasses.surface.WidgetType;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IVertex;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class Quad3D extends Widget implements IAlpha, IColorizable, IThroughVisibility, IVertex {
-	float x[];
-	float y[];
-	float z[];
-	float alpha = 0.5f;
-	float r;
-	float g;
-	float b;
-	boolean isThroughVisibility = true;
+public class Quad3D extends Triangle3D{
 	
 	public Quad3D() {
 		x = new float[4];
@@ -41,86 +28,35 @@ public class Quad3D extends Widget implements IAlpha, IColorizable, IThroughVisi
 	
 	@Override
 	public void write(ByteBuf buff) {
-		buff.writeFloat(x[0]);
-		buff.writeFloat(x[1]);
-		buff.writeFloat(x[2]);
+		super.write(buff);
 		buff.writeFloat(x[3]);
-		buff.writeFloat(y[0]);
-		buff.writeFloat(y[1]);
-		buff.writeFloat(y[2]);
 		buff.writeFloat(y[3]);
-		buff.writeFloat(z[0]);
-		buff.writeFloat(z[1]);
-		buff.writeFloat(z[2]);
 		buff.writeFloat(z[3]);
-		buff.writeFloat(alpha);
-		buff.writeFloat(r);
-		buff.writeFloat(g);
-		buff.writeFloat(b);
-		buff.writeBoolean(isThroughVisibility);
 	}
 
 	@Override
 	public void read(ByteBuf buff) {
-		x[0] = buff.readFloat();
-		x[1] = buff.readFloat();
-		x[2] = buff.readFloat();
+		super.read(buff);
 		x[3] = buff.readFloat();
-		y[0] = buff.readFloat();
-		y[1] = buff.readFloat();
-		y[2] = buff.readFloat();
 		y[3] = buff.readFloat();
-		z[0] = buff.readFloat();
-		z[1] = buff.readFloat();
-		z[2] = buff.readFloat();
 		z[3] = buff.readFloat();
-		alpha = buff.readFloat();
-		r = buff.readFloat();
-		g = buff.readFloat();
-		b = buff.readFloat();
-		isThroughVisibility = buff.readBoolean();
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
-		nbt.setFloat("x0", x[0]);
-		nbt.setFloat("x1", x[1]);
-		nbt.setFloat("x2", x[2]);
+		super.writeToNBT(nbt);
 		nbt.setFloat("x3", x[3]);
-		nbt.setFloat("y0", y[0]);
-		nbt.setFloat("y1", y[1]);
-		nbt.setFloat("y2", y[2]);
 		nbt.setFloat("y3", y[3]);
-		nbt.setFloat("z0", z[0]);
-		nbt.setFloat("z1", z[1]);
-		nbt.setFloat("z2", z[2]);
 		nbt.setFloat("z3", z[3]);
-		nbt.setFloat("alpha", alpha);
-		nbt.setFloat("r", r);
-		nbt.setFloat("g", g);
-		nbt.setFloat("b", b);
-		nbt.setBoolean("isThroughVisibility", isThroughVisibility);
+
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
-		x[0] = nbt.getFloat("x0");
-		x[1] = nbt.getFloat("x1");
-		x[2] = nbt.getFloat("x2");
+		super.readFromNBT(nbt);
 		x[3] = nbt.getFloat("x3");
-		y[0] = nbt.getFloat("y0");
-		y[1] = nbt.getFloat("y1");
-		y[2] = nbt.getFloat("y2");
 		y[3] = nbt.getFloat("y3");
-		z[0] = nbt.getFloat("z0");
-		z[1] = nbt.getFloat("z1");
-		z[2] = nbt.getFloat("z2");
 		z[3] = nbt.getFloat("z3");
-		alpha = nbt.getFloat("alpha");
-		r = nbt.getFloat("r");
-		g = nbt.getFloat("g");
-		b = nbt.getFloat("b");
-		isThroughVisibility = nbt.getBoolean("isThroughVisibility");
 	}
 
 	@Override
@@ -169,59 +105,5 @@ public class Quad3D extends Widget implements IAlpha, IColorizable, IThroughVisi
 			return RenderType.WorldLocated;
 		}
 		
-	}
-
-	@Override
-	public float getAlpha() {
-		return alpha;
-	}
-
-	@Override
-	public void setAlpha(double alpha) {
-		this.alpha = (float) alpha;
-	}
-
-	@Override
-	public void setColor(double d, double e, double f) {
-		r = (float) d;
-		g = (float) e;
-		b = (float) f;
-	}
-
-	@Override
-	public float getColorR() {
-		return r;
-	}
-
-	@Override
-	public float getColorG() {
-		return g;
-	}
-
-	@Override
-	public float getColorB() {
-		return b;
-	}
-
-	@Override
-	public boolean isVisibleThroughObjects() {
-		return isThroughVisibility;
-	}
-
-	@Override
-	public void setVisibleThroughObjects(boolean visible) {
-		isThroughVisibility = visible;
-	}
-
-	@Override
-	public int getVertexCount() {
-		return x.length;
-	}
-
-	@Override
-	public void setVertex(int n, double x, double y, double z) {
-		this.x[n] = (float) x;
-		this.y[n] = (float) y;
-		this.z[n] = (float) z;
 	}
 }
