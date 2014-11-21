@@ -7,7 +7,7 @@ import com.bymarcin.openglasses.network.packet.GlassesEventPacket.EventType;
 import com.bymarcin.openglasses.surface.ClientSurface;
 import com.bymarcin.openglasses.utils.Location;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -19,8 +19,10 @@ public class ClientEventHandler {
 	
 	@SubscribeEvent
 	public void onPlayerTick(PlayerTickEvent e){
+		if(e.player != Minecraft.getMinecraft().thePlayer) return;
 		ItemStack glassesStack= e.player.inventory.armorInventory[3];
 		Item glasses = glassesStack!=null?glassesStack.getItem():null;
+
 		if(glasses instanceof OpenGlassesItem){
 			Location uuid  = OpenGlassesItem.getUUID(glassesStack);
 			if(uuid!=null && ClientSurface.instances.haveGlasses==false){
@@ -35,7 +37,7 @@ public class ClientEventHandler {
 	
 	@SubscribeEvent
 	public void onJoin(EntityJoinWorldEvent e){
-		if (((e.entity instanceof EntityPlayer)) && (e.world.isRemote)){
+		if ((e.entity == Minecraft.getMinecraft().thePlayer) && (e.world.isRemote)){
 			ClientSurface.instances.removeAllWidgets();
 			ClientSurface.instances.haveGlasses = false;
 		}

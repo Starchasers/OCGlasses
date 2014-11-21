@@ -2,8 +2,11 @@ package com.bymarcin.openglasses.network.packet;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.Level;
+
 import net.minecraft.entity.player.EntityPlayer;
 
+import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.network.Packet;
 import com.bymarcin.openglasses.surface.ServerSurface;
 import com.bymarcin.openglasses.utils.Location;
@@ -56,7 +59,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 
 	@Override
 	protected IMessage executeOnServer() {
-		//OpenGlasses.logger.log(Level.INFO,"PACKET:" + eventType);
+		OpenGlasses.logger.log(Level.INFO,"PACKET:" + eventType +":"+ player);
 		switch(eventType){
 		case EQUIPED_GLASSES: ServerSurface.instance.subscribePlayer(player, UUID);
 			break;
