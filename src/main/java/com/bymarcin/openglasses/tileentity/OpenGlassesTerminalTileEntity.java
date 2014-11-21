@@ -70,7 +70,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 //		return new Object[]{String.format("Hello, %s!", args.checkString(0))};
 //    }
 	
-	@Callback
+	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] getActivePlayers(Context context, Arguments args) {
 		return ServerSurface.instance.getActivePlayers(getTerminalUUID());
@@ -83,20 +83,20 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 //		return new Object[]{};
 //	}
 	
-	@Callback
+	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] getObjectCount(Context context, Arguments args){
 		return new Object[]{widgetList.size()};
 	}
 	
-	@Callback
+	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] removeObject(Context context, Arguments args){
 		int id = args.checkInteger(0);
 		return new Object[]{removeWidget(id)};
 	}
 	
-	@Callback
+	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] removeAll(Context context, Arguments args){
 		currID = 0;
@@ -108,56 +108,56 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 	
 	/* Object manipulation */
 	
-	@Callback
+	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addBox(Context context, Arguments args){
 		Widget w = new SquareWidget(args.checkDouble(0),args.checkDouble(1),args.checkDouble(2),args.checkDouble(3),args.checkDouble(4));
 		return addWidget(w);
 	}
 	
-	@Callback
+	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addDot(Context context, Arguments args){
 		Widget w = new Dot(args.checkDouble(0),args.checkDouble(1),args.checkDouble(2),args.checkDouble(3),args.checkDouble(4));
 		return addWidget(w);
 	}
 	
-	@Callback
+	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addCube3D(Context context, Arguments args){
 		Widget w = new Cube3D();
 		return addWidget(w);
 	}
 	
-	@Callback
+	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addFloatingText(Context context, Arguments args){
 		Widget w = new FloatingText();
 		return addWidget(w);
 	}
 	
-	@Callback
+	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addTriangle(Context context, Arguments args){
 		Widget w = new TriangleWidget(args.checkDouble(0),args.checkDouble(1),args.checkDouble(2),args.checkDouble(3),args.checkDouble(4), args.checkDouble(5), args.checkDouble(6), args.checkDouble(7), args.checkDouble(8));
 		return addWidget(w);
 	}
 	
-	@Callback
+	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addDot3D(Context context, Arguments args){
 		Widget w = new Dot3D((float)args.checkDouble(0),(float)args.checkDouble(1),(float)args.checkDouble(2));
 		return addWidget(w);
 	}
 	
-	@Callback
+	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addTextLable(Context context, Arguments args){
 		Widget w = new Text();
 		return addWidget(w);
 	}
 	
-	@Callback
+	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addLine3D(Context context, Arguments args){
 		Widget w = new Line3D(
@@ -167,7 +167,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 		return addWidget(w);
 	}
 	
-	@Callback
+	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addTriangle3D(Context context, Arguments args){
 		Widget w = new Triangle3D(
@@ -177,7 +177,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 		return addWidget(w);
 	}
 	
-	@Callback
+	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addQuad3D(Context context, Arguments args){
 		Widget w = new Quad3D(
@@ -203,6 +203,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 //	public Object[] getUserLookingAt(Context context, Arguments args){
 //		return new Object[]{};
 //	}
+
 
 	public boolean removeWidget(int id){
 		if(widgetList.containsKey(id) && widgetList.remove(id)!=null){
