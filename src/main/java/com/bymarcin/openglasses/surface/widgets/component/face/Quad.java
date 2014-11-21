@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.RenderType;
+import com.bymarcin.openglasses.surface.WidgetType;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -12,8 +13,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import io.netty.buffer.ByteBuf;
 
 public class Quad extends TriangleWidget {
-	float[] x;
-	float[] y;
 
 	public Quad() {
 		x = new float[4];
@@ -82,5 +81,10 @@ public class Quad extends TriangleWidget {
 			return RenderType.GameOverlayLocated;
 		}
 		
+	}
+	
+	@Override
+	public WidgetType getType() {
+		return WidgetType.QUAD;
 	}
 }

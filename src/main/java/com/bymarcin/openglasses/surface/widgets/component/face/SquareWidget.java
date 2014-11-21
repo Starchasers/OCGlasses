@@ -61,7 +61,7 @@ public class SquareWidget extends Widget implements IPositionable, IResizable, I
 	
 	@Override
 	public WidgetType getType() {
-		return WidgetType.QUAD;
+		return WidgetType.SQUARE;
 	}
 	
 	@SideOnly(Side.CLIENT)
