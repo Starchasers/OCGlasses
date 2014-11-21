@@ -162,6 +162,7 @@ public class Triangle3D extends Widget implements IAlpha, IColorizable, IThrough
 	public void setAlpha(double alpha) {
 		this.alpha = (float) alpha;
 	}
+	
 	@Override
 	public void setColor(double d, double e, double f) {
 		r = (float) d;

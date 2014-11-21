@@ -10,16 +10,24 @@ import com.bymarcin.openglasses.surface.RenderType;
 import com.bymarcin.openglasses.surface.Widget;
 import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IVertex;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class Line3D extends Widget implements IAlpha{
+public class Line3D extends Widget implements IAlpha, IColorizable, IVertex, IScalable, IThroughVisibility{
 	float x[];
 	float y[];
 	float z[];
 	float alpha = 0.5F;
 	float size = 8.F;
+	float r;
+	float g;
+	float b;
+	boolean isThroughVisibility = true;
 	
 	public Line3D() {
 		x = new float[2];
@@ -42,6 +50,11 @@ public class Line3D extends Widget implements IAlpha{
 		buff.writeFloat(z[0]);
 		buff.writeFloat(z[1]);
 		buff.writeFloat(alpha);
+		buff.writeFloat(r);
+		buff.writeFloat(g);
+		buff.writeFloat(b);
+		buff.writeBoolean(isThroughVisibility);
+		buff.writeFloat(size);
 	}
 
 	@Override
@@ -53,6 +66,11 @@ public class Line3D extends Widget implements IAlpha{
 		z[0] = buff.readFloat();
 		z[1] = buff.readFloat();
 		alpha = buff.readFloat();
+		r = buff.readFloat();
+		g = buff.readFloat();
+		b = buff.readFloat();
+		isThroughVisibility = buff.readBoolean();
+		size = buff.readFloat();
 	}
 
 	@Override
@@ -64,6 +82,11 @@ public class Line3D extends Widget implements IAlpha{
 		nbt.setFloat("z0", z[0]);
 		nbt.setFloat("z1", z[1]);
 		nbt.setFloat("alpha", alpha);
+		nbt.setFloat("r", r);
+		nbt.setFloat("g", g);
+		nbt.setFloat("b", b);
+		nbt.setBoolean("isThroughVisibility", isThroughVisibility);
+		nbt.setFloat("size", size);
 	}
 
 	@Override
@@ -75,6 +98,11 @@ public class Line3D extends Widget implements IAlpha{
 		z[0] = nbt.getFloat("z0");
 		z[1] = nbt.getFloat("z1");
 		alpha = nbt.getFloat("alpha");
+		r = nbt.getFloat("r");
+		g = nbt.getFloat("g");
+		b = nbt.getFloat("b");
+		isThroughVisibility = nbt.getBoolean("isThroughVisibility");
+		size = nbt.getFloat("size");
 	}
 
 	@Override
@@ -94,7 +122,11 @@ public class Line3D extends Widget implements IAlpha{
 		@Override
 		public void render() {
 			GL11.glPushMatrix();
-			//System.out.printf("%f;%f,%f\n",x[0],y[0],z[0]);
+			if(isThroughVisibility){
+				GL11.glDisable(GL11.GL_DEPTH_TEST);
+			}else{
+				GL11.glEnable(GL11.GL_DEPTH_TEST);
+			}
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			GL11.glLineWidth(size);
 			GL11.glBegin(GL11.GL_LINES);
@@ -104,6 +136,7 @@ public class Line3D extends Widget implements IAlpha{
 			GL11.glEnd();
 			GL11.glPopMatrix();
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			GL11.glEnable(GL11.GL_DEPTH_TEST);
 		}
 
 		@Override
@@ -121,5 +154,59 @@ public class Line3D extends Widget implements IAlpha{
 	@Override
 	public void setAlpha(double alpha) {
 		this.alpha = (float) alpha;
+	}
+	
+	@Override
+	public void setColor(double d, double e, double f) {
+		r = (float) d;
+		g = (float) e;
+		b = (float) f;
+	}
+
+	@Override
+	public float getColorR() {
+		return r;
+	}
+
+	@Override
+	public float getColorG() {
+		return g;
+	}
+
+	@Override
+	public float getColorB() {
+		return b;
+	}
+
+	@Override
+	public boolean isVisibleThroughObjects() {
+		return isThroughVisibility;
+	}
+
+	@Override
+	public void setVisibleThroughObjects(boolean visible) {
+		isThroughVisibility = visible;
+	}
+
+	@Override
+	public int getVertexCount() {
+		return x.length;
+	}
+
+	@Override
+	public void setVertex(int n, double x, double y, double z) {
+		this.x[n] = (float) x;
+		this.y[n] = (float) y;
+		this.z[n] = (float) z;
+	}
+
+	@Override
+	public void setScale(double scale) {
+		size = (float) scale;	
+	}
+
+	@Override
+	public double getScale() {
+		return size;
 	}
 }
