@@ -155,7 +155,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 	
 	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
-	public Object[] addTextLable(Context context, Arguments args){
+	public Object[] addTextLabel(Context context, Arguments args){
 		Widget w = new Text();
 		return addWidget(w);
 	}
