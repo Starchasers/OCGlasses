@@ -33,17 +33,7 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 	float size = 0.2F;
 	float alpha = 0.5F;
 	
-	public Dot3D() {
-		x = 0;
-		y = 0;
-		z = 0;
-	}
-	
-	public Dot3D(float x, float y, float z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-	}
+	public Dot3D() {}
 	
 	@Override
 	public void write(ByteBuf buff) {

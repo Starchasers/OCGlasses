@@ -19,13 +19,7 @@ public class Quad3D extends Triangle3D{
 		y = new float[4];
 		z = new float[4];
 	}
-	
-	public Quad3D(float x[], float y[], float z[]) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-	}
-	
+
 	@Override
 	public void write(ByteBuf buff) {
 		super.write(buff);

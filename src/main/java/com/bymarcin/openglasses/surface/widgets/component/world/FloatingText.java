@@ -37,6 +37,8 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable, 
 	float scale = 0.05f;
 	String text ="";
 	
+	public FloatingText() {}
+	
 	@Override
 	public double getPosX() {
 		return x;

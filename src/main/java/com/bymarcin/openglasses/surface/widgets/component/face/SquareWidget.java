@@ -34,19 +34,7 @@ public class SquareWidget extends Widget implements IPositionable, IResizable, I
 	
 	public SquareWidget() {
 	}
-	
-	public SquareWidget(float x, float y, float r, float g, float b) {
-		this.x = x;
-		this.y = y;
-		this.r = r;
-		this.g = g;
-		this.b = b;
-	}
-	public SquareWidget(double x, double y, double r, double g, double b){
-		this((float)x,(float)y,(float)r,(float)g,(float)b);
-	}
-	
-	
+
 	@Override
 	public void write(ByteBuf buff) {
 		buff.writeFloat(x);

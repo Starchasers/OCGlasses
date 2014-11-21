@@ -27,23 +27,6 @@ public class TriangleWidget extends Widget implements IColorizable,IAlpha{
 	public TriangleWidget() {
 	}
 	
-	public TriangleWidget(float x1, float x2, float x3, float y1, float y2, float y3, float r, float g, float b) {
-		this.x1 = x1;
-		this.x2 = x2;
-		this.x3 = x3;
-		this.y1 = y1;
-		this.y2 = y2;
-		this.y3 = y3;
-		this.r = r;
-		this.g = g;
-		this.b = b;
-	}
-	
-	public TriangleWidget(double x1, double x2, double x3, double y1, double y2, double y3, double r, double g, double b){
-		this((float) x1, (float) x2, (float) x3, (float) y1, (float) y2, (float) y3, (float) r, (float) g, (float) b);
-	}
-	
-	
 	@Override
 	public void write(ByteBuf buff) {
 		buff.writeFloat(x1);

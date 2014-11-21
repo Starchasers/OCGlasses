@@ -111,14 +111,14 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addBox(Context context, Arguments args){
-		Widget w = new SquareWidget(args.checkDouble(0),args.checkDouble(1),args.checkDouble(2),args.checkDouble(3),args.checkDouble(4));
+		Widget w = new SquareWidget();
 		return addWidget(w);
 	}
 	
 	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addDot(Context context, Arguments args){
-		Widget w = new Dot(args.checkDouble(0),args.checkDouble(1),args.checkDouble(2),args.checkDouble(3),args.checkDouble(4));
+		Widget w = new Dot();
 		return addWidget(w);
 	}
 	
@@ -139,14 +139,14 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addTriangle(Context context, Arguments args){
-		Widget w = new TriangleWidget(args.checkDouble(0),args.checkDouble(1),args.checkDouble(2),args.checkDouble(3),args.checkDouble(4), args.checkDouble(5), args.checkDouble(6), args.checkDouble(7), args.checkDouble(8));
+		Widget w = new TriangleWidget();
 		return addWidget(w);
 	}
 	
 	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addDot3D(Context context, Arguments args){
-		Widget w = new Dot3D((float)args.checkDouble(0),(float)args.checkDouble(1),(float)args.checkDouble(2));
+		Widget w = new Dot3D();
 		return addWidget(w);
 	}
 	
@@ -160,30 +160,21 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addLine3D(Context context, Arguments args){
-		Widget w = new Line3D(
-				new float[]	{(float)args.checkDouble(0),(float)args.checkDouble(1)},
-				new float[] {(float)args.checkDouble(2),(float)args.checkDouble(3)},
-				new float[] {(float)args.checkDouble(4),(float)args.checkDouble(5)});
+		Widget w = new Line3D();
 		return addWidget(w);
 	}
 	
 	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addTriangle3D(Context context, Arguments args){
-		Widget w = new Triangle3D(
-				new float[]	{(float)args.checkDouble(0),(float)args.checkDouble(1),(float)args.checkDouble(2)},
-				new float[] {(float)args.checkDouble(3),(float)args.checkDouble(4),(float)args.checkDouble(5)},
-				new float[] {(float)args.checkDouble(6),(float)args.checkDouble(7),(float)args.checkDouble(8)});
+		Widget w = new Triangle3D();
 		return addWidget(w);
 	}
 	
 	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
 	public Object[] addQuad3D(Context context, Arguments args){
-		Widget w = new Quad3D(
-				new float[]	{(float)args.checkDouble(0),(float)args.checkDouble(1),(float)args.checkDouble(2),(float)args.checkDouble(3)},
-				new float[] {(float)args.checkDouble(4),(float)args.checkDouble(5),(float)args.checkDouble(6),(float)args.checkDouble(7)},
-				new float[] {(float)args.checkDouble(8),(float)args.checkDouble(9),(float)args.checkDouble(10),(float)args.checkDouble(11)});
+		Widget w = new Quad3D();
 		return addWidget(w);
 	}
 
@@ -277,4 +268,9 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 		}
 	}
 	
+	@Override
+	public void updateEntity() {
+		super.updateEntity();
+		
+	}
 }

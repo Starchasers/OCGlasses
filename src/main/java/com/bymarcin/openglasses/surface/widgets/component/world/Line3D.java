@@ -35,12 +35,6 @@ public class Line3D extends Widget implements IAlpha, IColorizable, IVertex, ISc
 		z = new float[2];
 	}
 	
-	public Line3D(float x[], float y[], float z[]) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-	}
-	
 	@Override
 	public void write(ByteBuf buff) {
 		buff.writeFloat(x[0]);

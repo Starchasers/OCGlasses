@@ -33,12 +33,6 @@ public class Triangle3D extends Widget implements IAlpha, IColorizable, IThrough
 		z = new float[3];
 	}
 	
-	public Triangle3D(float x[], float y[], float z[]) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-	}
-	
 	@Override
 	public void write(ByteBuf buff) {
 		buff.writeFloat(x[0]);
