@@ -63,9 +63,10 @@ public class Text extends Dot implements ITextable{
 		
 		@Override
 		public void render() {
+			GL11.glPushMatrix();
 			GL11.glScaled(size, size, 0);
 			fontRender.drawString(text, (int) x, (int) y, color);
-			GL11.glScaled(1f/size, 1f/size, 0);
+			GL11.glPopMatrix();
 			
 		}
 

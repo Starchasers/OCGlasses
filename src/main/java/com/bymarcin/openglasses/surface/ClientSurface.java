@@ -16,6 +16,8 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import org.lwjgl.opengl.GL11;
 
+import com.bymarcin.openglasses.surface.widgets.component.face.Text;
+
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -25,8 +27,12 @@ public class ClientSurface {
 	public static ClientSurface instances = new ClientSurface();
 	public Map<Integer, IRenderableWidget> renderables = new HashMap<Integer, IRenderableWidget>();
 	public Map<Integer, IRenderableWidget> renderablesWorld = new HashMap<Integer, IRenderableWidget>();
-	
-	private ClientSurface() {}
+	boolean isPowered = false;
+	public boolean haveGlasses = false;
+	IRenderableWidget noPowerRender;
+	private ClientSurface() {
+		noPowerRender = getNoPowerRender();
+	}
 	
 	
 	public void updateWigets(Set<Entry<Integer, Widget>> widgets){
@@ -55,7 +61,8 @@ public class ClientSurface {
 	
 	@SubscribeEvent
 	public void onRenderGameOverlay(RenderGameOverlayEvent evt) {
-		if (evt.type == ElementType.HELMET && evt instanceof RenderGameOverlayEvent.Post) {
+		if (evt.type == ElementType.HELMET && evt instanceof RenderGameOverlayEvent.Post && haveGlasses) {
+			if(!isPowered){ noPowerRender.render(); return;}
 			GL11.glPushMatrix();
 			//GL11.glScaled(evt.resolution.getScaledWidth_double()/512D, evt.resolution.getScaledHeight_double()/512D*16D/9D, 0);
 			for(IRenderableWidget renderable : renderables.values()){
@@ -68,6 +75,7 @@ public class ClientSurface {
 	@SubscribeEvent
 	public void renderWorldLastEvent(RenderWorldLastEvent event)
 	{	
+		if(!isPowered || !haveGlasses) return;
 		GL11.glPushMatrix();
 		EntityPlayer player= Minecraft.getMinecraft().thePlayer;
 		double playerX = player.prevPosX + (player.posX - player.prevPosX) * event.partialTicks; 
@@ -100,4 +108,18 @@ public class ClientSurface {
 		}
 		return null;
 	}
+	
+	public void setPowered(boolean isPowered) {
+		this.isPowered = isPowered;
+	}
+	
+	private IRenderableWidget getNoPowerRender(){
+		Text t = new Text();
+		t.setText("NO POWER");
+		t.setAlpha(0.5);
+		t.setScale(1);
+		t.setColor(1, 0, 0);
+		return t.getRenderable();
+	}
+	
 }

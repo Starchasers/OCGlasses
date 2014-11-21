@@ -11,7 +11,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import com.bymarcin.openglasses.network.NetworkRegistry;
+import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
 import com.bymarcin.openglasses.network.packet.WidgetUpdatePacket;
+import com.bymarcin.openglasses.network.packet.TerminalStatusPacket.TerminalStatus;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 import com.bymarcin.openglasses.utils.Location;
 
@@ -25,8 +27,10 @@ public class ServerSurface {
 		if(player!=null){
 			players.put(player, UUID);
 			sendSync(player, UUID);
+			
 			OpenGlassesTerminalTileEntity terminal = UUID.getTerminal();
 			if(terminal != null){
+				sendPowerInfo(UUID, terminal.isPowered()?TerminalStatus.HavePower:TerminalStatus.NoPower);
 				terminal.onGlassesPutOn(player.getDisplayName());
 			}
 		}
@@ -60,6 +64,15 @@ public class ServerSurface {
 		if(t instanceof OpenGlassesTerminalTileEntity){
 			WidgetUpdatePacket packet = new WidgetUpdatePacket( ((OpenGlassesTerminalTileEntity)t).widgetList);
 			NetworkRegistry.packetHandler.sendTo(packet, (EntityPlayerMP) p);
+		}
+	}
+	
+	public void sendPowerInfo(Location loc, TerminalStatus status){
+		TerminalStatusPacket packet = new TerminalStatusPacket(status);
+		for(Entry<EntityPlayer, Location> e: players.entrySet()){
+			if(e.getValue().equals(loc)){
+				NetworkRegistry.packetHandler.sendTo(packet, (EntityPlayerMP) e.getKey());
+			}
 		}
 	}
 	

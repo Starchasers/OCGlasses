@@ -54,13 +54,12 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 
 	@Override
 	protected IMessage executeOnClient() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected IMessage executeOnServer() {
-		OpenGlasses.logger.log(Level.INFO,"PACKET:" + eventType);
+		//OpenGlasses.logger.log(Level.INFO,"PACKET:" + eventType);
 		switch(eventType){
 		case EQUIPED_GLASSES: ServerSurface.instance.subscribePlayer(player, UUID);
 			break;

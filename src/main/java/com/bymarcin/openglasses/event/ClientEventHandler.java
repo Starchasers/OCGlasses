@@ -15,7 +15,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 public class ClientEventHandler {
-	private boolean haveGlasses = false;
+	
 	
 	@SubscribeEvent
 	public void onPlayerTick(PlayerTickEvent e){
@@ -23,12 +23,12 @@ public class ClientEventHandler {
 		Item glasses = glassesStack!=null?glassesStack.getItem():null;
 		if(glasses instanceof OpenGlassesItem){
 			Location uuid  = OpenGlassesItem.getUUID(glassesStack);
-			if(uuid!=null && haveGlasses==false){
+			if(uuid!=null && ClientSurface.instances.haveGlasses==false){
 				equiped(e, uuid);
-			}else if(haveGlasses == true && uuid ==null){
+			}else if(ClientSurface.instances.haveGlasses == true && uuid ==null){
 				unEquiped(e);
 			}
-		}else if(haveGlasses == true){
+		}else if(ClientSurface.instances.haveGlasses == true){
 			unEquiped(e);
 		}
 	}
@@ -37,18 +37,18 @@ public class ClientEventHandler {
 	public void onJoin(EntityJoinWorldEvent e){
 		if (((e.entity instanceof EntityPlayer)) && (e.world.isRemote)){
 			ClientSurface.instances.removeAllWidgets();
-			haveGlasses = false;
+			ClientSurface.instances.haveGlasses = false;
 		}
 	}
 	
 	private void unEquiped(PlayerTickEvent e){
-		haveGlasses = false;
+		ClientSurface.instances.haveGlasses = false;
 		ClientSurface.instances.removeAllWidgets();
 		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.UNEQUIPED_GLASSES,null, e.player));
 	}
 	
 	private void equiped(PlayerTickEvent e, Location uuid){
 		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.EQUIPED_GLASSES, uuid, e.player));
-		haveGlasses = true;
+		ClientSurface.instances.haveGlasses = true;
 	}
 }
