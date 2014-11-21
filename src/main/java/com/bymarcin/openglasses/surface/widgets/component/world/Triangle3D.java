@@ -12,12 +12,12 @@ import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IVertex;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DVertex;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class Triangle3D extends Widget implements IAlpha, IColorizable, IThroughVisibility, IVertex {
+public class Triangle3D extends Widget implements IAlpha, IColorizable, IThroughVisibility, I3DVertex {
 	float x[];
 	float y[];
 	float z[];

@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import com.bymarcin.openglasses.lua.LuaFunction;
 import com.bymarcin.openglasses.lua.LuaReference;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.I2DVertex;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DPositionable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAttribute;
@@ -14,7 +15,7 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IResizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.ITextable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IVertex;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DVertex;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetColor;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetID;
@@ -65,8 +66,12 @@ public class AttributeRegistry {
 		addAtribute(IThroughVisibility.class, SetVisibleThroughObjects.class);
 		addAtribute(IThroughVisibility.class, IsVisibleThroughObjects.class);
 		
-		addAtribute(IVertex.class, SetVertex.class);
-		addAtribute(IVertex.class, GetVertexCount.class);
+		addAtribute(I3DVertex.class, SetVertex.class);
+		addAtribute(I3DVertex.class, GetVertexCount.class);
+		
+		addAtribute(I2DVertex.class, SetVertex.class);
+		addAtribute(I2DVertex.class, GetVertexCount.class);
+		
 	}
 	
 	static HashMap<Class<? extends IAttribute>, LinkedList<Class<? extends LuaFunction>>> attributes;
