@@ -54,6 +54,10 @@ public class Quad3D extends Widget implements IAlpha, IColorizable, IThroughVisi
 		buff.writeFloat(z[2]);
 		buff.writeFloat(z[3]);
 		buff.writeFloat(alpha);
+		buff.writeFloat(r);
+		buff.writeFloat(g);
+		buff.writeFloat(b);
+		buff.writeBoolean(isThroughVisibility);
 	}
 
 	@Override
@@ -71,6 +75,10 @@ public class Quad3D extends Widget implements IAlpha, IColorizable, IThroughVisi
 		z[2] = buff.readFloat();
 		z[3] = buff.readFloat();
 		alpha = buff.readFloat();
+		r = buff.readFloat();
+		g = buff.readFloat();
+		b = buff.readFloat();
+		isThroughVisibility = buff.readBoolean();
 	}
 
 	@Override
@@ -88,6 +96,10 @@ public class Quad3D extends Widget implements IAlpha, IColorizable, IThroughVisi
 		nbt.setFloat("z2", z[2]);
 		nbt.setFloat("z3", z[3]);
 		nbt.setFloat("alpha", alpha);
+		nbt.setFloat("r", r);
+		nbt.setFloat("g", g);
+		nbt.setFloat("b", b);
+		nbt.setBoolean("isThroughVisibility", isThroughVisibility);
 	}
 
 	@Override
@@ -105,6 +117,10 @@ public class Quad3D extends Widget implements IAlpha, IColorizable, IThroughVisi
 		z[2] = nbt.getFloat("z2");
 		z[3] = nbt.getFloat("z3");
 		alpha = nbt.getFloat("alpha");
+		r = nbt.getFloat("r");
+		g = nbt.getFloat("g");
+		b = nbt.getFloat("b");
+		isThroughVisibility = nbt.getBoolean("isThroughVisibility");
 	}
 
 	@Override
