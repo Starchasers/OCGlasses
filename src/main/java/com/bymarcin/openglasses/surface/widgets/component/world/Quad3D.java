@@ -10,15 +10,22 @@ import com.bymarcin.openglasses.surface.RenderType;
 import com.bymarcin.openglasses.surface.Widget;
 import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IVertex;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class Quad3D extends Widget implements IAlpha {
+public class Quad3D extends Widget implements IAlpha, IColorizable, IThroughVisibility, IVertex {
 	float x[];
 	float y[];
 	float z[];
 	float alpha = 0.5f;
+	float r;
+	float g;
+	float b;
+	boolean isThroughVisibility = true;
 	
 	public Quad3D() {
 		x = new float[4];
@@ -117,10 +124,16 @@ public class Quad3D extends Widget implements IAlpha {
 		@Override
 		public void render() {
 			GL11.glPushMatrix();
-			//System.out.printf("%f;%f,%f\n",x[0],y[0],z[0]);
+			
+			if(isThroughVisibility){
+				GL11.glDisable(GL11.GL_DEPTH_TEST);
+			}else{
+				GL11.glEnable(GL11.GL_DEPTH_TEST);
+			}
+			
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			GL11.glBegin(GL11.GL_QUAD_STRIP);
-			GL11.glColor4f(0.0f,1.0f,0.0f,0.5f);
+			GL11.glColor4f(r,g,b,alpha);
 			
 			GL11.glVertex3f(x[0], y[0], z[0]);
 			GL11.glVertex3f(x[1], y[1], z[1]);
@@ -131,6 +144,7 @@ public class Quad3D extends Widget implements IAlpha {
 			
 			GL11.glEnd();
 			GL11.glPopMatrix();
+			GL11.glEnable(GL11.GL_DEPTH_TEST);
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 		}
 
@@ -149,5 +163,49 @@ public class Quad3D extends Widget implements IAlpha {
 	@Override
 	public void setAlpha(double alpha) {
 		this.alpha = (float) alpha;
+	}
+
+	@Override
+	public void setColor(double d, double e, double f) {
+		r = (float) d;
+		g = (float) e;
+		b = (float) f;
+	}
+
+	@Override
+	public float getColorR() {
+		return r;
+	}
+
+	@Override
+	public float getColorG() {
+		return g;
+	}
+
+	@Override
+	public float getColorB() {
+		return b;
+	}
+
+	@Override
+	public boolean isVisibleThroughObjects() {
+		return isThroughVisibility;
+	}
+
+	@Override
+	public void setVisibleThroughObjects(boolean visible) {
+		isThroughVisibility = visible;
+	}
+
+	@Override
+	public int getVertexCount() {
+		return x.length;
+	}
+
+	@Override
+	public void setVertex(int n, double x, double y, double z) {
+		this.x[n] = (float) x;
+		this.y[n] = (float) y;
+		this.z[n] = (float) z;
 	}
 }
