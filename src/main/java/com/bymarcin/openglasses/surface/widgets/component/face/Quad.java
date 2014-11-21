@@ -63,7 +63,7 @@ public class Quad extends TriangleWidget {
 			GL11.glDisable(GL11.GL_ALPHA_TEST);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			Tessellator tessellator = Tessellator.instance;
-			tessellator.startDrawing(GL11.GL_TRIANGLES);
+			tessellator.startDrawing(GL11.GL_QUADS);
 			tessellator.setColorRGBA_F(r, g, b, alpha);
 			tessellator.addVertex(x[0], y[0], 0);
 			tessellator.addVertex(x[1], y[1], 0);
