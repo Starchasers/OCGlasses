@@ -16,7 +16,6 @@ import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.network.packet.WidgetUpdatePacket;
 import com.bymarcin.openglasses.surface.ServerSurface;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
-import com.bymarcin.openglasses.utils.Location;
 
 public class OpenGlassesTerminalBlock extends BlockContainer {
 
@@ -62,7 +61,7 @@ public class OpenGlassesTerminalBlock extends BlockContainer {
 		if (glassesStack != null) {
 			Item item = glassesStack.getItem();
 			if (item instanceof OpenGlassesItem) {
-				((OpenGlassesItem) item).bindToTerminal(glassesStack, new Location(x,y,z,world.provider.dimensionId));
+				((OpenGlassesItem) item).bindToTerminal(glassesStack, te.getTerminalUUID());
 				return true;
 			}
 		}
@@ -71,7 +70,9 @@ public class OpenGlassesTerminalBlock extends BlockContainer {
 
 	@Override
 	public void onBlockPreDestroy(World world, int x, int y, int z, int m) {
-		ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(), new Location(x, y, z, world.provider.dimensionId));
+		OpenGlassesTerminalTileEntity te = getTileEntity(world, x, y, z, OpenGlassesTerminalTileEntity.class);
+		if(te!=null)
+			ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(), te.getTerminalUUID());
 	}
 	
 }

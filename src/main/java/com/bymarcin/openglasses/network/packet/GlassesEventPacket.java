@@ -38,7 +38,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		this.player = readString();
 		this.eventType = EventType.values()[readInt()];
 		if(EventType.UNEQUIPED_GLASSES == eventType) return;
-		this.UUID = new Location(readInt(), readInt(), readInt(), readInt());
+		this.UUID = new Location(readInt(), readInt(), readInt(), readInt(), readLong());
 	}
 
 	@Override
@@ -50,6 +50,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	    writeInt(UUID.y);
 	    writeInt(UUID.z);
 	    writeInt(UUID.dimID);
+	    writeLong(UUID.uniqueKey);
 	}
 
 	@Override

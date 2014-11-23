@@ -38,8 +38,8 @@ public class OpenGlassesItem extends ItemArmor {
 
 	public static Location getUUID(ItemStack itemStack){
 		NBTTagCompound tag = getItemTag(itemStack);
-		if (!tag.hasKey("X") || !tag.hasKey("Y") || ! tag.hasKey("Z")) return null;
-		return new Location(tag.getInteger("X"),tag.getInteger("Y"),tag.getInteger("Z"),tag.getInteger("DIM"));
+		if (!tag.hasKey("X") || !tag.hasKey("Y") || ! tag.hasKey("Z") || ! tag.hasKey("uniqueKey")) return null;
+		return new Location(tag.getInteger("X"),tag.getInteger("Y"),tag.getInteger("Z"),tag.getInteger("DIM"), tag.getLong("uniqueKey"));
 	}
 	
 	@Override
@@ -49,7 +49,10 @@ public class OpenGlassesItem extends ItemArmor {
 		super.addInformation(itemStack, player, list, par4);
 		Location uuid = getUUID(itemStack);
 		if (uuid != null)
-			list.add("Link to: " + uuid.toString());
+			list.add("Link to:");
+			for(String s : uuid.toArrayString()){
+				list.add(s);
+			}
 	}
 
 	public static NBTTagCompound getItemTag(ItemStack stack) {
@@ -64,5 +67,6 @@ public class OpenGlassesItem extends ItemArmor {
 		tag.setInteger("Y", uuid.y);
 		tag.setInteger("Z", uuid.z);
 		tag.setInteger("DIM", uuid.dimID);
+		tag.setLong("uniqueKey", uuid.uniqueKey);
 	}
 }

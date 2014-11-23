@@ -2,6 +2,7 @@ package com.bymarcin.openglasses.tileentity;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import li.cil.oc.api.API;
 import li.cil.oc.api.machine.Arguments;
@@ -53,7 +54,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 		if(loc!=null){
 			return loc;
 		}
-		return loc = new Location(xCoord, yCoord, zCoord, worldObj.provider.dimensionId);
+		return loc = new Location(xCoord, yCoord, zCoord, worldObj.provider.dimensionId, UUID.randomUUID().getMostSignificantBits());
 	}
 	
 	public void onGlassesPutOn(String user){
@@ -108,7 +109,18 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 		ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(), getTerminalUUID());
 		return new Object[]{};
 	}
-
+	
+	@Callback(direct = true)
+	@Optional.Method(modid = "OpenComputers")
+	public Object[] newUniqueKey(Context context, Arguments args){
+		String [] players = ServerSurface.instance.getActivePlayers(loc);
+		for(String p: players){
+			ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(), loc);
+			ServerSurface.instance.unsubscribePlayer(p);
+		}
+		loc.uniqueKey = UUID.randomUUID().getMostSignificantBits();
+		return new Object[]{loc.uniqueKey};
+	}
 	
 	/* Object manipulation */
 	
@@ -252,6 +264,10 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 			i++;
 		}
 		nbt.setTag("widgetList", tag);
+		
+		NBTTagCompound tagLoc = new NBTTagCompound();
+		loc.writeToNBT(tagLoc);
+		nbt.setTag("uniqueKey", tagLoc);
 	}
 	
 	@Override
@@ -277,6 +293,9 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 				}
 			}
 		}
+		if(nbt.hasKey("uniqueKey")){
+			loc = new Location().readFromNBT((NBTTagCompound) nbt.getTag("uniqueKey"));
+		}
 	}
 	
 	@Override
@@ -291,7 +310,6 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 		}
 		
 		if(lastStatus != isPowered){
-			System.out.println("NO POWER");
 			ServerSurface.instance.sendPowerInfo(getTerminalUUID(), isPowered?TerminalStatus.HavePower:TerminalStatus.NoPower);
 		}
 		
