@@ -17,6 +17,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.lwjgl.opengl.GL11;
 
 import com.bymarcin.openglasses.surface.widgets.component.face.Text;
+import com.bymarcin.openglasses.utils.Location;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -29,6 +30,7 @@ public class ClientSurface {
 	public Map<Integer, IRenderableWidget> renderablesWorld = new HashMap<Integer, IRenderableWidget>();
 	boolean isPowered = false;
 	public boolean haveGlasses = false;
+	public Location lastBind;
 	IRenderableWidget noPowerRender;
 	private ClientSurface() {
 		noPowerRender = getNoPowerRender();
@@ -62,7 +64,7 @@ public class ClientSurface {
 	@SubscribeEvent
 	public void onRenderGameOverlay(RenderGameOverlayEvent evt) {
 		if (evt.type == ElementType.HELMET && evt instanceof RenderGameOverlayEvent.Post && haveGlasses) {
-			if(!isPowered){ noPowerRender.render(); return;}
+			if(!isPowered || !haveGlasses || lastBind == null){ noPowerRender.render(); return;}
 			GL11.glPushMatrix();
 			//GL11.glScaled(evt.resolution.getScaledWidth_double()/512D, evt.resolution.getScaledHeight_double()/512D*16D/9D, 0);
 			for(IRenderableWidget renderable : renderables.values()){
@@ -75,14 +77,14 @@ public class ClientSurface {
 	@SubscribeEvent
 	public void renderWorldLastEvent(RenderWorldLastEvent event)
 	{	
-		if(!isPowered || !haveGlasses) return;
+		if(!isPowered || !haveGlasses || lastBind == null) return;
 		GL11.glPushMatrix();
 		EntityPlayer player= Minecraft.getMinecraft().thePlayer;
 		double playerX = player.prevPosX + (player.posX - player.prevPosX) * event.partialTicks; 
 		double playerY = player.prevPosY + (player.posY - player.prevPosY) * event.partialTicks;
 		double playerZ = player.prevPosZ + (player.posZ - player.prevPosZ) * event.partialTicks;
 		GL11.glTranslated(-playerX, -playerY, -playerZ);
-		
+		GL11.glTranslated(lastBind.x, lastBind.y, lastBind.z);
 		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_BLEND);
 		//Start Drawing In World

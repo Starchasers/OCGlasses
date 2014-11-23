@@ -16,18 +16,25 @@ import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 public class ClientEventHandler {
 	
+	int tick = 0;
 	
 	@SubscribeEvent
 	public void onPlayerTick(PlayerTickEvent e){
 		if(e.player != Minecraft.getMinecraft().thePlayer) return;
+		tick ++;
+		if(tick%20 != 0){ 
+			return;
+		}
+		tick = 0;
+		
 		ItemStack glassesStack= e.player.inventory.armorInventory[3];
 		Item glasses = glassesStack!=null?glassesStack.getItem():null;
-
+		
 		if(glasses instanceof OpenGlassesItem){
 			Location uuid  = OpenGlassesItem.getUUID(glassesStack);
 			if(uuid!=null && ClientSurface.instances.haveGlasses==false){
 				equiped(e, uuid);
-			}else if(ClientSurface.instances.haveGlasses == true && uuid ==null){
+			}else if(ClientSurface.instances.haveGlasses == true && (uuid ==null || !uuid.equals(ClientSurface.instances.lastBind) ) ) {
 				unEquiped(e);
 			}
 		}else if(ClientSurface.instances.haveGlasses == true){
@@ -50,6 +57,7 @@ public class ClientEventHandler {
 	}
 	
 	private void equiped(PlayerTickEvent e, Location uuid){
+		ClientSurface.instances.lastBind = uuid;
 		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.EQUIPED_GLASSES, uuid, e.player));
 		ClientSurface.instances.haveGlasses = true;
 	}
