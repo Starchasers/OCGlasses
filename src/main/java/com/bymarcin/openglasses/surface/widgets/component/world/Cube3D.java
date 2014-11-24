@@ -76,7 +76,6 @@ public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughV
 		lookAtY = buff.readInt();
 		lookAtZ = buff.readInt();
 		isLookingAtEnable = buff.readBoolean();
-		
 	}
 
 	@Override

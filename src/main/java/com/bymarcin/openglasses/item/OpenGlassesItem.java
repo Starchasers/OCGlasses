@@ -3,6 +3,7 @@ package com.bymarcin.openglasses.item;
 import java.util.List;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
@@ -34,6 +35,11 @@ public class OpenGlassesItem extends ItemArmor {
 	@Override
 	public IIcon getIcon(ItemStack stack, int pass) {
 		return itemIcon;
+	}
+	
+	@Override
+	public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type) {
+		return OpenGlasses.MODID + ":textures/models/glasses.png";
 	}
 
 	public static Location getUUID(ItemStack itemStack){
