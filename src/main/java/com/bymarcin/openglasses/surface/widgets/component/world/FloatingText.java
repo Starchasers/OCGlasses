@@ -4,9 +4,11 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.MovingObjectPosition;
 
 import org.lwjgl.opengl.GL11;
 
+import com.bymarcin.openglasses.surface.ClientSurface;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.RenderType;
 import com.bymarcin.openglasses.surface.Widget;
@@ -14,23 +16,32 @@ import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DPositionable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.ILookable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.ITextable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IViewDistance;
 import com.bymarcin.openglasses.utils.OGUtils;
 
+import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class FloatingText extends Widget implements I3DPositionable, ITextable, IColorizable, IScalable, IAlpha, IThroughVisibility{
+public class FloatingText extends Widget implements IViewDistance, ILookable, I3DPositionable, ITextable, IColorizable, IScalable, IAlpha, IThroughVisibility{
 	float x;
 	float y;
 	float z;
 	
+	int lookingAtX;
+	int lookingAtY;
+	int lookingAtZ;
+	boolean isLookingAtEnable;
+	int viewDistance = 100;
+	
 	float r;
 	float g;
 	float b;
-	float alpha = 1f;
+	float alpha = 0.5f;
 	
 	boolean isThroughVisibility = true;
 	float scale = 0.05f;
@@ -65,16 +76,18 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable, 
 		buff.writeFloat(x);
 		buff.writeFloat(y);
 		buff.writeFloat(z);
-		buff.writeInt(text.length());
-		for(char s: text.toCharArray()){
-			buff.writeChar(s);
-		}
+		ByteBufUtils.writeUTF8String(buff, text);
 		buff.writeFloat(r);
 		buff.writeFloat(g);
 		buff.writeFloat(b);
 		buff.writeFloat(scale);
 		buff.writeFloat(alpha);
 		buff.writeBoolean(isThroughVisibility);
+		buff.writeInt(lookingAtX);
+		buff.writeInt(lookingAtY);
+		buff.writeInt(lookingAtZ);
+		buff.writeBoolean(isLookingAtEnable);
+		buff.writeInt(viewDistance);
 	}
 
 	@Override
@@ -82,18 +95,18 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable, 
 		x = buff.readFloat();
 		y = buff.readFloat();
 		z = buff.readFloat();
-		StringBuilder sb = new StringBuilder();
-		int size = buff.readInt();
-		for(int i=0;i<size;i++){
-			sb.append(buff.readChar());
-		}
-		text = sb.toString();
+		text = ByteBufUtils.readUTF8String(buff);
 		r = buff.readFloat();
 		g = buff.readFloat();
 		b = buff.readFloat();
 		scale = buff.readFloat();	
 		alpha = buff.readFloat();
 		isThroughVisibility = buff.readBoolean();
+		lookingAtX = buff.readInt();
+		lookingAtY = buff.readInt();
+		lookingAtZ = buff.readInt();
+		isLookingAtEnable = buff.readBoolean();
+		viewDistance = buff.readInt();
 	}
 	
 	@Override
@@ -112,11 +125,17 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable, 
 		FontRenderer fontRender = Minecraft.getMinecraft().fontRenderer;
 		double offsetX = fontRender.getStringWidth(text)/2D;
 		double offsetY = fontRender.FONT_HEIGHT/2D;
-		final EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 		int color = OGUtils.getIntFromColor(r, g, b, alpha);
 		
 		@Override
 		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
+			if(OGUtils.inRange(playerX, playerY, playerZ, x, y, z, viewDistance)){
+				if(isLookingAtEnable){
+					MovingObjectPosition pos = ClientSurface.getBlockCoordsLookingAt(player);
+					if(pos == null || pos.blockX != lookingAtX || pos.blockY != lookingAtY || pos.blockZ != lookingAtZ)
+						return;
+				}
+			}
 			GL11.glPushMatrix();
 			if(isThroughVisibility){
 				GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -207,6 +226,49 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable, 
 	@Override
 	public void setVisibleThroughObjects(boolean visible) {
 		isThroughVisibility = visible;
+	}
+
+	@Override
+	public void setLookingAt(int x, int y, int z) {
+		lookingAtX = x;
+		lookingAtY = y;
+		lookingAtZ = z;
+		
+	}
+
+	@Override
+	public boolean isLookingAtEnable() {
+		return isLookingAtEnable;
+	}
+
+	@Override
+	public void setLookingAtEnable(boolean enable) {
+		isLookingAtEnable = enable;
+	}
+
+	@Override
+	public int getLookingAtX() {
+		return lookingAtX;
+	}
+
+	@Override
+	public int getLookingAtY() {
+		return lookingAtY;
+	}
+
+	@Override
+	public int getLookingAtZ() {
+		return lookingAtZ;
+	}
+
+	@Override
+	public int getDistanceView() {
+		return viewDistance;
+	}
+
+	@Override
+	public void setDistanceView(int distance) {
+		viewDistance = distance;
 	}
 	
 }
