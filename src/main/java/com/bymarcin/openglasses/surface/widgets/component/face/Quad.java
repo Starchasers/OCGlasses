@@ -9,6 +9,7 @@ import com.bymarcin.openglasses.surface.WidgetType;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import io.netty.buffer.ByteBuf;
 
@@ -57,7 +58,7 @@ public class Quad extends TriangleWidget {
 	class RenderQuad implements IRenderableWidget{
 
 		@Override
-		public void render() {
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			GL11.glDisable(GL11.GL_ALPHA_TEST);

@@ -3,6 +3,7 @@ package com.bymarcin.openglasses.surface.widgets.component.face;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
 import org.lwjgl.opengl.GL11;
@@ -62,7 +63,7 @@ public class Text extends Dot implements ITextable{
 		FontRenderer fontRender = Minecraft.getMinecraft().fontRenderer;
 		
 		@Override
-		public void render() {
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
 			GL11.glPushMatrix();
 			GL11.glScaled(size, size, 0);
 			fontRender.drawString(text, (int) x, (int) y, color);

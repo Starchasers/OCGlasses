@@ -10,6 +10,8 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DPositionable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAttribute;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IDistanceView;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.ILookable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IPositionable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IResizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
@@ -18,7 +20,9 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibilit
 import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DVertex;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetColor;
+import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetDistanceView;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetID;
+import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetLookingAt;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetPosition;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetPosition3D;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetScale;
@@ -28,6 +32,8 @@ import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetVertexCount;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.IsVisibleThroughObjects;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetColor;
+import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetDistanceView;
+import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetLookingAt;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetPosition;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetPosition3D;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetScale;
@@ -71,6 +77,12 @@ public class AttributeRegistry {
 		
 		addAtribute(I2DVertex.class, SetVertex.class);
 		addAtribute(I2DVertex.class, GetVertexCount.class);
+		
+		addAtribute(IDistanceView.class, SetDistanceView.class);
+		addAtribute(IDistanceView.class, GetDistanceView.class);
+		
+		addAtribute(ILookable.class, SetLookingAt.class);
+		addAtribute(ILookable.class, GetLookingAt.class);
 		
 	}
 	

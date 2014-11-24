@@ -1,6 +1,7 @@
 package com.bymarcin.openglasses.surface.widgets.component.world;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
 import org.lwjgl.opengl.GL11;
@@ -68,7 +69,7 @@ public class Quad3D extends Triangle3D{
 	class RenderQuad3D implements IRenderableWidget{
 
 		@Override
-		public void render() {
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
 			GL11.glPushMatrix();
 			
 			if(isThroughVisibility){

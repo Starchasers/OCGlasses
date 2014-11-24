@@ -17,7 +17,10 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.lwjgl.opengl.GL11;
 
 import com.bymarcin.openglasses.surface.widgets.component.face.Text;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IDistanceView;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.ILookable;
 import com.bymarcin.openglasses.utils.Location;
+import com.bymarcin.openglasses.utils.OGUtils;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -64,11 +67,11 @@ public class ClientSurface {
 	@SubscribeEvent
 	public void onRenderGameOverlay(RenderGameOverlayEvent evt) {
 		if (evt.type == ElementType.HELMET && evt instanceof RenderGameOverlayEvent.Post && haveGlasses) {
-			if(!isPowered || !haveGlasses || lastBind == null){ noPowerRender.render(); return;}
+			if(!isPowered || !haveGlasses || lastBind == null){ noPowerRender.render(null, 0, 0, 0); return;}
 			GL11.glPushMatrix();
 			//GL11.glScaled(evt.resolution.getScaledWidth_double()/512D, evt.resolution.getScaledHeight_double()/512D*16D/9D, 0);
 			for(IRenderableWidget renderable : renderables.values()){
-				renderable.render();
+				renderable.render(null, 0, 0, 0);
 			}
 			GL11.glPopMatrix();
 		}
@@ -88,10 +91,10 @@ public class ClientSurface {
 		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_BLEND);
 		//Start Drawing In World
-		
+		MovingObjectPosition lookingAt = getBlockCoordsLookingAt(player);
 		
 		for(IRenderableWidget renderable : renderablesWorld.values()){
-			renderable.render();
+			renderable.render(player, playerX - lastBind.x, playerY - lastBind.y, playerZ - lastBind.z);
 		}
 		
 		
@@ -101,7 +104,7 @@ public class ClientSurface {
 		GL11.glPopMatrix();
 	}
 	
-	MovingObjectPosition getBlockCoordsLookingAt(EntityPlayer player){
+	public static MovingObjectPosition  getBlockCoordsLookingAt(EntityPlayer player){
 		MovingObjectPosition objectMouseOver;
 		objectMouseOver = player.rayTrace(200, 1);	
 		if(objectMouseOver != null && objectMouseOver.typeOfHit == MovingObjectType.BLOCK)

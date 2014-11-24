@@ -1,6 +1,7 @@
 package com.bymarcin.openglasses.surface.widgets.component.world;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
 import org.lwjgl.opengl.GL11;
@@ -114,7 +115,7 @@ public class Line3D extends Widget implements IAlpha, IColorizable, I3DVertex, I
 	class RenderLine3D implements IRenderableWidget{
 
 		@Override
-		public void render() {
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
 			GL11.glPushMatrix();
 			if(isThroughVisibility){
 				GL11.glDisable(GL11.GL_DEPTH_TEST);

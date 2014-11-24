@@ -3,8 +3,12 @@ package com.bymarcin.openglasses.surface.widgets.component.world;
 import org.lwjgl.opengl.GL11;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.MovingObjectPosition;
 
+import com.bymarcin.openglasses.surface.ClientSurface;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.RenderType;
 import com.bymarcin.openglasses.surface.Widget;
@@ -12,22 +16,32 @@ import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DPositionable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IDistanceView;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.ILookable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
+import com.bymarcin.openglasses.utils.OGUtils;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughVisibility, IColorizable{
+public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughVisibility, IColorizable, IDistanceView, ILookable{
 
 	float x;
 	float y;
 	float z;
 	
 	boolean isThroughVisibility;
+	boolean isLookingAtEnable;
+	
+	int lookAtX;
+	int lookAtY;
+	int lookAtZ;
+	
 	float r;
 	float g;
 	float b;
 	
+	int distance = 100;
 	float alpha = 0.5f;
 	
 	public Cube3D() {}
@@ -42,6 +56,11 @@ public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughV
 		buff.writeFloat(g);
 		buff.writeFloat(b);
 		buff.writeBoolean(isThroughVisibility);
+		buff.writeInt(distance);
+		buff.writeInt(lookAtX);
+		buff.writeInt(lookAtY);
+		buff.writeInt(lookAtZ);
+		buff.writeBoolean(isLookingAtEnable);
 	}
 
 	@Override
@@ -54,30 +73,46 @@ public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughV
 		g = buff.readFloat();
 		b = buff.readFloat();
 		isThroughVisibility = buff.readBoolean();
+		distance = buff.readInt();
+		lookAtX = buff.readInt();
+		lookAtY = buff.readInt();
+		lookAtZ = buff.readInt();
+		isLookingAtEnable = buff.readBoolean();
+		
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
-		nbt.setFloat("x", x);
-		nbt.setFloat("y", y);
-		nbt.setFloat("z", z);
-		nbt.setFloat("alpha", alpha);
-		nbt.setFloat("r", r);
-		nbt.setFloat("g", g);
-		nbt.setFloat("b", b);
-		nbt.setBoolean("isThroughVisibility", isThroughVisibility);
+		ByteBuf buff = Unpooled.buffer();
+		write(buff);
+		nbt.setByteArray("asd", buff.array());
+
+		
+//		nbt.setFloat("x", x);
+//		nbt.setFloat("y", y);
+//		nbt.setFloat("z", z);
+//		nbt.setFloat("alpha", alpha);
+//		nbt.setFloat("r", r);
+//		nbt.setFloat("g", g);
+//		nbt.setFloat("b", b);
+//		nbt.setBoolean("isThroughVisibility", isThroughVisibility);
+//		nbt.setInteger("distance", distance);
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
-		x = nbt.getFloat("x");
-		y = nbt.getFloat("y");
-		z = nbt.getFloat("z");
-		alpha = nbt.getFloat("alpha");
-		r = nbt.getFloat("r");
-		g = nbt.getFloat("g");
-		b = nbt.getFloat("b");
-		isThroughVisibility = nbt.getBoolean("isThroughVisibility");
+		byte[] b = nbt.getByteArray("asd");
+		ByteBuf buff = Unpooled.copiedBuffer(b);
+		read(buff);
+//		x = nbt.getFloat("x");
+//		y = nbt.getFloat("y");
+//		z = nbt.getFloat("z");
+//		alpha = nbt.getFloat("alpha");
+//		r = nbt.getFloat("r");
+//		g = nbt.getFloat("g");
+//		b = nbt.getFloat("b");
+//		isThroughVisibility = nbt.getBoolean("isThroughVisibility");
+//		distance = nbt.getInteger("distance");
 	}
 
 	@Override
@@ -95,8 +130,14 @@ public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughV
 	class RenderCube3D implements IRenderableWidget{
 
 		@Override
-		public void render() {
-			drawQuad(x, y, z, alpha);	
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
+			if(OGUtils.inRange(playerX, playerY, playerZ, x, y, z, distance)){
+				MovingObjectPosition pos = ClientSurface.getBlockCoordsLookingAt(player);
+				if(isLookingAtEnable && (pos == null || pos.blockX != lookAtX || pos.blockY != lookAtY || pos.blockZ != lookAtZ) )
+						return;
+				drawQuad(x, y, z, alpha);	
+				
+			}
 		}
 		
 		public void drawQuad(float posX, float posY, float PosZ, float alpha){
@@ -217,6 +258,48 @@ public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughV
 	public void setVisibleThroughObjects(boolean visible) {
 		isThroughVisibility = visible;
 		
+	}
+
+	@Override
+	public int getDistanceView() {
+		return distance;
+	}
+
+	@Override
+	public void setDistanceView(int distance) {
+		this.distance = distance;
+	}
+
+	@Override
+	public void setLookingAt(int x, int y, int z) {
+		lookAtX = x;
+		lookAtY = y;
+		lookAtZ = z;
+	}
+
+	@Override
+	public boolean isLookingAtEnable() {
+		return isLookingAtEnable;
+	}
+
+	@Override
+	public void setLookingAtEnable(boolean enable) {
+		isLookingAtEnable = enable;
+	}
+
+	@Override
+	public int getLookingAtX() {
+		return lookAtX;
+	}
+
+	@Override
+	public int getLookingAtY() {
+		return lookAtY;
+	}
+
+	@Override
+	public int getLookingAtZ() {
+		return lookAtZ;
 	}
 
 }

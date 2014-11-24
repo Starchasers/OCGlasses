@@ -1,11 +1,13 @@
 package com.bymarcin.openglasses.surface.widgets.component.face;
 
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
 import org.lwjgl.opengl.GL11;
 
 import io.netty.buffer.ByteBuf;
+
 
 
 
@@ -73,7 +75,7 @@ public class SquareWidget extends Widget implements IPositionable, IResizable, I
 	@SideOnly(Side.CLIENT)
 	public class RenderableSquareWidget implements IRenderableWidget{
 		@Override
-		public void render() {
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			GL11.glDisable(GL11.GL_ALPHA_TEST);

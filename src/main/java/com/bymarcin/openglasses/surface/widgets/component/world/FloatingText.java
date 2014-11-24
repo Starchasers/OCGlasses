@@ -145,7 +145,7 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable, 
 		int color = OGUtils.getIntFromColor(r, g, b, alpha);
 		
 		@Override
-		public void render() {
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
 			GL11.glPushMatrix();
 			if(isThroughVisibility){
 				GL11.glDisable(GL11.GL_DEPTH_TEST);

@@ -98,7 +98,7 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 	class RenderDot3D implements IRenderableWidget{
 		final EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 		@Override
-		public void render() {
+		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
 			GL11.glPushMatrix();
 			if(isThroughVisibility){
 				GL11.glDisable(GL11.GL_DEPTH_TEST);
