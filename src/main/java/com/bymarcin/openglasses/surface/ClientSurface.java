@@ -17,10 +17,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.lwjgl.opengl.GL11;
 
 import com.bymarcin.openglasses.surface.widgets.component.face.Text;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IDistanceView;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.ILookable;
 import com.bymarcin.openglasses.utils.Location;
-import com.bymarcin.openglasses.utils.OGUtils;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -91,7 +88,6 @@ public class ClientSurface {
 		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_BLEND);
 		//Start Drawing In World
-		MovingObjectPosition lookingAt = getBlockCoordsLookingAt(player);
 		
 		for(IRenderableWidget renderable : renderablesWorld.values()){
 			renderable.render(player, playerX - lastBind.x, playerY - lastBind.y, playerZ - lastBind.z);

@@ -7,7 +7,7 @@ import com.bymarcin.openglasses.lua.LuaFunction;
 import com.bymarcin.openglasses.surface.Widget;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IDistanceView;
 
-public class GetDistanceView extends LuaFunction{
+public class GetViewDistance extends LuaFunction{
 
 	@Override
 	public Object[] call(Context context, Arguments arguments) {

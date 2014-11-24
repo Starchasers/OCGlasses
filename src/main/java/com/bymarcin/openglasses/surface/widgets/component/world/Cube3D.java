@@ -1,12 +1,10 @@
 package com.bymarcin.openglasses.surface.widgets.component.world;
 
-import org.lwjgl.opengl.GL11;
-
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MovingObjectPosition;
+
+import org.lwjgl.opengl.GL11;
 
 import com.bymarcin.openglasses.surface.ClientSurface;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
@@ -79,40 +77,6 @@ public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughV
 		lookAtZ = buff.readInt();
 		isLookingAtEnable = buff.readBoolean();
 		
-	}
-
-	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
-		ByteBuf buff = Unpooled.buffer();
-		write(buff);
-		nbt.setByteArray("asd", buff.array());
-
-		
-//		nbt.setFloat("x", x);
-//		nbt.setFloat("y", y);
-//		nbt.setFloat("z", z);
-//		nbt.setFloat("alpha", alpha);
-//		nbt.setFloat("r", r);
-//		nbt.setFloat("g", g);
-//		nbt.setFloat("b", b);
-//		nbt.setBoolean("isThroughVisibility", isThroughVisibility);
-//		nbt.setInteger("distance", distance);
-	}
-
-	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
-		byte[] b = nbt.getByteArray("asd");
-		ByteBuf buff = Unpooled.copiedBuffer(b);
-		read(buff);
-//		x = nbt.getFloat("x");
-//		y = nbt.getFloat("y");
-//		z = nbt.getFloat("z");
-//		alpha = nbt.getFloat("alpha");
-//		r = nbt.getFloat("r");
-//		g = nbt.getFloat("g");
-//		b = nbt.getFloat("b");
-//		isThroughVisibility = nbt.getBoolean("isThroughVisibility");
-//		distance = nbt.getInteger("distance");
 	}
 
 	@Override

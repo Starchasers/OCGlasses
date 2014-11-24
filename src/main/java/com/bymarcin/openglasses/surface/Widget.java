@@ -10,15 +10,25 @@ import net.minecraft.nbt.NBTTagCompound;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 public abstract class Widget implements IAttribute{
 	public abstract void write(ByteBuf buff);
 
 	public abstract void read(ByteBuf buff);
 
-	public abstract void writeToNBT(NBTTagCompound nbt);
+	public void writeToNBT(NBTTagCompound nbt){
+		ByteBuf buff = Unpooled.buffer();
+		write(buff);
+		nbt.setByteArray("WidgetData", buff.array());
+	};
 
-	public abstract void readFromNBT(NBTTagCompound nbt);
+	public void readFromNBT(NBTTagCompound nbt){
+		if(!nbt.hasKey("WidgetData")) return;
+		byte[] b = nbt.getByteArray("WidgetData");
+		ByteBuf buff = Unpooled.copiedBuffer(b);
+		read(buff);
+	};
 
 	public Object[] getLuaObject(LuaReference ref) {
 		HashMap<String, Object> luaObject = new HashMap<String, Object>();

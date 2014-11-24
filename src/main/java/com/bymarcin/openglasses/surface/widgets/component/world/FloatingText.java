@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 
 import org.lwjgl.opengl.GL11;
 
@@ -95,34 +94,6 @@ public class FloatingText extends Widget implements I3DPositionable, ITextable, 
 		scale = buff.readFloat();	
 		alpha = buff.readFloat();
 		isThroughVisibility = buff.readBoolean();
-	}
-
-	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
-		nbt.setFloat("x", x);
-		nbt.setFloat("y", y);
-		nbt.setFloat("z", z);
-		nbt.setString("text", text);
-		nbt.setFloat("r", r);
-		nbt.setFloat("g", g);
-		nbt.setFloat("b", b);
-		nbt.setFloat("scale", scale);
-		nbt.setFloat("alpha", alpha);
-		nbt.setBoolean("isThroughVisibility", isThroughVisibility);
-	}
-
-	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
-		x = nbt.getFloat("x");
-		y = nbt.getFloat("y");
-		z = nbt.getFloat("z");
-		text = nbt.getString("text");
-		r = nbt.getFloat("r");
-		g = nbt.getFloat("g");
-		b = nbt.getFloat("b");
-		scale = nbt.getFloat("scale");
-		alpha = nbt.getFloat("alpha");
-		isThroughVisibility = nbt.getBoolean("isThroughVisibility");
 	}
 	
 	@Override

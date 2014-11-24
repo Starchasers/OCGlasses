@@ -3,7 +3,6 @@ package com.bymarcin.openglasses.surface.widgets.component.world;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 
 import org.lwjgl.opengl.GL11;
 
@@ -57,30 +56,6 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 		g = buff.readFloat();
 		b = buff.readFloat();
 		isThroughVisibility = buff.readBoolean();
-	}
-
-	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
-		nbt.setFloat("x0", x);
-		nbt.setFloat("y0", y);
-		nbt.setFloat("z0", z);
-		nbt.setFloat("alpha", alpha);
-		nbt.setFloat("r", r);
-		nbt.setFloat("g", g);
-		nbt.setFloat("b", b);
-		nbt.setBoolean("isThroughVisibility", isThroughVisibility);
-	}
-
-	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
-		x = nbt.getFloat("x0");
-		y = nbt.getFloat("y0");
-		z = nbt.getFloat("z0");
-		alpha = nbt.getFloat("alpha");
-		r = nbt.getFloat("r");
-		g = nbt.getFloat("g");
-		b = nbt.getFloat("b");
-		isThroughVisibility = nbt.getBoolean("isThroughVisibility");		
 	}
 
 	@Override

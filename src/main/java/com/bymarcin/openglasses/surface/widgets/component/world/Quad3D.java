@@ -2,7 +2,6 @@ package com.bymarcin.openglasses.surface.widgets.component.world;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 
 import org.lwjgl.opengl.GL11;
 
@@ -35,23 +34,6 @@ public class Quad3D extends Triangle3D{
 		x[3] = buff.readFloat();
 		y[3] = buff.readFloat();
 		z[3] = buff.readFloat();
-	}
-
-	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
-		super.writeToNBT(nbt);
-		nbt.setFloat("x3", x[3]);
-		nbt.setFloat("y3", y[3]);
-		nbt.setFloat("z3", z[3]);
-
-	}
-
-	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
-		super.readFromNBT(nbt);
-		x[3] = nbt.getFloat("x3");
-		y[3] = nbt.getFloat("y3");
-		z[3] = nbt.getFloat("z3");
 	}
 
 	@Override

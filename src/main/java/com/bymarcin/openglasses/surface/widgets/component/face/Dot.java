@@ -3,7 +3,6 @@ package com.bymarcin.openglasses.surface.widgets.component.face;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 
 import org.lwjgl.opengl.GL11;
 
@@ -89,28 +88,6 @@ public class Dot extends Widget implements IPositionable, IColorizable, IAlpha, 
 		public RenderType getRenderType() {
 			return RenderType.GameOverlayLocated;
 		}
-	}
-
-	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
-		nbt.setFloat("x", x);
-		nbt.setFloat("y", y);
-		nbt.setFloat("r", r);
-		nbt.setFloat("g", g);
-		nbt.setFloat("b", b);	
-		nbt.setFloat("size", size);
-		nbt.setFloat("alpha", alpha);
-	}
-
-	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
-		x = nbt.getFloat("x");
-		y = nbt.getFloat("y");
-		r = nbt.getFloat("r");
-		g = nbt.getFloat("g");
-		b = nbt.getFloat("b");
-		size = nbt.getFloat("size");
-		alpha = nbt.getFloat("alpha");
 	}
 
 	@Override

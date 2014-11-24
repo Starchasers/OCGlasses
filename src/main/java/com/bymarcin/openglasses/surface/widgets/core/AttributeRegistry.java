@@ -20,7 +20,7 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibilit
 import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DVertex;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetColor;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetDistanceView;
+import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetViewDistance;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetID;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetLookingAt;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetPosition;
@@ -32,7 +32,7 @@ import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetVertexCount;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.IsVisibleThroughObjects;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetColor;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetDistanceView;
+import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetViewDistance;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetLookingAt;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetPosition;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetPosition3D;
@@ -78,8 +78,8 @@ public class AttributeRegistry {
 		addAtribute(I2DVertex.class, SetVertex.class);
 		addAtribute(I2DVertex.class, GetVertexCount.class);
 		
-		addAtribute(IDistanceView.class, SetDistanceView.class);
-		addAtribute(IDistanceView.class, GetDistanceView.class);
+		addAtribute(IDistanceView.class, SetViewDistance.class);
+		addAtribute(IDistanceView.class, GetViewDistance.class);
 		
 		addAtribute(ILookable.class, SetLookingAt.class);
 		addAtribute(ILookable.class, GetLookingAt.class);

@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 
 import org.lwjgl.opengl.GL11;
 
@@ -33,18 +32,6 @@ public class Text extends Dot implements ITextable{
 	public void read(ByteBuf buff) {
 		super.read(buff);
 		text = ByteBufUtils.readUTF8String(buff);
-	}
-
-	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
-		super.writeToNBT(nbt);
-		nbt.setString("text", text);
-	}
-
-	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
-		super.readFromNBT(nbt);
-		text = nbt.getString("text");
 	}
 
 	@Override

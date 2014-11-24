@@ -1,15 +1,10 @@
 package com.bymarcin.openglasses.surface.widgets.component.face;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 
 import org.lwjgl.opengl.GL11;
-
-import io.netty.buffer.ByteBuf;
-
-
-
 
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.RenderType;
@@ -97,30 +92,6 @@ public class SquareWidget extends Widget implements IPositionable, IResizable, I
 		public RenderType getRenderType() {
 			return RenderType.GameOverlayLocated;
 		}
-	}
-
-	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
-		nbt.setFloat("x", x);
-		nbt.setFloat("y", y);
-		nbt.setFloat("r", r);
-		nbt.setFloat("g", g);
-		nbt.setFloat("b", b);	
-		nbt.setFloat("width", width);
-		nbt.setFloat("height", height);
-		nbt.setFloat("alpha", alpha);
-	}
-
-	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
-		x = nbt.getFloat("x");
-		y = nbt.getFloat("y");
-		r = nbt.getFloat("r");
-		g = nbt.getFloat("g");
-		b = nbt.getFloat("b");
-		width = nbt.getFloat("width");
-		height = nbt.getFloat("height");
-		alpha = nbt.getFloat("alpha");
 	}
 
 	@Override

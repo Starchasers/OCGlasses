@@ -8,7 +8,7 @@ import com.bymarcin.openglasses.surface.Widget;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IDistanceView;
 
-public class SetDistanceView extends LuaFunction{
+public class SetViewDistance extends LuaFunction{
 
 	@Override
 	public Object[] call(Context context, Arguments arguments) {
@@ -23,7 +23,7 @@ public class SetDistanceView extends LuaFunction{
 
 	@Override
 	public String getName() {
-		return "setDistanceView";
+		return "setViewDistance";
 	}
 
 }

@@ -3,7 +3,6 @@ package com.bymarcin.openglasses.surface.widgets.component.face;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 
 import org.lwjgl.opengl.GL11;
 
@@ -95,34 +94,6 @@ public class TriangleWidget extends Widget implements IColorizable, IAlpha, I2DV
 		public RenderType getRenderType() {
 			return RenderType.GameOverlayLocated;
 		}
-	}
-
-	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
-		nbt.setFloat("x0", x[0]);
-		nbt.setFloat("x1", x[1]);
-		nbt.setFloat("x2", x[2]);
-		nbt.setFloat("y0", y[0]);
-		nbt.setFloat("y1", y[1]);
-		nbt.setFloat("y2", y[2]);
-		nbt.setFloat("r", r);
-		nbt.setFloat("g", g);
-		nbt.setFloat("b", b);	
-		nbt.setFloat("alpha", alpha);
-	}
-
-	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
-		x[0] = nbt.getFloat("x0");
-		x[1] = nbt.getFloat("x1");
-		x[2] = nbt.getFloat("x2");
-		y[0] = nbt.getFloat("y0");
-		y[1] = nbt.getFloat("y1");
-		y[2] = nbt.getFloat("y2");
-		r = nbt.getFloat("r");
-		g = nbt.getFloat("g");
-		b = nbt.getFloat("b");
-		alpha = nbt.getFloat("alpha");
 	}
 
 	@Override

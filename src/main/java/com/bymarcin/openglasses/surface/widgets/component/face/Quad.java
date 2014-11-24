@@ -1,5 +1,9 @@
 package com.bymarcin.openglasses.surface.widgets.component.face;
 
+import io.netty.buffer.ByteBuf;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.entity.player.EntityPlayer;
+
 import org.lwjgl.opengl.GL11;
 
 import com.bymarcin.openglasses.surface.IRenderableWidget;
@@ -8,10 +12,6 @@ import com.bymarcin.openglasses.surface.WidgetType;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import io.netty.buffer.ByteBuf;
 
 public class Quad extends TriangleWidget {
 
@@ -32,20 +32,6 @@ public class Quad extends TriangleWidget {
 		super.read(buff);
 		x[3] = buff.readFloat();
 		y[3] = buff.readFloat();
-	}
-	
-	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
-		super.writeToNBT(nbt);
-		nbt.setFloat("x3", x[3]);
-		nbt.setFloat("y3", y[3]);
-	}
-	
-	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
-		super.readFromNBT(nbt);
-		x[3] = nbt.getFloat("x3");
-		y[3] = nbt.getFloat("y3");
 	}
 	
 	@SideOnly(Side.CLIENT)

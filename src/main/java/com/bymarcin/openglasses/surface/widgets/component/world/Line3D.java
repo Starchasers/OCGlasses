@@ -2,7 +2,6 @@ package com.bymarcin.openglasses.surface.widgets.component.world;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 
 import org.lwjgl.opengl.GL11;
 
@@ -10,11 +9,11 @@ import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.RenderType;
 import com.bymarcin.openglasses.surface.Widget;
 import com.bymarcin.openglasses.surface.WidgetType;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DVertex;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DVertex;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -66,38 +65,6 @@ public class Line3D extends Widget implements IAlpha, IColorizable, I3DVertex, I
 		b = buff.readFloat();
 		isThroughVisibility = buff.readBoolean();
 		size = buff.readFloat();
-	}
-
-	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
-		nbt.setFloat("x0", x[0]);
-		nbt.setFloat("x1", x[1]);
-		nbt.setFloat("y0", y[0]);
-		nbt.setFloat("y1", y[1]);
-		nbt.setFloat("z0", z[0]);
-		nbt.setFloat("z1", z[1]);
-		nbt.setFloat("alpha", alpha);
-		nbt.setFloat("r", r);
-		nbt.setFloat("g", g);
-		nbt.setFloat("b", b);
-		nbt.setBoolean("isThroughVisibility", isThroughVisibility);
-		nbt.setFloat("size", size);
-	}
-
-	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
-		x[0] = nbt.getFloat("x0");
-		x[1] = nbt.getFloat("x1");
-		y[0] = nbt.getFloat("y0");
-		y[1] = nbt.getFloat("y1");
-		z[0] = nbt.getFloat("z0");
-		z[1] = nbt.getFloat("z1");
-		alpha = nbt.getFloat("alpha");
-		r = nbt.getFloat("r");
-		g = nbt.getFloat("g");
-		b = nbt.getFloat("b");
-		isThroughVisibility = nbt.getBoolean("isThroughVisibility");
-		size = nbt.getFloat("size");
 	}
 
 	@Override
