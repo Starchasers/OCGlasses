@@ -14,7 +14,7 @@ import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DPositionable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IDistanceView;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IViewDistance;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.ILookable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
 import com.bymarcin.openglasses.utils.OGUtils;
@@ -22,7 +22,7 @@ import com.bymarcin.openglasses.utils.OGUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughVisibility, IColorizable, IDistanceView, ILookable{
+public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughVisibility, IColorizable, IViewDistance, ILookable{
 
 	float x;
 	float y;

@@ -10,7 +10,7 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DPositionable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAttribute;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IDistanceView;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IViewDistance;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.ILookable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IPositionable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IResizable;
@@ -78,8 +78,8 @@ public class AttributeRegistry {
 		addAtribute(I2DVertex.class, SetVertex.class);
 		addAtribute(I2DVertex.class, GetVertexCount.class);
 		
-		addAtribute(IDistanceView.class, SetViewDistance.class);
-		addAtribute(IDistanceView.class, GetViewDistance.class);
+		addAtribute(IViewDistance.class, SetViewDistance.class);
+		addAtribute(IViewDistance.class, GetViewDistance.class);
 		
 		addAtribute(ILookable.class, SetLookingAt.class);
 		addAtribute(ILookable.class, GetLookingAt.class);
