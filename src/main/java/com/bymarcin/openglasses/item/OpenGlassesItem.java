@@ -48,11 +48,12 @@ public class OpenGlassesItem extends ItemArmor {
 	public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean par4) {
 		super.addInformation(itemStack, player, list, par4);
 		Location uuid = getUUID(itemStack);
-		if (uuid != null)
+		if (uuid != null){
 			list.add("Link to:");
 			for(String s : uuid.toArrayString()){
 				list.add(s);
 			}
+		}
 	}
 
 	public static NBTTagCompound getItemTag(ItemStack stack) {
