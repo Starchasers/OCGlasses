@@ -18,7 +18,8 @@ import com.bymarcin.openglasses.surface.ServerSurface;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 
 public class OpenGlassesTerminalBlock extends BlockContainer {
-
+	IIcon side;
+	IIcon top;
 	public OpenGlassesTerminalBlock() {
 		super(Material.iron);
 		setCreativeTab(OpenGlasses.creativeTab);
@@ -33,12 +34,18 @@ public class OpenGlassesTerminalBlock extends BlockContainer {
 
 	@Override
 	public void registerBlockIcons(IIconRegister register) {
-		blockIcon = register.registerIcon(OpenGlasses.MODID + ":terminal");
+		blockIcon = register.registerIcon(OpenGlasses.MODID + ":glasses_bottom");
+		side = register.registerIcon(OpenGlasses.MODID + ":glasses_side");
+		top = register.registerIcon(OpenGlasses.MODID + ":glasses_top");
 	}
 
 	@Override
 	public IIcon getIcon(int side, int metadata) {
-		return blockIcon;
+		switch(side){
+			case 0: return blockIcon;
+			case 1: return top;
+			default: return this.side;
+		}
 	}
 
 	@SuppressWarnings("unchecked")
