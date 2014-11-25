@@ -21,16 +21,16 @@ public class Quad3D extends Triangle3D{
 	}
 
 	@Override
-	public void write(ByteBuf buff) {
-		super.write(buff);
+	public void writeData(ByteBuf buff) {
+		super.writeData(buff);
 		buff.writeFloat(x[3]);
 		buff.writeFloat(y[3]);
 		buff.writeFloat(z[3]);
 	}
 
 	@Override
-	public void read(ByteBuf buff) {
-		super.read(buff);
+	public void readData(ByteBuf buff) {
+		super.readData(buff);
 		x[3] = buff.readFloat();
 		y[3] = buff.readFloat();
 		z[3] = buff.readFloat();
@@ -82,5 +82,11 @@ public class Quad3D extends Triangle3D{
 			return RenderType.WorldLocated;
 		}
 		
+		@Override
+		public boolean shouldWidgetBeRendered() {
+			return isVisible();
+		}
+		
 	}
+
 }

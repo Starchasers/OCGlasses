@@ -36,7 +36,7 @@ public class Line3D extends Widget implements IAlpha, IColorizable, I3DVertex, I
 	}
 	
 	@Override
-	public void write(ByteBuf buff) {
+	public void writeData(ByteBuf buff) {
 		buff.writeFloat(x[0]);
 		buff.writeFloat(x[1]);
 		buff.writeFloat(y[0]);
@@ -52,7 +52,7 @@ public class Line3D extends Widget implements IAlpha, IColorizable, I3DVertex, I
 	}
 
 	@Override
-	public void read(ByteBuf buff) {
+	public void readData(ByteBuf buff) {
 		x[0] = buff.readFloat();
 		x[1] = buff.readFloat();
 		y[0] = buff.readFloat();
@@ -104,6 +104,11 @@ public class Line3D extends Widget implements IAlpha, IColorizable, I3DVertex, I
 		@Override
 		public RenderType getRenderType() {
 			return RenderType.WorldLocated;
+		}
+		
+		@Override
+		public boolean shouldWidgetBeRendered() {
+			return isVisible();
 		}
 		
 	}

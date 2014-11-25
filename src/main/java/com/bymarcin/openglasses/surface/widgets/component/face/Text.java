@@ -23,14 +23,14 @@ public class Text extends Dot implements ITextable{
 	public Text() {}
 
 	@Override
-	public void write(ByteBuf buff) {
-		super.write(buff);
+	public void writeData(ByteBuf buff) {
+		super.writeData(buff);
 		ByteBufUtils.writeUTF8String(buff, text);
 	}
 
 	@Override
-	public void read(ByteBuf buff) {
-		super.read(buff);
+	public void readData(ByteBuf buff) {
+		super.readData(buff);
 		text = ByteBufUtils.readUTF8String(buff);
 	}
 
@@ -61,6 +61,11 @@ public class Text extends Dot implements ITextable{
 		@Override
 		public RenderType getRenderType() {
 			return RenderType.GameOverlayLocated;
+		}
+
+		@Override
+		public boolean shouldWidgetBeRendered() {
+			return isVisible();
 		}
 		
 	}

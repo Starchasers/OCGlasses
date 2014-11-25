@@ -13,9 +13,21 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 public abstract class Widget implements IAttribute{
-	public abstract void write(ByteBuf buff);
+	boolean isVisable = true;
+	
+	public abstract void writeData(ByteBuf buff);
 
-	public abstract void read(ByteBuf buff);
+	public abstract void readData(ByteBuf buff);
+	
+	public final void write(ByteBuf buff){
+		buff.writeBoolean(isVisable);
+		writeData(buff);
+	}
+
+	public final void read(ByteBuf buff){
+		isVisable = buff.readBoolean();
+		readData(buff);
+	}
 
 	public void writeToNBT(NBTTagCompound nbt){
 		ByteBuf buff = Unpooled.buffer();
@@ -49,4 +61,12 @@ public abstract class Widget implements IAttribute{
 	
 	@SideOnly(Side.CLIENT)
 	public abstract IRenderableWidget getRenderable();
+
+	public boolean isVisible() {
+		return isVisable;
+	}
+	
+	public void setVisable(boolean isVisable) {
+		this.isVisable = isVisable;
+	}
 }

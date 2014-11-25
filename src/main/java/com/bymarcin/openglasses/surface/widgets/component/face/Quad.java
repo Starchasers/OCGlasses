@@ -21,15 +21,15 @@ public class Quad extends TriangleWidget {
 	}
 
 	@Override
-	public void write(ByteBuf buff) {
-		super.write(buff);
+	public void writeData(ByteBuf buff) {
+		super.writeData(buff);
 		buff.writeFloat(x[3]);
 		buff.writeFloat(y[3]);
 	}
 	
 	@Override
-	public void read(ByteBuf buff) {
-		super.read(buff);
+	public void readData(ByteBuf buff) {
+		super.readData(buff);
 		x[3] = buff.readFloat();
 		y[3] = buff.readFloat();
 	}
@@ -66,6 +66,11 @@ public class Quad extends TriangleWidget {
 		@Override
 		public RenderType getRenderType() {
 			return RenderType.GameOverlayLocated;
+		}
+
+		@Override
+		public boolean shouldWidgetBeRendered() {
+			return isVisible();
 		}
 		
 	}

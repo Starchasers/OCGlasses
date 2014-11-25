@@ -34,7 +34,7 @@ public class Triangle3D extends Widget implements IAlpha, IColorizable, IThrough
 	}
 	
 	@Override
-	public void write(ByteBuf buff) {
+	public void writeData(ByteBuf buff) {
 		buff.writeFloat(x[0]);
 		buff.writeFloat(x[1]);
 		buff.writeFloat(x[2]);
@@ -52,7 +52,7 @@ public class Triangle3D extends Widget implements IAlpha, IColorizable, IThrough
 	}
 
 	@Override
-	public void read(ByteBuf buff) {
+	public void readData(ByteBuf buff) {
 		x[0] = buff.readFloat();
 		x[1] = buff.readFloat();
 		x[2] = buff.readFloat();
@@ -107,6 +107,11 @@ public class Triangle3D extends Widget implements IAlpha, IColorizable, IThrough
 		@Override
 		public RenderType getRenderType() {
 			return RenderType.WorldLocated;
+		}
+		
+		@Override
+		public boolean shouldWidgetBeRendered() {
+			return isVisible();
 		}
 		
 	}

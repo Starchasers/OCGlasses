@@ -29,6 +29,7 @@ import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetScale;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetSize;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetText;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetVertexCount;
+import com.bymarcin.openglasses.surface.widgets.core.luafunction.IsVisible;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.IsVisibleThroughObjects;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetColor;
@@ -40,6 +41,7 @@ import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetScale;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetSize;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetText;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetVertex;
+import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetVisible;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetVisibleThroughObjects;
 
 public class AttributeRegistry {
@@ -47,6 +49,8 @@ public class AttributeRegistry {
 		attributes = new HashMap<Class<? extends IAttribute>, LinkedList<Class<? extends LuaFunction>>>();
 		
 		addAtribute(IAttribute.class, GetID.class);
+		addAtribute(IAttribute.class, IsVisible.class);
+		addAtribute(IAttribute.class, SetVisible.class);
 		
 		addAtribute(IAlpha.class, GetAlpha.class);
 		addAtribute(IAlpha.class, SetAlpha.class);

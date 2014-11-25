@@ -33,7 +33,7 @@ public class SquareWidget extends Widget implements IPositionable, IResizable, I
 	}
 
 	@Override
-	public void write(ByteBuf buff) {
+	public void writeData(ByteBuf buff) {
 		buff.writeFloat(x);
 		buff.writeFloat(y);
 		buff.writeFloat(r);
@@ -45,7 +45,7 @@ public class SquareWidget extends Widget implements IPositionable, IResizable, I
 	}
 
 	@Override
-	public void read(ByteBuf buff) {
+	public void readData(ByteBuf buff) {
 		x = buff.readFloat();
 		y = buff.readFloat();
 		r = buff.readFloat();
@@ -91,6 +91,11 @@ public class SquareWidget extends Widget implements IPositionable, IResizable, I
 		@Override
 		public RenderType getRenderType() {
 			return RenderType.GameOverlayLocated;
+		}
+
+		@Override
+		public boolean shouldWidgetBeRendered() {
+			return isVisible();
 		}
 	}
 

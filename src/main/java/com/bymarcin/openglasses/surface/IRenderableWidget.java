@@ -8,4 +8,5 @@ import cpw.mods.fml.relauncher.SideOnly;
 public interface IRenderableWidget {
 	public void render(EntityPlayer player, double playerX, double playerY, double playerZ);
 	public RenderType getRenderType();
+	public boolean shouldWidgetBeRendered();
 }

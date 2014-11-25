@@ -38,7 +38,7 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 	public Dot3D() {}
 	
 	@Override
-	public void write(ByteBuf buff) {
+	public void writeData(ByteBuf buff) {
 		buff.writeFloat(x);
 		buff.writeFloat(y);
 		buff.writeFloat(z);
@@ -51,7 +51,7 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 	}
 
 	@Override
-	public void read(ByteBuf buff) {
+	public void readData(ByteBuf buff) {
 		x = buff.readFloat();
 		y = buff.readFloat();
 		z = buff.readFloat();
@@ -114,6 +114,11 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 		@Override
 		public RenderType getRenderType() {
 			return RenderType.WorldLocated;
+		}
+
+		@Override
+		public boolean shouldWidgetBeRendered() {
+			return isVisible();
 		}
 		
 	}
