@@ -15,15 +15,18 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IViewDistance;
+import com.bymarcin.openglasses.utils.OGUtils;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3DPositionable, IThroughVisibility {
+public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3DPositionable, IThroughVisibility, IViewDistance {
 	float x;
 	float y;
 	float z;
 	
+	int distance = 100;
 	float r;
 	float g;
 	float b;
@@ -44,6 +47,7 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 		buff.writeFloat(g);
 		buff.writeFloat(b);
 		buff.writeBoolean(isThroughVisibility);
+		buff.writeInt(distance);
 	}
 
 	@Override
@@ -56,6 +60,7 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 		g = buff.readFloat();
 		b = buff.readFloat();
 		isThroughVisibility = buff.readBoolean();
+		distance = buff.readInt();
 	}
 
 	@Override
@@ -74,6 +79,11 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 		final EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 		@Override
 		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
+			
+			if(!OGUtils.inRange(playerX, playerY, playerZ, x, y, z, distance)){
+				return;
+			}
+			
 			GL11.glPushMatrix();
 			if(isThroughVisibility){
 				GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -181,5 +191,15 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 	@Override
 	public void setVisibleThroughObjects(boolean visible) {
 		isThroughVisibility = visible;
+	}
+
+	@Override
+	public int getDistanceView() {
+		return distance;
+	}
+
+	@Override
+	public void setDistanceView(int distance) {
+		this.distance = distance;	
 	}
 }
