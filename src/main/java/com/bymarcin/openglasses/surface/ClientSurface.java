@@ -87,6 +87,7 @@ public class ClientSurface {
 		GL11.glTranslated(lastBind.x, lastBind.y, lastBind.z);
 		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glDepthMask(false);
 		//Start Drawing In World
 		
 		for(IRenderableWidget renderable : renderablesWorld.values()){
@@ -95,6 +96,7 @@ public class ClientSurface {
 		
 		
 		//Stop Drawing In World
+		GL11.glDepthMask(true);
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glPopMatrix();
