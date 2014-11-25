@@ -68,7 +68,8 @@ public class ClientSurface {
 			GL11.glPushMatrix();
 			//GL11.glScaled(evt.resolution.getScaledWidth_double()/512D, evt.resolution.getScaledHeight_double()/512D*16D/9D, 0);
 			for(IRenderableWidget renderable : renderables.values()){
-				renderable.render(null, 0, 0, 0);
+				if(renderable.shouldWidgetBeRendered())
+					renderable.render(null, 0, 0, 0);
 			}
 			GL11.glPopMatrix();
 		}
@@ -91,7 +92,8 @@ public class ClientSurface {
 		//Start Drawing In World
 		
 		for(IRenderableWidget renderable : renderablesWorld.values()){
-			renderable.render(player, playerX - lastBind.x, playerY - lastBind.y, playerZ - lastBind.z);
+			if(renderable.shouldWidgetBeRendered())
+				renderable.render(player, playerX - lastBind.x, playerY - lastBind.y, playerZ - lastBind.z);
 		}
 		
 		
