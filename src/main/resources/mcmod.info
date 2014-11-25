@@ -1,14 +1,17 @@
 [
 {
-  "modid": "ocglasses",
+  "modid": "openglasses",
   "name": "OC Glasses",
-  "description": "Addon for Open Computers",
+  "description": "Addon for Open Computers which adds Augmented Reality features to Minecraft.",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "url": "",
+  "url": "http://starchasers.pl/OpenGlasses/",
   "updateUrl": "",
   "authorList": ["marcin212","magik6000"],
-  "credits": "",
+  "credits": "
+    Great thanks to:
+    Axoi, for the textures.
+    alucard87pl, for help with the wiki.",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
