@@ -129,12 +129,13 @@ public class FloatingText extends Widget implements IViewDistance, ILookable, I3
 		
 		@Override
 		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
-			if(OGUtils.inRange(playerX, playerY, playerZ, x, y, z, viewDistance)){
-				if(isLookingAtEnable){
-					MovingObjectPosition pos = ClientSurface.getBlockCoordsLookingAt(player);
-					if(pos == null || pos.blockX != lookingAtX || pos.blockY != lookingAtY || pos.blockZ != lookingAtZ)
-						return;
-				}
+			if(!OGUtils.inRange(playerX, playerY, playerZ, x, y, z, viewDistance)){
+				return;
+			}
+			if(isLookingAtEnable){
+				MovingObjectPosition pos = ClientSurface.getBlockCoordsLookingAt(player);
+				if(pos == null || pos.blockX != lookingAtX || pos.blockY != lookingAtY || pos.blockZ != lookingAtZ)
+					return;
 			}
 			GL11.glPushMatrix();
 			if(isThroughVisibility){
