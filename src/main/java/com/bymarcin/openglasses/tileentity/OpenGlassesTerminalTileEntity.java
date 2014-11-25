@@ -77,7 +77,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 	
 	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
-	public Object[] getActivePlayers(Context context, Arguments args) {
+	public Object[] getBindPlayers(Context context, Arguments args) {
 		return ServerSurface.instance.getActivePlayers(getTerminalUUID());
 	}
 //	
@@ -126,7 +126,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 	
 	@Callback(direct = true)
 	@Optional.Method(modid = "OpenComputers")
-	public Object[] addBox(Context context, Arguments args){
+	public Object[] addRect(Context context, Arguments args){
 		Widget w = new SquareWidget();
 		return addWidget(w);
 	}
