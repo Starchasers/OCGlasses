@@ -12,8 +12,8 @@ import net.minecraft.world.World;
 
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
-import com.bymarcin.openglasses.network.packet.WidgetUpdatePacket;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket.TerminalStatus;
+import com.bymarcin.openglasses.network.packet.WidgetUpdatePacket;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 import com.bymarcin.openglasses.utils.Location;
 
@@ -85,9 +85,10 @@ public class ServerSurface {
 	}
 	
 	private EntityPlayerMP checkUUID(String uuid){
-		for(Object p : MinecraftServer.getServer().getConfigurationManager().playerEntityList)
-			if(((EntityPlayerMP)p).getUniqueID().toString().equals(uuid))
+		for(Object p : MinecraftServer.getServer().getConfigurationManager().playerEntityList){
+			if(((EntityPlayerMP)p).getGameProfile().getName().equals(uuid))
 				return (EntityPlayerMP) p;
+		}
 		return null;	
 	}
 
