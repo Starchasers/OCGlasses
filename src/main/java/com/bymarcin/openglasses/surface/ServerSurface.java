@@ -7,8 +7,6 @@ import java.util.Map.Entry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
@@ -25,11 +23,10 @@ public class ServerSurface {
 	public void subscribePlayer(String playerUUID, Location UUID){
 		EntityPlayerMP player = checkUUID(playerUUID);
 		if(player!=null){
-			players.put(player, UUID);
-			sendSync(player, UUID);
-			
 			OpenGlassesTerminalTileEntity terminal = UUID.getTerminal();
-			if(terminal != null){
+			if(terminal != null && terminal.getTerminalUUID().equals(UUID)){
+				players.put(player, UUID);
+				sendSync(player, UUID, terminal);
 				sendPowerInfo(UUID, terminal.isPowered()?TerminalStatus.HavePower:TerminalStatus.NoPower);
 				terminal.onGlassesPutOn(player.getDisplayName());
 			}
@@ -51,20 +48,15 @@ public class ServerSurface {
 		LinkedList<String> players = new LinkedList<String>();
 		for(Entry<EntityPlayer, Location> p: this.players.entrySet()){
 			if(p.getValue().equals(l)){
-				players.add(p.getKey().getDisplayName());
+				players.add(p.getKey().getGameProfile().getName());
 			}
 		}
 		return players.toArray(new String[]{});
 	}
 	
-	public void sendSync(EntityPlayer p,Location coords){
-		World w  = MinecraftServer.getServer().worldServerForDimension(coords.dimID);
-		if(w==null) return;
-		TileEntity t = w.getTileEntity(coords.x, coords.y, coords.z);
-		if(t instanceof OpenGlassesTerminalTileEntity){
+	public void sendSync(EntityPlayer p,Location coords, OpenGlassesTerminalTileEntity t){
 			WidgetUpdatePacket packet = new WidgetUpdatePacket( ((OpenGlassesTerminalTileEntity)t).widgetList);
 			NetworkRegistry.packetHandler.sendTo(packet, (EntityPlayerMP) p);
-		}
 	}
 	
 	public void sendPowerInfo(Location loc, TerminalStatus status){
