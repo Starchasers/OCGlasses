@@ -48,6 +48,7 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 		buff.writeFloat(b);
 		buff.writeBoolean(isThroughVisibility);
 		buff.writeInt(distance);
+		buff.writeFloat(size);
 	}
 
 	@Override
@@ -61,6 +62,7 @@ public class Dot3D extends Widget implements IAlpha, IScalable, IColorizable, I3
 		b = buff.readFloat();
 		isThroughVisibility = buff.readBoolean();
 		distance = buff.readInt();
+		size = buff.readFloat();
 	}
 
 	@Override
