@@ -92,7 +92,7 @@ public class Line3D extends Widget implements IAlpha, IColorizable, I3DVertex, I
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			GL11.glLineWidth(size);
 			GL11.glBegin(GL11.GL_LINES);
-			GL11.glColor4f(0.0f,1.0f,0.0f,0.5f);
+			GL11.glColor4f(r,g,b,alpha);
 			GL11.glVertex3f(x[0], y[0], z[0]);
 			GL11.glVertex3f(x[1], y[1], z[1]);
 			GL11.glEnd();
