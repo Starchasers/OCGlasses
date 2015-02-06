@@ -1,13 +1,13 @@
 package com.bymarcin.openglasses.testRender;
 
 import java.util.ArrayList;
-import java.util.PriorityQueue;
+import java.util.LinkedList;
 
 import com.google.common.primitives.Floats;
 
 public class Shape {
 	private ArrayList<Float> buffer = new ArrayList<Float>();
-	private PriorityQueue<Matrix> transformation = new PriorityQueue<Matrix>();
+	private LinkedList<Matrix> transformation = new LinkedList<Matrix>();
 	private Matrix color = new Matrix(1, 4);
 	private int vertexCount;
 	
@@ -47,48 +47,28 @@ public class Shape {
 	}
 
 	public void translate(float x, float y, float z) {
-		Matrix translate = Matrix.generateIdentityMatrix(4);
-		translate.set(3, 0, x);
-		translate.set(3, 1, y);
-		translate.set(3, 2, z);
+		Matrix translate = Transformation.getTrasnslateMatrix(x, y, z);
 		transformation.add(Matrix.multiply(transformation.poll(), translate));
 	}
 
 	public void scale(float x, float y, float z) {
-		Matrix scale = Matrix.generateIdentityMatrix(4);
-		scale.set(0, 0, x);
-		scale.set(1, 1, y);
-		scale.set(2, 2, z);
+		Matrix scale = Transformation.getScaleMatrix(x, y, z);
 		transformation.add(Matrix.multiply(transformation.poll(), scale));
 	}
 
 	public void rotate(float angle, float x, float y, float z) {
-		float cosA = (float) Math.cos(Math.toRadians(angle));
-		float sinA = (float) Math.sin(Math.toRadians(angle));
 		if (x != 0) {
-			Matrix rotate = Matrix.generateIdentityMatrix(4);
-			rotate.set(1, 1, cosA);
-			rotate.set(2, 1, -sinA);
-			rotate.set(1, 2, sinA);
-			rotate.set(2, 2, cosA);
+			Matrix rotate = Transformation.getRoatateXMatrix(angle);
 			transformation.add(Matrix.multiply(transformation.poll(), rotate));
 		}
 
 		if (y != 0) {
-			Matrix rotate = Matrix.generateIdentityMatrix(4);
-			rotate.set(0, 0, cosA);
-			rotate.set(2, 0, sinA);
-			rotate.set(0, 2, -sinA);
-			rotate.set(2, 2, cosA);
+			Matrix rotate = Transformation.getRoatateYMatrix(angle);
 			transformation.add(Matrix.multiply(transformation.poll(), rotate));
 		}
 
 		if (z != 0) {
-			Matrix rotate = Matrix.generateIdentityMatrix(4);
-			rotate.set(0, 0, cosA);
-			rotate.set(0, 1, sinA);
-			rotate.set(1, 0, -sinA);
-			rotate.set(1, 1, cosA);
+			Matrix rotate = Transformation.getRoatateZMatrix(angle);
 			transformation.add(Matrix.multiply(transformation.poll(), rotate));
 		}
 	}
