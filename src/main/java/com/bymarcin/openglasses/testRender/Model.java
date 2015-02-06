@@ -3,11 +3,9 @@ package com.bymarcin.openglasses.testRender;
 import java.util.ArrayList;
 
 public class Model {
-	Shape shape;
 	ArrayList<Command> commandList = new ArrayList<Command>();
 	Matrix modelTransformation = Matrix.generateIdentityMatrix(4);
-	
-	
+
 	public void setColor(float r, float g, float b, float alpha) {
 		commandList.add(new Command(Command.COLOR, r, g, b, alpha));
 	}
@@ -36,21 +34,56 @@ public class Model {
 		commandList.add(new Command(Command.POPMATRIX));
 	}
 
-	
 	public void translateModel(float x, float y, float z) {
-		
+		modelTransformation = Matrix.multiply(modelTransformation, Transformation.getTrasnslateMatrix(x, y, z));
 	}
 
 	public void scaleModel(float x, float y, float z) {
-
-	}
-	
-	public void rotateModel(float angle, float x, float y, float z){
-		
-	}
-	
-	public void setVisible(boolean isVisible){
-		
+		modelTransformation = Matrix.multiply(modelTransformation, Transformation.getScaleMatrix(x, y, z));
 	}
 
+	public void rotateModel(float angle, float x, float y, float z) {
+		if (x != 0) {
+			modelTransformation = Matrix.multiply(modelTransformation, Transformation.getRoatateXMatrix(angle));
+		}
+
+		if (y != 0) {
+			modelTransformation = Matrix.multiply(modelTransformation, Transformation.getRoatateYMatrix(angle));
+		}
+
+		if (z != 0) {
+			modelTransformation = Matrix.multiply(modelTransformation, Transformation.getRoatateZMatrix(angle));
+		}
+	}
+
+	public void resetModelTransformation() {
+		modelTransformation = Matrix.generateIdentityMatrix(4);
+	}
+
+	public void setVisible(boolean visible) {
+
+	}
+
+	public float[] generateBuffer(){
+		Shape shape = new Shape(modelTransformation);
+		for(Command cmd : commandList){
+			switch(cmd.getCommand()){
+			case Command.COLOR: shape.setColor(cmd.getArgs()[0], cmd.getArgs()[1], cmd.getArgs()[2], cmd.getArgs()[3]);
+				break;
+			case Command.POPMATRIX: shape.popMatrix();
+				break;
+			case Command.PUSHMATRIX: shape.pushMatrix();
+				break;
+			case Command.ROTATE: shape.rotate(cmd.getArgs()[0], cmd.getArgs()[1], cmd.getArgs()[2], cmd.getArgs()[3]);
+				break;
+			case Command.SCALE: shape.scale(cmd.getArgs()[0], cmd.getArgs()[1], cmd.getArgs()[2]);
+				break;
+			case Command.TRANSLATE: shape.translate(cmd.getArgs()[0], cmd.getArgs()[1], cmd.getArgs()[2]);
+				break;
+			case Command.VERTEX: shape.translate(cmd.getArgs()[0], cmd.getArgs()[1], cmd.getArgs()[2]);
+				break;
+			}
+		}
+		return shape.getBuffer();
+	}
 }
