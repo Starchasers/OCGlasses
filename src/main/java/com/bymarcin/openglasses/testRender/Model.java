@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Model {
 	ArrayList<Command> commandList = new ArrayList<Command>();
 	Matrix modelTransformation = Matrix.generateIdentityMatrix(4);
+	boolean isVisible = true;
 
 	public void setColor(float r, float g, float b, float alpha) {
 		commandList.add(new Command(Command.COLOR, r, g, b, alpha));
@@ -61,29 +62,46 @@ public class Model {
 	}
 
 	public void setVisible(boolean visible) {
-
+		isVisible = visible;
 	}
 
-	public float[] generateBuffer(){
+	public float[] generateBuffer() {
 		Shape shape = new Shape(modelTransformation);
-		for(Command cmd : commandList){
-			switch(cmd.getCommand()){
-			case Command.COLOR: shape.setColor(cmd.getArgs()[0], cmd.getArgs()[1], cmd.getArgs()[2], cmd.getArgs()[3]);
-				break;
-			case Command.POPMATRIX: shape.popMatrix();
-				break;
-			case Command.PUSHMATRIX: shape.pushMatrix();
-				break;
-			case Command.ROTATE: shape.rotate(cmd.getArgs()[0], cmd.getArgs()[1], cmd.getArgs()[2], cmd.getArgs()[3]);
-				break;
-			case Command.SCALE: shape.scale(cmd.getArgs()[0], cmd.getArgs()[1], cmd.getArgs()[2]);
-				break;
-			case Command.TRANSLATE: shape.translate(cmd.getArgs()[0], cmd.getArgs()[1], cmd.getArgs()[2]);
-				break;
-			case Command.VERTEX: shape.translate(cmd.getArgs()[0], cmd.getArgs()[1], cmd.getArgs()[2]);
-				break;
+		if (isVisible) {
+			for (Command cmd : commandList) {
+				switch (cmd.getCommand()) {
+				case Command.COLOR:
+					shape.setColor(cmd.getArgs()[0], cmd.getArgs()[1], cmd.getArgs()[2], cmd.getArgs()[3]);
+					break;
+				case Command.POPMATRIX:
+					shape.popMatrix();
+					break;
+				case Command.PUSHMATRIX:
+					shape.pushMatrix();
+					break;
+				case Command.ROTATE:
+					shape.rotate(cmd.getArgs()[0], cmd.getArgs()[1], cmd.getArgs()[2], cmd.getArgs()[3]);
+					break;
+				case Command.SCALE:
+					shape.scale(cmd.getArgs()[0], cmd.getArgs()[1], cmd.getArgs()[2]);
+					break;
+				case Command.TRANSLATE:
+					shape.translate(cmd.getArgs()[0], cmd.getArgs()[1], cmd.getArgs()[2]);
+					break;
+				case Command.VERTEX:
+					shape.addVertex(cmd.getArgs()[0], cmd.getArgs()[1], cmd.getArgs()[2]);
+					break;
+				}
+			}
+		} else {
+			shape.setColor(0, 0, 0, 0);
+			for (Command cmd : commandList) {
+				if (cmd.getCommand() == Command.VERTEX) {
+					shape.addVertex(31000000, 31000000, 31000000);
+				}
 			}
 		}
+
 		return shape.getBuffer();
 	}
 }

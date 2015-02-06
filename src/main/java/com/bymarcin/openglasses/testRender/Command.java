@@ -43,7 +43,6 @@ public class Command {
 
 	public void readFromNBT(NBTTagCompound tag) {
 		cmd = tag.getInteger("cmd");
-
 		if (tag.hasKey("argsCount")) {
 			int argsCount = tag.getInteger("argsCount");
 			args = new float[argsCount];
