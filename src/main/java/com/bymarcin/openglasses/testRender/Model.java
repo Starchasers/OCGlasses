@@ -3,10 +3,14 @@ package com.bymarcin.openglasses.testRender;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
+import com.google.common.primitives.Floats;
+import com.google.common.primitives.Ints;
+
 public class Model {
-	ArrayList<Matrix> vertexBuffer = new ArrayList<Matrix>();
-	PriorityQueue<Matrix> transformation = new PriorityQueue<Matrix>();
-	Matrix color = new Matrix(1, 4);
+	private ArrayList<Float> buffer = new ArrayList<Float>();
+	private PriorityQueue<Matrix> transformation = new PriorityQueue<Matrix>();
+	private Matrix color = new Matrix(1, 4);
+	private int vertexCount;
 	
 	public Model() {
 		transformation.add(Matrix.generateIdentityMatrix(4));
@@ -33,7 +37,14 @@ public class Model {
 	}
 	
 	private void addVertex(Matrix vertex){
-		//TODO zamiana z 4 na 3, dodanie koloru, wrzucenie do bufora.
+		for(int i=0;i<color.getHeight(); i++){
+			buffer.add(color.get(0, i));
+		}
+		
+		for(int i=0;i<vertex.getHeight()-1; i++){
+			buffer.add(vertex.get(0, i));
+		}
+		vertexCount++;
 	}
 
 	public void translate(float x, float y, float z) {
@@ -90,4 +101,13 @@ public class Model {
 	public void popMatrix() {
 		transformation.poll();
 	}
+	
+	public boolean canCreateShape(){
+		return vertexCount%3==0;
+	}
+	
+	public float[] getBuffer(){
+		return Floats.toArray(buffer);
+	}
+	
 }
