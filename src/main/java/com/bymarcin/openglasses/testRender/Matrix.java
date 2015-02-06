@@ -61,4 +61,11 @@ public class Matrix {
 		return matrix;
 	}
 
+	public int getHeight() {
+		return height;
+	}
+	
+	public int getWidth() {
+		return width;
+	}
 }
