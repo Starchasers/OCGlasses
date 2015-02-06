@@ -36,12 +36,12 @@ public class Shape {
 	}
 	
 	private void addVertex(Matrix vertex){
-		for(int i=0;i<color.getHeight(); i++){
-			buffer.add(color.get(0, i));
-		}
-		
 		for(int i=0;i<vertex.getHeight()-1; i++){
 			buffer.add(vertex.get(0, i));
+		}
+		
+		for(int i=0;i<color.getHeight(); i++){
+			buffer.add(color.get(0, i));
 		}
 		vertexCount++;
 	}
