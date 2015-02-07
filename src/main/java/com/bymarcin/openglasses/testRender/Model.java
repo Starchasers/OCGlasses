@@ -24,7 +24,7 @@ public class Model {
 	}
 
 	public void rotate(float angle, float x, float y, float z) {
-		commandList.add(new Command(Command.ROTATE, x, y, z));
+		commandList.add(new Command(Command.ROTATE, angle, x, y, z));
 	}
 
 	public void pushMatrix() {
