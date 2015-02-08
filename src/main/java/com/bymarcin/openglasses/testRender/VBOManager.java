@@ -2,7 +2,6 @@ package com.bymarcin.openglasses.testRender;
 
 import static org.lwjgl.opengl.ARBBufferObject.glBindBufferARB;
 import static org.lwjgl.opengl.ARBBufferObject.glBufferDataARB;
-import static org.lwjgl.opengl.ARBVertexBufferObject.GL_ARRAY_BUFFER_ARB;
 import static org.lwjgl.opengl.ARBVertexBufferObject.*;
 import static org.lwjgl.opengl.GL11.GL_COLOR_ARRAY;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
@@ -30,7 +29,6 @@ public class VBOManager {
 	int vcHandle;
 	HashMap<Model, Memory> models = new HashMap<Model, Memory>();
 	HashMap<Integer, Integer> freeMemory = new HashMap<Integer, Integer>();
-	int vertexCount;
 	int lastBuffferSize;
 
 	public VBOManager() {
@@ -55,10 +53,8 @@ public class VBOManager {
 				freeMemory.put(free.getKey() + size, free.getValue() - size);
 			}
 			freeMemory.remove(free.getKey());
-			System.out.println("free found");
 			return free.getKey();
 		} else {
-			System.out.println("realokacja");
 			int offset = vcBuffer.size();
 			vcBuffer.addAll(Floats.asList(new float[size]));
 			return offset;
@@ -79,6 +75,29 @@ public class VBOManager {
 		}
 	}
 
+	private float getFragmentationLevel() {
+		int free = 0;
+		for (Entry<Integer, Integer> e : freeMemory.entrySet()) {
+			free += e.getValue();
+		}
+		return (float) free / (float) vcBuffer.size();
+	}
+
+	private void defragmentation(){
+		vcBuffer.clear();
+		freeMemory.clear();
+		for(Entry<Model, Memory> model: models.entrySet()){
+			addModel(model.getKey());
+		}
+	}
+	
+	public void clear(){
+		models.clear();
+		vcBuffer.clear();
+		freeMemory.clear();
+		recreateVBO();
+	}
+
 	public int addDataToBuffer(float[] buffer) {
 		int offset = getMemory(buffer.length);
 		setBuffer(offset, buffer);
@@ -95,6 +114,10 @@ public class VBOManager {
 		float[] buffer = m.generateBuffer();
 		int offset = addDataToBuffer(buffer);
 		models.put(m, new Memory(offset, buffer.length));
+		System.out.println("VBO fragmentation: " + getFragmentationLevel());
+		if(getFragmentationLevel()>0.5f){
+			defragmentation();
+		}
 	}
 
 	public boolean updateModel(Model m) {
