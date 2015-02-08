@@ -7,8 +7,7 @@ import net.minecraftforge.common.MinecraftForge;
 
 import com.bymarcin.openglasses.event.ClientEventHandler;
 import com.bymarcin.openglasses.surface.ClientSurface;
-import com.bymarcin.openglasses.testRender.TestSurface;
-
+import com.bymarcin.openglasses.testRender.ClientLayer;
 import cpw.mods.fml.common.FMLCommonHandler;
 
 public class ClientProxy extends CommonProxy {
@@ -19,7 +18,7 @@ public class ClientProxy extends CommonProxy {
 		//FMLCommonHandler.instance().bus().register(eh);
 	 	//MinecraftForge.EVENT_BUS.register(eh);
 		//MinecraftForge.EVENT_BUS.register(ClientSurface.instances);
-		MinecraftForge.EVENT_BUS.register(new TestSurface());
+		MinecraftForge.EVENT_BUS.register(ClientLayer.getInstance());
 	}
 
 	@Override
