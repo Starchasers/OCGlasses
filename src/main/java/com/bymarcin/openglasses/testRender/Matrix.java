@@ -1,6 +1,9 @@
 package com.bymarcin.openglasses.testRender;
 
-public class Matrix {
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+
+public class Matrix implements ISendable<Matrix> {
 	private float[][] matrix;
 	private int width;
 	private int height;
@@ -64,8 +67,34 @@ public class Matrix {
 	public int getHeight() {
 		return height;
 	}
-	
+
 	public int getWidth() {
 		return width;
+	}
+
+	@Override
+	public ByteBuf toPacket() {
+		ByteBuf b = Unpooled.buffer();
+		b.writeInt(width);
+		b.writeInt(height);
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				b.writeFloat(matrix[i][j]);
+			}
+		}
+		return b;
+	}
+
+	@Override
+	public Matrix fromPacket(ByteBuf buf) {
+		width = buf.readInt();
+		height = buf.readInt();
+		matrix = new float[width][height];
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				matrix[i][j] = buf.readFloat();
+			}
+		}
+		return this;
 	}
 }

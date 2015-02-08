@@ -2,10 +2,18 @@ package com.bymarcin.openglasses.testRender;
 
 import java.util.ArrayList;
 
-public class Model {
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+
+public class Model implements ISendable<Model> {
 	ArrayList<Command> commandList = new ArrayList<Command>();
 	Matrix modelTransformation = Matrix.generateIdentityMatrix(4);
 	boolean isVisible = true;
+	int id;
+
+	public Model(int id) {
+		this.id = id;
+	}
 
 	public void setColor(float r, float g, float b, float alpha) {
 		commandList.add(new Command(Command.COLOR, r, g, b, alpha));
@@ -103,5 +111,31 @@ public class Model {
 		}
 
 		return shape.getBuffer();
+	}
+
+	@Override
+	public ByteBuf toPacket() {
+		ByteBuf b = Unpooled.buffer();
+		b.writeInt(id);
+		b.writeBoolean(isVisible);
+		b.writeInt(commandList.size());
+		for (Command cmd : commandList) {
+			b.writeBytes(cmd.toPacket());
+		}
+		b.writeBytes(modelTransformation.toPacket());
+
+		return null;
+	}
+
+	@Override
+	public Model fromPacket(ByteBuf buf) {
+		id = buf.readInt();
+		isVisible = buf.readBoolean();
+		int size = buf.readInt();
+		for (int i = 0; i < size; i++) {
+
+		}
+		modelTransformation = new Matrix(0, 0).fromPacket(buf);
+		return this;
 	}
 }
