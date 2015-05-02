@@ -4,15 +4,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import li.cil.oc.api.API;
-import li.cil.oc.api.machine.Arguments;
-import li.cil.oc.api.machine.Callback;
-import li.cil.oc.api.machine.Context;
-import li.cil.oc.api.network.Connector;
-import li.cil.oc.api.network.Visibility;
-import li.cil.oc.api.prefab.TileEntityEnvironment;
-import net.minecraft.nbt.NBTTagCompound;
-
 import com.bymarcin.openglasses.lua.LuaReference;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket.TerminalStatus;
 import com.bymarcin.openglasses.network.packet.WidgetUpdatePacket;
@@ -30,14 +21,25 @@ import com.bymarcin.openglasses.surface.widgets.component.world.FloatingText;
 import com.bymarcin.openglasses.surface.widgets.component.world.Line3D;
 import com.bymarcin.openglasses.surface.widgets.component.world.Quad3D;
 import com.bymarcin.openglasses.surface.widgets.component.world.Triangle3D;
+import com.bymarcin.openglasses.testRender.vbo.computer.ModelBuilder;
 import com.bymarcin.openglasses.utils.Location;
+
+import li.cil.oc.api.API;
+import li.cil.oc.api.machine.Arguments;
+import li.cil.oc.api.machine.Callback;
+import li.cil.oc.api.machine.Context;
+import li.cil.oc.api.network.Connector;
+import li.cil.oc.api.network.Visibility;
+import li.cil.oc.api.prefab.TileEntityEnvironment;
+
+import net.minecraft.nbt.NBTTagCompound;
 
 import cpw.mods.fml.common.Optional;
 
 @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers")
 public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 	
-	public HashMap<Integer,Widget> widgetList = new HashMap<Integer,Widget>();
+	public HashMap<Integer, Widget> widgetList = new HashMap<Integer, Widget>();
 	int currID=0;
 	Location loc;
 	boolean isPowered;
@@ -50,7 +52,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 		return "glasses";
 	}
 	
-	public Location getTerminalUUID(){
+	public Location getTerminalLocation(){
 		if(loc!=null){
 			return loc;
 		}
@@ -75,11 +77,11 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 //		return new Object[]{String.format("Hello, %s!", args.checkString(0))};
 //    }
 	
-	@Callback(direct = true)
-	@Optional.Method(modid = "OpenComputers")
-	public Object[] getBindPlayers(Context context, Arguments args) {
-		return ServerSurface.instance.getActivePlayers(getTerminalUUID());
-	}
+//	@Callback(direct = true)
+//	@Optional.Method(modid = "OpenComputers")
+//	public Object[] getBindPlayers(Context context, Arguments args) {
+//		return ServerSurface.instance.getActivePlayers(getTerminalUUID());
+//	}
 //	
 //	@Callback
 //	@Optional.Method(modid = "OpenComputers")
@@ -106,7 +108,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 	public Object[] removeAll(Context context, Arguments args){
 		currID = 0;
 		widgetList.clear();
-		ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(), getTerminalUUID());
+		ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(), getTerminalLocation());
 		return new Object[]{};
 	}
 	
@@ -121,6 +123,16 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 		loc.uniqueKey = UUID.randomUUID().getMostSignificantBits();
 		return new Object[]{loc.uniqueKey};
 	}
+	
+	
+	
+	
+	@Callback(direct = true)
+	@Optional.Method(modid = "OpenComputers")
+	public Object[] newModel(Context context, Arguments args){
+		return new Object[]{new ModelBuilder(UUID.randomUUID().toString())};
+	}
+	
 	
 	/* Object manipulation */
 	
@@ -221,7 +233,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 
 	public boolean removeWidget(int id){
 		if(widgetList.containsKey(id) && widgetList.remove(id)!=null){
-			ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(id), getTerminalUUID());
+			ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(id), getTerminalLocation());
 			return true;
 		}
 		return false;
@@ -229,16 +241,16 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 	
 	public Object[] addWidget(Widget w){
 		widgetList.put(currID,w);
-		ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(currID, w), getTerminalUUID());
+		ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(currID, w), getTerminalLocation());
 		int t = currID;
 		currID++;
-		return w.getLuaObject(new LuaReference(t, getTerminalUUID()));
+		return w.getLuaObject(new LuaReference(t, getTerminalLocation()));
 	}
 	
 	public void updateWidget(int id){
 		Widget w = widgetList.get(id);
 		if(w!=null)
-			ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(id, w), getTerminalUUID());
+			ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(id, w), getTerminalLocation());
 	}
 	
 	public Widget getWidget(int id){
@@ -310,7 +322,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 		}
 		
 		if(lastStatus != isPowered){
-			ServerSurface.instance.sendPowerInfo(getTerminalUUID(), isPowered?TerminalStatus.HavePower:TerminalStatus.NoPower);
+			ServerSurface.instance.sendPowerInfo(getTerminalLocation(), isPowered?TerminalStatus.HavePower:TerminalStatus.NoPower);
 		}
 		
 	}

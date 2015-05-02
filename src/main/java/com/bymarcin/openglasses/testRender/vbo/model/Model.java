@@ -1,6 +1,10 @@
-package com.bymarcin.openglasses.testRender;
+package com.bymarcin.openglasses.testRender.vbo.model;
 
 import java.util.ArrayList;
+
+import com.bymarcin.openglasses.testRender.Command;
+import com.bymarcin.openglasses.testRender.vbo.network.ISendable;
+import com.bymarcin.openglasses.utils.OGUtils;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -9,10 +13,14 @@ public class Model implements ISendable<Model> {
 	ArrayList<Command> commandList = new ArrayList<Command>();
 	Matrix modelTransformation = Matrix.generateIdentityMatrix(4);
 	boolean isVisible = true;
-	int id;
+	private String id;
 
-	public Model(int id) {
+	public Model(String id) {
 		this.id = id;
+	}
+	
+	public String getId() {
+		return id;
 	}
 
 	public void setColor(float r, float g, float b, float alpha) {
@@ -112,11 +120,21 @@ public class Model implements ISendable<Model> {
 
 		return shape.getBuffer();
 	}
+	
+	public boolean isValid(){
+		//TODO 
+		return true;
+	}
+	
+	public String lastError(){
+		//TODO 
+		return "";
+	}
 
 	@Override
 	public ByteBuf toPacket() {
 		ByteBuf b = Unpooled.buffer();
-		b.writeInt(id);
+		OGUtils.writeString(b, id);
 		b.writeBoolean(isVisible);
 		b.writeInt(commandList.size());
 		for (Command cmd : commandList) {
@@ -124,16 +142,16 @@ public class Model implements ISendable<Model> {
 		}
 		b.writeBytes(modelTransformation.toPacket());
 
-		return null;
+		return b;
 	}
 
 	@Override
 	public Model fromPacket(ByteBuf buf) {
-		id = buf.readInt();
+		id = OGUtils.readString(buf);
 		isVisible = buf.readBoolean();
 		int size = buf.readInt();
 		for (int i = 0; i < size; i++) {
-
+			commandList.add(new Command().fromPacket(buf));
 		}
 		modelTransformation = new Matrix(0, 0).fromPacket(buf);
 		return this;

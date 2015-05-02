@@ -49,5 +49,6 @@ public class LuaReference {
 		nbt.setTag("loc", loc);
 		nbt.setInteger("id", widgetRef);
 		return this;
+
 	}
 }

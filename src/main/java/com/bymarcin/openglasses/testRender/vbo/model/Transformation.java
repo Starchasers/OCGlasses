@@ -1,4 +1,5 @@
-package com.bymarcin.openglasses.testRender;
+package com.bymarcin.openglasses.testRender.vbo.model;
+
 
 public class Transformation {
 

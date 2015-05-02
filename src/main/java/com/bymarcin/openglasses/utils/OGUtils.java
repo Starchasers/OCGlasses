@@ -1,5 +1,7 @@
 package com.bymarcin.openglasses.utils;
 
+import io.netty.buffer.ByteBuf;
+
 
 public class OGUtils {
 	
@@ -17,5 +19,18 @@ public class OGUtils {
 	
 	public static boolean inRange(double x, double y, double z, double sx, double sy, double sz, double r){
 		return (((x-sx)*(x-sx)) + ((y-sy)*(y-sy)) + ((z-sz)*(z-sz))) <= (r*r);
+	}
+	
+	public static void writeString(ByteBuf buff, String value){
+		byte[] string = value.getBytes();
+		buff.writeInt(string.length);
+		buff.writeBytes(string);
+	}
+	
+	public static String readString(ByteBuf buff){
+		int l = buff.readInt();
+		byte[] string = new byte[l];
+		buff.readBytes(string);
+		return new String(string);
 	}
 }

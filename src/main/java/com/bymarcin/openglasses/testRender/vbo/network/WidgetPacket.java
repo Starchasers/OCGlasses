@@ -1,4 +1,4 @@
-package com.bymarcin.openglasses.testRender;
+package com.bymarcin.openglasses.testRender.vbo.network;
 
 import java.io.IOException;
 

@@ -24,7 +24,7 @@ public class ServerSurface {
 		EntityPlayerMP player = checkUUID(playerUUID);
 		if(player!=null){
 			OpenGlassesTerminalTileEntity terminal = UUID.getTerminal();
-			if(terminal != null && terminal.getTerminalUUID().equals(UUID)){
+			if(terminal != null && terminal.getTerminalLocation().equals(UUID)){
 				players.put(player, UUID);
 				sendSync(player, UUID, terminal);
 				sendPowerInfo(UUID, terminal.isPowered()?TerminalStatus.HavePower:TerminalStatus.NoPower);

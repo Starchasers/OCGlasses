@@ -26,7 +26,7 @@ public class OpenGlassesTerminalBlock extends BlockContainer {
 		setBlockName("openglassesterminal");
 		setHardness(3.0F);
 	}
-
+	
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new OpenGlassesTerminalTileEntity();
@@ -68,7 +68,7 @@ public class OpenGlassesTerminalBlock extends BlockContainer {
 		if (glassesStack != null) {
 			Item item = glassesStack.getItem();
 			if (item instanceof OpenGlassesItem) {
-				((OpenGlassesItem) item).bindToTerminal(glassesStack, te.getTerminalUUID());
+				((OpenGlassesItem) item).bindToTerminal(glassesStack, te.getTerminalLocation());
 				return true;
 			}
 		}
@@ -79,7 +79,7 @@ public class OpenGlassesTerminalBlock extends BlockContainer {
 	public void onBlockPreDestroy(World world, int x, int y, int z, int m) {
 		OpenGlassesTerminalTileEntity te = getTileEntity(world, x, y, z, OpenGlassesTerminalTileEntity.class);
 		if(te!=null)
-			ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(), te.getTerminalUUID());
+			ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(), te.getTerminalLocation());
 	}
 	
 }

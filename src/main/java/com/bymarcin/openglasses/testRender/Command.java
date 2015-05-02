@@ -1,5 +1,7 @@
 package com.bymarcin.openglasses.testRender;
 
+import com.bymarcin.openglasses.testRender.vbo.network.ISendable;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
@@ -36,6 +38,15 @@ public class Command implements ISendable<Command> {
 
 	public int getCommand() {
 		return cmd;
+	}
+	
+	@Override
+	public String toString() {
+		String out =  "cmd:"+cmd+"|";
+		for(float f: args){
+			out += f;
+		}
+		return out;
 	}
 
 	public void writeToNBT(NBTTagCompound tag) {

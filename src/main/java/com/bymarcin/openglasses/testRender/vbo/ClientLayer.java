@@ -1,6 +1,9 @@
-package com.bymarcin.openglasses.testRender;
+package com.bymarcin.openglasses.testRender.vbo;
 
 import java.util.HashMap;
+
+import com.bymarcin.openglasses.testRender.vbo.model.Model;
+import com.bymarcin.openglasses.testRender.vbo.network.WidgetPacket;
 
 import org.lwjgl.opengl.GL11;
 
@@ -15,7 +18,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 public class ClientLayer {
 	private static ClientLayer instance = new ClientLayer();
 	VBOManager vbo = new VBOManager();
-	HashMap<Integer, Model> models = new HashMap<Integer, Model>();
+	HashMap<String, Model> models = new HashMap<String, Model>();
 
 	private ClientLayer() {
 
@@ -26,7 +29,7 @@ public class ClientLayer {
 	}
 
 	public void addModel(Model m) {
-		models.put(m.id, m);
+		models.put(m.getId(), m);
 		vbo.addModel(m);
 	}
 

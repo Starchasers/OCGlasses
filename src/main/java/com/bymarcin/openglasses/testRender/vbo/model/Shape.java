@@ -1,4 +1,4 @@
-package com.bymarcin.openglasses.testRender;
+package com.bymarcin.openglasses.testRender.vbo.model;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

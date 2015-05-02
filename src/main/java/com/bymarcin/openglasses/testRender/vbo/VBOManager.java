@@ -1,4 +1,4 @@
-package com.bymarcin.openglasses.testRender;
+package com.bymarcin.openglasses.testRender.vbo;
 
 import static org.lwjgl.opengl.ARBBufferObject.glBindBufferARB;
 import static org.lwjgl.opengl.ARBBufferObject.glBufferDataARB;
@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import com.bymarcin.openglasses.testRender.vbo.model.Model;
 import com.google.common.primitives.Floats;
 
 import org.lwjgl.BufferUtils;

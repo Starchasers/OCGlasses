@@ -77,7 +77,7 @@ public class OpenGlasses
 		ItemStack server = Items.get("geolyzer").createItemStack(1);
 		ItemStack screen = Items.get("screen3").createItemStack(1);
 		ItemStack cpu = Items.get("cpu3").createItemStack(1);
-		
+		new ItemStack(net.minecraft.init.Items.dye, 1, 9);
 		GameRegistry.addRecipe(new ItemStack(openGlasses),"SCS"," W ","   ", 'S', screen, 'W', wlanCard, 'C', graphics);
 		GameRegistry.addRecipe(new ItemStack(openTerminal),"R  ","S  ","M  ", 'S', server, 'R', ram, 'M', cpu);
 		

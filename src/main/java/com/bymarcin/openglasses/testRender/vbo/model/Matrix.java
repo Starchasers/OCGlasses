@@ -1,4 +1,6 @@
-package com.bymarcin.openglasses.testRender;
+package com.bymarcin.openglasses.testRender.vbo.model;
+
+import com.bymarcin.openglasses.testRender.vbo.network.ISendable;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
