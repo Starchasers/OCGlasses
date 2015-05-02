@@ -12,9 +12,11 @@ import cpw.mods.fml.relauncher.Side;
 public class NetworkRegistry {
 	public static SimpleNetworkWrapper packetHandler;
 	private static Set<RPacket> packetsID = new HashSet<RPacket>();
-
+	public static PacketManager pm;
 	public static void initialize() {
 		packetHandler = new SimpleNetworkWrapper(OpenGlasses.MODID);
+		pm = new PacketManager();
+		pm.start();
 	}
 
 	public static <T extends Packet<T, U>, U extends IMessage> void registerPacket(int id, Class<T> clazz, Side handleOn) {
