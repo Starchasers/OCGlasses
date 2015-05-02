@@ -1,6 +1,10 @@
 package com.bymarcin.openglasses.utils;
 
+import com.bymarcin.openglasses.OpenGlasses;
+
 import io.netty.buffer.ByteBuf;
+
+import cpw.mods.fml.common.registry.LanguageRegistry;
 
 
 public class OGUtils {
@@ -32,5 +36,9 @@ public class OGUtils {
 		byte[] string = new byte[l];
 		buff.readBytes(string);
 		return new String(string);
+	}
+	
+	public static String getLocalization(String name){
+		return LanguageRegistry.instance().getStringLocalization(OpenGlasses.MODID + name);
 	}
 }
