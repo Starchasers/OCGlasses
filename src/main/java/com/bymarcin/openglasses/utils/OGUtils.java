@@ -4,6 +4,11 @@ import com.bymarcin.openglasses.OpenGlasses;
 
 import io.netty.buffer.ByteBuf;
 
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 
@@ -40,5 +45,28 @@ public class OGUtils {
 	
 	public static String getLocalization(String name){
 		return LanguageRegistry.instance().getStringLocalization(OpenGlasses.MODID + name);
+	}
+	
+	
+	public static EntityPlayerMP getPlayerMP(String name){
+		for(Object p : MinecraftServer.getServer().getConfigurationManager().playerEntityList){
+			if(((EntityPlayerMP)p).getGameProfile().getName().equals(name))
+				return (EntityPlayerMP) p;
+		}
+		return null;	
+	}
+	
+	public static TileEntity getTileEntity(int dimensionId, int x, int y, int z) {
+		World world = OpenGlasses.proxy.getWorld(dimensionId);
+		if (world == null)
+			return null;
+		return world.getTileEntity(x, y, z);
+	}
+
+	public static TileEntity getTileEntityServer(int dimensionId, int x, int y, int z) {
+		World world = MinecraftServer.getServer().worldServerForDimension(dimensionId);
+		if (world == null)
+			return null;
+		return world.getTileEntity(x, y, z);
 	}
 }

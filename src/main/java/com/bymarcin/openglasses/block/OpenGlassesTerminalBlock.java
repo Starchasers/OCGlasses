@@ -13,8 +13,6 @@ import net.minecraft.world.World;
 
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
-import com.bymarcin.openglasses.network.packet.WidgetUpdatePacket;
-import com.bymarcin.openglasses.surface.ServerSurface;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 
 public class OpenGlassesTerminalBlock extends BlockContainer {
@@ -75,11 +73,11 @@ public class OpenGlassesTerminalBlock extends BlockContainer {
 		return false;
 	}
 
-	@Override
-	public void onBlockPreDestroy(World world, int x, int y, int z, int m) {
-		OpenGlassesTerminalTileEntity te = getTileEntity(world, x, y, z, OpenGlassesTerminalTileEntity.class);
-		if(te!=null)
-			ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(), te.getTerminalLocation());
-	}
+//	@Override
+//	public void onBlockPreDestroy(World world, int x, int y, int z, int m) {
+//		OpenGlassesTerminalTileEntity te = getTileEntity(world, x, y, z, OpenGlassesTerminalTileEntity.class);
+//		if(te!=null)
+//			ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(), te.getTerminalLocation());
+//	}
 	
 }

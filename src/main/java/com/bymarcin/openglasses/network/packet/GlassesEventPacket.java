@@ -8,8 +8,9 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.network.Packet;
-import com.bymarcin.openglasses.surface.ServerSurface;
 import com.bymarcin.openglasses.utils.Location;
+import com.bymarcin.openglasses.utils.OGUtils;
+import com.bymarcin.openglasses.vbo.ServerLayer;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 
@@ -21,13 +22,13 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	}
 	
 	EventType eventType;
-	Location UUID;
+	Location location;
 	String player;
 	
 	public GlassesEventPacket(EventType eventType, Location UUID, EntityPlayer player) {
 		this.player = player.getGameProfile().getName();
 		this.eventType = eventType;
-		this.UUID = UUID;
+		this.location = UUID;
 	}
 	
 	public GlassesEventPacket() {
@@ -38,7 +39,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		this.player = readString();
 		this.eventType = EventType.values()[readInt()];
 		if(EventType.UNEQUIPED_GLASSES == eventType) return;
-		this.UUID = new Location(readInt(), readInt(), readInt(), readInt(), readLong());
+		this.location = new Location(readInt(), readInt(), readInt(), readInt(), readLong());
 	}
 
 	@Override
@@ -46,11 +47,11 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		writeString(player);
 	    writeInt(eventType.ordinal());
 	    if(EventType.UNEQUIPED_GLASSES == eventType) return;
-	    writeInt(UUID.x);	
-	    writeInt(UUID.y);
-	    writeInt(UUID.z);
-	    writeInt(UUID.dimID);
-	    writeLong(UUID.uniqueKey);
+	    writeInt(location.x);	
+	    writeInt(location.y);
+	    writeInt(location.z);
+	    writeInt(location.dimID);
+	    writeLong(location.uniqueKey);
 	}
 
 	@Override
@@ -62,9 +63,9 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	protected IMessage executeOnServer() {
 		OpenGlasses.logger.log(Level.INFO,"PACKET:" + eventType +":"+ player);
 		switch(eventType){
-		case EQUIPED_GLASSES: ServerSurface.instance.subscribePlayer(player, UUID);
+		case EQUIPED_GLASSES: ServerLayer.instance().subscribePlayer(location, OGUtils.getPlayerMP(player));
 			break;
-		case UNEQUIPED_GLASSES: ServerSurface.instance.unsubscribePlayer(player);
+		case UNEQUIPED_GLASSES: ServerLayer.instance().unsubscribePlayer(OGUtils.getPlayerMP(player));
 			break;
 		default:
 			break;

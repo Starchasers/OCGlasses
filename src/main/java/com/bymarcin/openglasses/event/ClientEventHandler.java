@@ -4,13 +4,15 @@ import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket.EventType;
-import com.bymarcin.openglasses.surface.ClientSurface;
 import com.bymarcin.openglasses.utils.Location;
+import com.bymarcin.openglasses.vbo.ClientLayer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
@@ -32,12 +34,12 @@ public class ClientEventHandler {
 		
 		if(glasses instanceof OpenGlassesItem){
 			Location uuid  = OpenGlassesItem.getUUID(glassesStack);
-			if(uuid!=null && ClientSurface.instances.haveGlasses==false){
+			if(uuid!=null && ClientLayer.getInstance().haveGlasses==false){
 				equiped(e, uuid);
-			}else if(ClientSurface.instances.haveGlasses == true && (uuid ==null || !uuid.equals(ClientSurface.instances.lastBind) ) ) {
+			}else if(ClientLayer.getInstance().haveGlasses == true && (uuid ==null || !uuid.equals(ClientLayer.getInstance().lastBind) ) ) {
 				unEquiped(e);
 			}
-		}else if(ClientSurface.instances.haveGlasses == true){
+		}else if(ClientLayer.getInstance().haveGlasses == true){
 			unEquiped(e);
 		}
 	}
@@ -45,20 +47,20 @@ public class ClientEventHandler {
 	@SubscribeEvent
 	public void onJoin(EntityJoinWorldEvent e){
 		if ((e.entity == Minecraft.getMinecraft().thePlayer) && (e.world.isRemote)){
-			ClientSurface.instances.removeAllWidgets();
-			ClientSurface.instances.haveGlasses = false;
+			ClientLayer.getInstance().clear();
+			ClientLayer.getInstance().haveGlasses = false;
 		}
 	}
 	
 	private void unEquiped(PlayerTickEvent e){
-		ClientSurface.instances.haveGlasses = false;
-		ClientSurface.instances.removeAllWidgets();
+		ClientLayer.getInstance().haveGlasses = false;
+		ClientLayer.getInstance().clear();
 		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.UNEQUIPED_GLASSES,null, e.player));
 	}
 	
 	private void equiped(PlayerTickEvent e, Location uuid){
-		ClientSurface.instances.lastBind = uuid;
+		ClientLayer.getInstance().lastBind = uuid;
 		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.EQUIPED_GLASSES, uuid, e.player));
-		ClientSurface.instances.haveGlasses = true;
+		ClientLayer.getInstance().haveGlasses = true;
 	}
 }

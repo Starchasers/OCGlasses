@@ -1,8 +1,10 @@
 package com.bymarcin.openglasses;
 
 import li.cil.oc.api.Items;
+
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.common.config.Configuration;
 
 import org.apache.logging.log4j.LogManager;
@@ -11,9 +13,9 @@ import org.apache.logging.log4j.Logger;
 import com.bymarcin.openglasses.block.OpenGlassesTerminalBlock;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
+import com.bymarcin.openglasses.network.WidgetPacket;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
-import com.bymarcin.openglasses.network.packet.WidgetUpdatePacket;
 import com.bymarcin.openglasses.proxy.CommonProxy;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 
@@ -59,7 +61,7 @@ public class OpenGlasses
 	public void init(FMLInitializationEvent event)
 	{
 		NetworkRegistry.registerPacket(0, GlassesEventPacket.class, Side.SERVER);
-		NetworkRegistry.registerPacket(1, WidgetUpdatePacket.class, Side.CLIENT);
+		NetworkRegistry.registerPacket(1, WidgetPacket.class, Side.CLIENT);
 		NetworkRegistry.registerPacket(2, TerminalStatusPacket.class, Side.CLIENT);
 		
 		GameRegistry.registerBlock(openTerminal = new OpenGlassesTerminalBlock(), "openglassesterminal");

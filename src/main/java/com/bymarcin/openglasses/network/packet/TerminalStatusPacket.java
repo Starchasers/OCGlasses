@@ -3,7 +3,7 @@ package com.bymarcin.openglasses.network.packet;
 import java.io.IOException;
 
 import com.bymarcin.openglasses.network.Packet;
-import com.bymarcin.openglasses.surface.ClientSurface;
+import com.bymarcin.openglasses.vbo.ClientLayer;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.relauncher.Side;
@@ -31,7 +31,7 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 	@SideOnly(Side.CLIENT)
 	@Override
 	protected IMessage executeOnClient() {
-		ClientSurface.instances.setPowered(status==TerminalStatus.HavePower?true:false);
+		ClientLayer.getInstance().setPowered(status==TerminalStatus.HavePower?true:false);
 		return null;
 	}
 

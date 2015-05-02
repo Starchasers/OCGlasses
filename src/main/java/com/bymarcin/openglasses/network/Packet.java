@@ -8,6 +8,7 @@ import java.lang.reflect.Type;
 
 import net.minecraft.tileentity.TileEntity;
 
+import com.bymarcin.openglasses.utils.OGUtils;
 import com.google.gson.Gson;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
@@ -40,7 +41,7 @@ public abstract class Packet<T extends Packet<T, RES>, RES extends IMessage> imp
 		int x = readInt();
 		int y = readInt();
 		int z = readInt();
-		return Utils.getTileEntity(dimensionId, x, y, z);
+		return OGUtils.getTileEntity(dimensionId, x, y, z);
 	}
 
 	public TileEntity readServerTileEntity() throws IOException {
@@ -48,7 +49,7 @@ public abstract class Packet<T extends Packet<T, RES>, RES extends IMessage> imp
 		int x = readInt();
 		int y = readInt();
 		int z = readInt();
-		return Utils.getTileEntityServer(dimensionId, x, y, z);
+		return OGUtils.getTileEntityServer(dimensionId, x, y, z);
 	}
 
 	public byte[] readByteArray() throws IOException {

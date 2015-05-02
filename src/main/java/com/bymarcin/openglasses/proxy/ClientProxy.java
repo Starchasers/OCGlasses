@@ -1,16 +1,11 @@
 package com.bymarcin.openglasses.proxy;
 
+import com.bymarcin.openglasses.vbo.ClientLayer;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.MinecraftForge;
-
-import com.bymarcin.openglasses.event.ClientEventHandler;
-import com.bymarcin.openglasses.surface.ClientSurface;
-import com.bymarcin.openglasses.testRender.vbo.ClientLayer;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-
 public class ClientProxy extends CommonProxy {
 
 	@Override
