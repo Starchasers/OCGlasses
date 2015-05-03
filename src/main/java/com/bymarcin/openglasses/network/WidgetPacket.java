@@ -5,6 +5,8 @@ import java.io.IOException;
 import com.bymarcin.openglasses.vbo.ClientLayer;
 import com.bymarcin.openglasses.vbo.model.Model;
 
+import io.netty.buffer.Unpooled;
+
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 
 public class WidgetPacket extends Packet<WidgetPacket, IMessage> {
@@ -54,7 +56,7 @@ public class WidgetPacket extends Packet<WidgetPacket, IMessage> {
 		switch (type) {
 		case ADD:
 			widgetId = readString();
-			data = new Model("").fromPacket(read);
+			data = new Model("").fromPacket(Unpooled.wrappedBuffer(readByteArray()));
 			break;
 		case RESET:
 		case REMOVE:
@@ -86,7 +88,8 @@ public class WidgetPacket extends Packet<WidgetPacket, IMessage> {
 		switch (type) {
 		case ADD:
 			writeString(widgetId);
-			writeByteArray(data.toPacket().array());
+			byte[] bytes = data.toPacket().array();
+			writeByteArray(bytes);
 			break;
 		case RESET:
 		case REMOVE:

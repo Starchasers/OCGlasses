@@ -26,17 +26,18 @@ public class ServerLayer {
 	}
 
 	public boolean subscribePlayer(Location loc, EntityPlayerMP player) {
+		System.out.println("SUBSCRIBEEVENT");
 		Location location = players.get(player);
 		if (location == null) {
-			if (players.put(player, location) != null) {
+				players.put(player, loc);
 				HashMap<String, Model> models = widgetList.get(loc);
 				if (models != null) {
 					for (Model m : models.values()) {
 						NetworkRegistry.pm.sendTo(new WidgetPacket(m), player);
 					}
 				}
+				System.out.println("SUBSCRIBE");
 				return true;
-			}
 		}
 		return false;
 	}
@@ -46,6 +47,7 @@ public class ServerLayer {
 		if (location != null) {
 			if(players.remove(player) != null){
 				NetworkRegistry.pm.sendTo(new WidgetPacket(WidgetPacket.REMOVEALL), player);
+				System.out.println("UNSUBSCRIBE");
 				return true;
 			}
 		}
@@ -76,10 +78,11 @@ public class ServerLayer {
 		HashMap<String, Model> buffor = widgetList.get(loc);
 		if (buffor == null)
 			return false;
-		if (!widgetList.containsValue(m.getId())) {
+		if (!buffor.containsKey(m.getId())) {//TODO notCOntains
 			buffor.put(m.getId(), m);
 			for (Entry<EntityPlayerMP, Location> e : players.entrySet()) {
 				if(e.getValue().equals(loc)){
+					System.out.println("SENDING" + e.getKey().getGameProfile().getName());
 					NetworkRegistry.pm.sendTo(new WidgetPacket(m),e.getKey());
 				}
 			}

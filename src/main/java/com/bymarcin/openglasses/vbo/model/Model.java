@@ -146,7 +146,9 @@ public class Model implements ISendable<Model> {
 		b.writeBoolean(isVisible);
 		b.writeInt(commandList.size());
 		for (Command cmd : commandList) {
-			b.writeBytes(cmd.toPacket());
+			byte[] arr = cmd.toPacket().array();
+			b.writeInt(arr.length);
+			b.writeBytes(arr);
 		}
 		b.writeBytes(modelTransformation.toPacket());
 
@@ -159,7 +161,11 @@ public class Model implements ISendable<Model> {
 		isVisible = buf.readBoolean();
 		int size = buf.readInt();
 		for (int i = 0; i < size; i++) {
-			commandList.add(new Command().fromPacket(buf));
+			int sizeCMD = buf.readInt();
+			System.out.println("SIZE:" + sizeCMD + ":" + id);
+			byte[] b = new byte[sizeCMD];
+			buf.readBytes(b);
+			commandList.add(new Command().fromPacket(Unpooled.wrappedBuffer(b)));
 		}
 		modelTransformation = new Matrix(0, 0).fromPacket(buf);
 		return this;

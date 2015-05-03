@@ -30,7 +30,7 @@ public class PacketManager extends Thread{
 	public void run() {
 		while(!stop){
 			try {
-				packetQueue.wait();
+				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

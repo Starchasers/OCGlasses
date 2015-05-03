@@ -1,19 +1,21 @@
 package com.bymarcin.openglasses.proxy;
 
+import com.bymarcin.openglasses.event.ClientEventHandler;
 import com.bymarcin.openglasses.vbo.ClientLayer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.common.FMLCommonHandler;
 
 import net.minecraftforge.common.MinecraftForge;
 public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void init() {
-		//ClientEventHandler eh = new ClientEventHandler();
-		//FMLCommonHandler.instance().bus().register(eh);
-	 	//MinecraftForge.EVENT_BUS.register(eh);
-		//MinecraftForge.EVENT_BUS.register(ClientSurface.instances);
+		ClientEventHandler eh = new ClientEventHandler();
+		FMLCommonHandler.instance().bus().register(eh);
+	 	MinecraftForge.EVENT_BUS.register(eh);
 		MinecraftForge.EVENT_BUS.register(ClientLayer.getInstance());
 	}
 

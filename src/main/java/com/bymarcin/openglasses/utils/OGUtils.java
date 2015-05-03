@@ -3,12 +3,14 @@ package com.bymarcin.openglasses.utils;
 import com.bymarcin.openglasses.OpenGlasses;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 
@@ -31,16 +33,11 @@ public class OGUtils {
 	}
 	
 	public static void writeString(ByteBuf buff, String value){
-		byte[] string = value.getBytes();
-		buff.writeInt(string.length);
-		buff.writeBytes(string);
+		ByteBufUtils.writeUTF8String(buff, value);
 	}
 	
 	public static String readString(ByteBuf buff){
-		int l = buff.readInt();
-		byte[] string = new byte[l];
-		buff.readBytes(string);
-		return new String(string);
+		return ByteBufUtils.readUTF8String(buff);
 	}
 	
 	public static String getLocalization(String name){

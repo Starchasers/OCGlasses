@@ -58,7 +58,7 @@ public abstract class Packet<T extends Packet<T, RES>, RES extends IMessage> imp
 
 	public byte[] readByteArrayData(int size) throws IOException {
 		byte[] data = new byte[size];
-		read.readBytes(data, 0, size);
+		read.readBytes(data);
 		return data;
 	}
 

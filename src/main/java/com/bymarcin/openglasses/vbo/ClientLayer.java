@@ -40,6 +40,7 @@ public class ClientLayer {
 	public void addModel(Model m) {
 		models.put(m.getId(), m);
 		vbo.addModel(m);
+		System.out.println("ADDING");
 	}
 
 	public void updateModel(int action, String id, float... args) {
