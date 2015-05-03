@@ -121,7 +121,7 @@ public abstract class Packet<T extends Packet<T, RES>, RES extends IMessage> imp
 	}
 
 	// Custom write instructions
-
+	
 	public Packet<T, RES> writeTileLocation(TileEntity te) throws IOException, RuntimeException {
 		if (te.getWorldObj() == null)
 			throw new RuntimeException("World does not exist!");
