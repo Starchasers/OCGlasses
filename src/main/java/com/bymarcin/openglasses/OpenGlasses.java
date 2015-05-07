@@ -47,12 +47,17 @@ public class OpenGlasses
 	public static OpenGlassesItem openGlasses;
 	public static OpenGlassesTerminalBlock openTerminal;
 	
+	public static int energyBuffer = 100;
+	public static double energyMultiplier  = 1;
+	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
 		config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
 		NetworkRegistry.initialize();
+		energyBuffer = config.get("Energy", "energyBuffer", 100).getInt(100);
+		energyMultiplier = config.get("Energy", "energyMultiplier", 1.0, "PowerDrain= (NumberOfWidgets / 10) * energyMultiplier").getDouble(1.0);	
 	}
 
 	@EventHandler

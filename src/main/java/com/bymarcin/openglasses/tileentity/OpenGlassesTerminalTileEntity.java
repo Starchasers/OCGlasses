@@ -11,8 +11,10 @@ import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.Connector;
 import li.cil.oc.api.network.Visibility;
 import li.cil.oc.api.prefab.TileEntityEnvironment;
+
 import net.minecraft.nbt.NBTTagCompound;
 
+import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.lua.LuaReference;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket.TerminalStatus;
 import com.bymarcin.openglasses.network.packet.WidgetUpdatePacket;
@@ -43,7 +45,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 	boolean isPowered;
 	
 	public OpenGlassesTerminalTileEntity() {
-		node = API.network.newNode(this, Visibility.Network).withComponent(getComponentName()).withConnector(100).create();
+		node = API.network.newNode(this, Visibility.Network).withComponent(getComponentName()).withConnector(OpenGlasses.energyBuffer).create();
 	}
 	
 	public String getComponentName() {
@@ -303,7 +305,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 		super.updateEntity();
 		if(worldObj.isRemote) return;
 		boolean lastStatus = isPowered;
-		if((node()!=null) && ((Connector)node()).tryChangeBuffer(-widgetList.size()/10f) ){
+		if((node()!=null) && ((Connector)node()).tryChangeBuffer(-widgetList.size()/10f*OpenGlasses.energyMultiplier) ){
 			isPowered = true;
 		}else{
 			isPowered = false;
