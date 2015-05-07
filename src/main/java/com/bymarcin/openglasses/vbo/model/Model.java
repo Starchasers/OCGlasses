@@ -3,6 +3,7 @@ package com.bymarcin.openglasses.vbo.model;
 import java.util.ArrayList;
 
 import com.bymarcin.openglasses.network.ISendable;
+import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.utils.OGUtils;
 
 import io.netty.buffer.ByteBuf;
@@ -10,7 +11,7 @@ import io.netty.buffer.Unpooled;
 
 public class Model implements ISendable<Model> {
 	ArrayList<Command> commandList = new ArrayList<Command>();
-	Matrix modelTransformation = Matrix.generateIdentityMatrix(4);
+	public Matrix modelTransformation = Matrix.generateIdentityMatrix(4);//TODO remove public
 	boolean isVisible = true;
 	private String id;
 	private boolean isFinalize = false;

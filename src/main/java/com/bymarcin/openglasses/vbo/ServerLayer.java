@@ -2,6 +2,7 @@ package com.bymarcin.openglasses.vbo;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map.Entry;
 
 import com.bymarcin.openglasses.network.NetworkRegistry;
@@ -78,7 +79,7 @@ public class ServerLayer {
 		HashMap<String, Model> buffor = widgetList.get(loc);
 		if (buffor == null)
 			return false;
-		if (!buffor.containsKey(m.getId())) {//TODO notCOntains
+		if (!buffor.containsKey(m.getId())) {
 			buffor.put(m.getId(), m);
 			for (Entry<EntityPlayerMP, Location> e : players.entrySet()) {
 				if(e.getValue().equals(loc)){
@@ -129,6 +130,57 @@ public class ServerLayer {
 		} else {
 			return 0;
 		}
+	}
+	
+	public void sendModelUpdate(int action, String id, float... args){
+				WidgetPacket p = null;
+				switch (action) {
+				case WidgetPacket.VISIBLE:
+					p = new WidgetPacket(WidgetPacket.VISIBLE, id);
+					break;
+				case WidgetPacket.INVISIBLE:
+					p = new WidgetPacket(WidgetPacket.INVISIBLE, id);
+					break;
+				case WidgetPacket.RESET:		
+					p = new WidgetPacket(WidgetPacket.RESET, id);
+					break;
+				case WidgetPacket.ROTATE:
+					p = new WidgetPacket(id, WidgetPacket.ROTATE, args);
+					break;
+				case WidgetPacket.SCALE:
+					p = new WidgetPacket(id, WidgetPacket.SCALE, args);
+					break;
+				case WidgetPacket.TRANSLATE:
+					p = new WidgetPacket(id, WidgetPacket.TRANSLATE, args);
+					break;
+				}
+				if(p == null) return;
+				Location loc = findLocation(id);
+				if(loc == null) return;
+				List<EntityPlayerMP> recivers = findPlayers(loc);
+				for(EntityPlayerMP player : recivers){
+					NetworkRegistry.pm.sendTo(p, player);	
+				}
+		}
+	
+	private List<EntityPlayerMP> findPlayers(Location loc){
+		List<EntityPlayerMP> playersList = new LinkedList<EntityPlayerMP>();
+		for(Entry<EntityPlayerMP, Location> entry : players.entrySet()){
+			if(entry.getValue().equals(loc)){
+				playersList.add(entry.getKey());
+			}
+		}
+		return playersList;	 
+	}
+	
+	private Location findLocation(String id){
+		for(Entry<Location, HashMap<String, Model>> e: widgetList.entrySet()){
+			HashMap<String, Model> modelList = e.getValue();
+			if(modelList!=null && modelList.containsKey(id)){
+				return e.getKey();
+			}
+		}
+		return null;
 	}
 
 }

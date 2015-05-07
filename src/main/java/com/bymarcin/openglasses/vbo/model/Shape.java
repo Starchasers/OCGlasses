@@ -57,17 +57,17 @@ public class Shape {
 	}
 
 	public void rotate(float angle, float x, float y, float z) {
-		if (x != 0) {
+		if (((int)x) != 0) {
 			Matrix rotate = Transformation.getRoatateXMatrix(angle);
 			transformation.add(Matrix.multiply(transformation.poll(), rotate));
 		}
 
-		if (y != 0) {
+		if (((int)y) != 0) {
 			Matrix rotate = Transformation.getRoatateYMatrix(angle);
 			transformation.add(Matrix.multiply(transformation.poll(), rotate));
 		}
 
-		if (z != 0) {
+		if (((int)z) != 0) {
 			Matrix rotate = Transformation.getRoatateZMatrix(angle);
 			transformation.add(Matrix.multiply(transformation.poll(), rotate));
 		}

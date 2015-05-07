@@ -24,7 +24,6 @@ public class WidgetPacket extends Packet<WidgetPacket, IMessage> {
 	private String widgetId;
 	private Model data;
 	private float[] args;
-	private boolean visible;
 
 	public WidgetPacket() {
 
@@ -65,7 +64,6 @@ public class WidgetPacket extends Packet<WidgetPacket, IMessage> {
 		case VISIBLE:
 		case INVISIBLE:
 			widgetId = readString();
-			visible = readBoolean();
 			break;
 		case ROTATE:
 		case SCALE:
@@ -98,7 +96,6 @@ public class WidgetPacket extends Packet<WidgetPacket, IMessage> {
 		case VISIBLE:
 		case INVISIBLE:
 			writeString(widgetId);
-			writeBoolean(visible);
 			break;
 		case ROTATE:
 		case SCALE:

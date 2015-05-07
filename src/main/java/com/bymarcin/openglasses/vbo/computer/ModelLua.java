@@ -1,5 +1,7 @@
 package com.bymarcin.openglasses.vbo.computer;
 
+import com.bymarcin.openglasses.network.WidgetPacket;
+import com.bymarcin.openglasses.vbo.ServerLayer;
 import com.bymarcin.openglasses.vbo.model.Model;
 
 import li.cil.oc.api.machine.Arguments;
@@ -21,6 +23,7 @@ public class ModelLua extends BasicModelObject{
 	public Object[] resetModelTransformation(Context context, Arguments arguments) {
 		if(arguments.count() == 0){
 			model.resetModelTransformation();
+			ServerLayer.instance().sendModelUpdate(WidgetPacket.RESET, model.getId());
 		}
 		return null;
 	}
@@ -33,6 +36,7 @@ public class ModelLua extends BasicModelObject{
 			int y = arguments.checkInteger(2);
 			int z = arguments.checkInteger(3);
 			model.rotateModel(angle, x, y, z);
+			ServerLayer.instance().sendModelUpdate(WidgetPacket.ROTATE, model.getId(), angle, x, y, z);
 		}
 		return null;
 	}
@@ -44,6 +48,7 @@ public class ModelLua extends BasicModelObject{
 			float y = (float) arguments.checkDouble(1);
 			float z = (float) arguments.checkDouble(2);
 			model.translateModel(x, y, z);
+			ServerLayer.instance().sendModelUpdate(WidgetPacket.TRANSLATE, model.getId(), x, y, z);
 		}
 		return null;
 	}
@@ -55,6 +60,7 @@ public class ModelLua extends BasicModelObject{
 			float y = (float) arguments.checkDouble(1);
 			float z = (float) arguments.checkDouble(2);
 			model.scaleModel(x, y, z);
+			ServerLayer.instance().sendModelUpdate(WidgetPacket.SCALE, model.getId(), x, y, z);
 		}
 		return null;
 	}

@@ -44,6 +44,7 @@ public class ClientLayer {
 	}
 
 	public void updateModel(int action, String id, float... args) {
+		System.out.println("UPDATING MODEL" + action);
 		Model m = models.get(id);
 		if (m != null) {
 			switch (action) {
