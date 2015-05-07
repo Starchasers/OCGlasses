@@ -136,8 +136,10 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 		NBTTagCompound tagLoc = new NBTTagCompound();
-		loc.writeToNBT(tagLoc);
-		nbt.setTag("uniqueKey", tagLoc);
+		if (loc != null) {
+			loc.writeToNBT(tagLoc);
+			nbt.setTag("uniqueKey", tagLoc);
+		}
 	}
 	
 	@Override
