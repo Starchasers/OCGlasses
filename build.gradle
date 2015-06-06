@@ -32,9 +32,9 @@ minecraft {
 	
 	version = "1.7.10-10.13.2.1236"
 	if (file('../run').exists()){
-		assetDir = "../run/assets"
+		runDir = "../run/"
 	}else{
-		assetDir = "assets"
+		runDir = "./"
 	}
 }
 
