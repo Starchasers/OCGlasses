@@ -42,7 +42,8 @@ repositories {
     maven { url = "http://maven.cil.li/" }
 }
 dependencies {
-    compile "li.cil.oc:OpenComputers:MC1.7.10-1.4.+:api"
+    compile "li.cil.oc:OpenComputers:MC1.7.10-1.5.+:api"
+    runtime "li.cil.oc:OpenComputers:MC1.7.10-1.5.+:dev"
 }
 
 processResources
