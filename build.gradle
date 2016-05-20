@@ -11,14 +11,14 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
     }
 }
 
-apply plugin: 'forge'
+apply plugin: 'net.minecraftforge.gradle.forge'
 
 
-def simpleVersion = "1.0"
+def simpleVersion = "1.1"
 if (System.getenv("BUILD_NUMBER") != null)
 	simpleVersion += ".${System.getenv("BUILD_NUMBER")}"
 
@@ -29,21 +29,24 @@ version = simpleVersion
 minecraft {
 	 replaceIn "com/bymarcin/openglasses/OpenGlasses.java"
 		replace "@VERSION@", simpleVersion
-	
-	version = "1.7.10-10.13.2.1236"
-	if (file('../run').exists()){
-		runDir = "../run/"
-	}else{
-		runDir = "./"
-	}
+	runDir = "run"
+	version = "1.9-12.16.1.1907"
+	mappings = "snapshot_20160506"
+}
+
+runClient {
+    jvmArgs '-Dfml.coreMods.load=li.cil.oc.common.launch.TransformerLoader'
+}
+
+runServer {
+    jvmArgs '-Dfml.coreMods.load=li.cil.oc.common.launch.TransformerLoader'
 }
 
 repositories {
     maven { url = "http://maven.cil.li/" }
 }
 dependencies {
-    compile "li.cil.oc:OpenComputers:MC1.7.10-1.5.+:api"
-    runtime "li.cil.oc:OpenComputers:MC1.7.10-1.5.+:dev"
+    provided  "li.cil.oc:OpenComputers:MC1.9-1.6.0.11-dev"
 }
 
 processResources
