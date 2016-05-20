@@ -4,16 +4,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import li.cil.oc.api.API;
-import li.cil.oc.api.machine.Arguments;
-import li.cil.oc.api.machine.Callback;
-import li.cil.oc.api.machine.Context;
-import li.cil.oc.api.network.Connector;
-import li.cil.oc.api.network.Visibility;
-import li.cil.oc.api.prefab.TileEntityEnvironment;
-
-import net.minecraft.nbt.NBTTagCompound;
-
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.lua.LuaReference;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket.TerminalStatus;
@@ -34,10 +24,21 @@ import com.bymarcin.openglasses.surface.widgets.component.world.Quad3D;
 import com.bymarcin.openglasses.surface.widgets.component.world.Triangle3D;
 import com.bymarcin.openglasses.utils.Location;
 
-import cpw.mods.fml.common.Optional;
+import li.cil.oc.api.API;
+import li.cil.oc.api.Network;
+import li.cil.oc.api.machine.Arguments;
+import li.cil.oc.api.machine.Callback;
+import li.cil.oc.api.machine.Context;
+import li.cil.oc.api.network.Connector;
+import li.cil.oc.api.network.Visibility;
+import li.cil.oc.api.prefab.TileEntityEnvironment;
+
+import net.minecraft.nbt.NBTTagCompound;
+
+import net.minecraftforge.fml.common.Optional;
 
 @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers")
-public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
+public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
 	
 	public HashMap<Integer,Widget> widgetList = new HashMap<Integer,Widget>();
 	int currID=0;
@@ -56,7 +57,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 		if(loc!=null){
 			return loc;
 		}
-		return loc = new Location(xCoord, yCoord, zCoord, worldObj.provider.dimensionId, UUID.randomUUID().getMostSignificantBits());
+		return loc = new Location(getPos(), worldObj.provider.getDimension(), UUID.randomUUID().getMostSignificantBits());
 	}
 	
 	public void onGlassesPutOn(String user){
@@ -302,9 +303,16 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 		}
 	}
 	
+	
+	
+	
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+        if (!addedToNetwork) {
+            addedToNetwork = true;
+            Network.joinOrCreateNetwork(this);
+        }
+        
 		if(worldObj.isRemote) return;
 		boolean lastStatus = isPowered;
 		if((node()!=null) && ((Connector)node()).tryChangeBuffer(-widgetList.size()/10f*OpenGlasses.energyMultiplier) ){
@@ -318,8 +326,10 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment{
 		}
 		
 	}
+
 	
 	public boolean isPowered() {
 		return isPowered;
 	}
+
 }

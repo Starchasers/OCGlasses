@@ -7,14 +7,17 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
 import com.google.gson.Gson;
 
-import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import cpw.mods.fml.relauncher.Side;
+
 
 public abstract class Packet<T extends Packet<T, RES>, RES extends IMessage> implements IMessage, IMessageHandler<T, RES> {
 	protected final ByteBuf write;
@@ -40,7 +43,7 @@ public abstract class Packet<T extends Packet<T, RES>, RES extends IMessage> imp
 		int x = readInt();
 		int y = readInt();
 		int z = readInt();
-		return Utils.getTileEntity(dimensionId, x, y, z);
+		return Utils.getTileEntity(dimensionId, new BlockPos(x, y, z));
 	}
 
 	public TileEntity readServerTileEntity() throws IOException {
@@ -48,7 +51,7 @@ public abstract class Packet<T extends Packet<T, RES>, RES extends IMessage> imp
 		int x = readInt();
 		int y = readInt();
 		int z = readInt();
-		return Utils.getTileEntityServer(dimensionId, x, y, z);
+		return Utils.getTileEntityServer(dimensionId, new BlockPos(x, y, z));
 	}
 
 	public byte[] readByteArray() throws IOException {
@@ -122,14 +125,14 @@ public abstract class Packet<T extends Packet<T, RES>, RES extends IMessage> imp
 	// Custom write instructions
 
 	public Packet<T, RES> writeTileLocation(TileEntity te) throws IOException, RuntimeException {
-		if (te.getWorldObj() == null)
+		if (te.getWorld() == null)
 			throw new RuntimeException("World does not exist!");
 		if (te.isInvalid())
 			throw new RuntimeException("TileEntity is invalid!");
-		write.writeInt(te.getWorldObj().provider.dimensionId);
-		write.writeInt(te.xCoord);
-		write.writeInt(te.yCoord);
-		write.writeInt(te.zCoord);
+		write.writeInt(te.getWorld().provider.getDimension());
+		write.writeInt(te.getPos().getX());
+		write.writeInt(te.getPos().getY());
+		write.writeInt(te.getPos().getZ());
 		return this;
 	}
 

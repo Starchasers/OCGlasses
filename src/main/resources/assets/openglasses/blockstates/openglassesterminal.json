@@ -1,0 +1,20 @@
+{
+  "forge_marker": 1,
+    "defaults": {
+        "textures": {
+            "up": "openglasses:blocks/glasses_top",
+			"side": "openglasses:blocks/glasses_side",
+			"down": "openglasses:blocks/glasses_bottom",
+			"particle": "openglasses:blocks/glasses_bottom"
+        },
+        "model": "cube_all",
+        "uvlock": true
+    },
+  "variants": { 
+    "normal": [{}],
+    "inventory": [{
+	  "transform": "forge:default-block"
+	}],
+ 	
+	}
+}

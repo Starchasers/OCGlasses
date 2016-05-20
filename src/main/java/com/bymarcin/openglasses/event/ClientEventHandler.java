@@ -10,9 +10,10 @@ import com.bymarcin.openglasses.utils.Location;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 public class ClientEventHandler {
 	
@@ -44,7 +45,7 @@ public class ClientEventHandler {
 	
 	@SubscribeEvent
 	public void onJoin(EntityJoinWorldEvent e){
-		if ((e.entity == Minecraft.getMinecraft().thePlayer) && (e.world.isRemote)){
+		if ((e.getEntity() == Minecraft.getMinecraft().thePlayer) && (e.getWorld().isRemote)){
 			ClientSurface.instances.removeAllWidgets();
 			ClientSurface.instances.haveGlasses = false;
 		}

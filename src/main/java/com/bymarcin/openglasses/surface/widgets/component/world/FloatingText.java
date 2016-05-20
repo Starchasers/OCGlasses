@@ -1,10 +1,15 @@
 package com.bymarcin.openglasses.surface.widgets.component.world;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.math.RayTraceResult;
+
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.lwjgl.opengl.GL11;
 
@@ -22,10 +27,6 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.ITextable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IViewDistance;
 import com.bymarcin.openglasses.utils.OGUtils;
-
-import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class FloatingText extends Widget implements IViewDistance, ILookable, I3DPositionable, ITextable, IColorizable, IScalable, IAlpha, IThroughVisibility{
 	float x;
@@ -122,7 +123,7 @@ public class FloatingText extends Widget implements IViewDistance, ILookable, I3
 	
 	@SideOnly(Side.CLIENT)
 	class RenderableFloatingText implements IRenderableWidget{
-		FontRenderer fontRender = Minecraft.getMinecraft().fontRenderer;
+		FontRenderer fontRender = Minecraft.getMinecraft().fontRendererObj;
 		double offsetX = fontRender.getStringWidth(text)/2D;
 		double offsetY = fontRender.FONT_HEIGHT/2D;
 		int color = OGUtils.getIntFromColor(r, g, b, alpha);
@@ -133,8 +134,8 @@ public class FloatingText extends Widget implements IViewDistance, ILookable, I3
 				return;
 			}
 			if(isLookingAtEnable){
-				MovingObjectPosition pos = ClientSurface.getBlockCoordsLookingAt(player);
-				if(pos == null || pos.blockX != lookingAtX || pos.blockY != lookingAtY || pos.blockZ != lookingAtZ)
+				RayTraceResult pos = ClientSurface.getBlockCoordsLookingAt(player);
+				if(pos == null || pos.getBlockPos().getX() != lookingAtX || pos.getBlockPos().getY() != lookingAtY || pos.getBlockPos().getZ() != lookingAtZ)
 					return;
 			}
 			GL11.glPushMatrix();

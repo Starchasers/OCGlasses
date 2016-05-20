@@ -5,9 +5,10 @@ import java.util.Set;
 
 import com.bymarcin.openglasses.OpenGlasses;
 
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
+
 
 public class NetworkRegistry {
 	public static SimpleNetworkWrapper packetHandler;

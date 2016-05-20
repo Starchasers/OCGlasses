@@ -1,7 +1,11 @@
 package com.bymarcin.openglasses.surface.widgets.component.world;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.entity.player.EntityPlayer;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.lwjgl.opengl.GL11;
 
@@ -13,9 +17,6 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DVertex;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class Triangle3D extends Widget implements IAlpha, IColorizable, IThroughVisibility, I3DVertex {
 	float x[];

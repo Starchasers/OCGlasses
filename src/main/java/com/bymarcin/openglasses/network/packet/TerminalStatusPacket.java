@@ -5,9 +5,10 @@ import java.io.IOException;
 import com.bymarcin.openglasses.network.Packet;
 import com.bymarcin.openglasses.surface.ClientSurface;
 
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 
 public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>{
 	TerminalStatus status;

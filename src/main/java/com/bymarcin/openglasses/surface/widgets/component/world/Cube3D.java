@@ -1,8 +1,12 @@
 package com.bymarcin.openglasses.surface.widgets.component.world;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.math.RayTraceResult;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.lwjgl.opengl.GL11;
 
@@ -20,8 +24,6 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibilit
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IViewDistance;
 import com.bymarcin.openglasses.utils.OGUtils;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughVisibility, IColorizable, IViewDistance, ILookable, IScalable{
 
@@ -100,8 +102,8 @@ public class Cube3D extends Widget implements I3DPositionable, IAlpha, IThroughV
 		@Override
 		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
 			if(OGUtils.inRange(playerX, playerY, playerZ, x, y, z, distance)){
-				MovingObjectPosition pos = ClientSurface.getBlockCoordsLookingAt(player);
-				if(isLookingAtEnable && (pos == null || pos.blockX != lookAtX || pos.blockY != lookAtY || pos.blockZ != lookAtZ) )
+				RayTraceResult pos = ClientSurface.getBlockCoordsLookingAt(player);
+				if(isLookingAtEnable && (pos == null || pos.getBlockPos().getX() != lookAtX || pos.getBlockPos().getY() != lookAtY || pos.getBlockPos().getZ() != lookAtZ) )
 						return;
 				drawQuad(x, y, z, alpha);	
 				

@@ -3,10 +3,7 @@ package com.bymarcin.openglasses.surface;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
+import java.util.UUID;
 
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
@@ -14,6 +11,11 @@ import com.bymarcin.openglasses.network.packet.TerminalStatusPacket.TerminalStat
 import com.bymarcin.openglasses.network.packet.WidgetUpdatePacket;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 import com.bymarcin.openglasses.utils.Location;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class ServerSurface {
 	public static ServerSurface instance  = new ServerSurface();
@@ -28,7 +30,7 @@ public class ServerSurface {
 				players.put(player, UUID);
 				sendSync(player, UUID, terminal);
 				sendPowerInfo(UUID, terminal.isPowered()?TerminalStatus.HavePower:TerminalStatus.NoPower);
-				terminal.onGlassesPutOn(player.getDisplayName());
+				terminal.onGlassesPutOn(player.getDisplayNameString());
 			}
 		}
 	}
@@ -39,7 +41,7 @@ public class ServerSurface {
 		if(l!=null){
 			OpenGlassesTerminalTileEntity terminal = l.getTerminal();
 			if(terminal!=null){
-				terminal.onGlassesPutOff(p.getDisplayName());
+				terminal.onGlassesPutOff(p.getDisplayNameString());
 			}
 		}
 	}
@@ -77,11 +79,7 @@ public class ServerSurface {
 	}
 	
 	private EntityPlayerMP checkUUID(String uuid){
-		for(Object p : MinecraftServer.getServer().getConfigurationManager().playerEntityList){
-			if(((EntityPlayerMP)p).getGameProfile().getName().equals(uuid))
-				return (EntityPlayerMP) p;
-		}
-		return null;	
+		return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(UUID.fromString(uuid));	
 	}
 
 }

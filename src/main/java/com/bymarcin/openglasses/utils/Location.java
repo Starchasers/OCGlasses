@@ -3,17 +3,19 @@ package com.bymarcin.openglasses.utils;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class Location {
 	public int x,y,z,dimID;
 	public long uniqueKey;
-	public Location(int x, int y, int z, int dimID, long uniqueKey) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
+	public Location(BlockPos pos, int dimID, long uniqueKey) {
+		this.x = pos.getX();
+		this.y = pos.getY();
+		this.z = pos.getZ();
 		this.dimID = dimID;
 		this.uniqueKey = uniqueKey;
 	}
@@ -43,10 +45,10 @@ public class Location {
 	}
 	
 	public TileEntity getTileEntity(){
-		World world  = MinecraftServer.getServer().worldServerForDimension(dimID);
+		World world  = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(dimID);
 		if(world==null) 
 			return null;
-		return world.getTileEntity(x, y, z);
+		return world.getTileEntity(new BlockPos(x, y, z));
 	}
 	
 	public OpenGlassesTerminalTileEntity getTerminal(){

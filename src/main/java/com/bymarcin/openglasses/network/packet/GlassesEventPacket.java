@@ -5,13 +5,15 @@ import java.io.IOException;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.BlockPos;
+
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.network.Packet;
 import com.bymarcin.openglasses.surface.ServerSurface;
 import com.bymarcin.openglasses.utils.Location;
 
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
 
 public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	public static enum EventType{
@@ -38,7 +40,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		this.player = readString();
 		this.eventType = EventType.values()[readInt()];
 		if(EventType.UNEQUIPED_GLASSES == eventType) return;
-		this.UUID = new Location(readInt(), readInt(), readInt(), readInt(), readLong());
+		this.UUID = new Location(new BlockPos(readInt(), readInt(), readInt()), readInt(), readLong());
 	}
 
 	@Override

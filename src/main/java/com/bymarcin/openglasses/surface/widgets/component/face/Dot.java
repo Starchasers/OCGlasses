@@ -1,8 +1,14 @@
 package com.bymarcin.openglasses.surface.widgets.component.face;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.entity.player.EntityPlayer;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.lwjgl.opengl.GL11;
 
@@ -14,9 +20,6 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IPositionable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class Dot extends Widget implements IPositionable, IColorizable, IAlpha, IScalable{
 	float x;
@@ -71,14 +74,14 @@ public class Dot extends Widget implements IPositionable, IColorizable, IAlpha, 
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			GL11.glDisable(GL11.GL_ALPHA_TEST);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			Tessellator tessellator = Tessellator.instance;
-			tessellator.startDrawingQuads();
-			tessellator.setColorRGBA_F(r, g, b, alpha);
-			tessellator.addVertex(x, y, 0);
-			tessellator.addVertex(x, y+size, 0);
-			tessellator.addVertex(x+size, y+size, 0);
-			tessellator.addVertex(x+size, y, 0);
-			tessellator.draw();
+			VertexBuffer tessellator = Tessellator.getInstance().getBuffer();
+			tessellator.begin(GL11.GL_QUADS, new VertexFormat());
+			tessellator.color(r, g, b, alpha);
+			tessellator.putPosition(x, y, 0);
+			tessellator.putPosition(x, y+size, 0);
+			tessellator.putPosition(x+size, y+size, 0);
+			tessellator.putPosition(x+size, y, 0);
+			tessellator.finishDrawing();
 			GL11.glDisable(GL11.GL_BLEND);
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 			GL11.glEnable(GL11.GL_ALPHA_TEST);

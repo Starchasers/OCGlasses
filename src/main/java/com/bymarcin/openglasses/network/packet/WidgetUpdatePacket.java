@@ -11,9 +11,10 @@ import com.bymarcin.openglasses.surface.ClientSurface;
 import com.bymarcin.openglasses.surface.Widget;
 import com.bymarcin.openglasses.surface.WidgetType;
 
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 
 public class WidgetUpdatePacket extends Packet<WidgetUpdatePacket, IMessage>{
 	HashMap<Integer, Widget> widgetList;

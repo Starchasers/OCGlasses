@@ -1,16 +1,22 @@
 package com.bymarcin.openglasses.proxy;
 
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.item.Item;
 import net.minecraft.world.World;
 
-public class CommonProxy {
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
+public class CommonProxy {
+	
+	public void registermodel(Item item, int meta){
+
+	}
+	
 	public void init() {
 
 	}
 
 	public World getWorld(int dimensionId) {
-		return MinecraftServer.getServer().worldServerForDimension(dimensionId);
+		return FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(dimensionId);
 	}
 
 	public int getCurrentClientDimension() {

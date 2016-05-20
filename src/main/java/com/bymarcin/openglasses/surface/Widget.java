@@ -7,8 +7,10 @@ import com.bymarcin.openglasses.surface.widgets.core.AttributeRegistry;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAttribute;
 
 import net.minecraft.nbt.NBTTagCompound;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 

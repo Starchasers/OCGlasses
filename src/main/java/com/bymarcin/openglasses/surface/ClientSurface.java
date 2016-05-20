@@ -6,22 +6,22 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.MovingObjectPosition.MovingObjectType;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-
-import org.lwjgl.opengl.GL11;
-
 import com.bymarcin.openglasses.surface.widgets.component.face.Text;
 import com.bymarcin.openglasses.utils.Location;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.RayTraceResult;
+
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 
 @SideOnly(Side.CLIENT)
 public class ClientSurface {
@@ -63,7 +63,7 @@ public class ClientSurface {
 	
 	@SubscribeEvent
 	public void onRenderGameOverlay(RenderGameOverlayEvent evt) {
-		if (evt.type == ElementType.HELMET && evt instanceof RenderGameOverlayEvent.Post && haveGlasses) {
+		if (evt.getType() == ElementType.HELMET && evt instanceof RenderGameOverlayEvent.Post && haveGlasses) {
 			if(!isPowered || !haveGlasses || lastBind == null){ noPowerRender.render(null, 0, 0, 0); return;}
 			GL11.glPushMatrix();
 			//GL11.glScaled(evt.resolution.getScaledWidth_double()/512D, evt.resolution.getScaledHeight_double()/512D*16D/9D, 0);
@@ -81,9 +81,9 @@ public class ClientSurface {
 		if(!isPowered || !haveGlasses || lastBind == null) return;
 		GL11.glPushMatrix();
 		EntityPlayer player= Minecraft.getMinecraft().thePlayer;
-		double playerX = player.prevPosX + (player.posX - player.prevPosX) * event.partialTicks; 
-		double playerY = player.prevPosY + (player.posY - player.prevPosY) * event.partialTicks;
-		double playerZ = player.prevPosZ + (player.posZ - player.prevPosZ) * event.partialTicks;
+		double playerX = player.prevPosX + (player.posX - player.prevPosX) * event.getPartialTicks(); 
+		double playerY = player.prevPosY + (player.posY - player.prevPosY) * event.getPartialTicks();
+		double playerZ = player.prevPosZ + (player.posZ - player.prevPosZ) * event.getPartialTicks();
 		GL11.glTranslated(-playerX, -playerY, -playerZ);
 		GL11.glTranslated(lastBind.x, lastBind.y, lastBind.z);
 		GL11.glDisable(GL11.GL_LIGHTING);
@@ -104,10 +104,10 @@ public class ClientSurface {
 		GL11.glPopMatrix();
 	}
 	
-	public static MovingObjectPosition  getBlockCoordsLookingAt(EntityPlayer player){
-		MovingObjectPosition objectMouseOver;
+	public static RayTraceResult getBlockCoordsLookingAt(EntityPlayer player){
+		RayTraceResult objectMouseOver;
 		objectMouseOver = player.rayTrace(200, 1);	
-		if(objectMouseOver != null && objectMouseOver.typeOfHit == MovingObjectType.BLOCK)
+		if(objectMouseOver != null && objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK)
 		{
 			return objectMouseOver;
 		}

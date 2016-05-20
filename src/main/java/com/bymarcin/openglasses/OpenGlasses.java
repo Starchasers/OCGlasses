@@ -1,13 +1,5 @@
 package com.bymarcin.openglasses;
 
-import li.cil.oc.api.Items;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.config.Configuration;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.bymarcin.openglasses.block.OpenGlassesTerminalBlock;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
@@ -17,15 +9,26 @@ import com.bymarcin.openglasses.network.packet.WidgetUpdatePacket;
 import com.bymarcin.openglasses.proxy.CommonProxy;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import li.cil.oc.api.Items;
+
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
+
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid = OpenGlasses.MODID, version = OpenGlasses.VERSION, dependencies = "required-after:OpenComputers@[1.4.0,)")
 public class OpenGlasses
@@ -42,9 +45,9 @@ public class OpenGlasses
 	@Instance(value = OpenGlasses.MODID)
 	public static OpenGlasses instance;
 
-	public static CreativeTabs creativeTab = CreativeTabs.tabRedstone;
+	public static CreativeTabs creativeTab = CreativeTabs.REDSTONE;
 	
-	public static OpenGlassesItem openGlasses;
+	public static Item openGlasses;
 	public static OpenGlassesTerminalBlock openTerminal;
 	
 	public static int energyBuffer = 100;
@@ -67,9 +70,16 @@ public class OpenGlasses
 		NetworkRegistry.registerPacket(1, WidgetUpdatePacket.class, Side.CLIENT);
 		NetworkRegistry.registerPacket(2, TerminalStatusPacket.class, Side.CLIENT);
 		
-		GameRegistry.registerBlock(openTerminal = new OpenGlassesTerminalBlock(), "openglassesterminal");
-		GameRegistry.registerTileEntity(OpenGlassesTerminalTileEntity.class, "openglassesterminal");
-		GameRegistry.registerItem(openGlasses = new OpenGlassesItem(), "openglasses");
+		openTerminal = GameRegistry.register(new OpenGlassesTerminalBlock());
+		Item i = GameRegistry.register(new ItemBlock(openTerminal).setRegistryName(openTerminal.getRegistryName()));
+		proxy.registermodel(i, 0);
+		
+		
+		GameRegistry.registerTileEntity(OpenGlassesTerminalTileEntity.class, "openglassesterminalte");
+		
+		GameRegistry.register(openGlasses = new OpenGlassesItem());
+		proxy.registermodel(openGlasses, 0);
+		
 		proxy.init();
 	}
 
