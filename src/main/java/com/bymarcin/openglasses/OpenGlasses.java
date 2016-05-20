@@ -60,15 +60,8 @@ public class OpenGlasses
 		config.load();
 		NetworkRegistry.initialize();
 		energyBuffer = config.get("Energy", "energyBuffer", 100).getInt(100);
-		energyMultiplier = config.get("Energy", "energyMultiplier", 1.0, "PowerDrain= (NumberOfWidgets / 10) * energyMultiplier").getDouble(1.0);	
-	}
-
-	@EventHandler
-	public void init(FMLInitializationEvent event)
-	{
-		NetworkRegistry.registerPacket(0, GlassesEventPacket.class, Side.SERVER);
-		NetworkRegistry.registerPacket(1, WidgetUpdatePacket.class, Side.CLIENT);
-		NetworkRegistry.registerPacket(2, TerminalStatusPacket.class, Side.CLIENT);
+		energyMultiplier = config.get("Energy", "energyMultiplier", 1.0, "PowerDrain= (NumberOfWidgets / 10) * energyMultiplier").getDouble(1.0);
+		
 		
 		openTerminal = GameRegistry.register(new OpenGlassesTerminalBlock());
 		Item i = GameRegistry.register(new ItemBlock(openTerminal).setRegistryName(openTerminal.getRegistryName()));
@@ -79,6 +72,16 @@ public class OpenGlasses
 		
 		GameRegistry.register(openGlasses = new OpenGlassesItem());
 		proxy.registermodel(openGlasses, 0);
+	}
+
+	@EventHandler
+	public void init(FMLInitializationEvent event)
+	{
+		NetworkRegistry.registerPacket(0, GlassesEventPacket.class, Side.SERVER);
+		NetworkRegistry.registerPacket(1, WidgetUpdatePacket.class, Side.CLIENT);
+		NetworkRegistry.registerPacket(2, TerminalStatusPacket.class, Side.CLIENT);
+		
+
 		
 		proxy.init();
 	}

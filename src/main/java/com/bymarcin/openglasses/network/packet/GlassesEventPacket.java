@@ -27,7 +27,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	String player;
 	
 	public GlassesEventPacket(EventType eventType, Location UUID, EntityPlayer player) {
-		this.player = player.getGameProfile().getName();
+		this.player = player.getGameProfile().getId().toString();
 		this.eventType = eventType;
 		this.UUID = UUID;
 	}

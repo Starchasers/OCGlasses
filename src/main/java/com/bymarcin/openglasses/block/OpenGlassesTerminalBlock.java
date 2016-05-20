@@ -8,6 +8,7 @@ import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -21,35 +22,19 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 public class OpenGlassesTerminalBlock extends BlockContainer {
-	// IIcon side;
-	// IIcon top;
+
 	public OpenGlassesTerminalBlock() {
 		super(Material.IRON);
 		setCreativeTab(OpenGlasses.creativeTab);
 		setRegistryName("openglassesterminal");
 		setHardness(3.0F);
+		setUnlocalizedName("openglassesterminal");
 	}
 
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new OpenGlassesTerminalTileEntity();
 	}
-
-	// @Override
-	// public void registerBlockIcons(IIconRegister register) {
-	// blockIcon = register.registerIcon(OpenGlasses.MODID + ":glasses_bottom");
-	// side = register.registerIcon(OpenGlasses.MODID + ":glasses_side");
-	// top = register.registerIcon(OpenGlasses.MODID + ":glasses_top");
-	// }
-	//
-	// @Override
-	// public IIcon getIcon(int side, int metadata) {
-	// switch(side){
-	// case 0: return blockIcon;
-	// case 1: return top;
-	// default: return this.side;
-	// }
-	// }
 
 	@SuppressWarnings("unchecked")
 	public static <T> T getTileEntity(IBlockAccess world, BlockPos pos, Class<T> T) {

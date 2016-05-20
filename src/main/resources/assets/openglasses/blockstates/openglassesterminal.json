@@ -7,14 +7,14 @@
 			"down": "openglasses:blocks/glasses_bottom",
 			"particle": "openglasses:blocks/glasses_bottom"
         },
-        "model": "cube_all",
-        "uvlock": true
+        "model": "openglasses:openglassesterminal",
+        "uvlock": false
     },
   "variants": { 
     "normal": [{}],
     "inventory": [{
 	  "transform": "forge:default-block"
-	}],
+	}]
  	
 	}
 }

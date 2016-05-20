@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.bymarcin.openglasses.surface.widgets.component.face.Text;
 import com.bymarcin.openglasses.utils.Location;
@@ -26,8 +27,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class ClientSurface {
 	public static ClientSurface instances = new ClientSurface();
-	public Map<Integer, IRenderableWidget> renderables = new HashMap<Integer, IRenderableWidget>();
-	public Map<Integer, IRenderableWidget> renderablesWorld = new HashMap<Integer, IRenderableWidget>();
+	public Map<Integer, IRenderableWidget> renderables = new ConcurrentHashMap<Integer, IRenderableWidget>();
+	public Map<Integer, IRenderableWidget> renderablesWorld = new ConcurrentHashMap<Integer, IRenderableWidget>();
 	boolean isPowered = false;
 	public boolean haveGlasses = false;
 	public Location lastBind;
