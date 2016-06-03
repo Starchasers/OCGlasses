@@ -249,7 +249,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
 	}
 	
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 		nbt.setInteger("currID",currID);
 		NBTTagCompound tag = new NBTTagCompound();
@@ -273,6 +273,8 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
 			loc.writeToNBT(tagLoc);
 			nbt.setTag("uniqueKey", tagLoc);
 		}
+		
+		return nbt;
 	}
 	
 	@Override
