@@ -18,3 +18,7 @@ hs_err_pid*
 /OpenGlasses_Client.launch
 /OpenGlasses_Server.launch
 /run
+/out
+*.ipr
+*.iws
+*.iml
