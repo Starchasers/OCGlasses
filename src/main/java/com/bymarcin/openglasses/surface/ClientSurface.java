@@ -67,11 +67,21 @@ public class ClientSurface {
 		if (evt.getType() == ElementType.HELMET && evt instanceof RenderGameOverlayEvent.Post && haveGlasses) {
 			if(!isPowered || !haveGlasses || lastBind == null){ noPowerRender.render(null, 0, 0, 0); return;}
 			GL11.glPushMatrix();
-			//GL11.glScaled(evt.resolution.getScaledWidth_double()/512D, evt.resolution.getScaledHeight_double()/512D*16D/9D, 0);
+			GL11.glScaled(evt.getResolution().getScaledWidth_double()/512D, evt.getResolution().getScaledHeight_double()/512D*16D/9D, 0);
+
 			for(IRenderableWidget renderable : renderables.values()){
 				if(renderable.shouldWidgetBeRendered())
 					renderable.render(null, 0, 0, 0);
 			}
+
+//			GL11.glBegin(GL11.GL_QUADS);
+//			GL11.glColor4f(1, 0, 0, 1);
+//			GL11.glVertex3f(0, 0, 0);
+//			GL11.glVertex3f(0, 10, 0);
+//			GL11.glVertex3f(10, 10, 0);
+//			GL11.glVertex3f(10, 0, 0);
+//			GL11.glEnd();
+			GL11.glColor3f(1.0f,1.0f,1.0f);
 			GL11.glPopMatrix();
 		}
 	}

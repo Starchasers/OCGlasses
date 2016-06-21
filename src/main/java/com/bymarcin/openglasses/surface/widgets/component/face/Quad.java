@@ -53,14 +53,14 @@ public class Quad extends TriangleWidget {
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 			GL11.glDisable(GL11.GL_ALPHA_TEST);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			VertexBuffer tessellator = Tessellator.getInstance().getBuffer();
-			tessellator.begin(GL11.GL_QUADS, new VertexFormat());
-			tessellator.color(r, g, b, alpha);
-			tessellator.pos(x[0], y[0], 0);
-			tessellator.pos(x[1], y[1], 0);
-			tessellator.pos(x[2], y[2], 0);
-			tessellator.pos(x[3], y[3], 0);
-			tessellator.finishDrawing();
+
+			GL11.glBegin(GL11.GL_QUADS);
+			GL11.glColor4f(r, g, b, alpha);
+			GL11.glVertex3f(x[0], y[0], 0);
+			GL11.glVertex3f(x[1], y[1], 0);
+			GL11.glVertex3f(x[2], y[2], 0);
+			GL11.glVertex3f(x[3], y[3], 0);
+			GL11.glEnd();
 			GL11.glDisable(GL11.GL_BLEND);
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 			GL11.glEnable(GL11.GL_ALPHA_TEST);

@@ -75,21 +75,22 @@ public class SquareWidget extends Widget implements IPositionable, IResizable, I
 	public class RenderableSquareWidget implements IRenderableWidget{
 		@Override
 		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
-			GL11.glEnable(GL11.GL_BLEND);
-			GL11.glDisable(GL11.GL_TEXTURE_2D);
-			GL11.glDisable(GL11.GL_ALPHA_TEST);
-			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			VertexBuffer tessellator = Tessellator.getInstance().getBuffer();
-			tessellator.begin(GL11.GL_QUADS, new VertexFormat());
-			tessellator.color(r, g, b, alpha);
-			tessellator.pos(x, y, 0);
-			tessellator.pos(x, y+width, 0);
-			tessellator.pos(x+height, y+width, 0);
-			tessellator.pos(x+height, y+0, 0);
-			tessellator.finishDrawing();
-			GL11.glDisable(GL11.GL_BLEND);
-			GL11.glEnable(GL11.GL_TEXTURE_2D);
-			GL11.glEnable(GL11.GL_ALPHA_TEST);
+				GL11.glEnable(GL11.GL_BLEND);
+				GL11.glDisable(GL11.GL_TEXTURE_2D);
+
+				GL11.glDisable(GL11.GL_ALPHA_TEST);
+				GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+				GL11.glBegin(GL11.GL_QUADS);
+				GL11.glColor4f(r, g, b, alpha);
+				GL11.glVertex3f(x, y, 0);
+				GL11.glVertex3f(x, y + width, 0);
+				GL11.glVertex3f(x + height, y + width, 0);
+				GL11.glVertex3f(x + height, y + 0, 0);
+				GL11.glEnd();
+				GL11.glDisable(GL11.GL_BLEND);
+				GL11.glEnable(GL11.GL_TEXTURE_2D);
+				GL11.glEnable(GL11.GL_ALPHA_TEST);
 		}
 		
 		@Override
