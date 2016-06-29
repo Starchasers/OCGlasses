@@ -66,6 +66,7 @@ public class ClientSurface {
 	public void onRenderGameOverlay(RenderGameOverlayEvent evt) {
 		if (evt.getType() == ElementType.HELMET && evt instanceof RenderGameOverlayEvent.Post && haveGlasses) {
 			if(!isPowered || !haveGlasses || lastBind == null){ noPowerRender.render(null, 0, 0, 0); return;}
+			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 			GL11.glPushMatrix();
 			GL11.glScaled(evt.getResolution().getScaledWidth_double()/512D, evt.getResolution().getScaledHeight_double()/512D*16D/9D, 0);
 
@@ -74,15 +75,9 @@ public class ClientSurface {
 					renderable.render(null, 0, 0, 0);
 			}
 
-//			GL11.glBegin(GL11.GL_QUADS);
-//			GL11.glColor4f(1, 0, 0, 1);
-//			GL11.glVertex3f(0, 0, 0);
-//			GL11.glVertex3f(0, 10, 0);
-//			GL11.glVertex3f(10, 10, 0);
-//			GL11.glVertex3f(10, 0, 0);
-//			GL11.glEnd();
 			GL11.glColor3f(1.0f,1.0f,1.0f);
 			GL11.glPopMatrix();
+			GL11.glPopAttrib();
 		}
 	}
 	
@@ -90,6 +85,7 @@ public class ClientSurface {
 	public void renderWorldLastEvent(RenderWorldLastEvent event)
 	{	
 		if(!isPowered || !haveGlasses || lastBind == null) return;
+		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glPushMatrix();
 		EntityPlayer player= Minecraft.getMinecraft().thePlayer;
 		double playerX = player.prevPosX + (player.posX - player.prevPosX) * event.getPartialTicks(); 
@@ -113,6 +109,7 @@ public class ClientSurface {
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glPopMatrix();
+		GL11.glPopAttrib();
 	}
 	
 	public static RayTraceResult getBlockCoordsLookingAt(EntityPlayer player){
