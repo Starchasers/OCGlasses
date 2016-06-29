@@ -18,31 +18,7 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.ITextable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DVertex;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetAlpha;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetColor;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetViewDistance;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetID;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetLookingAt;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetPosition;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetPosition3D;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetScale;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetSize;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetText;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.GetVertexCount;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.IsVisible;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.IsVisibleThroughObjects;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetAlpha;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetColor;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetViewDistance;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetLookingAt;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetPosition;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetPosition3D;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetScale;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetSize;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetText;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetVertex;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetVisible;
-import com.bymarcin.openglasses.surface.widgets.core.luafunction.SetVisibleThroughObjects;
+import com.bymarcin.openglasses.surface.widgets.core.luafunction.*;
 
 public class AttributeRegistry {
 	static{
@@ -51,7 +27,8 @@ public class AttributeRegistry {
 		addAtribute(IAttribute.class, GetID.class);
 		addAtribute(IAttribute.class, IsVisible.class);
 		addAtribute(IAttribute.class, SetVisible.class);
-		
+		addAtribute(IAttribute.class, SetVisibleCompat.class);
+
 		addAtribute(IAlpha.class, GetAlpha.class);
 		addAtribute(IAlpha.class, SetAlpha.class);
 		

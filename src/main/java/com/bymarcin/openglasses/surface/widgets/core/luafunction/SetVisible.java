@@ -20,7 +20,7 @@ public class SetVisible extends LuaFunction{
 
 	@Override
 	public String getName() {
-		return "setVisable";
+		return "setVisible";
 	}
 
 }
