@@ -1,5 +1,6 @@
 package com.bymarcin.openglasses.proxy;
 
+import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.event.ClientEventHandler;
 import com.bymarcin.openglasses.surface.ClientSurface;
 
@@ -10,6 +11,7 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 
 public class ClientProxy extends CommonProxy {

@@ -48,6 +48,18 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
 	public OpenGlassesTerminalTileEntity() {
 		node = API.network.newNode(this, Visibility.Network).withComponent(getComponentName()).withConnector(OpenGlasses.energyBuffer).create();
 	}
+
+	public void sendInteractEvent(String eventType, String name, double x, double y, double z, double lx, double ly, double lz, double eyeh){
+		if(node!=null){
+			node.sendToReachable("computer.signal", eventType.toLowerCase(), name, x - getPos().getX(), y  - getPos().getY(), z - getPos().getZ(), lx, ly, lz, eyeh);
+		}
+	}
+
+	public void sendInteractEvent(String eventType, String name, double button, double x, double y, double width, double height){
+		if(node!=null){
+			node.sendToReachable("computer.signal", eventType.toLowerCase(), name, button, x, y, width, height);
+		}
+	}
 	
 	public String getComponentName() {
 		return "glasses";

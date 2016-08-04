@@ -77,8 +77,8 @@ public class ServerSurface {
 			}
 		}
 	}
-	
-	private EntityPlayerMP checkUUID(String uuid){
+
+	public EntityPlayerMP checkUUID(String uuid){
 		return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(UUID.fromString(uuid));	
 	}
 
