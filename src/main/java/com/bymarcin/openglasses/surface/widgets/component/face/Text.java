@@ -48,13 +48,12 @@ public class Text extends Dot implements ITextable{
 	
 	class RenderText implements IRenderableWidget{
 		int color = OGUtils.getIntFromColor(r, g, b, alpha);
-		FontRenderer fontRender = Minecraft.getMinecraft().fontRendererObj;
 		
 		@Override
 		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
 			GL11.glPushMatrix();
 			GL11.glScaled(size, size, 0);
-			fontRender.drawString(text, (int) x, (int) y, color);
+			Minecraft.getMinecraft().fontRendererObj.drawString(text, (int) x, (int) y, color);
 			GL11.glPopMatrix();
 			
 		}
