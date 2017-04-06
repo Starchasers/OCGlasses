@@ -1,26 +1,22 @@
 package com.bymarcin.openglasses.surface.widgets.component.face;
 
-import io.netty.buffer.ByteBuf;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.entity.player.EntityPlayer;
-
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import org.lwjgl.opengl.GL11;
-
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.RenderType;
 import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.ITextable;
 import com.bymarcin.openglasses.utils.OGUtils;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
 public class Text extends Dot implements ITextable{
 	String text="";
-	
+	int color;
+
 	public Text() {}
 
 	@Override
@@ -33,6 +29,7 @@ public class Text extends Dot implements ITextable{
 	public void readData(ByteBuf buff) {
 		super.readData(buff);
 		text = ByteBufUtils.readUTF8String(buff);
+		color = OGUtils.getIntFromColor(r, g, b, alpha);
 	}
 
 	@Override
@@ -47,8 +44,7 @@ public class Text extends Dot implements ITextable{
 	}
 	
 	class RenderText implements IRenderableWidget{
-		int color = OGUtils.getIntFromColor(r, g, b, alpha);
-		
+
 		@Override
 		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
 			GL11.glPushMatrix();
