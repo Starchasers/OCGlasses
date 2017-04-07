@@ -11,6 +11,7 @@ public class SetSize extends LuaFunction{
 
 	@Override
 	public Object[] call(Context context, Arguments arguments) {
+		super.call(context, arguments);
 		Widget widget = getSelf().getWidget(); 
 		if(widget instanceof IResizable){
 			((IResizable) widget).setSize(arguments.checkDouble(0), arguments.checkDouble(1));

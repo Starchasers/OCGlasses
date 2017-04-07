@@ -12,6 +12,7 @@ public class SetViewDistance extends LuaFunction{
 
 	@Override
 	public Object[] call(Context context, Arguments arguments) {
+		super.call(context, arguments);
 		Widget widget = getSelf().getWidget(); 
 		if(widget instanceof IColorizable){
 			((IViewDistance) widget).setDistanceView(arguments.checkInteger(0));

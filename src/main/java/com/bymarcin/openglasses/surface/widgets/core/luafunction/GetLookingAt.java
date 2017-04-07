@@ -11,6 +11,7 @@ public class GetLookingAt extends LuaFunction{
 
 	@Override
 	public Object[] call(Context context, Arguments arguments) {
+		super.call(context, arguments);
 		Widget widget = getSelf().getWidget(); 
 		if(widget instanceof ILookable){
 			return new Object[]{((ILookable) widget).getLookingAtX(), ((ILookable) widget).getLookingAtY(), ((ILookable) widget).getLookingAtZ(),((ILookable) widget).isLookingAtEnable()};

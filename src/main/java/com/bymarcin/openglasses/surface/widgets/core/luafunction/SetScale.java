@@ -11,6 +11,7 @@ public class SetScale extends LuaFunction{
 
 	@Override
 	public Object[] call(Context context, Arguments arguments) {
+		super.call(context, arguments);
 		Widget widget = getSelf().getWidget(); 
 		if(widget instanceof IScalable){
 			((IScalable) widget).setScale(arguments.checkDouble(0));

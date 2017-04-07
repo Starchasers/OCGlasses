@@ -10,6 +10,7 @@ public class IsVisible extends LuaFunction{
 
 	@Override
 	public Object[] call(Context context, Arguments arguments) {
+		super.call(context, arguments);
 		Widget widget = getSelf().getWidget(); 
 		if(widget != null){
 			return new Object[]{widget.isVisible()};

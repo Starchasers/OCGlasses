@@ -11,6 +11,7 @@ public class GetAlpha extends LuaFunction{
 
 	@Override
 	public Object[] call(Context context, Arguments arguments) {
+		super.call(context, arguments);
 		Widget widget = getSelf().getWidget(); 
 		if(widget instanceof IAlpha){
 			return new Object[]{((IAlpha) widget).getAlpha()};

@@ -11,6 +11,7 @@ public class SetVisibleThroughObjects extends LuaFunction{
 
 	@Override
 	public Object[] call(Context context, Arguments arguments) {
+		super.call(context, arguments);
 		Widget widget = getSelf().getWidget(); 
 		if(widget instanceof IThroughVisibility){
 			((IThroughVisibility) widget).setVisibleThroughObjects(arguments.checkBoolean(0));

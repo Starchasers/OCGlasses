@@ -11,6 +11,7 @@ public class GetSize extends LuaFunction{
 
 	@Override
 	public Object[] call(Context context, Arguments arguments) {
+		super.call(context, arguments);
 		Widget widget = getSelf().getWidget(); 
 		if(widget instanceof IResizable){
 			return new Object[]{((IResizable) widget).getWidth(), ((IResizable) widget).getHeight()};

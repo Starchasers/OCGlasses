@@ -38,6 +38,8 @@ public abstract class LuaFunction implements Value{
 		nbt.setTag("ref", refTag);	
 	}
 
+	//TODO context.node().canBeReachedFrom(getSelf().getTerminal().node());
+
 	@Override
 	public Object apply(Context context, Arguments arguments) {
 		throw new RuntimeException("You can't replace this function");
@@ -51,4 +53,11 @@ public abstract class LuaFunction implements Value{
 	@Override
 	public void dispose(Context context) {}
 
+
+	@Override
+	public Object[] call(Context context, Arguments arguments) {
+		if(context.node() ==null || getSelf().getTerminal() == null || getSelf().getTerminal().node() == null) throw new RuntimeException("Terminal is not connected!");
+		if(!context.node().canBeReachedFrom(getSelf().getTerminal().node())) throw new RuntimeException("Terminal is not connected!");
+		return new Object[]{null};
+	}
 }

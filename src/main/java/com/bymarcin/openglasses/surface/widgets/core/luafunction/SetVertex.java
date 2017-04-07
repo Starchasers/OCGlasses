@@ -12,6 +12,7 @@ public class SetVertex extends LuaFunction{
 
 	@Override
 	public Object[] call(Context context, Arguments arguments) {
+		super.call(context, arguments);
 		Widget widget = getSelf().getWidget(); 
 		if(widget instanceof I3DVertex){
 			if(arguments.checkInteger(0)>0 && arguments.checkInteger(0)<=((I3DVertex) widget).getVertexCount()){

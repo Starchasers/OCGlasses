@@ -11,6 +11,7 @@ public class SetText extends LuaFunction{
 
 	@Override
 	public Object[] call(Context context, Arguments arguments) {
+		super.call(context, arguments);
 		Widget widget = getSelf().getWidget(); 
 		if(widget instanceof ITextable){
 			((ITextable) widget).setText(arguments.checkString(0));

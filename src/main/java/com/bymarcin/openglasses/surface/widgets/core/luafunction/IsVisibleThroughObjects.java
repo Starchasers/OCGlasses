@@ -11,6 +11,7 @@ public class IsVisibleThroughObjects extends LuaFunction{
 
 	@Override
 	public Object[] call(Context context, Arguments arguments) {
+		super.call(context, arguments);
 		Widget widget = getSelf().getWidget(); 
 		if(widget instanceof IThroughVisibility){
 			return new Object[]{((IThroughVisibility) widget).isVisibleThroughObjects()};

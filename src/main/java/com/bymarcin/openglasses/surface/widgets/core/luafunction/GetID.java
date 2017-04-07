@@ -9,6 +9,7 @@ public class GetID extends LuaFunction{
 
 	@Override
 	public Object[] call(Context context, Arguments arguments) {
+		super.call(context, arguments);
 		return new Object[]{getSelf().getWidgetRef()};
 	}
 

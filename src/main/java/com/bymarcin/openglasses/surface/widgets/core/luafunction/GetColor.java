@@ -11,6 +11,7 @@ public class GetColor extends LuaFunction{
 
 	@Override
 	public Object[] call(Context context, Arguments arguments) {
+		super.call(context, arguments);
 		Widget widget = getSelf().getWidget(); 
 		if(widget instanceof IColorizable){
 			return new Object[]{((IColorizable) widget).getColorR(),((IColorizable) widget).getColorG(),((IColorizable) widget).getColorB()};

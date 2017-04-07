@@ -11,6 +11,7 @@ public class GetPosition3D extends LuaFunction{
 
 	@Override
 	public Object[] call(Context context, Arguments arguments) {
+		super.call(context, arguments);
 		Widget widget = getSelf().getWidget(); 
 		if(widget instanceof I3DPositionable){
 			return new Object[]{((I3DPositionable) widget).getPosX(), ((I3DPositionable) widget).getPosY(), ((I3DPositionable) widget).getPosZ()};
