@@ -15,7 +15,6 @@ import org.lwjgl.opengl.GL11;
 
 public class Text extends Dot implements ITextable{
 	String text="";
-	int color;
 
 	public Text() {}
 
@@ -29,7 +28,6 @@ public class Text extends Dot implements ITextable{
 	public void readData(ByteBuf buff) {
 		super.readData(buff);
 		text = ByteBufUtils.readUTF8String(buff);
-		color = OGUtils.getIntFromColor(r, g, b, alpha);
 	}
 
 	@Override
@@ -49,7 +47,8 @@ public class Text extends Dot implements ITextable{
 		public void render(EntityPlayer player, double playerX, double playerY, double playerZ) {
 			GL11.glPushMatrix();
 			GL11.glScaled(size, size, 0);
-			Minecraft.getMinecraft().fontRendererObj.drawString(text, (int) x, (int) y, color);
+			GL11.glColor3f(r,g,b);
+			Minecraft.getMinecraft().fontRendererObj.drawString(text, (int) x, (int) y, -1);
 			GL11.glPopMatrix();
 			
 		}
