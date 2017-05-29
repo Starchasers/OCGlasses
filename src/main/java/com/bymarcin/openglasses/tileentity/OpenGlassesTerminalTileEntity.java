@@ -35,15 +35,16 @@ import li.cil.oc.api.prefab.TileEntityEnvironment;
 
 import net.minecraft.nbt.NBTTagCompound;
 
+import net.minecraft.util.ITickable;
 import net.minecraftforge.fml.common.Optional;
 
-@Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "OpenComputers")
-public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
+public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment implements ITickable {
 	
 	public HashMap<Integer,Widget> widgetList = new HashMap<Integer,Widget>();
 	int currID=0;
 	Location loc;
 	boolean isPowered;
+	boolean addedToNetwork;
 	
 	public OpenGlassesTerminalTileEntity() {
 		node = API.network.newNode(this, Visibility.Network).withComponent(getComponentName()).withConnector(OpenGlasses.energyBuffer).create();
@@ -69,7 +70,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
 		if(loc!=null){
 			return loc;
 		}
-		return loc = new Location(getPos(), worldObj.provider.getDimension(), UUID.randomUUID().getMostSignificantBits());
+		return loc = new Location(getPos(), world.provider.getDimension(), UUID.randomUUID().getMostSignificantBits());
 	}
 	
 	public void onGlassesPutOn(String user){
@@ -85,39 +86,39 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
 	}
 
 //	@Callback
-//    @Optional.Method(modid = "OpenComputers")
+//    @Optional.Method(modid = "opencomputers")
 //    public Object[] greet(Context context, Arguments args) {
 //		return new Object[]{String.format("Hello, %s!", args.checkString(0))};
 //    }
 	
 	@Callback(direct = true)
-	@Optional.Method(modid = "OpenComputers")
+	@Optional.Method(modid = "opencomputers")
 	public Object[] getBindPlayers(Context context, Arguments args) {
 		return ServerSurface.instance.getActivePlayers(getTerminalUUID());
 	}
 //	
 //	@Callback
-//	@Optional.Method(modid = "OpenComputers")
+//	@Optional.Method(modid = "opencomputers")
 //	public Object[] getObjectLimit(Context context, Arguments args){
 //		
 //		return new Object[]{};
 //	}
 	
 	@Callback(direct = true)
-	@Optional.Method(modid = "OpenComputers")
+	@Optional.Method(modid = "opencomputers")
 	public Object[] getObjectCount(Context context, Arguments args){
 		return new Object[]{widgetList.size()};
 	}
 	
 	@Callback(direct = true)
-	@Optional.Method(modid = "OpenComputers")
+	@Optional.Method(modid = "opencomputers")
 	public Object[] removeObject(Context context, Arguments args){
 		int id = args.checkInteger(0);
 		return new Object[]{removeWidget(id)};
 	}
 	
 	@Callback(direct = true)
-	@Optional.Method(modid = "OpenComputers")
+	@Optional.Method(modid = "opencomputers")
 	public Object[] removeAll(Context context, Arguments args){
 		currID = 0;
 		widgetList.clear();
@@ -126,7 +127,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
 	}
 	
 	@Callback(direct = true)
-	@Optional.Method(modid = "OpenComputers")
+	@Optional.Method(modid = "opencomputers")
 	public Object[] newUniqueKey(Context context, Arguments args){
 		String [] players = ServerSurface.instance.getActivePlayers(loc);
 		for(String p: players){
@@ -140,77 +141,77 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
 	/* Object manipulation */
 	
 	@Callback(direct = true)
-	@Optional.Method(modid = "OpenComputers")
+	@Optional.Method(modid = "opencomputers")
 	public Object[] addRect(Context context, Arguments args){
 		Widget w = new SquareWidget();
 		return addWidget(w);
 	}
 	
 	@Callback(direct = true)
-	@Optional.Method(modid = "OpenComputers")
+	@Optional.Method(modid = "opencomputers")
 	public Object[] addDot(Context context, Arguments args){
 		Widget w = new Dot();
 		return addWidget(w);
 	}
 	
 	@Callback(direct = true)
-	@Optional.Method(modid = "OpenComputers")
+	@Optional.Method(modid = "opencomputers")
 	public Object[] addCube3D(Context context, Arguments args){
 		Widget w = new Cube3D();
 		return addWidget(w);
 	}
 	
 	@Callback(direct = true)
-	@Optional.Method(modid = "OpenComputers")
+	@Optional.Method(modid = "opencomputers")
 	public Object[] addFloatingText(Context context, Arguments args){
 		Widget w = new FloatingText();
 		return addWidget(w);
 	}
 	
 	@Callback(direct = true)
-	@Optional.Method(modid = "OpenComputers")
+	@Optional.Method(modid = "opencomputers")
 	public Object[] addTriangle(Context context, Arguments args){
 		Widget w = new TriangleWidget();
 		return addWidget(w);
 	}
 	
 	@Callback(direct = true)
-	@Optional.Method(modid = "OpenComputers")
+	@Optional.Method(modid = "opencomputers")
 	public Object[] addDot3D(Context context, Arguments args){
 		Widget w = new Dot3D();
 		return addWidget(w);
 	}
 	
 	@Callback(direct = true)
-	@Optional.Method(modid = "OpenComputers")
+	@Optional.Method(modid = "opencomputers")
 	public Object[] addTextLabel(Context context, Arguments args){
 		Widget w = new Text();
 		return addWidget(w);
 	}
 	
 	@Callback(direct = true)
-	@Optional.Method(modid = "OpenComputers")
+	@Optional.Method(modid = "opencomputers")
 	public Object[] addLine3D(Context context, Arguments args){
 		Widget w = new Line3D();
 		return addWidget(w);
 	}
 	
 	@Callback(direct = true)
-	@Optional.Method(modid = "OpenComputers")
+	@Optional.Method(modid = "opencomputers")
 	public Object[] addTriangle3D(Context context, Arguments args){
 		Widget w = new Triangle3D();
 		return addWidget(w);
 	}
 	
 	@Callback(direct = true)
-	@Optional.Method(modid = "OpenComputers")
+	@Optional.Method(modid = "opencomputers")
 	public Object[] addQuad3D(Context context, Arguments args){
 		Widget w = new Quad3D();
 		return addWidget(w);
 	}
 	
 	@Callback(direct = true)
-	@Optional.Method(modid = "OpenComputers")
+	@Optional.Method(modid = "opencomputers")
 	public Object[] addQuad(Context context, Arguments args){
 		Widget w = new Quad();
 		return addWidget(w);
@@ -222,13 +223,13 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
 	 * @return Position relative to terminal position
 	 */
 //	@Callback
-//	@Optional.Method(modid = "OpenComputers")
+//	@Optional.Method(modid = "opencomputers")
 //	public Object[] getUserPosition(Context context, Arguments args){
 //		return new Object[]{};
 //	}
 //	
 //	@Callback
-//	@Optional.Method(modid = "OpenComputers")
+//	@Optional.Method(modid = "opencomputers")
 //	public Object[] getUserLookingAt(Context context, Arguments args){
 //		return new Object[]{};
 //	}
@@ -316,9 +317,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
 			loc = new Location().readFromNBT((NBTTagCompound) nbt.getTag("uniqueKey"));
 		}
 	}
-	
-	
-	
+
 	
 	@Override
 	public void update() {
@@ -327,7 +326,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment {
             Network.joinOrCreateNetwork(this);
         }
         
-		if(worldObj.isRemote) return;
+		if(world.isRemote) return;
 		boolean lastStatus = isPowered;
 		if((node()!=null) && ((Connector)node()).tryChangeBuffer(-widgetList.size()/10f*OpenGlasses.energyMultiplier) ){
 			isPowered = true;

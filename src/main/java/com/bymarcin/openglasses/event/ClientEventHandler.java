@@ -35,15 +35,15 @@ public class ClientEventHandler {
 
 	@SubscribeEvent
 	public void onPlayerTick(PlayerTickEvent e){
-		if(e.player != Minecraft.getMinecraft().thePlayer) return;
+		if(e.player != Minecraft.getMinecraft().player) return;
 		tick ++;
 		if(tick%20 != 0){ 
 			return;
 		}
 		tick = 0;
 		
-		ItemStack glassesStack= e.player.inventory.armorInventory[3];
-		Item glasses = glassesStack!=null?glassesStack.getItem():null;
+		ItemStack glassesStack= e.player.inventory.armorInventory.get(3);
+		Item glasses = glassesStack!=ItemStack.EMPTY?glassesStack.getItem():null;
 		
 		if(glasses instanceof OpenGlassesItem){
 			Location uuid  = OpenGlassesItem.getUUID(glassesStack);
@@ -59,7 +59,7 @@ public class ClientEventHandler {
 	
 	@SubscribeEvent
 	public void onJoin(EntityJoinWorldEvent e){
-		if ((e.getEntity() == Minecraft.getMinecraft().thePlayer) && (e.getWorld().isRemote)){
+		if ((e.getEntity() == Minecraft.getMinecraft().player) && (e.getWorld().isRemote)){
 			ClientSurface.instances.removeAllWidgets();
 			ClientSurface.instances.haveGlasses = false;
 		}

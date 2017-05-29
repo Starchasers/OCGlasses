@@ -26,7 +26,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = OpenGlasses.MODID, version = OpenGlasses.VERSION, dependencies = "required-after:OpenComputers@[1.4.0,)")
+@Mod(modid = OpenGlasses.MODID, version = OpenGlasses.VERSION, dependencies = "required-after:opencomputers@[1.7.0,)")
 public class OpenGlasses
 {
 	public static final String MODID = "openglasses";
@@ -86,8 +86,8 @@ public class OpenGlasses
 	public void postInit(FMLPostInitializationEvent event)
 	{
 		ItemStack ram= Items.get("ram5").createItemStack(1);
-		ItemStack graphics = Items.get("graphicsCard3").createItemStack(1);
-		ItemStack wlanCard = Items.get("wlanCard").createItemStack(1);
+		ItemStack graphics = Items.get("graphicscard3").createItemStack(1);
+		ItemStack wlanCard = Items.get("wlancard").createItemStack(1);
 		ItemStack server = Items.get("geolyzer").createItemStack(1);
 		ItemStack screen = Items.get("screen3").createItemStack(1);
 		ItemStack cpu = Items.get("cpu3").createItemStack(1);

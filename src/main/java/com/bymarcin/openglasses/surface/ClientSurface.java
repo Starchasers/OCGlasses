@@ -87,7 +87,7 @@ public class ClientSurface {
 		if(!isPowered || !haveGlasses || lastBind == null) return;
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glPushMatrix();
-		EntityPlayer player= Minecraft.getMinecraft().thePlayer;
+		EntityPlayer player= Minecraft.getMinecraft().player;
 		double playerX = player.prevPosX + (player.posX - player.prevPosX) * event.getPartialTicks(); 
 		double playerY = player.prevPosY + (player.posY - player.prevPosY) * event.getPartialTicks();
 		double playerZ = player.prevPosZ + (player.posZ - player.prevPosZ) * event.getPartialTicks();

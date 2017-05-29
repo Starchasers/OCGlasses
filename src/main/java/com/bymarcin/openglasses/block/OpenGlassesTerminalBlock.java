@@ -47,14 +47,14 @@ public class OpenGlassesTerminalBlock extends BlockContainer {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (player.isSneaking() || world.isRemote)
 			return false;
 		OpenGlassesTerminalTileEntity te = getTileEntity(world, pos, OpenGlassesTerminalTileEntity.class);
 		if (te == null)
 			return false;
 		ItemStack glassesStack = player.getHeldItemMainhand();
-		if (glassesStack != null) {
+		if (glassesStack != ItemStack.EMPTY) {
 			Item item = glassesStack.getItem();
 			if (item instanceof OpenGlassesItem) {
 				((OpenGlassesItem) item).bindToTerminal(glassesStack, te.getTerminalUUID());

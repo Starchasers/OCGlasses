@@ -18,7 +18,7 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 
-def simpleVersion = "1.4.2"
+def simpleVersion = "1.5.2"
 
 group= "com.bymarcin.openglasses" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "OpenGlasses"
@@ -28,8 +28,8 @@ minecraft {
 	 replaceIn "com/bymarcin/openglasses/OpenGlasses.java"
 		replace "@VERSION@", simpleVersion
 	runDir = "run"
-	version = "1.10.2-12.18.1.2044"
-	mappings = "snapshot_20160801"
+	version = "13.20.0.2282"
+	mappings = "snapshot_20170323"
 }
 
 runClient {
@@ -44,7 +44,7 @@ repositories {
     maven { url = "http://maven.cil.li/" }
 }
 dependencies {
-    provided  "li.cil.oc:OpenComputers:MC1.10.2-1.6.0.3-rc.1"
+    provided  "li.cil.oc:OpenComputers:MC1.11.2-1.7.0.28"
 }
 
 processResources

@@ -123,7 +123,7 @@ public class FloatingText extends Widget implements IViewDistance, ILookable, I3
 	
 	@SideOnly(Side.CLIENT)
 	class RenderableFloatingText implements IRenderableWidget{
-		FontRenderer fontRender = Minecraft.getMinecraft().fontRendererObj;
+		FontRenderer fontRender = Minecraft.getMinecraft().fontRenderer;
 		double offsetX = fontRender.getStringWidth(text)/2D;
 		double offsetY = fontRender.FONT_HEIGHT/2D;
 		int color = OGUtils.getIntFromColor(r, g, b, alpha);
