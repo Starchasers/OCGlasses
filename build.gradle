@@ -18,10 +18,10 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 
-def simpleVersion = "1.5.2"
+def simpleVersion = "1.5.3"
 
 group= "com.bymarcin.openglasses" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "OpenGlasses"
+archivesBaseName = "OpenGlasses-MC1.11.2"
 version = simpleVersion
 
 minecraft {
