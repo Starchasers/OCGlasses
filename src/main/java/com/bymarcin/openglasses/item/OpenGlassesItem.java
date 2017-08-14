@@ -1,7 +1,9 @@
 package com.bymarcin.openglasses.item;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -9,6 +11,7 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -40,16 +43,15 @@ public class OpenGlassesItem extends ItemArmor {
 		return new Location(new BlockPos(tag.getInteger("X"),tag.getInteger("Y"),tag.getInteger("Z")),tag.getInteger("DIM"), tag.getLong("uniqueKey"));
 	}
 	
-	@Override
 	@SideOnly(Side.CLIENT)
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean par4) {
-		super.addInformation(itemStack, player, list, par4);
-		Location uuid = getUUID(itemStack);
+	@Override
+	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+		super.addInformation(stack, worldIn, tooltip, flagIn);
+		Location uuid = getUUID(stack);
 		if (uuid != null){
-			list.add("Link to:");
+			tooltip.add("Link to:");
 			for(String s : uuid.toArrayString()){
-				list.add(s);
+				tooltip.add(s);
 			}
 		}
 	}

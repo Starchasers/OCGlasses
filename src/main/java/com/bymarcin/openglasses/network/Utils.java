@@ -17,7 +17,7 @@ public class Utils {
 	}
 
 	public static TileEntity getTileEntityServer(int dimensionId, BlockPos pos) {
-		World world = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(dimensionId);
+		World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimensionId);
 		if (world == null)
 			return null;
 		return world.getTileEntity(pos);

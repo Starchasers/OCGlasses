@@ -2,9 +2,6 @@ package com.bymarcin.openglasses.surface.widgets.component.face;
 
 import io.netty.buffer.ByteBuf;
 
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.entity.player.EntityPlayer;
 
 import net.minecraftforge.fml.relauncher.Side;

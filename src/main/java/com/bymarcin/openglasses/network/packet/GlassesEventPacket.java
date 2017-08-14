@@ -110,7 +110,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 				terminal.sendInteractEvent(eventType.name(),
 					playerMP.getName(),
 					playerMP.posX, playerMP.posY, playerMP.posZ,
-					look.xCoord, look.yCoord, look.zCoord,
+					look.x, look.y, look.z,
 					playerMP.getEyeHeight()
 				);
 			break;

@@ -45,7 +45,7 @@ public class Location {
 	}
 	
 	public TileEntity getTileEntity(){
-		World world  = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(dimID);
+		World world  = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimID);
 		if(world==null) 
 			return null;
 		return world.getTileEntity(new BlockPos(x, y, z));

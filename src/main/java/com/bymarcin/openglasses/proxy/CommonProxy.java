@@ -16,7 +16,7 @@ public class CommonProxy {
 	}
 
 	public World getWorld(int dimensionId) {
-		return FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(dimensionId);
+		return FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimensionId);
 	}
 
 	public int getCurrentClientDimension() {
