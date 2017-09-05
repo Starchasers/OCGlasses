@@ -1,20 +1,20 @@
 Possible Modifiers:
 
-`addRotation(float, float, float, float)`
+`addRotation(float angle, float x, float y, float z)`
 
-`addScale(float, float, float)`
 
-`addColor(float, float, float, float)`
+`addScale(float x, float y, float z)`
 
-`addTranslation(float, float, float)`
+`addColor(float red, float green, float blue, float alpha)`
+
+`addTranslation(float x, float y, float z)`
 
 
 Additional Lua Methods for Widgets:
 
-`removeModifier(int)`
+`removeModifier(int modifierIndex)`
 
 `getModifiers()`
-
 
 
 modifiers can have conditions to get active, those are:
@@ -26,6 +26,7 @@ modifiers can have conditions to get active, those are:
 `OVERLAY_ACTIVE`, `OVERLAY_INACTIVE`
 
 
+Examples for Conditions:
 
 `(widget)->setCondition(1, "IS_SNEAKING", true)` requires the user to sneak to activate 1st modifier
 
