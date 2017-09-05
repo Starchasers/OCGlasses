@@ -1,4 +1,4 @@
-`g = require("component").glasses
+``g = require("component").glasses
 g.removeAll()
 
 f = g.addItemIcon()
@@ -23,4 +23,4 @@ l = g.addTextLabel()
 l.setText("Hello")
 l.addColor(1, 0, 0, 0.5)
 l.addColor(0, 1, 0, 0.5)
-l.setCondition(2, "OVERLAY_ACTIVE", true)`
+l.setCondition(2, "OVERLAY_ACTIVE", true)``
