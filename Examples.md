@@ -15,12 +15,12 @@
 	Widget_Cube3D.setCondition(4, "IS_LIGHTLEVEL_MIN", true, 7)
 
 	Widget_FloatingText = glassesTerminal.addFloatingText()
-	Widget_FloatingText.setText("Hello!?") -- no modifier!
+	Widget_FloatingText.setText("openGlasses") -- no modifier!
 	Widget_FloatingText.addTranslation(0, 4, 0) -- this is modifier #1
 	Widget_FloatingText.addColor(1, 1, 0, 0.8)  -- this is modifier #2
 
 	Widget_TextLabel = glassesTerminal.addTextLabel()
-	Widget_TextLabel.setText("Hello") -- no modifier!
+	Widget_TextLabel.setText("openGlasses") -- no modifier!
 	Widget_TextLabel.addColor(1, 0, 0, 0.5)  -- this is modifier #1
 	Widget_TextLabel.addColor(0, 1, 0, 0.5)  -- this is modifier #2
 	Widget_TextLabel.setCondition(2, "OVERLAY_ACTIVE", true)
