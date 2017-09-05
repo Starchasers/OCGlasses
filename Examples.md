@@ -1,26 +1,26 @@
-	g = require("component").glasses
-	g.removeAll()
+	glassesTerminal = require("component").glasses
+	glassesTerminal.removeAll()
 
-	f = g.addItemIcon()
-	f.setItem("wooden_shovel", 0)
-	f.addScale(40, 40, 40)      -- modifier #1
-	f.addTranslation(2, 3, 0)   -- modifier #2
-	f.addRotation(180, 1, 0, 0) -- modifier #3
+	Widget_ItemIcon = glassesTerminal.addItemIcon()
+	Widget_ItemIcon.setItem("minecraft:iron_sword", 0)
+	Widget_ItemIcon.addScale(40, 40, 40)      -- modifier #1
+	Widget_ItemIcon.addTranslation(2, 3, 0)   -- modifier #2
+	Widget_ItemIcon.addRotation(180, 1, 0, 0) -- modifier #3
 
-	c = g.addCube3D()
-	c.addTranslation(0, 3, 0)  -- modifier #1
-	c.addColor(1, 1, 0.4, 0.8) -- modifier #2
-	c.addRotation(45, 0, 0, 1) -- modifier #3
-	c.addScale(2, 2, 2)        -- modifier #4
-	c.setCondition(4, "IS_LIGHTLEVEL_MIN", true, 7)
+	Widget_Cube3D = glassesTerminal.addCube3D()
+	Widget_Cube3D.addTranslation(0, 3, 0)  -- modifier #1
+	Widget_Cube3D.addColor(1, 1, 0.4, 0.8) -- modifier #2
+	Widget_Cube3D.addRotation(45, 0, 0, 1) -- modifier #3
+	Widget_Cube3D.addScale(2, 2, 2)        -- modifier #4
+	Widget_Cube3D.setCondition(4, "IS_LIGHTLEVEL_MIN", true, 7)
 
-	s = g.addFloatingText()
-	s.setText("Hello!?") -- no modifier!
-	s.addTranslation(0, 4, 0) -- this is modifier #1
-	s.addColor(1, 1, 0, 0.8)  -- this is modifier #2
+	Widget_FloatingText = glassesTerminal.addFloatingText()
+	Widget_FloatingText.setText("Hello!?") -- no modifier!
+	Widget_FloatingText.addTranslation(0, 4, 0) -- this is modifier #1
+	Widget_FloatingText.addColor(1, 1, 0, 0.8)  -- this is modifier #2
 
-	l = g.addTextLabel()
-	l.setText("Hello") -- no modifier!
-	l.addColor(1, 0, 0, 0.5)  -- this is modifier #1
-	l.addColor(0, 1, 0, 0.5)  -- this is modifier #2
-	l.setCondition(2, "OVERLAY_ACTIVE", true)
+	Widget_TextLabel = glassesTerminal.addTextLabel()
+	Widget_TextLabel.setText("Hello") -- no modifier!
+	Widget_TextLabel.addColor(1, 0, 0, 0.5)  -- this is modifier #1
+	Widget_TextLabel.addColor(0, 1, 0, 0.5)  -- this is modifier #2
+	Widget_TextLabel.setCondition(2, "OVERLAY_ACTIVE", true)
