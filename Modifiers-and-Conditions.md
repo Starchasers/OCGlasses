@@ -35,6 +35,6 @@ Examples for Conditions:
 
 conditions can be combined like in this example, which requires a lightlevel between 10-14 to activate the modifier
 
-`(widget)->setCondition(2, "IS_LIGHTLEVEL_MIN", true, 10)`
+`(widget)->setCondition(2, "IS_LIGHTLEVEL_MIN_10", true)`
 
-`(widget)->setCondition(2, "IS_LIGHTLEVEL_MAX", true, 14)`
+`(widget)->setCondition(2, "IS_LIGHTLEVEL_MAX_14", true)`
