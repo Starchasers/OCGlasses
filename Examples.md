@@ -12,7 +12,7 @@
 	Widget_Cube3D.addColor(1, 1, 0.4, 0.8) -- modifier #2
 	Widget_Cube3D.addRotation(45, 0, 0, 1) -- modifier #3
 	Widget_Cube3D.addScale(2, 2, 2)        -- modifier #4
-	Widget_Cube3D.setCondition(4, "IS_LIGHTLEVEL_MIN", true, 7)
+	Widget_Cube3D.setCondition(4, "IS_LIGHTLEVEL_MIN_7", true)
 
 	Widget_FloatingText = glassesTerminal.addFloatingText()
 	Widget_FloatingText.setText("openGlasses") -- no modifier!
