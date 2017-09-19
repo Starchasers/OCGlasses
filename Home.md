@@ -3,5 +3,6 @@ http://starchasers.pl/OpenGlasses/doku.php?id=start
 
 keep in mind that the API changed significantly.
 
-some "hints" are in the release notes ;)
-https://github.com/ben-mkiv/OCGlasses/releases
+some examples are found here => https://github.com/ben-mkiv/OCGlasses/wiki/Examples
+
+lua demo script => https://github.com/ben-mkiv/OCGlasses/wiki/lua-Demo
