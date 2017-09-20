@@ -15,15 +15,17 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_COORD_ARRAY;
+import static org.lwjgl.opengl.GL11.glFinish;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 
 
 public class VBO {
 	public static final VBO vbo = new VBO();
-	
+	public ShaderProgram shaderProgram = null;
 	
 	@SubscribeEvent
 	public void renderInWorld(RenderWorldLastEvent event) {
@@ -86,19 +88,23 @@ public class VBO {
 	
 	public void render(){
 		System.out.println("render");
+		if(shaderProgram==null){
+			shaderProgram = new ShaderProgram("assets/openglasses/shaders/basic.vert","assets/openglasses/shaders/basic.frag");
+		}
+		
 		int vertexBufferID = createVBOID();
 		
 		IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(Blocks.DISPENSER.getDefaultState());
 		TextureAtlasSprite texture = model.getParticleTexture();
 		
 		
-		BufferElement v1 = new BufferElement().setX(0 ).setY(0 ).setA(1f).setR(.5f).setZ(0);
-		BufferElement v2 = new BufferElement().setX(0 ).setY(10).setA(1f).setG(.5f).setZ(0);
-		BufferElement v3 = new BufferElement().setX(10).setY(0 ).setA(1f).setB(.5f).setZ(0);
+		BufferElement v1 = new BufferElement().setX(0 ).setY(0 ).setA(0.5f).setR(1).setG(0).setB(0).setZ(0);
+		BufferElement v2 = new BufferElement().setX(0 ).setY(10).setA(0.5f).setR(0).setG(1).setB(0).setZ(0);
+		BufferElement v3 = new BufferElement().setX(10).setY(0 ).setA(0.5f).setR(0).setG(0).setB(1).setZ(0);
 		
-		BufferElement v4 = new BufferElement().setX(0 ).setY(10).setA(1f).setB(.5f).setZ(0);
-		BufferElement v5 = new BufferElement().setX(10).setY(10).setA(1f).setG(.5f).setZ(0);
-		BufferElement v6 = new BufferElement().setX(10).setY(0 ).setA(1f).setR(.5f).setB(.5f).setZ(0);
+		BufferElement v4 = new BufferElement().setX(0 ).setY(10).setA(1f).setR(1).setG(0).setB(0).setZ(0);
+		BufferElement v5 = new BufferElement().setX(10).setY(10).setA(1f).setR(0).setG(1).setB(0).setZ(0);
+		BufferElement v6 = new BufferElement().setX(10).setY(0 ).setA(1f).setR(0).setG(0).setB(1).setZ(0);
 		
 		FloatBuffer buff = BufferUtils.createFloatBuffer(6*BufferElement.SIZE);
 		
@@ -120,26 +126,32 @@ public class VBO {
 		buff.put(v6.get());
 		buff.flip();
 		vertexBufferData(vertexBufferID, buff);
+		glFinish();
+		GL11.glEnable(GL11.GL_POLYGON_SMOOTH);
+		GL11.glEnable(GL11.GL_VERTEX_ARRAY);
+		//GL11.glEnable(GL11.GL_COLOR_ARRAY);
+		//GL11.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		
-		
-		GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-		GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
-		GL11.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		
-		GL13.glClientActiveTexture(GL_TEXTURE0);
+		//GL13.glClientActiveTexture(GL_TEXTURE0);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vertexBufferID);
-		
+		shaderProgram.useProgram();
+		//GL11.glColorPointer(4, GL_FLOAT, BufferElement.SIZE*4, BufferElement.COLOR_POINTER_OFFSET*4);
+		GL11.glVertexPointer(3, GL_FLOAT, BufferElement.SIZE*4, BufferElement.VERTEX_POINTER_OFFSET*4);
+		//GL11.glTexCoordPointer(2, GL_FLOAT, BufferElement.SIZE*4, BufferElement.TEXCOORD_POINTER_OFFSET*4);
 
-		GL11.glVertexPointer(3, GL_FLOAT, BufferElement.SIZE*4, BufferElement.VERTEX_POINTER_OFFSET);
-		GL11.glColorPointer(4, GL_FLOAT, BufferElement.SIZE*4, BufferElement.COLOR_POINTER_OFFSET*4);
-		GL11.glTexCoordPointer(2, GL_FLOAT, BufferElement.SIZE*4, BufferElement.TEXCOORD_POINTER_OFFSET*4);
+		GL20.glVertexAttribPointer(shaderProgram.getAttirbLocation("in_color"),4,GL_FLOAT,false,BufferElement.SIZE*4,BufferElement.COLOR_POINTER_OFFSET*4);
+		GL20.glEnableVertexAttribArray(shaderProgram.getAttirbLocation("in_color"));
+		
+		GL20.glVertexAttribPointer(shaderProgram.getAttirbLocation("in_uv"),2,GL_FLOAT,false,BufferElement.SIZE*4,BufferElement.TEXCOORD_POINTER_OFFSET*4);
+		GL20.glEnableVertexAttribArray(shaderProgram.getAttirbLocation("in_uv"));
+		
 		
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 6);
-		
+		GL20.glUseProgram(0);
 		//cleanup
-		GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-		GL11.glDisableClientState(GL11.GL_COLOR_ARRAY);
-		GL11.glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		GL11.glDisable(GL11.GL_VERTEX_ARRAY);
+		//GL11.glDisable(GL11.GL_COLOR_ARRAY);
+		//GL11.glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 		GL15.glDeleteBuffers(vertexBufferID);
 	 /*
