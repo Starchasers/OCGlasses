@@ -65,6 +65,12 @@ public class OpenGlassesTerminalTileEntity extends TileEntity implements Environ
 		}
 	}
 	
+	public void sendChangeSizeEvent(String eventType, String player, int width, int height, int scaleFactor){
+		if (node != null) {
+			node.sendToReachable("computer.signal", eventType.toLowerCase(), player, width, height, scaleFactor);
+		}
+	}
+	
 	public String getComponentName() {
 		return "glasses";
 	}

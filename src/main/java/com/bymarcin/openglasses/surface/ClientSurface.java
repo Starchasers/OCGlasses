@@ -68,8 +68,6 @@ public class ClientSurface {
 			if(!isPowered || !haveGlasses || lastBind == null){ if(noPowerRender !=null)noPowerRender.render(null, 0, 0, 0); return;}
 			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 			GL11.glPushMatrix();
-			GL11.glScaled(evt.getResolution().getScaledWidth_double()/512D, evt.getResolution().getScaledHeight_double()/512D*16D/9D, 0);
-
 			for(IRenderableWidget renderable : renderables.values()){
 				if(renderable.shouldWidgetBeRendered())
 					renderable.render(null, 0, 0, 0);
