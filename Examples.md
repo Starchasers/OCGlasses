@@ -6,7 +6,7 @@
 	Widget_ItemIcon.addScale(40, 40, 40)      -- modifier #1
 	Widget_ItemIcon.addTranslation(2, 3, 0)   -- modifier #2
 	Widget_ItemIcon.addRotation(180, 1, 0, 0) -- modifier #3
-	Widget_ItemIcon.setFaceWidgetToPlayer(true) -- enables auto rotation, so the item rotates to face the player
+	Widget_ItemIcon.setFaceWidgetToPlayer(true) -- enables auto rotation, so the widget rotates to face the player
 
 	Widget_Cube3D = glassesTerminal.addCube3D()
 	Widget_Cube3D.addTranslation(0, 3, 0)  -- modifier #1
