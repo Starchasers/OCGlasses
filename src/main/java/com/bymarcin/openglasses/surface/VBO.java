@@ -5,27 +5,36 @@ import java.nio.FloatBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 
+import com.bymarcin.openglasses.surface.vbo.BasicShader;
+import com.bymarcin.openglasses.surface.vbo.TextureManager;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_COORD_ARRAY;
-import static org.lwjgl.opengl.GL11.glFinish;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 
-
+@SideOnly(Side.CLIENT)
 public class VBO {
-	public static final VBO vbo = new VBO();
-	public ShaderProgram shaderProgram = null;
+	public static final VBO instances = new VBO();
+	BasicShader basicShader;
+	TextureManager textureManager;
+	
+	public void compileShader(){
+		basicShader = new BasicShader();
+		textureManager = new TextureManager();
+	}
 	
 	@SubscribeEvent
 	public void renderInWorld(RenderWorldLastEvent event) {
@@ -34,7 +43,6 @@ public class VBO {
 			double playerX = player.prevPosX + (player.posX - player.prevPosX) * event.getPartialTicks();
 			double playerY = player.prevPosY + (player.posY - player.prevPosY) * event.getPartialTicks();
 			double playerZ = player.prevPosZ + (player.posZ - player.prevPosZ) * event.getPartialTicks();
-			
 		
 			GL11.glPushMatrix();
 			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
@@ -44,11 +52,11 @@ public class VBO {
 			 //GL11.glDepthMask(false);
 			GL11.glTranslated(-playerX, -playerY, -playerZ);
 			// Start render
-			vbo.render();
+			instances.render();
 			// End render
 			// GL11.glDepthMask(true);
-			GL11.glEnable(GL11.GL_LIGHTING);
-			GL11.glDisable(GL11.GL_BLEND);
+			//GL11.glEnable(GL11.GL_LIGHTING);
+			//GL11.glDisable(GL11.GL_BLEND);
 			//GL11.glEnable(GL11.GL_TEXTURE_2D);
 			GL11.glPopAttrib();
 			GL11.glPopMatrix();
@@ -88,15 +96,13 @@ public class VBO {
 	
 	public void render(){
 		System.out.println("render");
-		if(shaderProgram==null){
-			shaderProgram = new ShaderProgram("assets/openglasses/shaders/basic.vert","assets/openglasses/shaders/basic.frag");
-		}
 		
 		int vertexBufferID = createVBOID();
 		
-		IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(Blocks.DISPENSER.getDefaultState());
-		TextureAtlasSprite texture = model.getParticleTexture();
+
+		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		
+		TextureAtlasSprite texture =  textureManager.findTexture("minecraft:chest");
 		
 		BufferElement v1 = new BufferElement().setX(0 ).setY(0 ).setA(0.5f).setR(1).setG(0).setB(0).setZ(0);
 		BufferElement v2 = new BufferElement().setX(0 ).setY(10).setA(0.5f).setR(0).setG(1).setB(0).setZ(0);
@@ -126,93 +132,23 @@ public class VBO {
 		buff.put(v6.get());
 		buff.flip();
 		vertexBufferData(vertexBufferID, buff);
-		glFinish();
-		GL11.glEnable(GL11.GL_POLYGON_SMOOTH);
-		GL11.glEnable(GL11.GL_VERTEX_ARRAY);
-		//GL11.glEnable(GL11.GL_COLOR_ARRAY);
-		//GL11.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		
+
 		//GL13.glClientActiveTexture(GL_TEXTURE0);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vertexBufferID);
-		shaderProgram.useProgram();
-		//GL11.glColorPointer(4, GL_FLOAT, BufferElement.SIZE*4, BufferElement.COLOR_POINTER_OFFSET*4);
-		GL11.glVertexPointer(3, GL_FLOAT, BufferElement.SIZE*4, BufferElement.VERTEX_POINTER_OFFSET*4);
-		//GL11.glTexCoordPointer(2, GL_FLOAT, BufferElement.SIZE*4, BufferElement.TEXCOORD_POINTER_OFFSET*4);
-
-		GL20.glVertexAttribPointer(shaderProgram.getAttirbLocation("in_color"),4,GL_FLOAT,false,BufferElement.SIZE*4,BufferElement.COLOR_POINTER_OFFSET*4);
-		GL20.glEnableVertexAttribArray(shaderProgram.getAttirbLocation("in_color"));
+		basicShader.bind();
 		
-		GL20.glVertexAttribPointer(shaderProgram.getAttirbLocation("in_uv"),2,GL_FLOAT,false,BufferElement.SIZE*4,BufferElement.TEXCOORD_POINTER_OFFSET*4);
-		GL20.glEnableVertexAttribArray(shaderProgram.getAttirbLocation("in_uv"));
+		GL11.glVertexPointer(3, GL_FLOAT, BufferElement.SIZE*4, BufferElement.VERTEX_POINTER_OFFSET*4);
+		GL20.glVertexAttribPointer(basicShader.getInColorAttrib(),4,GL_FLOAT,false,BufferElement.SIZE*4,BufferElement.COLOR_POINTER_OFFSET*4);
+		GL20.glVertexAttribPointer(basicShader.getInUVAttrib(),2,GL_FLOAT,false,BufferElement.SIZE*4,BufferElement.TEXCOORD_POINTER_OFFSET*4);
 		
 		
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 6);
-		GL20.glUseProgram(0);
+
 		//cleanup
-		GL11.glDisable(GL11.GL_VERTEX_ARRAY);
-		//GL11.glDisable(GL11.GL_COLOR_ARRAY);
-		//GL11.glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		basicShader.unBind();
+
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 		GL15.glDeleteBuffers(vertexBufferID);
-	 /*
-	 
-	 
-	   glBindBuffer(GL_ARRAY_BUFFER, VertexVBOID);
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glVertexPointer(3, GL_FLOAT, sizeof(MyVertex), BUFFER_OFFSET(0));   //The starting point of the VBO, for the vertices
-  glEnableClientState(GL_NORMAL_ARRAY);
-  glNormalPointer(GL_FLOAT, sizeof(MyVertex), BUFFER_OFFSET(12));   //The starting point of normals, 12 bytes away
-  glClientActiveTexture(GL_TEXTURE0);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  glTexCoordPointer(2, GL_FLOAT, sizeof(MyVertex), BUFFER_OFFSET(24));   //The starting point of texcoords, 24 bytes away
-  
-	 
-	struct MyVertex
-  {
-    float x, y, z;        //Vertex
-    float nx, ny, nz;     //Normal
-    float s0, t0;         //Texcoord0
-  };
-  
-  MyVertex pvertex[3];
-
-
-  
-  glGenBuffers(1, VertexVBOID);
-  glBindBuffer(GL_ARRAY_BUFFER, VertexVBOID);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(MyVertex)*3, &pvertex[0].x, GL_STATIC_DRAW);
-  
-  ushort pindices[3];
-  pindices[0] = 0;
-  pindices[1] = 1;
-  pindices[2] = 2;
-  
-  glGenBuffers(1, &IndexVBOID);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexVBOID);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ushort)*3, pindices, GL_STATIC_DRAW);
-  
-  //Define this somewhere in your header file
-  #define BUFFER_OFFSET(i) ((void*)(i))
-  
-  glBindBuffer(GL_ARRAY_BUFFER, VertexVBOID);
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glVertexPointer(3, GL_FLOAT, sizeof(MyVertex), BUFFER_OFFSET(0));   //The starting point of the VBO, for the vertices
-  glEnableClientState(GL_NORMAL_ARRAY);
-  glNormalPointer(GL_FLOAT, sizeof(MyVertex), BUFFER_OFFSET(12));   //The starting point of normals, 12 bytes away
-  glClientActiveTexture(GL_TEXTURE0);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  glTexCoordPointer(2, GL_FLOAT, sizeof(MyVertex), BUFFER_OFFSET(24));   //The starting point of texcoords, 24 bytes away
-  
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexVBOID);
-  //To render, we can either use glDrawElements or glDrawRangeElements
-  //The is the number of indices. 3 indices needed to make a single triangle
-  glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, BUFFER_OFFSET(0));   //The starting point of the IBO
-  //0 and 3 are the first and last vertices
-  //glDrawRangeElements(GL_TRIANGLES, 0, 3, 3, GL_UNSIGNED_SHORT, BUFFER_OFFSET(0));   //The starting point of the IBO
-  //glDrawRangeElements may or may not give a performance advantage over glDrawElements
-		
-		
-		
-		*/
 	}
 }

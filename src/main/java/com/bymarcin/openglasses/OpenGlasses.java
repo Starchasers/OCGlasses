@@ -98,6 +98,7 @@ public class OpenGlasses
 	public void registerModels(ModelRegistryEvent event) {
 		proxy.registermodel(openTerminalItem, 0);
 		proxy.registermodel(openGlasses, 0);
+		proxy.registerShader();
 	}
 	
 	@SubscribeEvent

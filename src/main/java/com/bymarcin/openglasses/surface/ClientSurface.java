@@ -83,7 +83,6 @@ public class ClientSurface {
 	@SubscribeEvent
 	public void renderWorldLastEvent(RenderWorldLastEvent event)
 	{
-		VBO.vbo.renderInWorld(event);
 		if(!isPowered || !haveGlasses || lastBind == null) return;
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glPushMatrix();

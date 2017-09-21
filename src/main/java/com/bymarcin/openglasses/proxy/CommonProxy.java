@@ -7,6 +7,10 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class CommonProxy {
 	
+	public void registerShader(){
+	
+	}
+	
 	public void registermodel(Item item, int meta){
 
 	}
