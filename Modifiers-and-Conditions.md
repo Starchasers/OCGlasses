@@ -20,12 +20,18 @@ Additional Lua Methods for Widgets:
 modifiers can have conditions to get active, those are:
 
 `IS_LIGHTLEVEL_MIN`, `IS_LIGHTLEVEL_MAX` -- requires minecraft Daylight Sensor
+
 `IS_WEATHER_RAIN`, `IS_WEATHER_CLEAR`  -- requires opencomputers tank Upgrade
+
 `IS_SWIMMING`, `IS_NOT_SWIMMING`  -- requires opencomputers geolyzer
+
 `IS_SNEAKING`, `IS_NOT_SNEAKING`   -- requires opencomputers motion sensor
+
 `OVERLAY_ACTIVE`, `OVERLAY_INACTIVE`
 
 (add required upgrades on a Anvil like when enchanting armor)
+
+
 
 Examples for Conditions:
 
