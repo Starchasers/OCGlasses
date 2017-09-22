@@ -28,7 +28,7 @@
 
 `OVERLAY_ACTIVE`, `OVERLAY_INACTIVE`
 
-(add required upgrades on a Anvil like when enchanting armor)
+(add required upgrades on a Anvil like when enchanting armor, each upgrade costs 20 levels of XP)
 
 
 
