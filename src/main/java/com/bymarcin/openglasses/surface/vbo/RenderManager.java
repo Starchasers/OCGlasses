@@ -1,14 +1,10 @@
 package com.bymarcin.openglasses.surface.vbo;
 
-import com.google.common.primitives.Floats;
-
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL15;
+import org.lwjgl.util.vector.Matrix4f;
 
 import com.bymarcin.openglasses.surface.VBO;
 
@@ -17,59 +13,57 @@ public class RenderManager {
 	BasicShader shader;
 	List<Float> localBuffer = new ArrayList<>();
 	
-	private void init(){
+	private void init() {
 		shader = new BasicShader();
 		bufferId = GL15.glGenBuffers();
 	}
 	
-	public void bind(boolean bind){
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bind?bufferId:0);
+	public void bind(boolean bind) {
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bind ? bufferId : 0);
 	}
 	
 	
+	/*  rendering scheme
+	public void render() {
+		useProgram();
+		for(Model model : Models){
+			bindBuffer(model.bufferID);
+			setUniform("ModelMatrix",model.matrix);
+			for(ModelPart part : model.parts){
+				setUniform("PartMatrix", part.matrix);
+				drawArrays(part.startBufferPosition,part.getElements());
+			}
+		}
+	}
+	*/
 	
-	
-	
-//	public void recreateVBO() {
-//		FloatBuffer buffer = BufferUtils.createFloatBuffer(localBuffer.size());
-//		buffer.put(Floats.toArray(localBuffer));
-//		buffer.flip();
-//		bind(true);
-//		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
-//		bind(false);
-//	}
-//
-//	public void updateVBO(int offset, int size) {
-//		bind(true);
-//		FloatBuffer buffer = BufferUtils.createFloatBuffer(size);
-//		buffer.put(Floats.toArray(localBuffer.subList(offset, offset + size)));
-//		buffer.flip();
-//		GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, offset * 4, buffer);
-//		bind(false);
-//	}
-	
-	
-	
-	
-	
-	public void render(){
-	
+	public class ModelPart {
+		Matrix4f matrix;
+		List<VBO.BufferElement> bufferElements;
+		int startBufferPosition;
+		
+		int getElements() {
+			return bufferElements.size() / 3;
+		}
+		
+		public void addTriangle(VBO.BufferElement v1, VBO.BufferElement v2, VBO.BufferElement v3) {
+			bufferElements.add(v1);
+			bufferElements.add(v2);
+			bufferElements.add(v3);
+		}
 	}
 	
-
-	public static class Element{
-		VBO.BufferElement[] vertices = new VBO.BufferElement[3];
-		int startPos;
+	public class Model {
+		int bufferID;
+		Matrix4f matrix;
+		long modelID;
+		List<ModelPart> parts;
 	}
 	
-	public class Model{
-		List<Element> elements = new LinkedList<>();
+	
+	public class ModelBuilder {
 	}
 	
-	public static class Free{
-		int startPos;
-		int length;
-	}
 	
 	
 }
