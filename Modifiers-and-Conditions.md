@@ -1,4 +1,4 @@
-Possible Modifiers:
+### Possible Modifiers:
 
 `addRotation(float angle, float x, float y, float z)`
 
@@ -9,15 +9,14 @@ Possible Modifiers:
 
 `addTranslation(float x, float y, float z)`
 
-
-Additional Lua Methods for Widgets:
+### Additional Lua Methods for Widgets:
 
 `removeModifier(int modifierIndex)`
 
 `getModifiers()`
 
 
-modifiers can have conditions to get active, those are:
+### modifiers can have conditions to get active, those are:
 
 `IS_LIGHTLEVEL_MIN`, `IS_LIGHTLEVEL_MAX` -- requires minecraft Daylight Sensor
 
@@ -33,7 +32,7 @@ modifiers can have conditions to get active, those are:
 
 
 
-Examples for Conditions:
+### Examples for Conditions:
 
 `(widget)->setCondition(1, "IS_SNEAKING", true)` requires the user to sneak to activate 1st modifier
 
