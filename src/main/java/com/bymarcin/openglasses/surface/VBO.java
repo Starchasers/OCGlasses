@@ -22,6 +22,7 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 
 import com.bymarcin.openglasses.surface.vbo.BasicShader;
+import com.bymarcin.openglasses.surface.vbo.RenderManager;
 import com.bymarcin.openglasses.surface.vbo.TextureManager;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 
@@ -30,10 +31,12 @@ public class VBO {
 	public static final VBO instances = new VBO();
 	BasicShader basicShader;
 	TextureManager textureManager;
+	RenderManager rm = new RenderManager();
 	
 	public void compileShader(){
 		basicShader = new BasicShader();
 		textureManager = new TextureManager();
+		rm.init();
 	}
 	
 	@SubscribeEvent
@@ -76,79 +79,64 @@ public class VBO {
 	}
 	
 	
-	public class BufferElement{
-		public static final int SIZE = 9;
-		public static final int VERTEX_POINTER_OFFSET = 0;
-		public static final int COLOR_POINTER_OFFSET = 3;
-		public static final int TEXCOORD_POINTER_OFFSET = 7;
-		private float[] floats = new float[SIZE];
-		public BufferElement setX(float x){ floats[0]=x; return this;}
-		public BufferElement setY(float y){ floats[1]=y; return this;}
-		public BufferElement setZ(float z){ floats[2]=z; return this;}
-		public BufferElement setR(float r){ floats[3]=r; return this;}
-		public BufferElement setG(float g){ floats[4]=g; return this;}
-		public BufferElement setB(float b){ floats[5]=b; return this;}
-		public BufferElement setA(float a){ floats[6]=a; return this;}
-		public BufferElement setU(float u){ floats[7]=u; return this;}
-		public BufferElement setV(float v){ floats[8]=v; return this;}
-		public float[] get() {return floats;}
-	}
+
 	
 	public void render(){
-		System.out.println("render");
-		
-		int vertexBufferID = createVBOID();
-		
-
-		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-		
-		TextureAtlasSprite texture =  textureManager.findTexture("minecraft:chest");
-		
-		BufferElement v1 = new BufferElement().setX(0 ).setY(0 ).setA(0.5f).setR(1).setG(0).setB(0).setZ(0);
-		BufferElement v2 = new BufferElement().setX(0 ).setY(10).setA(0.5f).setR(0).setG(1).setB(0).setZ(0);
-		BufferElement v3 = new BufferElement().setX(10).setY(0 ).setA(0.5f).setR(0).setG(0).setB(1).setZ(0);
-		
-		BufferElement v4 = new BufferElement().setX(0 ).setY(10).setA(1f).setR(1).setG(0).setB(0).setZ(0);
-		BufferElement v5 = new BufferElement().setX(10).setY(10).setA(1f).setR(0).setG(1).setB(0).setZ(0);
-		BufferElement v6 = new BufferElement().setX(10).setY(0 ).setA(1f).setR(0).setG(0).setB(1).setZ(0);
-		
-		FloatBuffer buff = BufferUtils.createFloatBuffer(6*BufferElement.SIZE);
-		
-		if(texture!=null){
-			v1.setU(texture.getMinU()).setV(texture.getMinV());
-			v2.setU(texture.getMinU()).setV(texture.getMaxV());
-			v3.setU(texture.getMaxU()).setV(texture.getMinV());
-			
-			v4.setU(texture.getMinU()).setV(texture.getMaxV());
-			v5.setU(texture.getMaxU()).setV(texture.getMaxV());
-			v6.setU(texture.getMaxU()).setV(texture.getMinV());
-		}
-		
-		buff.put(v1.get());
-		buff.put(v2.get());
-		buff.put(v3.get());
-		buff.put(v4.get());
-		buff.put(v5.get());
-		buff.put(v6.get());
-		buff.flip();
-		vertexBufferData(vertexBufferID, buff);
+		//System.out.println("render");
+		rm.render();
+//
+//		int vertexBufferID = createVBOID();
+//
+//
+//		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+//
+//		TextureAtlasSprite texture =  textureManager.findTexture("minecraft:chest");
+//
+//		BufferElement v1 = new BufferElement().setX(0 ).setY(0 ).setA(0.5f).setR(1).setG(0).setB(0).setZ(0);
+//		BufferElement v2 = new BufferElement().setX(0 ).setY(10).setA(0.5f).setR(0).setG(1).setB(0).setZ(0);
+//		BufferElement v3 = new BufferElement().setX(10).setY(0 ).setA(0.5f).setR(0).setG(0).setB(1).setZ(0);
+//
+//		BufferElement v4 = new BufferElement().setX(0 ).setY(10).setA(1f).setR(1).setG(0).setB(0).setZ(0);
+//		BufferElement v5 = new BufferElement().setX(10).setY(10).setA(1f).setR(0).setG(1).setB(0).setZ(0);
+//		BufferElement v6 = new BufferElement().setX(10).setY(0 ).setA(1f).setR(0).setG(0).setB(1).setZ(0);
+//
+//		FloatBuffer buff = BufferUtils.createFloatBuffer(6*BufferElement.SIZE);
+//
+//		if(texture!=null){
+//			v1.setU(texture.getMinU()).setV(texture.getMinV());
+//			v2.setU(texture.getMinU()).setV(texture.getMaxV());
+//			v3.setU(texture.getMaxU()).setV(texture.getMinV());
+//
+//			v4.setU(texture.getMinU()).setV(texture.getMaxV());
+//			v5.setU(texture.getMaxU()).setV(texture.getMaxV());
+//			v6.setU(texture.getMaxU()).setV(texture.getMinV());
+//		}
+//
+//		buff.put(v1.get());
+//		buff.put(v2.get());
+//		buff.put(v3.get());
+//		buff.put(v4.get());
+//		buff.put(v5.get());
+//		buff.put(v6.get());
+//		buff.flip();
+//		vertexBufferData(vertexBufferID, buff);
 		
 
 		//GL13.glClientActiveTexture(GL_TEXTURE0);
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vertexBufferID);
-		basicShader.bind();
-		
-		GL11.glVertexPointer(3, GL_FLOAT, BufferElement.SIZE*4, BufferElement.VERTEX_POINTER_OFFSET*4);
-		GL20.glVertexAttribPointer(basicShader.getInColorAttrib(),4,GL_FLOAT,false,BufferElement.SIZE*4,BufferElement.COLOR_POINTER_OFFSET*4);
-		GL20.glVertexAttribPointer(basicShader.getInUVAttrib(),2,GL_FLOAT,false,BufferElement.SIZE*4,BufferElement.TEXCOORD_POINTER_OFFSET*4);
-		
-		
-		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 6);
-
-		//cleanup
-		basicShader.unBind();
-
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-		GL15.glDeleteBuffers(vertexBufferID);
+//		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vertexBufferID);
+//		basicShader.bind();
+//
+//		GL11.glVertexPointer(3, GL_FLOAT, BufferElement.SIZE*4, BufferElement.VERTEX_POINTER_OFFSET*4);
+//		GL20.glVertexAttribPointer(basicShader.getInColorAttrib(),4,GL_FLOAT,false,BufferElement.SIZE*4,BufferElement.COLOR_POINTER_OFFSET*4);
+//		GL20.glVertexAttribPointer(basicShader.getInUVAttrib(),2,GL_FLOAT,false,BufferElement.SIZE*4,BufferElement.TEXCOORD_POINTER_OFFSET*4);
+//
+//
+//		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 6);
+//
+//		//cleanup
+//		basicShader.unBind();
+//
+//		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+//		GL15.glDeleteBuffers(vertexBufferID);
 	}
 }
