@@ -1,7 +1,7 @@
 package com.bymarcin.openglasses.surface.vbo;
 
+import java.io.IOException;
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +11,13 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
+
+import de.javagl.obj.FloatTuple;
+import de.javagl.obj.Obj;
+import de.javagl.obj.ObjFace;
+import de.javagl.obj.ObjReader;
+import de.javagl.obj.ObjUtils;
 
 public class RenderManager {
 	BasicShader shader;
@@ -21,20 +28,61 @@ public class RenderManager {
 		//addModel(createModel());
 	}
 	
+	public Model objLoadr(String objFile) {
+		Model m = new Model();
+		try {
+			Obj obj = ObjUtils.convertToRenderable(ObjReader.read(ClassLoader.getSystemResourceAsStream(objFile)));
+			ModelPart  p = new ModelPart();
+			
+			for (int i = 0; i < obj.getNumFaces(); i++) {
+				
+				
+				ObjFace face = obj.getFace(i);
+				
+				FloatTuple v1 = obj.getVertex(face.getVertexIndex(0));
+				FloatTuple v2 = obj.getVertex(face.getVertexIndex(1));
+				FloatTuple v3 = obj.getVertex(face.getVertexIndex(2));
+				p.addTriangle(
+						new BufferElement().setX(v1.getX()).setY(v1.getY()).setZ(v1.getZ()).setA(1f),
+						new BufferElement().setX(v2.getX()).setY(v2.getY()).setZ(v2.getZ()).setA(1f),
+						new BufferElement().setX(v3.getX()).setY(v3.getY()).setZ(v3.getZ()).setA(1f)
+				);
+			}
+			
+			m.parts.put("main",p);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+		return m;
+	}
+	
 	public void bind(int bufferId) {
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferId);
 	}
 	
 	public void render() {
+		//objLoadr("assets/openglasses/shaders/ss.obj");
 		shader.bind();
+//				if(models.size()>1){
+//					Iterator i = models.iterator();
+//					i.next();
+//					i.remove();
+//				}
 
-		for(Model m: models){
+		
+		for (Model m : models) {
+			m.matrix = m.matrix.rotate(1/(120f*15f), new Vector3f(0,1,0) );
+			if(m.modelID==0){
+				m.matrix = m.matrix.translate(new Vector3f(0,20,0));
+				m.modelID=1;
+			}
 			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, m.bufferID);
-			GL20.glVertexAttribPointer(shader.getInColorAttrib(),4,GL11.GL_FLOAT,false,BufferElement.SIZE*4,BufferElement.COLOR_POINTER_OFFSET*4);
-			GL20.glVertexAttribPointer(shader.getInUVAttrib(),2,GL11.GL_FLOAT,false,BufferElement.SIZE*4,BufferElement.TEXCOORD_POINTER_OFFSET*4);
-			GL11.glVertexPointer(3, GL11.GL_FLOAT, BufferElement.SIZE*4, BufferElement.VERTEX_POINTER_OFFSET*4);
+			GL20.glVertexAttribPointer(shader.getInColorAttrib(), 4, GL11.GL_FLOAT, false, BufferElement.SIZE * 4, BufferElement.COLOR_POINTER_OFFSET * 4);
+			GL20.glVertexAttribPointer(shader.getInUVAttrib(), 2, GL11.GL_FLOAT, false, BufferElement.SIZE * 4, BufferElement.TEXCOORD_POINTER_OFFSET * 4);
+			GL11.glVertexPointer(3, GL11.GL_FLOAT, BufferElement.SIZE * 4, BufferElement.VERTEX_POINTER_OFFSET * 4);
 			GL20.glUniformMatrix4(shader.getInModelMatrix(), false, m.matrix());
-			for(ModelPart part : m.parts.values()) {
+			for (ModelPart part : m.parts.values()) {
 				GL11.glDrawArrays(GL11.GL_TRIANGLES, part.startBufferPosition, part.getElements());
 			}
 		}
@@ -57,7 +105,7 @@ public class RenderManager {
 	*
 	*/
 	
-	public void removeModel(Model m){
+	public void removeModel(Model m) {
 		models.remove(m);
 		GL15.glDeleteBuffers(m.bufferID);
 	}
@@ -67,7 +115,7 @@ public class RenderManager {
 		FloatBuffer buff = BufferUtils.createFloatBuffer(model.calculateBufferSize());
 		int offset = 0;
 		for (ModelPart part : model.parts.values()) {
-			part.startBufferPosition=offset;
+			part.startBufferPosition = offset;
 			offset += part.getElements();
 			part.bufferElements.forEach(bufferElement -> buff.put(bufferElement.get()));
 		}
@@ -103,7 +151,7 @@ public class RenderManager {
 		int startBufferPosition;
 		
 		int getElements() {
-			return bufferElements.size() ;
+			return bufferElements.size();
 		}
 		
 		public void addTriangle(BufferElement v1, BufferElement v2, BufferElement v3) {
@@ -127,7 +175,7 @@ public class RenderManager {
 			return size * BufferElement.SIZE;
 		}
 		
-		public FloatBuffer matrix(){
+		public FloatBuffer matrix() {
 			FloatBuffer buff = BufferUtils.createFloatBuffer(16);
 			matrix.store(buff);
 			buff.flip();

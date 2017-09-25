@@ -47,6 +47,7 @@ repositories {
 }
 dependencies {
     provided  "li.cil.oc:OpenComputers:MC1.12.1-1.7.0.4"
+	compile 'de.javagl:obj:0.2.1'
 }
 
 processResources

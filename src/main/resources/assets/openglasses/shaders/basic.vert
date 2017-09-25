@@ -2,7 +2,7 @@
 
 attribute vec4 in_color;
 attribute vec2 in_uv;
-attribute mat4 in_model_matrix;
+uniform mat4 in_model_matrix;
 
 
 varying vec4 color;
