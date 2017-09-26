@@ -5,6 +5,9 @@ import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -32,7 +35,7 @@ public class RenderManager {
 		Model m = new Model();
 		try {
 			Obj obj = ObjUtils.convertToRenderable(ObjReader.read(ClassLoader.getSystemResourceAsStream(objFile)));
-			ModelPart  p = new ModelPart();
+			ModelPart p = new ModelPart();
 			
 			for (int i = 0; i < obj.getNumFaces(); i++) {
 				
@@ -49,11 +52,13 @@ public class RenderManager {
 				);
 			}
 			
-			m.parts.put("main",p);
+			m.parts.put("main", p);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
+		
+		
 		return m;
 	}
 	
@@ -61,28 +66,69 @@ public class RenderManager {
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferId);
 	}
 	
-	public void render() {
+	public void render(RenderWorldLastEvent event) {
 		//objLoadr("assets/openglasses/shaders/ss.obj");
+		if (models.size() == 0) {
+			addModel(createModel());
+		}
 		shader.bind();
-//				if(models.size()>1){
-//					Iterator i = models.iterator();
-//					i.next();
-//					i.remove();
-//				}
-
+		//				if(models.size()>1){
+		//					Iterator i = models.iterator();
+		//					i.next();
+		//					i.remove();
+		//				}
 		
+		long time = System.currentTimeMillis();
 		for (Model m : models) {
-			m.matrix = m.matrix.rotate(1/(120f*15f), new Vector3f(0,1,0) );
-			if(m.modelID==0){
-				m.matrix = m.matrix.translate(new Vector3f(0,20,0));
-				m.modelID=1;
+			if(m.modelID-time<0){
+				AnimationFrame frame = new AnimationFrame();
+				frame.duration = 2*1000;
+				frame.stop = Matrix4f.rotate((float) Math.toRadians(m.modelID2%2==0?45:-45), new Vector3f(0,1,0), frame.start, frame.stop);
+
+				m.animationFrames.add(frame);
+				m.modelID = time + (2000);
+				m.modelID2++;
 			}
+			
 			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, m.bufferID);
 			GL20.glVertexAttribPointer(shader.getInColorAttrib(), 4, GL11.GL_FLOAT, false, BufferElement.SIZE * 4, BufferElement.COLOR_POINTER_OFFSET * 4);
 			GL20.glVertexAttribPointer(shader.getInUVAttrib(), 2, GL11.GL_FLOAT, false, BufferElement.SIZE * 4, BufferElement.TEXCOORD_POINTER_OFFSET * 4);
 			GL11.glVertexPointer(3, GL11.GL_FLOAT, BufferElement.SIZE * 4, BufferElement.VERTEX_POINTER_OFFSET * 4);
-			GL20.glUniformMatrix4(shader.getInModelMatrix(), false, m.matrix());
 			for (ModelPart part : m.parts.values()) {
+				
+				FloatBuffer buffer = BufferUtils.createFloatBuffer(16*6);
+				m.matrix.store(buffer);
+				part.matrix.store(buffer);
+				float t1=1;
+				float t2=1;
+				AnimationFrame animationFrame = m.animationFrames.peek();
+				if(animationFrame==null){
+					new Matrix4f().setIdentity().store(buffer);
+					new Matrix4f().setIdentity().store(buffer);
+				}else{
+					if(animationFrame.endtime == 0){
+						animationFrame.endtime = time + animationFrame.duration;
+					}else if(animationFrame.endtime< time && m.animationFrames.size()>1){
+						animationFrame = m.animationFrames.poll();
+						m.animationFrames.peek().start = Matrix4f.add(m.animationFrames.peek().start, animationFrame.stop, m.animationFrames.peek().start);
+					}
+					animationFrame.start.store(buffer);
+					animationFrame.stop.store(buffer);
+					t1 = Math.max(Math.min(1, 1-((animationFrame.endtime-time)/(float)animationFrame.duration)),0);
+				}
+				
+				AnimationFrame animationFramePart = part.animationFrames.peek();
+				if(animationFramePart==null){
+					new Matrix4f().setIdentity().store(buffer);
+					new Matrix4f().setIdentity().store(buffer);
+				}
+				
+				GL20.glUniform2f(shader.getInTime(), t1, t2);
+				
+				buffer.flip();
+				GL20.glUniformMatrix4(shader.getInMatrix(), false,buffer);
+				
+				
 				GL11.glDrawArrays(GL11.GL_TRIANGLES, part.startBufferPosition, part.getElements());
 			}
 		}
@@ -149,7 +195,7 @@ public class RenderManager {
 		Matrix4f matrix = Matrix4f.setIdentity(new Matrix4f());
 		List<BufferElement> bufferElements = new LinkedList<>();
 		int startBufferPosition;
-		
+		Queue<AnimationFrame> animationFrames = new LinkedList();
 		int getElements() {
 			return bufferElements.size();
 		}
@@ -161,11 +207,21 @@ public class RenderManager {
 		}
 	}
 	
+	public class AnimationFrame {
+		Matrix4f start = Matrix4f.setIdentity(new Matrix4f());
+		Matrix4f stop = Matrix4f.setIdentity(new Matrix4f());
+		long duration;
+		long endtime;
+	}
+	
 	public class Model {
 		int bufferID;
-		Matrix4f matrix = Matrix4f.setIdentity(new Matrix4f());
 		long modelID;
+		long modelID2;
+		Matrix4f modelID3;
+		Matrix4f matrix = Matrix4f.setIdentity(new Matrix4f());
 		HashMap<String, ModelPart> parts = new HashMap<>();
+		Queue<AnimationFrame> animationFrames = new LinkedList();
 		
 		int calculateBufferSize() {
 			int size = 0;
