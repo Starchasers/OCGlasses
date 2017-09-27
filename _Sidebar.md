@@ -9,6 +9,7 @@
 ## [Widgets](Widgets)
 ### [2D Overlay](Widgets2D)
 * [Box2D](Widget_Box2D)
+* [Custom](Widget_Custom)
 * [Dot](Widget_Dot)
 * [ItemIcon](Widget_ItemIcon)
 * [Quad](Widget_Triangle)
@@ -18,6 +19,7 @@
 
 ### [3D World](Widgets3D)
 * [Cube3D](Widget_Cube3D)
+* [Custom3D](Widget_Custom3D)
 * [Dot3D](Widget_Dot3D)
 * [FloatingText](Widget_FloatingText)
 * [Item3D](Widget_Item3D)
