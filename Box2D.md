@@ -16,17 +16,17 @@
   * [setVerticalAlign](Widget_Method_setVerticalAlign)
   * [setHorizontalAlign](Widget_Method_setHorizontalAlign)
 * visibility
-  * [isVisible](__getID)
-  * [setVisible](__getID)
+  * [isVisible](Widget_Method_isVisible)
+  * [setVisible](Widget_Method_setVisible)
 * size methods
-  * [getSize](__getID)
-  * [setSize](__getID)
+  * [getSize](Widget_Method_getSize)
+  * [setSize](Widget_Method_setSize)
   
 * Modifier Methods
-  * addColor
-  * addRotation
-  * addScale
-  * addTranslation
-  * getModifiers
-  * removeModifier
-  * setCondition
+  * [addColor](WidgetModifier_color)
+  * [addRotation](WidgetModifier_rotation)
+  * [addScale](WidgetModifier_scale)
+  * [addTranslation](WidgetModifier_translation)
+  * [getModifiers](Widget_Method_getModifiers)
+  * [removeModifier](Widget_Method_removeModifier)
+  * [setCondition](WidgetModifier_conditions)
