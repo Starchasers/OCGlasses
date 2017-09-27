@@ -10,27 +10,27 @@ AR Glasses can be Upgraded on an Anvil.
 ## Sensors
 ### Weather
 * OpenComputers Tank Upgrade
-* costs 20 Levels User XP
-* increases glasses power usage by 1 FE/tick
-* required for [Weather Modifier Condition](WidgetModifierConditions#Weather)
+  * costs 20 Levels User XP
+  * increases glasses power usage by 1 FE/tick
+  * required for [Weather Modifier Condition](WidgetModifierConditions#Weather)
 
 ### Sneaking
 * OpenComputers Motion Sensor
-* costs 20 Levels User XP
-* increases glasses power usage by 1 FE/tick
-* required for [Sneaking Modifier Condition](WidgetModifierConditions#Sneaking)
+  * costs 20 Levels User XP
+  * increases glasses power usage by 1 FE/tick
+  * required for [Sneaking Modifier Condition](WidgetModifierConditions#Sneaking)
 
 ### Swimming
 * OpenComputers Geolyzer
-* costs 20 Levels User XP
-* increases glasses power usage by 1 FE/tick
-* required for [Swimming Modifier Condition](WidgetModifierConditions#Swimming)
+  * costs 20 Levels User XP
+  * increases glasses power usage by 1 FE/tick
+  * required for [Swimming Modifier Condition](WidgetModifierConditions#Swimming)
 
 ### Light
 * Minecraft Daylight Sensor
-* costs 20 Levels User XP
-* increases glasses power usage by 1 FE/tick
-* required for [Light Modifier Condition](WidgetModifierConditions#Light)
+  * costs 20 Levels User XP
+  * increases glasses power usage by 1 FE/tick
+  * required for [Light Modifier Condition](WidgetModifierConditions#Light)
 
 
 
