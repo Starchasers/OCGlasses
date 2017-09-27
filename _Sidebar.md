@@ -28,9 +28,9 @@
 * Translate
 * Color
 
-### Widget Modifier Conditions
-* Weather
-* Sneaking
-* Swimming
-* Light
-* OverlayActive
+### [Widget Modifier Conditions](WidgetModifierConditions)
+* [Weather](WidgetModifierConditions#Weather)
+* [Sneaking](WidgetModifierConditions#Sneaking)
+* [Swimming](WidgetModifierConditions#Swimming)
+* [Light](WidgetModifierConditions#Light)
+* [OverlayActive](WidgetModifierConditions#OverlayActive)
