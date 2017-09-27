@@ -3,9 +3,9 @@
 `widget = component.glasses.addBox2D();`
 
 ### methods
-* default
-  * [getID](Widget_Method_getID)
-  * [removeWidget](Widget_Method_removeWidget)
+* [default](Widget_Methods_default)
+  * [getID](Widget_Methods_default)
+  * [removeWidget](Widget_Methods_default)
 * [private](Widget_Methods_private)
   * [getOwner](Widget_Methods_private)
   * [getOwnerUUID](Widget_Methods_private)
