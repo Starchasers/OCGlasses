@@ -2,7 +2,7 @@
 ## Box2D
 
 ### creation
-'widget = component.glasses.addBox2D();'
+`widget = component.glasses.addBox2D();`
 
 ### methods
 * default
