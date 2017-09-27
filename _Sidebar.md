@@ -23,10 +23,10 @@
 * Line3D / Quad3D / Triangle3D
 
 ### Widget Modifiers
-* Scale
-* Rotation
-* Translate
-* Color
+* [Color](WidgetModifiers#addColor)
+* [Rotation](WidgetModifiers#addRotation)
+* [Scale](WidgetModifiers#addScale)
+* [Translate](WidgetModifiers#addTranslate)
 
 ### [Widget Modifier Conditions](WidgetModifierConditions)
 * [Weather](WidgetModifierConditions#Weather)
