@@ -6,21 +6,21 @@
 
 ### methods
 * default
-  * getID
-  * removeWidget
+  * [getID](__getID)
+  * [removeWidget](__getID)
 * private
-  * getOwner
-  * getOwnerUUID
-  * setOwner
+  * [getOwner](__getID)
+  * [getOwnerUUID](__getID)
+  * [setOwner](__getID)
 * alignment
-  * setVerticalAlign
-  * setHorizontalAlign
+  * [setVerticalAlign](__getID)
+  * [setHorizontalAlign](__getID)
 * visibility
-  * isVisible
-  * setVisible
+  * [isVisible](__getID)
+  * [setVisible](__getID)
 * size methods
-  * getSize
-  * setSize
+  * [getSize](__getID)
+  * [setSize](__getID)
   
 * Modifier Methods
   * addColor
