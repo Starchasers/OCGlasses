@@ -4,8 +4,8 @@
 
 ### methods
 * [default](Widget_Methods_default)
-  * [getID](Widget_Methods_default)
-  * [removeWidget](Widget_Methods_default)
+  * [getID](Widget_Methods_default#getID)
+  * [removeWidget](Widget_Methods_default#removeWidget)
 * [private](Widget_Methods_private)
   * [getOwner](Widget_Methods_private)
   * [getOwnerUUID](Widget_Methods_private)
