@@ -6,10 +6,10 @@
 * default
   * [getID](Widget_Method_getID)
   * [removeWidget](Widget_Method_removeWidget)
-* private
-  * [getOwner](Widget_Method_getOwner)
-  * [getOwnerUUID](Widget_Method_getOwnerUUID)
-  * [setOwner](Widget_Method_setOwner)
+* [private](Widget_Methods_private)
+  * [getOwner](Widget_Methods_private)
+  * [getOwnerUUID](Widget_Methods_private)
+  * [setOwner](Widget_Methods_private)
 * alignment
   * [setVerticalAlign](Widget_Method_setVerticalAlign)
   * [setHorizontalAlign](Widget_Method_setHorizontalAlign)
