@@ -6,15 +6,15 @@
 
 ### methods
 * default
-  * [getID](Widget Method getID)
-  * [removeWidget](Widget Method removeWidget)
+  * [getID](Widget_Method_getID)
+  * [removeWidget](Widget_Method_removeWidget)
 * private
-  * [getOwner](Widget Method getOwner)
-  * [getOwnerUUID](Widget Method getOwnerUUID)
-  * [setOwner](Widget Method setOwner)
+  * [getOwner](Widget_Method_getOwner)
+  * [getOwnerUUID](Widget_Method_getOwnerUUID)
+  * [setOwner](Widget_Method_setOwner)
 * alignment
-  * [setVerticalAlign](Widget Method setVerticalAlign)
-  * [setHorizontalAlign](Widget Method setHorizontalAlign)
+  * [setVerticalAlign](Widget_Method_setVerticalAlign)
+  * [setHorizontalAlign](Widget_Method_setHorizontalAlign)
 * visibility
   * [isVisible](__getID)
   * [setVisible](__getID)
