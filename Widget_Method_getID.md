@@ -1,3 +1,3 @@
-integer `=widget.getID()`
+`=widget.getID()`
 
-returns the widget id
+(integer) returns the widget id
