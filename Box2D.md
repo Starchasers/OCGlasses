@@ -2,6 +2,10 @@
 ## Box2D
 `widget = component.glasses.addBox2D();`
 
+adds a gradient Box to the 2D Overlay
+
+last 2nd color Modifiers are used to determine the rendercolor
+
 ### methods
 * [default](Widget_Methods_default)
   * [getID](Widget_Methods_default#getID)
