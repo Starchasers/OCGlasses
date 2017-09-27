@@ -9,18 +9,21 @@
 ## [Widgets](Widgets)
 ### [2D Overlay](Widgets2D)
 * [Box2D](Widget_Box2D)
-* [Dot](Dot)
-* [ItemIcon](ItemIcon)
-* [Quad](Triangle)
-* [Rect](Rect)
-* [Triangle](Quad)
-* [TextLabel](TextLabel)
+* [Dot](Widget_Dot)
+* [ItemIcon](Widget_ItemIcon)
+* [Quad](Widget_Triangle)
+* [Rect](Widget_Rect)
+* [Triangle](Widget_Quad)
+* [TextLabel](Widget_TextLabel)
 
 ### [3D World](Widgets3D)
-* [Cube3D / Dot3D]
-* FloatingText
-* Item3D
-* Line3D / Quad3D / Triangle3D
+* [Cube3D](Widget_Cube3D)
+* [Dot3D](Widget_Dot3D)
+* [FloatingText](Widget_FloatingText)
+* [Item3D](Widget_Item3D)
+* [Line3D](Widget_Line3D)
+* [Quad3D](Widget_Quad3D)
+* [Triangle3D](Widget_Triangle3D)
 
 ### [Widget Modifiers](WidgetModifiers)
 * [Color](WidgetModifiers#addColor)
