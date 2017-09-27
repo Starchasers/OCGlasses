@@ -22,7 +22,7 @@
 * Item3D
 * Line3D / Quad3D / Triangle3D
 
-### Widget Modifiers
+### [Widget Modifiers](WidgetModifiers)
 * [Color](WidgetModifiers#addColor)
 * [Rotation](WidgetModifiers#addRotation)
 * [Scale](WidgetModifiers#addScale)
