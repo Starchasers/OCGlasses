@@ -3,6 +3,26 @@
 # Upgrades
 
 ## Sensors
+# OpenComputers Tank Upgrade
+# Weather
+* costs 20 Levels User XP
+* required for [Weather Modifier Condition]WidgetModifierConditions#Weather
+
+# OpenComputers Motion Sensor
+# Sneaking
+* costs 20 Levels User XP
+* required for [Sneaking Modifier Condition]WidgetModifierConditions#Sneaking
+
+# OpenComputers Geolyzer
+# Swimming
+* costs 20 Levels User XP
+* required for [Swimming Modifier Condition]WidgetModifierConditions#Swimming
+
+# Minecraft Daylight Sensor
+# Light
+* costs 20 Levels User XP
+* required for [Light Modifier Condition]WidgetModifierConditions#Light
+
 
 
 ### Widget Limit
