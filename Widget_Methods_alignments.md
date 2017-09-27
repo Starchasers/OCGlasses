@@ -1,7 +1,7 @@
 ### setHorizontalAlign
 `widget.setHorizontalAlign("alignment")`
 
-sets the vertical alignment, valid arguments are:
+sets the horizontal alignment, valid arguments are:
 * left
 * center
 * right
