@@ -87,19 +87,19 @@ public class RenderManager {
 			if (m.modelID - System.currentTimeMillis() < 0) {
 				AnimationFrame frame = new AnimationFrame();
 				frame.duration = 2 * 1000;
-				Matrix4f rotate = Matrix4f.rotate((float) Math.toRadians(m.modelID2 % 2 == 0 ? 45 : -45), new Vector3f(0, 1, 0),new Matrix4f(), null);
-				Matrix4f Oldrotate = Matrix4f.rotate((float) Math.toRadians(m.modelID2 % 2 != 0 ? 45 : -45), new Vector3f(0, 1, 0),new Matrix4f(), null);
+				Matrix4f rotate = Matrix4f.rotate((float) Math.toRadians(m.modelID2 % 2 == 0 ? 45 : -45), new Vector3f(0, 1, 0), new Matrix4f(), null);
+				Matrix4f Oldrotate = Matrix4f.rotate((float) Math.toRadians(m.modelID2 % 2 != 0 ? 45 : -45), new Vector3f(0, 1, 0), new Matrix4f(), null);
 				frame.stopRotation = Quaternion.setFromMatrix(rotate, new Quaternion());
 				frame.startRotation = Quaternion.setFromMatrix(Oldrotate, new Quaternion());
 				
-				frame.startScale = m.modelID2%2==0? new Vector4f(2,2,2,1):new Vector4f(1,1,1,1);
-				frame.stopScale = m.modelID2%2!=0? new Vector4f(2,2,2,1):new Vector4f(1,1,1,1);
+				frame.startScale = m.modelID2 % 2 == 0 ? new Vector4f(2, 2, 2, 0) : new Vector4f(0, 0, 0, 0);
+				frame.stopScale = m.modelID2 % 2 != 0 ? new Vector4f(2, 2, 2, 0) : new Vector4f(0, 0, 0, 0);
 				
 				
-				frame.startTranslate = m.modelID2%2==0? new Vector4f(0,10,0,1):new Vector4f(0,0,0,1);
-				frame.stopTranslate = m.modelID2%2!=0? new Vector4f(0,10,0,1):new Vector4f(0,0,0,1);
+				frame.startTranslate = m.modelID2 % 2 == 0 ? new Vector4f(0, 2, 0, 0) : new Vector4f(0, 0, 0, 0);
+				frame.stopTranslate = m.modelID2 % 2 != 0 ? new Vector4f(0, 2, 0, 0) : new Vector4f(0, 0, 0, 0);
 				//frame.stop = Matrix4f.translate(new Vector3f(0,m.modelID2 % 2 == 0 ? 5 : -5,0), frame.start, frame.stop);
-			
+				
 				
 				m.animationFrames.add(frame);
 				m.modelID = System.currentTimeMillis() + (2000);
@@ -146,7 +146,6 @@ public class RenderManager {
 				GL20.glUniform2f(shader.getInTime(), t1, t2);
 				
 				
-				
 				buffer.flip();
 				GL20.glUniformMatrix4(shader.getInMatrix(), false, buffer);
 				bufferAnim.flip();
@@ -158,21 +157,6 @@ public class RenderManager {
 		shader.unBind();
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 	}
-	
-	/*  rendering scheme
-	public void render() {
-		useProgram();
-		for(Model model : Models){
-			bindBuffer(model.bufferID);
-			setUniform("ModelMatrix",model.matrix);
-			for(ModelPart part : model.parts){
-				setUniform("PartMatrix", part.matrix);
-				drawArrays(part.startBufferPosition,part.getElements());
-			}
-		}
-	}
-	*
-	*/
 	
 	public void removeModel(Model m) {
 		models.remove(m);
@@ -245,7 +229,7 @@ public class RenderManager {
 		long endtime;
 		
 		
-		public void store(FloatBuffer floatBuffer){
+		public void store(FloatBuffer floatBuffer) {
 			startScale.store(floatBuffer);
 			startTranslate.store(floatBuffer);
 			startRotation.store(floatBuffer);
