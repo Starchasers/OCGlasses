@@ -11,13 +11,10 @@
 * [TextLabel](TextLabel)
 
 ### 3D World
-Cube3D
-Dot3D
-FloatingText
-Item3D
-Line3D
-Quad3D
-Triangle3D
+* Cube3D / Dot3D
+* FloatingText
+* Item3D
+* Line3D / Quad3D / Triangle3D
 
 ## Widget Modifiers
 ### Scale
