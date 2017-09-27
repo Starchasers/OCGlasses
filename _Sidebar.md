@@ -1,5 +1,5 @@
 ## OpenGlasses
-### [Home](Introduction)
+### [Introduction](Home)
 ### [Screenshots](Screenshots)
 
 ## Widgets
