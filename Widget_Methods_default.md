@@ -1,10 +1,10 @@
-### getID()
+### getID
 
 `=widget.getID()`
 
 (integer) returns the widget id
 
-### removeWidget()
+### removeWidget
 
 `widget.removeWidget()`
 
