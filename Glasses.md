@@ -1,6 +1,9 @@
 # AR Glasses
 
-## Upgrades
+# Upgrades
+
+## Sensors
+
 
 ### Widget Limit
 without upgrades the amount of widgets the glasses can display is 9
