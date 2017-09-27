@@ -69,22 +69,22 @@ mat4 toScaleMatrix(vec4 vec){
 
 mat4 toTranslateMatrix(vec4 vec){
 	return mat4(
-	vec4(0),
-	vec4(0),
-	vec4(0),
+	vec4(1,0,0,0),
+	vec4(0,1,0,0),
+	vec4(0,0,1,0),
 	vec);
 }
 
 void main(){
    mat4 deltaModel =
-   +lerp2(toScaleMatrix(animation[0]),toScaleMatrix(animation[3]),time.x)// scale
-   +lerp2(toTranslateMatrix(animation[1]),toTranslateMatrix(animation[4]),time.x)// translate
-   +toMat(slerp(animation[2],animation[5], time.x));//rotation
+   lerp2(toTranslateMatrix(animation[1]),toTranslateMatrix(animation[4]),time.x)// translate
+   *toMat(slerp(animation[2],animation[5], time.x))//rotation
+   *lerp2(toScaleMatrix(animation[0]),toScaleMatrix(animation[3]),time.x);// scale
 
 
 
    mat4 deltaPart = mat4(1f);//TODO
-   gl_Position=  gl_ModelViewProjectionMatrix * (matrices[0] + deltaModel) * (matrices[1] + deltaPart) * gl_Vertex;
+   gl_Position =  gl_ModelViewProjectionMatrix * (matrices[0] * deltaModel) * (matrices[1] + deltaPart) * gl_Vertex;
    color = in_color;
    uv = in_uv;
 }
