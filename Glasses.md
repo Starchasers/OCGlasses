@@ -1,4 +1,8 @@
 # AR Glasses
+* 50k FE Energy Buffer (can be upgraded)
+* handles up to 9 different widgets  (can be upgraded)
+* requires 1 FE/tick when worn
+* can be worn as baubles cosmetic
 
 # Upgrades
 AR Glasses can be Upgraded on an Anvil.
@@ -7,21 +11,25 @@ AR Glasses can be Upgraded on an Anvil.
 ### Weather
 * OpenComputers Tank Upgrade
 * costs 20 Levels User XP
+* increases glasses power usage by 1 FE/tick
 * required for [Weather Modifier Condition](WidgetModifierConditions#Weather)
 
 ### Sneaking
 * OpenComputers Motion Sensor
 * costs 20 Levels User XP
+* increases glasses power usage by 1 FE/tick
 * required for [Sneaking Modifier Condition](WidgetModifierConditions#Sneaking)
 
 ### Swimming
 * OpenComputers Geolyzer
 * costs 20 Levels User XP
+* increases glasses power usage by 1 FE/tick
 * required for [Swimming Modifier Condition](WidgetModifierConditions#Swimming)
 
 ### Light
 * Minecraft Daylight Sensor
 * costs 20 Levels User XP
+* increases glasses power usage by 1 FE/tick
 * required for [Light Modifier Condition](WidgetModifierConditions#Light)
 
 
