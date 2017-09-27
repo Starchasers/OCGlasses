@@ -15,7 +15,9 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Quaternion;
+import org.lwjgl.util.vector.ReadableVector4f;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 
 import de.javagl.obj.FloatTuple;
 import de.javagl.obj.Obj;
@@ -68,101 +70,6 @@ public class RenderManager {
 	}
 	
 	
-	Quaternion slerp(Quaternion v0, Quaternion v1, float t) {
-		// Only unit quaternions are valid rotations.
-		// Normalize to avoid undefined behavior.
-		Quaternion.normalise(v0, v0);
-		Quaternion.normalise(v1, v1);
-		
-		// Compute the cosine of the angle between the two vectors.
-		float dot = Quaternion.dot(v0, v1);
-		
-		float DOT_THRESHOLD = 0.9995f;
-		if (Math.abs(dot) > DOT_THRESHOLD) {
-			// If the inputs are too close for comfort, linearly interpolate
-			// and normalize the result.
-			return lerp(v0, v1, t);
-		}
-		
-		// If the dot product is negative, the quaternions
-		// have opposite handed-ness and slerp won't take
-		// the shorter path. Fix by reversing one quaternion.
-		if (dot < 0.0f) {
-			v1 = mult(v1, -1);
-			dot = -dot;
-		}
-		
-		clamp(dot, -1, 1);           // Robustness: Stay within domain of acos()
-		float theta_0 = (float) Math.acos(dot);  // theta_0 = angle between input vectors
-		float theta = theta_0 * t;    // theta = angle between v0 and result
-		
-		Quaternion v2 = sub(v1, mult(v0, dot));
-		Quaternion.normalise(v2, v2);        // { v0, v2 } is now an orthonormal basis
-		
-		return add(mult(v0, (float) Math.cos(theta)), mult(v2, (float) Math.sin(theta)));
-	}
-	
-	public static float clamp(float value, float min, float max) {
-		if (value < min) {
-			return min;
-		}
-		if (value > max) {
-			return max;
-		}
-		return value;
-	}
-	
-	private Quaternion mult(Quaternion q, float v) {
-		return new Quaternion(q.x * v, q.y * v, q.z * v, q.w * v);
-	}
-	
-	private Quaternion sub(Quaternion q0, Quaternion q1) {
-		return new Quaternion(q0.x - q1.x, q0.y - q1.y, q0.z - q1.z, q0.w - q1.w);
-	}
-	
-	private Quaternion add(Quaternion q0, Quaternion q1) {
-		return new Quaternion(q0.x + q1.x, q0.y + q1.y, q0.z + q1.z, q0.w + q1.w);
-	}
-	
-	private Quaternion lerp(Quaternion q0, Quaternion q1, float alpha) {
-		Quaternion q = new Quaternion(
-				q0.x + (q1.x - q0.x) * alpha,
-				q0.y + (q1.y - q0.y) * alpha,
-				q0.z + (q1.z - q0.z) * alpha,
-				q0.w + (q1.w - q0.w) * alpha);
-		return Quaternion.normalise(q, q);
-	}
-	
-	
-	private static Matrix4f convertQuaternionToMatrix4f(Quaternion q)
-	{
-		Matrix4f matrix = new Matrix4f();
-		matrix.m00 = 1.0f - 2.0f * ( q.getY() * q.getY() + q.getZ() * q.getZ() );
-		matrix.m01 = 2.0f * (q.getX() * q.getY() + q.getZ() * q.getW());
-		matrix.m02 = 2.0f * (q.getX() * q.getZ() - q.getY() * q.getW());
-		matrix.m03 = 0.0f;
-		
-		// Second row
-		matrix.m10 = 2.0f * ( q.getX() * q.getY() - q.getZ() * q.getW() );
-		matrix.m11 = 1.0f - 2.0f * ( q.getX() * q.getX() + q.getZ() * q.getZ() );
-		matrix.m12 = 2.0f * (q.getZ() * q.getY() + q.getX() * q.getW() );
-		matrix.m13 = 0.0f;
-		
-		// Third row
-		matrix.m20 = 2.0f * ( q.getX() * q.getZ() + q.getY() * q.getW() );
-		matrix.m21 = 2.0f * ( q.getY() * q.getZ() - q.getX() * q.getW() );
-		matrix.m22 = 1.0f - 2.0f * ( q.getX() * q.getX() + q.getY() * q.getY() );
-		matrix.m23 = 0.0f;
-		
-		// Fourth row
-		matrix.m30 = 0;
-		matrix.m31 = 0;
-		matrix.m32 = 0;
-		matrix.m33 = 1.0f;
-		
-		return matrix;
-	}
-	
 	public void render(RenderWorldLastEvent event) {
 		//objLoadr("assets/openglasses/shaders/ss.obj");
 		if (models.size() == 0) {
@@ -180,9 +87,12 @@ public class RenderManager {
 			if (m.modelID - System.currentTimeMillis() < 0) {
 				AnimationFrame frame = new AnimationFrame();
 				frame.duration = 2 * 1000;
-				frame.stop = Matrix4f.rotate((float) Math.toRadians(m.modelID2 % 2 == 0 ? 45 : -45), new Vector3f(0, 1, 0), frame.start, frame.stop);
+				Matrix4f rotate = Matrix4f.rotate((float) Math.toRadians(m.modelID2 % 2 == 0 ? 45 : -45), new Vector3f(0, 1, 0),new Matrix4f(), null);
+				Matrix4f Oldrotate = Matrix4f.rotate((float) Math.toRadians(m.modelID2 % 2 != 0 ? 45 : -45), new Vector3f(0, 1, 0),new Matrix4f(), null);
+				frame.stopRotation = Quaternion.setFromMatrix(rotate, new Quaternion());
+				frame.startRotation = Quaternion.setFromMatrix(Oldrotate, new Quaternion());
 				//frame.stop = Matrix4f.translate(new Vector3f(0,m.modelID2 % 2 == 0 ? 5 : -5,0), frame.start, frame.stop);
-				Quaternion.setFromMatrix(frame.stop,frame.qstop);
+			
 				
 				m.animationFrames.add(frame);
 				m.modelID = System.currentTimeMillis() + (2000);
@@ -195,7 +105,8 @@ public class RenderManager {
 			GL11.glVertexPointer(3, GL11.GL_FLOAT, BufferElement.SIZE * 4, BufferElement.VERTEX_POINTER_OFFSET * 4);
 			for (ModelPart part : m.parts.values()) {
 				
-				FloatBuffer buffer = BufferUtils.createFloatBuffer(16 * 6);
+				FloatBuffer buffer = BufferUtils.createFloatBuffer(16 * 2);
+				FloatBuffer bufferAnim = BufferUtils.createFloatBuffer(24 * 2);
 				m.matrix.store(buffer);
 				part.matrix.store(buffer);
 				float t1 = 1;
@@ -210,14 +121,11 @@ public class RenderManager {
 						AnimationFrame frame = m.currAnimationFrame;
 						m.currAnimationFrame = m.animationFrames.poll();
 						m.currAnimationFrame.endtime = System.currentTimeMillis() + m.currAnimationFrame.duration;
-						m.currAnimationFrame.start = Matrix4f.mul(frame.stop, m.currAnimationFrame.start, m.currAnimationFrame.start);
+						//m.currAnimationFrame.start = Matrix4f.mul(frame.stop, m.currAnimationFrame.start, m.currAnimationFrame.start);
 					}
-					m.currAnimationFrame.start.store(buffer);
-					m.currAnimationFrame.stop.store(buffer);
-					
+					m.currAnimationFrame.store(bufferAnim);
 				} else {
-					new Matrix4f().setIdentity().store(buffer);
-					new Matrix4f().setIdentity().store(buffer);
+					new AnimationFrame().store(bufferAnim);
 				}
 				
 				t1 = Math.max(Math.min(1, 1 - ((m.currAnimationFrame.endtime - System.currentTimeMillis()) / (float) m.currAnimationFrame.duration)), 0);
@@ -225,15 +133,17 @@ public class RenderManager {
 				
 				AnimationFrame animationFramePart = part.animationFrames.peek();
 				if (animationFramePart == null) {
-					new Matrix4f().setIdentity().store(buffer);
-					new Matrix4f().setIdentity().store(buffer);
+					new AnimationFrame().store(bufferAnim);
 				}
 				
 				GL20.glUniform2f(shader.getInTime(), t1, t2);
 				
+				
+				
 				buffer.flip();
 				GL20.glUniformMatrix4(shader.getInMatrix(), false, buffer);
-				
+				bufferAnim.flip();
+				GL20.glUniform4(shader.getInAnimation(), bufferAnim);
 				
 				GL11.glDrawArrays(GL11.GL_TRIANGLES, part.startBufferPosition, part.getElements());
 			}
@@ -316,12 +226,27 @@ public class RenderManager {
 	}
 	
 	public class AnimationFrame {
-		Matrix4f start = Matrix4f.setIdentity(new Matrix4f());
-		Quaternion qstart = new Quaternion();
-		Matrix4f stop = Matrix4f.setIdentity(new Matrix4f());
-		Quaternion qstop =  new Quaternion();
+		ReadableVector4f startScale = new Vector4f();
+		ReadableVector4f startTranslate = new Vector4f();
+		ReadableVector4f startRotation = new Vector4f();
+		
+		
+		ReadableVector4f stopScale = new Vector4f();
+		ReadableVector4f stopTranslate = new Vector4f();
+		ReadableVector4f stopRotation = new Vector4f();
 		long duration;
 		long endtime;
+		
+		
+		public void store(FloatBuffer floatBuffer){
+			startScale.store(floatBuffer);
+			startTranslate.store(floatBuffer);
+			startRotation.store(floatBuffer);
+			stopScale.store(floatBuffer);
+			stopTranslate.store(floatBuffer);
+			stopRotation.store(floatBuffer);
+		}
+		
 	}
 	
 	public class Model {

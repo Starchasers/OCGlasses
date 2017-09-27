@@ -1,10 +1,16 @@
 #version 120
 
+	//vec4 scale;
+	//vec4 translate;
+	//vec4 rotation;
+
+
+
 attribute vec4 in_color;
 attribute vec2 in_uv;
 uniform vec2 time; // x-model y-part
-uniform mat4[6] matrices; // [0]-model [1]-part [2]-anim model start  [3]-anim model stop [4]-anim part start  [5]-anim part stop
-
+uniform mat4[2] matrices; // [0]-model [1]-part
+uniform vec4[12] animation; //[0]-anim model start  [1]-anim model stop [2]-anim part start  [3]-anim part stop
 
 varying vec4 color;
 varying vec2 uv;
@@ -22,7 +28,7 @@ mat4 lerp2(mat4 v0, mat4 v1, float t) {
 
 mat4 toMat(vec4 q)
 {
-	mat4 matrix = mat4(0);
+	mat4 matrix = mat4(1f);
 	matrix[0][0] = 1.0f - 2.0f * ( q.y * q.y + q.z * q.z );
 	matrix[0][1] = 2.0f * (q.x * q.y + q.z * q.w);
 	matrix[0][2] = 2.0f * (q.x * q.z - q.y * q.w);
@@ -40,52 +46,7 @@ mat4 toMat(vec4 q)
 	matrix[2][2] = 1.0f - 2.0f * ( q.x * q.x + q.y * q.y );
 	matrix[2][3] = 0.0f;
 
-	// Fourth row
-	matrix[3][0] = 0;
-	matrix[3][1] = 0;
-	matrix[3][2] = 0;
-	matrix[3][3] = 1.0f;
-
 	return matrix;
-}
-
-vec4 fromMat(mat4 m) {
-	vec4 result = vec4(0);
-	float s;
-	float tr = m[0][0] + m[1][1] + m[2][2];
-	if (tr >= 0.0) {
-		s = sqrt(tr + 1.0);
-		result.w = s * 0.5f;
-		s = 0.5f / s;
-		result.x = (m[2][1] - m[1][2]) * s;
-		result.y = (m[0][2] - m[2][0]) * s;
-		result.z = (m[1][0] - m[0][1]) * s;
-	} else {
-		float max = max(max(m[0][0], m[1][1]), m[2][2]);
-		if (max == m[0][0]) {
-			s = sqrt(m[0][0] - (m[1][1] + m[2][2]) + 1.0);
-			result.x = s * 0.5f;
-			s = 0.5f / s;
-			result.y = (m[0][1] + m[1][0]) * s;
-			result.z = (m[2][0] + m[0][2]) * s;
-			result.w = (m[2][1] - m[1][2]) * s;
-		} else if (max == m[1][1]) {
-			s = sqrt(m[1][1] - (m[2][2] + m[0][0]) + 1.0);
-			result.y = s * 0.5f;
-			s = 0.5f / s;
-			result.z = (m[1][2] + m[2][1]) * s;
-			result.x = (m[0][1] + m[1][0]) * s;
-			result.w = (m[0][2] - m[2][0]) * s;
-		} else {
-			s = sqrt(m[2][2] - (m[0][0] + m[1][1]) + 1.0);
-			result.z = s * 0.5f;
-			s = 0.5f / s;
-			result.x = (m[2][0] + m[0][2]) * s;
-			result.y = (m[1][2] + m[2][1]) * s;
-			result.w = (m[1][0] - m[0][1]) * s;
-		}
-	}
-	return result;
 }
 
 vec4 slerp(vec4 start, vec4 end, float percent)
@@ -97,9 +58,31 @@ vec4 slerp(vec4 start, vec4 end, float percent)
      return (start*cos(theta)) + (RelativeVec*sin(theta));
 }
 
+mat4 toScaleMatrix(vec4 vec){
+	mat4 result = mat4(0);
+	result[0][0] = vec.x;
+	result[1][1] = vec.y;
+	result[2][2] = vec.z;
+	result[3][3] = vec.w;
+	return result;
+}
+
+mat4 toTranslateMatrix(vec4 vec){
+	return mat4(
+	vec4(0),
+	vec4(0),
+	vec,
+	vec4(0));
+}
+
 void main(){
-   mat4 deltaModel = toMat(slerp(fromMat(matrices[2]),fromMat(matrices[3]),time.x));//lerp(matrices[2],matrices[3],time.x);
-   mat4 deltaPart = lerp(matrices[4],matrices[5],time.y);
+   mat4 deltaModel =
+   +lerp2(toScaleMatrix(animation[0]),toScaleMatrix(animation[3]),time.x)// scale
+   +lerp2(toScaleMatrix(animation[1]),toScaleMatrix(animation[4]),time.x)// translate
+   +toMat(slerp(animation[2],animation[5], time.x));
+
+//TransformedVector = TranslationMatrix * RotationMatrix * ScaleMatrix * OriginalVector;
+   mat4 deltaPart = mat4(1f);
    gl_Position=  gl_ModelViewProjectionMatrix * (matrices[0] + deltaModel) * (matrices[1] + deltaPart) * gl_Vertex;
    color = in_color;
    uv = in_uv;

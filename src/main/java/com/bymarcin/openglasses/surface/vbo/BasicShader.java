@@ -11,6 +11,7 @@ public class BasicShader {
 	private int inColorAttrib;
 	private int inMatrix;
 	private int inTime;
+	private int inAnimation;
 	
 	public BasicShader() {
 		shaderProgram = new ShaderProgram("assets/openglasses/shaders/basic.vert","assets/openglasses/shaders/basic.frag");
@@ -18,6 +19,7 @@ public class BasicShader {
 		inColorAttrib = shaderProgram.getAttirbLocation("in_color") ;
 		inTime = shaderProgram.getUniformLocation("time");
 		inMatrix = shaderProgram.getUniformLocation("matrices");
+		inAnimation = shaderProgram.getUniformLocation("animation");
 	}
 	
 	public void bind(){
@@ -48,6 +50,10 @@ public class BasicShader {
 	
 	public int getInMatrix() {
 		return inMatrix;
+	}
+	
+	public int getInAnimation() {
+		return inAnimation;
 	}
 }
 
