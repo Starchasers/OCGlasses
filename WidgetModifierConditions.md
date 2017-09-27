@@ -1,8 +1,8 @@
 # Widget Modifier Conditions
 
 ### Light
-* `IS_LIGHTLEVEL_MIN`
-* `IS_LIGHTLEVEL_MAX`
+* `IS_LIGHTLEVEL_MIN_[0-15]`
+* `IS_LIGHTLEVEL_MAX_[0-15]`
 
 requires minecraft Daylight Sensor
 
