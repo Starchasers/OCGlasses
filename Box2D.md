@@ -22,7 +22,7 @@
   * [getSize](Widget_Method_getSize)
   * [setSize](Widget_Method_setSize)
   
-* Modifier Methods
+* [Modifier Methods](WidgetModifiers)
   * [addColor](WidgetModifier_color)
   * [addRotation](WidgetModifier_rotation)
   * [addScale](WidgetModifier_scale)
