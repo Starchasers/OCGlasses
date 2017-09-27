@@ -1,6 +1,6 @@
 ### getSize
 `=widget.getSize()`
-return Array((int) width, (int) height)
+return Array((integer) width, (integer) height)
 
 
 ### setSize
