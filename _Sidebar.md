@@ -1,5 +1,4 @@
-## OpenGlasses
-### [Introduction](Introduction)
+## [Introduction](Home)
 ### [Screenshots](Screenshots)
 
 
