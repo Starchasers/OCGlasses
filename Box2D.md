@@ -7,8 +7,6 @@
 ### methods
 * default
   * getID
-  * isVisible
-  * setVisible
   * removeWidget
 * private
   * getOwner
@@ -17,6 +15,9 @@
 * alignment
   * setVerticalAlign
   * setHorizontalAlign
+* visibility
+  * isVisible
+  * setVisible
 * size methods
   * getSize
   * setSize
