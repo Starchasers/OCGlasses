@@ -36,13 +36,13 @@ requires opencomputers motion sensor
 ## setCondition
 ### Examples for Conditions:
 
-`(widget)->setCondition(1, "IS_SNEAKING", true)` requires the user to sneak to activate 1st modifier
+`widget.setCondition(1, "IS_SNEAKING", true)` requires the user to sneak to activate 1st modifier
 
-`(widget)->setCondition(1, "IS_SNEAKING", false)` disables the sneaky condition
+`widget.setCondition(1, "IS_SNEAKING", false)` disables the sneaky condition
 
 
 conditions can be combined like in this example, which requires a lightlevel between 10-14 to activate the modifier
 
-`(widget)->setCondition(2, "IS_LIGHTLEVEL_MIN_10", true)`
+`widget.setCondition(2, "IS_LIGHTLEVEL_MIN_10", true)`
 
-`(widget)->setCondition(2, "IS_LIGHTLEVEL_MAX_14", true)`
+`widget.setCondition(2, "IS_LIGHTLEVEL_MAX_14", true)`
