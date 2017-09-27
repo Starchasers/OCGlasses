@@ -16,15 +16,14 @@
 * Item3D
 * Line3D / Quad3D / Triangle3D
 
-## Widget Modifiers
-### Scale
-### Rotation
-### Translate
-### Color
-
-## Widget Modifier Conditions
-### Weather
-### Sneaking
-### Swimming
-### Light
-### OverlayActive
+* ## Widget Modifiers
+* * Scale
+* * Rotation
+* * Translate
+* * Color
+### Widget Modifier Conditions
+* Weather
+* Sneaking
+* Swimming
+* Light
+* OverlayActive
