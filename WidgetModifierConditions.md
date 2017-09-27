@@ -1,18 +1,18 @@
 # Widget Modifier Conditions
 
-## Light
+### Light
 `IS_LIGHTLEVEL_MIN`, `IS_LIGHTLEVEL_MAX` -- requires minecraft Daylight Sensor
 
-## Weather
+### Weather
 `IS_WEATHER_RAIN`, `IS_WEATHER_CLEAR`  -- requires opencomputers tank Upgrade
 
-## Swimming
+### Swimming
 `IS_SWIMMING`, `IS_NOT_SWIMMING`  -- requires opencomputers geolyzer
 
-## Sneaking
+### Sneaking
 `IS_SNEAKING`, `IS_NOT_SNEAKING`   -- requires opencomputers motion sensor
 
-## OverlayActive
+### OverlayActive
 `OVERLAY_ACTIVE`, `OVERLAY_INACTIVE`
 
 
