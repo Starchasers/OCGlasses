@@ -1,6 +1,6 @@
 ## OpenGlasses
 ### Introduction
-### Screenshots
+### https://github.com/ben-mkiv/OCGlasses/wiki/Screenshots
 
 ## Widgets
 ### 2D Overlay
