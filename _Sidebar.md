@@ -1,6 +1,6 @@
 ## [Introduction](Home)
 
-## [Glasses](Glasses)
+## [AR Glasses](Glasses)
 
 
 ## [Terminal](Terminal)
