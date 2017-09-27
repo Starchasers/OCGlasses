@@ -1,0 +1,4 @@
+## Widget Modifier Conditions
+
+
+### setCondition
