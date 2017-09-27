@@ -4,29 +4,29 @@
 AR Glasses can be Upgraded on an Anvil.
 
 ## Sensors
-# Weather
+### Weather
 * OpenComputers Tank Upgrade
 * costs 20 Levels User XP
 * required for [Weather Modifier Condition](WidgetModifierConditions#Weather)
 
-# Sneaking
+### Sneaking
 * OpenComputers Motion Sensor
 * costs 20 Levels User XP
 * required for [Sneaking Modifier Condition](WidgetModifierConditions#Sneaking)
 
-# Swimming
+### Swimming
 * OpenComputers Geolyzer
 * costs 20 Levels User XP
 * required for [Swimming Modifier Condition](WidgetModifierConditions#Swimming)
 
-# Light
+### Light
 * Minecraft Daylight Sensor
 * costs 20 Levels User XP
 * required for [Light Modifier Condition](WidgetModifierConditions#Light)
 
 
 
-### Widget Limit
+## Widget Limit
 without upgrades the amount of widgets the glasses can display is 9
 add OpenComputers Database Upgrades to increase the limit up to 255 Widgets
 * OpenComputers Database Upgrade Tier 1
@@ -40,7 +40,7 @@ add OpenComputers Database Upgrades to increase the limit up to 255 Widgets
   * costs 34 Levels User XP
 
 
-### Energy Capacity
+## Energy Capacity
 upgrade on Anvil with OpenComputers Battery Upgrade
 * OpenComputers Battery Upgrade Tier 1
   * adds +100k FE to the Glasses Energy Buffer
@@ -52,7 +52,7 @@ upgrade on Anvil with OpenComputers Battery Upgrade
   * adds +1M FE to the Glasses Energy Buffer
   * costs 34 Levels User XP
 
-### crafting receipe
+## crafting receipe
 ![crafting receipe](https://i.imgur.com/rPJJ9K6.jpg)
 * 2x OpenComputer Screen Tier 3
 * 1x OpenComputer Graphics Card Tier 3
