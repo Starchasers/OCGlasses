@@ -1,16 +1,21 @@
 # Widget Modifier Conditions
 
-## modifiers can have conditions to get active, those are:
-
+## Light
 `IS_LIGHTLEVEL_MIN`, `IS_LIGHTLEVEL_MAX` -- requires minecraft Daylight Sensor
 
+## Weather
 `IS_WEATHER_RAIN`, `IS_WEATHER_CLEAR`  -- requires opencomputers tank Upgrade
 
+## Swimming
 `IS_SWIMMING`, `IS_NOT_SWIMMING`  -- requires opencomputers geolyzer
 
+## Sneaking
 `IS_SNEAKING`, `IS_NOT_SNEAKING`   -- requires opencomputers motion sensor
 
+## OverlayActive
 `OVERLAY_ACTIVE`, `OVERLAY_INACTIVE`
+
+
 
 (add required upgrades on a Anvil like when enchanting armor, each upgrade costs 20 levels of XP)
 
