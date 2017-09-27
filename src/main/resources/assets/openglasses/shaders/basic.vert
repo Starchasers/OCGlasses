@@ -71,15 +71,15 @@ mat4 toTranslateMatrix(vec4 vec){
 	return mat4(
 	vec4(0),
 	vec4(0),
-	vec,
-	vec4(0));
+	vec4(0),
+	vec);
 }
 
 void main(){
    mat4 deltaModel =
    +lerp2(toScaleMatrix(animation[0]),toScaleMatrix(animation[3]),time.x)// scale
-   +lerp2(toScaleMatrix(animation[1]),toScaleMatrix(animation[4]),time.x)// translate
-   +toMat(slerp(animation[2],animation[5], time.x));
+   +lerp2(toTranslateMatrix(animation[1]),toTranslateMatrix(animation[4]),time.x)// translate
+   +toMat(slerp(animation[2],animation[5], time.x));//rotation
 
 //TransformedVector = TranslationMatrix * RotationMatrix * ScaleMatrix * OriginalVector;
    mat4 deltaPart = mat4(1f);

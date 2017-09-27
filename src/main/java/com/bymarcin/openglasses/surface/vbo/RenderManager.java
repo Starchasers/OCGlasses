@@ -91,6 +91,13 @@ public class RenderManager {
 				Matrix4f Oldrotate = Matrix4f.rotate((float) Math.toRadians(m.modelID2 % 2 != 0 ? 45 : -45), new Vector3f(0, 1, 0),new Matrix4f(), null);
 				frame.stopRotation = Quaternion.setFromMatrix(rotate, new Quaternion());
 				frame.startRotation = Quaternion.setFromMatrix(Oldrotate, new Quaternion());
+				
+				frame.startScale = m.modelID2%2==0? new Vector4f(2,2,2,1):new Vector4f(1,1,1,1);
+				frame.stopScale = m.modelID2%2!=0? new Vector4f(2,2,2,1):new Vector4f(1,1,1,1);
+				
+				
+				frame.startTranslate = m.modelID2%2==0? new Vector4f(0,10,0,1):new Vector4f(0,0,0,1);
+				frame.stopTranslate = m.modelID2%2!=0? new Vector4f(0,10,0,1):new Vector4f(0,0,0,1);
 				//frame.stop = Matrix4f.translate(new Vector3f(0,m.modelID2 % 2 == 0 ? 5 : -5,0), frame.start, frame.stop);
 			
 				
