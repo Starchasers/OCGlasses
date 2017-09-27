@@ -87,8 +87,8 @@ public class RenderManager {
 			if (m.modelID - System.currentTimeMillis() < 0) {
 				AnimationFrame frame = new AnimationFrame();
 				frame.duration = 2 * 1000;
-				Matrix4f rotate = Matrix4f.rotate((float) Math.toRadians(m.modelID2 % 2 == 0 ? 0.1 : -0.1), new Vector3f(0, 1, 0), new Matrix4f(), null);
-				Matrix4f Oldrotate = Matrix4f.rotate((float) Math.toRadians(m.modelID2 % 2 != 0 ? 0.1 : -0.1), new Vector3f(0, 1, 0), new Matrix4f(), null);
+				Matrix4f rotate = Matrix4f.rotate((float) Math.toRadians(m.modelID2 % 2 == 0 ? 0 : -0), new Vector3f(0, 1, 0), new Matrix4f(), null);
+				Matrix4f Oldrotate = Matrix4f.rotate((float) Math.toRadians(m.modelID2 % 2 != 0 ? 0 : -0), new Vector3f(0, 1, 0), new Matrix4f(), null);
 				frame.stopRotation = Quaternion.setFromMatrix(rotate, new Quaternion());
 				frame.startRotation = Quaternion.setFromMatrix(Oldrotate, new Quaternion());
 				

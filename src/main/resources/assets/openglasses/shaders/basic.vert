@@ -51,7 +51,16 @@ mat4 toMat(vec4 q)
 
 vec4 slerp(vec4 start, vec4 end, float percent)
 {
+	 start = normalize(start);
+	 end = normalize(end);
+
      float dot = dot(start, end);
+
+     float DOT_THRESHOLD = 0.9995;
+         if (abs(dot) > DOT_THRESHOLD) {
+             return normalize(start + percent*(end-start));
+         }
+
      dot = clamp(dot, -1.0, 1.0);
      float theta = acos(dot)*percent;
      vec4 RelativeVec = normalize(end - start*dot);
