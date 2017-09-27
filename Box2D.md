@@ -1,4 +1,4 @@
-# 2D Overlay Widget
+### 2D Overlay Widget
 ## Box2D
 `widget = component.glasses.addBox2D();`
 
