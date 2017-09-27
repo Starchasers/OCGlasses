@@ -1,2 +1,1 @@
-# openGlasses Wiki
-version 2.0.0
+# openGlasses 2.x Wiki
