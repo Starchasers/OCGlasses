@@ -23,7 +23,7 @@ adds a Cube to the 3D World
   * [isVisibleThroughObjects](Widget3D_Methods_visibility#isVisibleThroughObjects)
   * [setVisibleThroughObjects](Widget3D_Methods_visibility#setVisibleThroughObjects)
 * [Modifier Methods](WidgetModifiers)
-  * [setFaceWidgetToPlayer]()
+  * [setFaceWidgetToPlayer](WidgetModifier_setFaceWidgetToPlayer)
   * [addColor](WidgetModifiers#addColor)
   * [addRotation](WidgetModifiers#addRotation)
   * [addScale](WidgetModifiers#addScale)
