@@ -1,6 +1,6 @@
 ### 2D Overlay Widget
 ## Quad
-`widget = component.glasses.addBox2D();`
+`widget = component.glasses.addQuad();`
 
 adds a Quad to the 2D Overlay
 
