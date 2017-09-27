@@ -4,13 +4,11 @@
 
 ## Widgets
 ### 2D Overlay
-Box2D
-Dot
-ItemIcon
-Quad
-Rect
-TextLabel
-Triangle
+[Box2D](Box2D)
+[Dot](Dot)
+[ItemIcon](ItemIcon)
+[Quad / Rect / Triangle](QuadRectTriangle)
+[TextLabel](TextLabel)
 
 ### 3D World
 Cube3D
