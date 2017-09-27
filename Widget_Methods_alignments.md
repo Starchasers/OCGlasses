@@ -1,5 +1,5 @@
 ### setHorizontalAlign
-`widget.setHorizontalAlign("alignment")`
+`widget.setHorizontalAlign("center")`
 
 sets the horizontal alignment, valid arguments are:
 * left
@@ -7,7 +7,7 @@ sets the horizontal alignment, valid arguments are:
 * right
 
 ### setVerticalAlign
-`widget.setVerticalAlign("alignment")`
+`widget.setVerticalAlign("middle")`
 
 sets the vertical alignment, valid arguments are:
 * top
