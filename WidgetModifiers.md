@@ -1,11 +1,8 @@
 # Widget Modifiers
-## methods
-[Color](WidgetModifiers#addColor)
-[Rotation](WidgetModifiers#addRotation)
-[Scale](WidgetModifiers#addScale)
-[Translate](WidgetModifiers#addTranslate)
+### methods
+[Color](WidgetModifiers#addColor), [Rotation](WidgetModifiers#addRotation), [Scale](WidgetModifiers#addScale), [Translate](WidgetModifiers#addTranslate)
 
-## [Widget Animation](WidgetModifiers#Animation)
+### [Widget Animation](WidgetModifiers#Animation)
 
 ### addColor
 * (float) red
