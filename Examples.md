@@ -36,6 +36,6 @@
 	cube3D.addTranslation(0, 2, 0); 
 	cube3D.addColor(1, 1, 1, 0.7); 
 
-	cube3D.addTranslation(0.5, 0, 0.5); 
+	cube3D.addTranslation(0.5, 0.5, 0.5);
 	cube3D.setEasing(cube3D.addRotation(1, 0, 1, 0), "LINEAR", "IN", 360, "deg", 0, 360, "repeat");
-	cube3D.addTranslation(-0.5, 0, -0.5); 
+	cube3D.addTranslation(-0.5, -0.5, -0.5); 
