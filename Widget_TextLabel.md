@@ -8,6 +8,12 @@ adds a Text to the 2D Overlay
 `widget.setText("My Text")`
 
 
+## getText
+`=widget.getText()`
+
+(String) returns configured text
+
+
 ### methods
 * [default](Widget_Methods_default)
   * [getID](Widget_Methods_default#getID)
