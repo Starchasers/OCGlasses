@@ -1,13 +1,36 @@
 # Modifiers:
 
 ### addColor
-`=addColor(float red, float green, float blue, float alpha)`
+* (float) red
+* (float) green
+* (float) blue
+* (float) alpha
+
+returns (int) modifierIndex
+
+`widget.addColor(1, 0, 0, 0.5)`
+adds a red color with 50% opacity
 
 ### addRotation
-`=addRotation(float angle, float x, float y, float z)`
+* (float) deg
+* (float) x
+* (float) y
+* (float) z
+
+returns (int) modifierIndex
+
+`widget.addRotation(90, 0, 1, 0)`
+rotates the widget by 90° on the Y-Axis
 
 ### addScale
-`=addScale(float x, float y, float z)`
+* (float) x
+* (float) y
+* (float) z
+
+returns (int) modifierIndex
+
+`widget.addScale(2, 2, 2)`
+scales widget by 2 on all axis
 
 ### addTranslation
 * (float) x
@@ -16,7 +39,7 @@
 
 returns (int) modifierIndex
 
-`addTranslation(0, 1, 0)`
+`widget.addTranslation(0, 1, 0)`
 moves widget on y axis by 1
 
 
@@ -33,7 +56,7 @@ Widgets can be animated by binding an easing function to a modifier. So you can 
 * (int) easing Index
 * (String) variable name
 
-`widget->removeEasing(4, 2, "x")`
+`widget.removeEasing(4, 2, "x")`
 
 removes easing 2 from list "x" of modifier 4
 
