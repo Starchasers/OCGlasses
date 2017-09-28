@@ -31,7 +31,7 @@
 * [Color](WidgetModifiers#addColor)
 * [Rotation](WidgetModifiers#addRotation)
 * [Scale](WidgetModifiers#addScale)
-* [Translate](WidgetModifiers#addTranslate)
+* [Translate](WidgetModifiers#addTranslation)
 
 ### [Widget Animation](WidgetModifiers#Animation)
 
