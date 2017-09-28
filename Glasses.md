@@ -1,7 +1,8 @@
 # AR Glasses
 * 50k FE Energy Buffer (can be upgraded)
+  * consumes power when worn (1 FE/tick without upgrades)
+  * can be charged in OpenComputers charger or by any ForgeEnergy compatible device (like EnderIO Wireless Charger)
 * handles up to 9 different widgets  (can be upgraded)
-* requires 1 FE/tick when worn
 * can be worn as baubles cosmetic
 
 # Upgrades
