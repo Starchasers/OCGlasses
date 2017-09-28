@@ -63,9 +63,9 @@ Widgets can be animated by binding an easing function to a modifier. So you can 
 * (float) max value
 * (String) loop/repeating mode
 
-`widget.setEasing(widget.addRotation(1, 0, 1, 0), "LINEAR", "IN", 360, "deg", 0, 360, "repeat")`
+`widget.setEasing(widget.addRotation(0, 0, 1, 0), "LINEAR", "IN", 360, "deg", 0, 360, "repeat")`
 
-this example adds a infinite rotation to a widget
+this example makes our widget rotate around the y-axis
 
 
 
