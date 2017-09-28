@@ -16,4 +16,15 @@
 
 # Animation
 
+Widgets can be animated by binding an easing function to a modifier. So you can animate color changes, movement, rotation and scale changes with a simple syntax
 
+### easing functions [previews](http://easings.net/)
+BACK, BOUNCE, CIRC, CUBIC, ELASTIC, EXPO, LINEAR, QUAD, QUART, QUINT, SINE
+
+### easing types
+IN, OUT, INOUT
+
+### loop/repeat modes
+`DEFAULT` only run once 
+`LOOP` loop/playback the easing back and forth
+`REPEAT` repeat the easing
