@@ -71,12 +71,11 @@ this example adds a infinite rotation to a widget
 
 ### removeEasing
 * (int) modifier Index
-* (int) easing Index
 * (String) variable name
 
-`widget.removeEasing(4, 2, "x")`
+`widget.removeEasing(4, "x")`
 
-removes easing 2 from list "x" of modifier 4
+removes easing from list "x" of modifier 4
 
 
 ### easing functions [previews](http://easings.net/)
