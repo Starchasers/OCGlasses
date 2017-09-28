@@ -1,6 +1,6 @@
 # Widget Modifiers
 ### methods
-[Color](WidgetModifiers#addColor), [Rotation](WidgetModifiers#addRotation), [Scale](WidgetModifiers#addScale), [Translate](WidgetModifiers#addTranslate)
+[Color](WidgetModifiers#addColor), [Rotation](WidgetModifiers#addRotation), [Scale](WidgetModifiers#addScale), [Translate](WidgetModifiers#addTranslation)
 
 ### [Widget Animation](WidgetModifiers#Animation)
 
