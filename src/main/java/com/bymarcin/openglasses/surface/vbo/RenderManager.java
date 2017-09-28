@@ -87,19 +87,18 @@ public class RenderManager {
 			if (m.modelID - System.currentTimeMillis() < 0) {
 				AnimationFrame frame = new AnimationFrame();
 				frame.duration = 2 * 1000;
-				Matrix4f rotate = Matrix4f.rotate((float) Math.toRadians(m.modelID2 % 2 == 0 ? 0 : -0), new Vector3f(0, 1, 0), new Matrix4f(), null);
-				Matrix4f Oldrotate = Matrix4f.rotate((float) Math.toRadians(m.modelID2 % 2 != 0 ? 0 : -0), new Vector3f(0, 1, 0), new Matrix4f(), null);
+				Matrix4f rotate = Matrix4f.rotate((float) Math.toRadians(m.modelID2 % 2 == 0 ? 45 : -45), new Vector3f(0, 1, 0), new Matrix4f(), null);
+				Matrix4f Oldrotate = Matrix4f.rotate((float) Math.toRadians(m.modelID2 % 2 != 0 ? 45 : -45), new Vector3f(0, 1, 0), new Matrix4f(), null);
 				frame.stopRotation = Quaternion.setFromMatrix(rotate, new Quaternion());
 				frame.startRotation = Quaternion.setFromMatrix(Oldrotate, new Quaternion());
-				
+				frame.startColor = m.modelID2 % 2 == 0 ?new Vector4f(1f,1f,1f,1f) : new Vector4f(.5f,.1f,.1f,0.5f);
+				frame.stopColor = m.modelID2 % 2 != 0 ? new Vector4f(1f,1f,1f,1f) : new Vector4f(.5f,.1f,.1f,0.5f);
 				//frame.startScale = m.modelID2 % 2 == 0 ? new Vector4f(2, 2, 2, 1) : new Vector4f(1, 1, 1, 1);
 				//frame.stopScale = m.modelID2 % 2 != 0 ? new Vector4f(2, 2, 2, 1) : new Vector4f(1, 1, 1, 1);
 				
 				
 				//frame.startTranslate = m.modelID2 % 2 == 0 ? new Vector4f(0, 10, 0, 1) : new Vector4f(0, 0, 0, 1);
 				//frame.stopTranslate = m.modelID2 % 2 != 0 ? new Vector4f(0, 10, 0, 1) : new Vector4f(0, 0, 0, 1);
-				//frame.stop = Matrix4f.translate(new Vector3f(0,m.modelID2 % 2 == 0 ? 5 : -5,0), frame.start, frame.stop);
-				
 				
 				m.animationFrames.add(frame);
 				m.modelID = System.currentTimeMillis() + (2000);
@@ -113,11 +112,11 @@ public class RenderManager {
 			for (ModelPart part : m.parts.values()) {
 				
 				FloatBuffer buffer = BufferUtils.createFloatBuffer(16 * 2);
-				FloatBuffer bufferAnim = BufferUtils.createFloatBuffer(24 * 2);
+				FloatBuffer bufferAnim = BufferUtils.createFloatBuffer(32 * 2);
 				m.matrix.store(buffer);
 				part.matrix.store(buffer);
 				float t1 = 1;
-				float t2 = 1;
+				float t2 = 0;
 				if (m.currAnimationFrame == null) {
 					m.currAnimationFrame = m.animationFrames.poll();
 					m.currAnimationFrame.endtime = System.currentTimeMillis() + m.currAnimationFrame.duration;
@@ -220,22 +219,29 @@ public class RenderManager {
 		ReadableVector4f startScale = new Vector4f(1, 1, 1, 1);
 		ReadableVector4f startTranslate =  new Vector4f(0, 0, 0, 1);
 		ReadableVector4f startRotation = Quaternion.setIdentity(new Quaternion());
+		ReadableVector4f startColor = new Vector4f(1, 1, 1, 1);
 		
 		
 		ReadableVector4f stopScale =  new Vector4f(1, 1, 1, 1);
 		ReadableVector4f stopTranslate =  new Vector4f(0, 0, 0, 1);
 		ReadableVector4f stopRotation = Quaternion.setIdentity(new Quaternion());
+		ReadableVector4f stopColor = new Vector4f(1, 1, 1, 1);
 		long duration;
 		long endtime;
 		
 		
 		public void store(FloatBuffer floatBuffer) {
-			startScale.store(floatBuffer);
 			startTranslate.store(floatBuffer);
-			startRotation.store(floatBuffer);
-			stopScale.store(floatBuffer);
 			stopTranslate.store(floatBuffer);
+			
+			startRotation.store(floatBuffer);
 			stopRotation.store(floatBuffer);
+			
+			startScale.store(floatBuffer);
+			stopScale.store(floatBuffer);
+			
+			startColor.store(floatBuffer);
+			stopColor.store(floatBuffer);
 		}
 		
 	}
