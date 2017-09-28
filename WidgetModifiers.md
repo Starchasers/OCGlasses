@@ -9,6 +9,7 @@
 returns (int) modifierIndex
 
 `widget.addColor(1, 0, 0, 0.5)`
+
 adds a red color with 50% opacity
 
 ### addRotation
@@ -20,6 +21,7 @@ adds a red color with 50% opacity
 returns (int) modifierIndex
 
 `widget.addRotation(90, 0, 1, 0)`
+
 rotates the widget by 90° on the Y-Axis
 
 ### addScale
@@ -30,6 +32,7 @@ rotates the widget by 90° on the Y-Axis
 returns (int) modifierIndex
 
 `widget.addScale(2, 2, 2)`
+
 scales widget by 2 on all axis
 
 ### addTranslation
@@ -40,6 +43,7 @@ scales widget by 2 on all axis
 returns (int) modifierIndex
 
 `widget.addTranslation(0, 1, 0)`
+
 moves widget on y axis by 1
 
 
