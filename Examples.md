@@ -19,10 +19,7 @@
 	Widget_ItemIcon = glassesTerminal.addItemIcon()
 	Widget_ItemIcon.setItem("minecraft:iron_sword", 0)
 	Widget_ItemIcon.addScale(40, 40, 40)      -- modifier #1
-	Widget_ItemIcon.addTranslation(2, 3, 0)   -- modifier #2
-	Widget_ItemIcon.addRotation(180, 1, 0, 0) -- modifier #3
-	Widget_ItemIcon.setFaceWidgetToPlayer(true) -- enables auto rotation, so the widget rotates to face the player
-
+	Widget_ItemIcon.addRotation(180, 1, 0, 0) -- modifier #2
 
 ### 2D Overlay TextLabel
 	glassesTerminal = require("component").glasses
