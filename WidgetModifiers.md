@@ -49,7 +49,7 @@ moves widget on y axis by 1
 
 
 # Animation
-Widgets can be animated by binding an easing function to a modifier. So you can animate color changes, movement, rotation and scale changes with a simple syntax
+Widgets can be animated by binding an easing function to a modifier. So you can animate color / scale changes, movement and rotation with a simple syntax
 
 ## methods
 
