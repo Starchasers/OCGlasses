@@ -33,7 +33,7 @@
 * [Scale](WidgetModifiers#addScale)
 * [Translate](WidgetModifiers#addTranslate)
 
-### [Widget Animation](WidgetModifiersEasing)
+### [Widget Animation](WidgetModifiers#Animation)
 
 ### [Widget Modifier Conditions](WidgetModifierConditions)
 * [Weather](WidgetModifierConditions#Weather)
