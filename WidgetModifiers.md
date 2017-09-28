@@ -1,5 +1,4 @@
-
-## Modifiers:
+# Modifiers:
 
 ### addColor
 `addColor(float red, float green, float blue, float alpha)`
@@ -15,6 +14,6 @@
 
 
 
-## Animation
+# Animation
 
 
