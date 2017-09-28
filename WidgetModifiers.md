@@ -1,13 +1,17 @@
-### Possible Modifiers:
+## Animation
 
-## addColor
+
+
+## Possible Modifiers:
+
+### addColor
 `addColor(float red, float green, float blue, float alpha)`
 
-## addRotation
+### addRotation
 `addRotation(float angle, float x, float y, float z)`
 
-## addScale
+### addScale
 `addScale(float x, float y, float z)`
 
-## addTranslation
+### addTranslation
 `addTranslation(float x, float y, float z)`
