@@ -10,9 +10,9 @@
 `=addScale(float x, float y, float z)`
 
 ### addTranslation
-(float) x
-(float) y
-(float) z
+* (float) x
+* (float) y
+* (float) z
 
 returns (int) modifierIndex
 
