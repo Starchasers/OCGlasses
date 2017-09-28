@@ -7,6 +7,7 @@ adds a Item Icon to the 2D Overlay
 ## setItem
 * (String) material name
 * (Integer) material metaindex
+
 `widget.setItem("minecraft:stone", 6)` 
 
 sets item icon to Andesite Block
