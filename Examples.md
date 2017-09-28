@@ -1,6 +1,6 @@
 # Animated
 ### rotating cube
-	glassesTerminal = component.glasses; 
+	glassesTerminal = require("component").glasses; 
 	glassesTerminal.removeAll(); 
 	cube3D = glassesTerminal.addCube3D(); 
 	cube3D.addTranslation(0, 2, 0); 
