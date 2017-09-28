@@ -8,6 +8,12 @@ adds a Text to the 3D World
 `widget.setText("My Text")`
 
 
+## getText
+`=widget.getText()`
+
+(String) returns configured text
+
+
 ### methods
 * [default](Widget_Methods_default)
   * [getID](Widget_Methods_default#getID)
