@@ -1,4 +1,4 @@
-# Modifiers:
+# Widget Modifiers
 
 ### addColor
 * (float) red
