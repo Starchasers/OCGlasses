@@ -1,11 +1,8 @@
 package com.bymarcin.openglasses.surface.vbo;
 
-import java.io.IOException;
 import java.nio.FloatBuffer;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 
@@ -15,15 +12,14 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Quaternion;
-import org.lwjgl.util.vector.ReadableVector4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
-import de.javagl.obj.FloatTuple;
-import de.javagl.obj.Obj;
-import de.javagl.obj.ObjFace;
-import de.javagl.obj.ObjReader;
-import de.javagl.obj.ObjUtils;
+import com.bymarcin.openglasses.surface.rendering.AnimationFrame;
+import com.bymarcin.openglasses.surface.rendering.BufferElement;
+import com.bymarcin.openglasses.surface.rendering.Model;
+import com.bymarcin.openglasses.surface.rendering.ModelPart;
+
 
 public class RenderManager {
 	BasicShader shader;
@@ -34,36 +30,6 @@ public class RenderManager {
 		//addModel(createModel());
 	}
 	
-	public Model objLoadr(String objFile) {
-		Model m = new Model();
-		try {
-			Obj obj = ObjUtils.convertToRenderable(ObjReader.read(ClassLoader.getSystemResourceAsStream(objFile)));
-			ModelPart p = new ModelPart();
-			
-			for (int i = 0; i < obj.getNumFaces(); i++) {
-				
-				
-				ObjFace face = obj.getFace(i);
-				
-				FloatTuple v1 = obj.getVertex(face.getVertexIndex(0));
-				FloatTuple v2 = obj.getVertex(face.getVertexIndex(1));
-				FloatTuple v3 = obj.getVertex(face.getVertexIndex(2));
-				p.addTriangle(
-						new BufferElement().setX(v1.getX()).setY(v1.getY()).setZ(v1.getZ()).setA(1f),
-						new BufferElement().setX(v2.getX()).setY(v2.getY()).setZ(v2.getZ()).setA(1f),
-						new BufferElement().setX(v3.getX()).setY(v3.getY()).setZ(v3.getZ()).setA(1f)
-				);
-			}
-			
-			m.parts.put("main", p);
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
-		
-		
-		return m;
-	}
 	
 	public void bind(int bufferId) {
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferId);
@@ -91,8 +57,8 @@ public class RenderManager {
 				Matrix4f Oldrotate = Matrix4f.rotate((float) Math.toRadians(m.modelID2 % 2 != 0 ? 45 : -45), new Vector3f(0, 1, 0), new Matrix4f(), null);
 				frame.stopRotation = Quaternion.setFromMatrix(rotate, new Quaternion());
 				frame.startRotation = Quaternion.setFromMatrix(Oldrotate, new Quaternion());
-				frame.startColor = m.modelID2 % 2 == 0 ?new Vector4f(1f,1f,1f,1f) : new Vector4f(.5f,.1f,.1f,0.5f);
-				frame.stopColor = m.modelID2 % 2 != 0 ? new Vector4f(1f,1f,1f,1f) : new Vector4f(.5f,.1f,.1f,0.5f);
+				frame.startColor = m.modelID2 % 2 == 0 ? new Vector4f(1f, 1f, 1f, 1f) : new Vector4f(.5f, .1f, .1f, 0.5f);
+				frame.stopColor = m.modelID2 % 2 != 0 ? new Vector4f(1f, 1f, 1f, 1f) : new Vector4f(.5f, .1f, .1f, 0.5f);
 				//frame.startScale = m.modelID2 % 2 == 0 ? new Vector4f(2, 2, 2, 1) : new Vector4f(1, 1, 1, 1);
 				//frame.stopScale = m.modelID2 % 2 != 0 ? new Vector4f(2, 2, 2, 1) : new Vector4f(1, 1, 1, 1);
 				
@@ -195,139 +161,6 @@ public class RenderManager {
 		part.addTriangle(v4, v5, v6);
 		model.parts.put("Quad", part);
 		return model;
-	}
-	
-	public class ModelPart {
-		Matrix4f matrix = Matrix4f.setIdentity(new Matrix4f());
-		List<BufferElement> bufferElements = new LinkedList<>();
-		int startBufferPosition;
-		Queue<AnimationFrame> animationFrames = new LinkedList();
-		AnimationFrame currAnimationFrame;
-		
-		int getElements() {
-			return bufferElements.size();
-		}
-		
-		public void addTriangle(BufferElement v1, BufferElement v2, BufferElement v3) {
-			bufferElements.add(v1);
-			bufferElements.add(v2);
-			bufferElements.add(v3);
-		}
-	}
-	
-	public class AnimationFrame {
-		ReadableVector4f startScale = new Vector4f(1, 1, 1, 1);
-		ReadableVector4f startTranslate =  new Vector4f(0, 0, 0, 1);
-		ReadableVector4f startRotation = Quaternion.setIdentity(new Quaternion());
-		ReadableVector4f startColor = new Vector4f(1, 1, 1, 1);
-		
-		
-		ReadableVector4f stopScale =  new Vector4f(1, 1, 1, 1);
-		ReadableVector4f stopTranslate =  new Vector4f(0, 0, 0, 1);
-		ReadableVector4f stopRotation = Quaternion.setIdentity(new Quaternion());
-		ReadableVector4f stopColor = new Vector4f(1, 1, 1, 1);
-		long duration;
-		long endtime;
-		
-		
-		public void store(FloatBuffer floatBuffer) {
-			startTranslate.store(floatBuffer);
-			stopTranslate.store(floatBuffer);
-			
-			startRotation.store(floatBuffer);
-			stopRotation.store(floatBuffer);
-			
-			startScale.store(floatBuffer);
-			stopScale.store(floatBuffer);
-			
-			startColor.store(floatBuffer);
-			stopColor.store(floatBuffer);
-		}
-		
-	}
-	
-	public class Model {
-		int bufferID;
-		long modelID;
-		long modelID2;
-		Matrix4f modelID3;
-		Matrix4f matrix = Matrix4f.setIdentity(new Matrix4f());
-		HashMap<String, ModelPart> parts = new HashMap<>();
-		Queue<AnimationFrame> animationFrames = new LinkedList();
-		AnimationFrame currAnimationFrame;
-		
-		int calculateBufferSize() {
-			int size = 0;
-			for (ModelPart part : parts.values()) {
-				size += part.bufferElements.size();
-			}
-			return size * BufferElement.SIZE;
-		}
-		
-		public FloatBuffer matrix() {
-			FloatBuffer buff = BufferUtils.createFloatBuffer(16);
-			matrix.store(buff);
-			buff.flip();
-			return buff;
-		}
-	}
-	
-	
-	public class BufferElement {
-		public static final int SIZE = 9;
-		public static final int VERTEX_POINTER_OFFSET = 0;
-		public static final int COLOR_POINTER_OFFSET = 3;
-		public static final int TEXCOORD_POINTER_OFFSET = 7;
-		private float[] floats = new float[SIZE];
-		
-		public BufferElement setX(float x) {
-			floats[0] = x;
-			return this;
-		}
-		
-		public BufferElement setY(float y) {
-			floats[1] = y;
-			return this;
-		}
-		
-		public BufferElement setZ(float z) {
-			floats[2] = z;
-			return this;
-		}
-		
-		public BufferElement setR(float r) {
-			floats[3] = r;
-			return this;
-		}
-		
-		public BufferElement setG(float g) {
-			floats[4] = g;
-			return this;
-		}
-		
-		public BufferElement setB(float b) {
-			floats[5] = b;
-			return this;
-		}
-		
-		public BufferElement setA(float a) {
-			floats[6] = a;
-			return this;
-		}
-		
-		public BufferElement setU(float u) {
-			floats[7] = u;
-			return this;
-		}
-		
-		public BufferElement setV(float v) {
-			floats[8] = v;
-			return this;
-		}
-		
-		public float[] get() {
-			return floats;
-		}
 	}
 	
 	
