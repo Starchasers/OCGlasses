@@ -25,3 +25,17 @@
 	Widget_TextLabel.addColor(1, 0, 0, 0.5)  -- this is modifier #1
 	Widget_TextLabel.addColor(0, 1, 0, 0.5)  -- this is modifier #2
 	Widget_TextLabel.setCondition(2, "OVERLAY_ACTIVE", true)
+
+
+
+
+### rotating cube
+	glassesTerminal = component.glasses; 
+	glassesTerminal.removeAll(); 
+	cube3D = glassesTerminal.addCube3D(); 
+	cube3D.addTranslation(0, 2, 0); 
+	cube3D.addColor(1, 1, 1, 0.7); 
+
+	cube3D.addTranslation(0.5, 0, 0.5); 
+	cube3D.setEasing(cube3D.addRotation(1, 0, 1, 0), "LINEAR", "IN", 360, "deg", 0, 360, "repeat");
+	cube3D.addTranslation(-0.5, 0, -0.5); 
