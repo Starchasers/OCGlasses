@@ -13,6 +13,17 @@ public class Model {
 	Matrix4f matrix = Matrix4f.setIdentity(new Matrix4f());
 	HashMap<String, ModelPart> parts = new HashMap<>();
 	Queue<AnimationFrame> animationFrames = new LinkedList();
+	boolean visable = true;
+	boolean depthTest = true;
+	
+	
+	public Queue<AnimationFrame> getAnimationFrames() {
+		return animationFrames;
+	}
+	
+	public void setAnimationFrames(Queue<AnimationFrame> animationFrames) {
+		this.animationFrames = animationFrames;
+	}
 	
 	int calculateBufferSize() {
 		int size = 0;
@@ -29,5 +40,43 @@ public class Model {
 		return buff;
 	}
 	
+	public boolean isVisable() {
+		return visable;
+	}
 	
+	public void setVisable(boolean visable) {
+		this.visable = visable;
+	}
+	
+	public boolean isDepthTest() {
+		return depthTest;
+	}
+	
+	public void setDepthTest(boolean depthTest) {
+		this.depthTest = depthTest;
+	}
+	
+	public int getBufferID() {
+		return bufferID;
+	}
+	
+	public void setBufferID(int bufferID) {
+		this.bufferID = bufferID;
+	}
+	
+	public Matrix4f getMatrix() {
+		return matrix;
+	}
+	
+	public void setMatrix(Matrix4f matrix) {
+		this.matrix = matrix;
+	}
+	
+	public HashMap<String, ModelPart> getParts() {
+		return parts;
+	}
+	
+	public void setParts(HashMap<String, ModelPart> parts) {
+		this.parts = parts;
+	}
 }

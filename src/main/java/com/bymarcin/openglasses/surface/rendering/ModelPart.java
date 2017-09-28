@@ -11,6 +11,8 @@ public class ModelPart {
 	List<BufferElement> bufferElements = new LinkedList<>();
 	int startBufferPosition;
 	Queue<AnimationFrame> animationFrames = new LinkedList();
+	boolean visable = true;
+	boolean depthTest = true;
 	
 	int getElements() {
 		return bufferElements.size();
@@ -45,4 +47,22 @@ public class ModelPart {
 		bufferElements.add(v2);
 		bufferElements.add(v3);
 	}
+	
+	public boolean isVisable() {
+		return visable;
+	}
+	
+	public void setVisable(boolean visable) {
+		this.visable = visable;
+	}
+	
+	public boolean isDepthTest() {
+		return depthTest;
+	}
+	
+	public void setDepthTest(boolean depthTest) {
+		this.depthTest = depthTest;
+	}
+	
+	
 }

@@ -10,10 +10,6 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Quaternion;
-import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
 
 import com.bymarcin.openglasses.surface.rendering.AnimationFrame;
 import com.bymarcin.openglasses.surface.rendering.BufferElement;
@@ -27,77 +23,47 @@ public class RenderManager {
 	
 	public void init() {
 		shader = new BasicShader();
+		shader.bind();
+		GL20.glVertexAttribPointer(shader.getInColorAttrib(), 4, GL11.GL_FLOAT, false, BufferElement.SIZE * 4, BufferElement.COLOR_POINTER_OFFSET * 4);
+		GL20.glVertexAttribPointer(shader.getInUVAttrib(), 2, GL11.GL_FLOAT, false, BufferElement.SIZE * 4, BufferElement.TEXCOORD_POINTER_OFFSET * 4);
+		GL11.glVertexPointer(3, GL11.GL_FLOAT, BufferElement.SIZE * 4, BufferElement.VERTEX_POINTER_OFFSET * 4);
+		shader.unBind();
 		//addModel(createModel());
 	}
-	
 	
 	public void bind(int bufferId) {
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, bufferId);
 	}
 	
-	
 	public void render(RenderWorldLastEvent event) {
-		//objLoadr("assets/openglasses/shaders/ss.obj");
 		if (models.size() == 0) {
 			addModel(createModel());
 		}
 		shader.bind();
-		//				if(models.size()>1){
-		//					Iterator i = models.iterator();
-		//					i.next();
-		//					i.remove();
-		//				}
-		
 		
 		for (Model m : models) {
-			if (m.modelID - System.currentTimeMillis() < 0) {
-				AnimationFrame frame = new AnimationFrame();
-				frame.duration = 2 * 1000;
-				Matrix4f rotate = Matrix4f.rotate((float) Math.toRadians(m.modelID2 % 2 == 0 ? 45 : -45), new Vector3f(0, 1, 0), new Matrix4f(), null);
-				Matrix4f Oldrotate = Matrix4f.rotate((float) Math.toRadians(m.modelID2 % 2 != 0 ? 45 : -45), new Vector3f(0, 1, 0), new Matrix4f(), null);
-				frame.stopRotation = Quaternion.setFromMatrix(rotate, new Quaternion());
-				frame.startRotation = Quaternion.setFromMatrix(Oldrotate, new Quaternion());
-				frame.startColor = m.modelID2 % 2 == 0 ? new Vector4f(1f, 1f, 1f, 1f) : new Vector4f(.5f, .1f, .1f, 0.5f);
-				frame.stopColor = m.modelID2 % 2 != 0 ? new Vector4f(1f, 1f, 1f, 1f) : new Vector4f(.5f, .1f, .1f, 0.5f);
-				//frame.startScale = m.modelID2 % 2 == 0 ? new Vector4f(2, 2, 2, 1) : new Vector4f(1, 1, 1, 1);
-				//frame.stopScale = m.modelID2 % 2 != 0 ? new Vector4f(2, 2, 2, 1) : new Vector4f(1, 1, 1, 1);
-				
-				
-				//frame.startTranslate = m.modelID2 % 2 == 0 ? new Vector4f(0, 10, 0, 1) : new Vector4f(0, 0, 0, 1);
-				//frame.stopTranslate = m.modelID2 % 2 != 0 ? new Vector4f(0, 10, 0, 1) : new Vector4f(0, 0, 0, 1);
-				
-				m.animationFrames.add(frame);
-				m.modelID = System.currentTimeMillis() + (2000);
-				m.modelID2++;
-			}
-			
-			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, m.bufferID);
-			GL20.glVertexAttribPointer(shader.getInColorAttrib(), 4, GL11.GL_FLOAT, false, BufferElement.SIZE * 4, BufferElement.COLOR_POINTER_OFFSET * 4);
-			GL20.glVertexAttribPointer(shader.getInUVAttrib(), 2, GL11.GL_FLOAT, false, BufferElement.SIZE * 4, BufferElement.TEXCOORD_POINTER_OFFSET * 4);
-			GL11.glVertexPointer(3, GL11.GL_FLOAT, BufferElement.SIZE * 4, BufferElement.VERTEX_POINTER_OFFSET * 4);
-			for (ModelPart part : m.parts.values()) {
-				
+			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, m.getBufferID());
+
+			for (ModelPart part : m.getParts().values()) {
 				FloatBuffer buffer = BufferUtils.createFloatBuffer(16 * 2);
 				FloatBuffer bufferAnim = BufferUtils.createFloatBuffer(32 * 2);
-				m.matrix.store(buffer);
-				part.matrix.store(buffer);
+				m.getMatrix().store(buffer);
+				part.getMatrix().store(buffer);
 				float t1 = 1;
 				float t2 = 0;
-				if (m.currAnimationFrame == null) {
-					m.currAnimationFrame = m.animationFrames.poll();
-					m.currAnimationFrame.endtime = System.currentTimeMillis() + m.currAnimationFrame.duration;
-				}
-				
-				if (m.currAnimationFrame != null) {
-					if (m.currAnimationFrame.endtime <= System.currentTimeMillis() && m.animationFrames.size() > 0) {
-						AnimationFrame frame = m.currAnimationFrame;
-						m.currAnimationFrame = m.animationFrames.poll();
-						m.currAnimationFrame.endtime = System.currentTimeMillis() + m.currAnimationFrame.duration;
-						//m.currAnimationFrame.start = Matrix4f.mul(frame.stop, m.currAnimationFrame.start, m.currAnimationFrame.start);
+
+				AnimationFrame modelAnimationFrame = m.getAnimationFrames().peek();
+				if (modelAnimationFrame != null) {
+					if(modelAnimationFrame.getEndtime()==0){
+						modelAnimationFrame.setEndtime(System.currentTimeMillis() + modelAnimationFrame.getDuration());
 					}
-					m.currAnimationFrame.store(bufferAnim);
+					if (modelAnimationFrame.getEndtime() <= System.currentTimeMillis() && m.getAnimationFrames().size()>1) {
+						m.getAnimationFrames().poll();
+						//TODO change original matrix
+					}
+					modelAnimationFrame.store(bufferAnim);
 				} else {
-					new AnimationFrame().store(bufferAnim);
+					AnimationFrame.EMPTY_FRAME.store(bufferAnim);
 				}
 				
 				t1 = Math.max(Math.min(1, 1 - ((m.currAnimationFrame.endtime - System.currentTimeMillis()) / (float) m.currAnimationFrame.duration)), 0);

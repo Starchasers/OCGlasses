@@ -7,6 +7,8 @@ import org.lwjgl.util.vector.ReadableVector4f;
 import org.lwjgl.util.vector.Vector4f;
 
 public class AnimationFrame {
+	public static final AnimationFrame EMPTY_FRAME = new AnimationFrame();
+	
 	private ReadableVector4f startScale = new Vector4f(1, 1, 1, 1);
 	private ReadableVector4f startTranslate = new Vector4f(0, 0, 0, 1);
 	private ReadableVector4f startRotation = Quaternion.setIdentity(new Quaternion());
