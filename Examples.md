@@ -27,9 +27,8 @@
 
 	Widget_TextLabel = glassesTerminal.addTextLabel()
 	Widget_TextLabel.setText("openGlasses") -- no modifier!
-	Widget_TextLabel.addColor(1, 0, 0, 0.5)  -- this is modifier #1
-	Widget_TextLabel.addColor(0, 1, 0, 0.5)  -- this is modifier #2
-	Widget_TextLabel.setCondition(2, "OVERLAY_ACTIVE", true)
+	Widget_TextLabel.addColor(1, 0, 0, 0.5)
+	Widget_TextLabel.setCondition(Widget_TextLabel.addColor(0, 1, 0, 0.5), "OVERLAY_ACTIVE", true)
 
 
 ### 3D World Cube3D
@@ -37,11 +36,10 @@
 	glassesTerminal.removeAll()
 
 	Widget_Cube3D = glassesTerminal.addCube3D()
-	Widget_Cube3D.addTranslation(0, 3, 0)  -- modifier #1
-	Widget_Cube3D.addColor(1, 1, 0.4, 0.8) -- modifier #2
-	Widget_Cube3D.addRotation(45, 0, 0, 1) -- modifier #3
-	Widget_Cube3D.addScale(2, 2, 2)        -- modifier #4
-	Widget_Cube3D.setCondition(4, "IS_LIGHTLEVEL_MIN_7", true)
+	Widget_Cube3D.addTranslation(0, 3, 0)
+	Widget_Cube3D.addColor(1, 1, 0.4, 0.8)
+	Widget_Cube3D.addRotation(45, 0, 0, 1)
+	Widget_Cube3D.setCondition(Widget_Cube3D.addScale(2, 2, 2), "IS_LIGHTLEVEL_MIN_7", true)
 
 
 ### 3D World FloatingText
