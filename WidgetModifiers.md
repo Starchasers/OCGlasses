@@ -57,15 +57,15 @@ Widgets can be animated by binding an easing function to a modifier. So you can 
 * (int) modifierIndex
 * (String) easing functionname
 * (String) easing type
-* (float) duration
+* (float) duration in milliseconds
 * (String) variable name
 * (float) min value
 * (float) max value
 * (String) loop/repeating mode
 
-`widget.setEasing(widget.addRotation(0, 0, 1, 0), "LINEAR", "IN", 360, "deg", 0, 360, "repeat")`
+`widget.setEasing(widget.addRotation(0, 0, 1, 0), "LINEAR", "IN", 3000, "deg", 0, 360, "repeat")`
 
-this example makes our widget rotate around the y-axis
+this example makes our widget rotate around the y-axis, one rotation takes 3seconds
 
 
 
