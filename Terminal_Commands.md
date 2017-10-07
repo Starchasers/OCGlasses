@@ -1,4 +1,12 @@
 
+* setRenderResolution(String "user", int width, int height)
+* newUniqueKey()
+* removeAll()
+* removeWidget(int id)
+* getWidgetCount()
+* requestResolutionEvents(String "user")
+* getConnectedPlayers()
+
 
 # set custom overlay render resolution
 `glassesTerminal.setRenderResolution("ben_mkiv", 1280, 720);`
