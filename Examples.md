@@ -6,16 +6,16 @@
 	objData = fh:read("*a"); 
 	fh:close(); 
 
-	g = require("component").glasses; 
-	g.removeAll(); 
-	c = g.addOBJModel3D(); 
+	glassesTerminal = require("component").glasses; 
+	glassesTerminal.removeAll(); 
+	customOBJ = glassesTerminal.addOBJModel3D(); 
 
-	c.loadOBJ(objData); 
+	customOBJ.loadOBJ(objData); 
 
-	c.addTranslation(0, 2.5, 0); 
-	c.addColor(0, 1, 0, 0.8); 
+	customOBJ.addTranslation(0, 2.5, 0); 
+	customOBJ.addColor(0, 1, 0, 0.8); 
 
-	c.setEasing(c.addRotation(0, 0, 1, 0), "LINEAR", "INOUT", 3000, "deg", 0, 360, "repeat");
+	customOBJ.setEasing(customOBJ.addRotation(0, 0, 1, 0), "LINEAR", "INOUT", 3000, "deg", 0, 360, "repeat");
 
 
 
