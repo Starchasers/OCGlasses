@@ -32,20 +32,20 @@
 
 
 # Static
-### 2D Overlay ItemIcon
+### 2D Overlay Item2D
 	glassesTerminal = require("component").glasses
 	glassesTerminal.removeAll()
 
-	Widget_ItemIcon = glassesTerminal.addItemIcon()
+	Widget_ItemIcon = glassesTerminal.addItem2D()
 	Widget_ItemIcon.setItem("minecraft:iron_sword", 0)
 	Widget_ItemIcon.addScale(40, 40, 40)      -- modifier #1
 	Widget_ItemIcon.addRotation(180, 1, 0, 0) -- modifier #2
 
-### 2D Overlay TextLabel
+### 2D Overlay Text2D
 	glassesTerminal = require("component").glasses
 	glassesTerminal.removeAll()
 
-	Widget_TextLabel = glassesTerminal.addTextLabel()
+	Widget_TextLabel = glassesTerminal.addText2D()
 	Widget_TextLabel.setText("openGlasses") -- no modifier!
 	Widget_TextLabel.addColor(1, 0, 0, 0.5)
 	Widget_TextLabel.setCondition(Widget_TextLabel.addColor(0, 1, 0, 0.5), "OVERLAY_ACTIVE", true)
@@ -62,11 +62,11 @@
 	Widget_Cube3D.setCondition(Widget_Cube3D.addScale(2, 2, 2), "IS_LIGHTLEVEL_MIN_7", true)
 
 
-### 3D World FloatingText
+### 3D World Text3D
 	glassesTerminal = require("component").glasses
 	glassesTerminal.removeAll()
 
-	Widget_FloatingText = glassesTerminal.addFloatingText()
+	Widget_FloatingText = glassesTerminal.addText3D()
 	Widget_FloatingText.setText("openGlasses") -- no modifier!
 	Widget_FloatingText.addTranslation(0, 4, 0) -- this is modifier #1
 	Widget_FloatingText.addColor(1, 1, 0, 0.8)  -- this is modifier #2
