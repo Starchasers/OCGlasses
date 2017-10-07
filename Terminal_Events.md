@@ -1,6 +1,13 @@
-# Terminal Events
+# Events
 
-### interact_overlay
+## Glasses Events
+* EQUIPED_GLASSES
+* UNEQUIPED_GLASSES
+* INTERACT_WORLD_RIGHT
+* INTERACT_WORLD_LEFT
+* INTERACT_OVERLAY
+* GLASSES_SCREEN_SIZE
 
-
-### 
+## Terminal Events
+* ASYNC_SCREEN_SIZES
+* SET_RENDER_RESOLUTION
