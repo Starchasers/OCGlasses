@@ -1,5 +1,10 @@
 # Glasses Terminal
+required as gateway between AR Glasses and the computer.
 
+position of 3D world space widgets is relative to the terminal block.
+
+## usage
+rightclick with AR Glasses for pairing
 
 ## crafting receipe
 ![crafting receipe](https://i.imgur.com/midEObF.jpg)
