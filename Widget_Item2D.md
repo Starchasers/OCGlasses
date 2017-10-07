@@ -1,6 +1,6 @@
 ### 2D Overlay Widget
-## ItemIcon
-`widget = component.glasses.addItemIcon();`
+## Item2D
+`widget = component.glasses.addItem2D();`
 
 adds a Item Icon to the 2D Overlay
 
