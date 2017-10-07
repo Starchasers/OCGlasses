@@ -2,6 +2,7 @@
 ### rotating monkey head
 	pastebin get mm7QbueM /home/suzanne.obj
 
+
 	fh = io.open("/home/suzanne.obj", "r"); 
 	objData = fh:read("*a"); 
 	fh:close(); 
