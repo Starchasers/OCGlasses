@@ -2,13 +2,13 @@
 ### rotating monkey head
 	pastebin get mm7QbueM /home/suzanne.obj
 
+	fh = io.open("/home/suzanne.obj", "r"); 
+	objData = fh:read("*a"); 
+	fh:close(); 
+
 	g = require("component").glasses; 
 	g.removeAll(); 
 	c = g.addOBJModel3D(); 
-
-	fh = io.open("/home/suzanne.obj", "r"); 
-
-	objData = fh:read("*a"); 
 
 	c.loadOBJ(objData); 
 
@@ -16,6 +16,7 @@
 	c.addColor(0, 1, 0, 0.8); 
 
 	c.setEasing(c.addRotation(0, 0, 1, 0), "LINEAR", "INOUT", 3000, "deg", 0, 360, "repeat");
+
 
 
 ### rotating cube
