@@ -1,6 +1,6 @@
 ### 2D Overlay Widget
-## Custom
-`widget = component.glasses.addCustom();`
+## Custom2D
+`widget = component.glasses.addCustom2D();`
 
 adds a Custom Shape to the 2D Overlay
 
