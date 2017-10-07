@@ -1,6 +1,6 @@
 ### 3D World Widget
 ## FloatingText
-`widget = component.glasses.addFloatingText();`
+`widget = component.glasses.addText3D();`
 
 adds a Text to the 3D World
 
