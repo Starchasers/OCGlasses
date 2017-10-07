@@ -1,6 +1,1 @@
-demo script
-
-    pastebin get Qe4emGPp /lib/ar.lua
-    pastebin get qsi4UvHr /home/ar_demo.lua
-
-then run with `/home/ar_demo.lua`
+the [demo script](https://github.com/ben-mkiv/OCGlasses/tree/MC1.10.2/src/main/resources/assets/openglasses/loot/ocglasses) is now available ingame as OpenComputers Loot Disk. (openGlasses Demo / green disk)
