@@ -7,4 +7,4 @@ wiki is still work in progress so some pages are blank ;-(
 please report problems [here](https://github.com/ben-mkiv/OCGlasses/issues/new)
 
 
-**version 2.2+ requires MalisisCore 4.3.0**
+**version 2 requires MalisisCore 4.3.0**
