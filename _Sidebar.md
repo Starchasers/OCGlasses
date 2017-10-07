@@ -11,13 +11,16 @@
 * [Box2D](Widget_Box2D)
 * [Custom2D](Widget_Custom)
 * [Item2D](Widget_ItemIcon)
+* [OBJModel2D](Widget_OBJModel2D)
 * [Text2D](Widget_TextLabel)
 
 ### [3D World](Widgets3D)
 * [Cube3D](Widget_Cube3D)
 * [Custom3D](Widget_Custom3D)
-* [Text3D](Widget_FloatingText)
 * [Item3D](Widget_Item3D)
+* [OBJModel3D](Widget_OBJModel3D)
+* [Text3D](Widget_FloatingText)
+
 
 ### [Widget Modifiers](WidgetModifiers)
 * [Color](WidgetModifiers#addColor)
