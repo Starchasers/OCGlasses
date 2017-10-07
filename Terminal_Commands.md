@@ -6,5 +6,5 @@
 * (int) width
 * (int) height
 
-sets a custom render resolution for player "ben_mkiv", playername can be empty to set the resolution for all connected glasses
+sets a custom render resolution for player "ben_mkiv"
 
