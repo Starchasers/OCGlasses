@@ -1,5 +1,4 @@
-# openGlasses 2.x Wiki
-**this version requires [MalisisCore 4.3.0](https://minecraft.curseforge.com/projects/malisiscore/files/2381988)**
+# openGlasses 3.x Wiki
 
 use the Navigation on the right to get started.
 
