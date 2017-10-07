@@ -1,6 +1,6 @@
 ### 2D Overlay Widget
-## TextLabel
-`widget = component.glasses.addTextLabel();`
+## Text2D
+`widget = component.glasses.addText2D();`
 
 adds a Text to the 2D Overlay
 
