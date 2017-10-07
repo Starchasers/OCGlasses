@@ -4,7 +4,7 @@
 
 
 ## [Terminal](Terminal)
-
+* [Commands](Terminal_Commands)
 
 ## [Widgets](Widgets)
 ### [2D Overlay](Widgets2D)
