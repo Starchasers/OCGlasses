@@ -5,6 +5,7 @@
 
 ## [Terminal](Terminal)
 * [Commands](Terminal_Commands)
+* [Events](Terminal_Events)
 
 ## [Widgets](Widgets)
 ### [2D Overlay](Widgets2D)
