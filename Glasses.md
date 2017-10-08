@@ -3,7 +3,13 @@
   * consumes power when worn (1 FE/tick without upgrades)
   * can be charged in OpenComputers charger or by any ForgeEnergy compatible device (like EnderIO Wireless Charger)
 * handles up to 9 different widgets  (can be upgraded)
-* can be worn as baubles cosmetic or in the armor helmet slot
+
+# usage
+link the glasses by rightclicking a Glasses Terminal with them.
+
+The glasses can be worn as baubles cosmetic or in the armor helmet slot.
+
+Check your Minecraft control settings for the OpenGlasses Hotkey to interact with the Overlay.
 
 # Upgrades
 AR Glasses can be Upgraded on an Anvil.
