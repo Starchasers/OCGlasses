@@ -1,4 +1,4 @@
-#terminal commands
+# terminal commands
 
 ### newUniqueKey()
 generates a new unique terminal key. all linked glasses have to be repaired after that.
