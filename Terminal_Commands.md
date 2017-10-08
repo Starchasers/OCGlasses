@@ -7,6 +7,7 @@ generates a new unique terminal key. all linked glasses have to be repaired afte
 removes all widgets
 
 ### removeWidget(id)
+(int) widget id
 `glassesTerminal.removeWidget(42);`
 
 removes the widget with the specified id 42
