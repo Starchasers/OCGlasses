@@ -29,7 +29,7 @@
 * [Scale](WidgetModifiers#addScale)
 * [Translate](WidgetModifiers#addTranslation)
 
-### [Widget Animation](WidgetModifiers#Animation)
+### [Widget Animation](WidgetModifiers#animation)
 
 ### [Widget Modifier Conditions](WidgetModifierConditions)
 * [Weather](WidgetModifierConditions#Weather)
