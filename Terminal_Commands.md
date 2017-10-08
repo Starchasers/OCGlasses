@@ -6,14 +6,17 @@ generates a new unique terminal key. all linked glasses have to be repaired afte
 ### removeAll()
 removes all widgets
 
-### removeWidget(int id)
-removes the widget with the specified id
+### removeWidget(id)
+`glassesTerminal.removeWidget(42);`
+removes the widget with the specified id 42
 
 ### getWidgetCount()
 gets the current widget count
 
 ### requestResolutionEvents("user")
+`glassesTerminal.requestResolutionEvents("ben_mkiv");`
   * (string) playername or empty for all connected glasses
+
 requests the screen resolution event from the specified user.
 
 ### getConnectedPlayers()
