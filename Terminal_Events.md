@@ -1,5 +1,7 @@
 # Events
 
+![](https://i.imgur.com/MUEE9RC.png)
+
 ## Glasses Events
 * EQUIPED_GLASSES
 * UNEQUIPED_GLASSES
