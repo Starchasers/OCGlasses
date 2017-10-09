@@ -1,6 +1,7 @@
 ### [3D World](Widgets3D)
 * [Cube3D](Widget_Cube3D)
 * [Custom3D](Widget_Custom3D)
+* [EntityTracker3D](Widget_EntityTracker3D)
 * [Item3D](Widget_Item3D)
 * [OBJModel3D](Widget_OBJModel3D)
 * [Text3D](Widget_Text3D)
