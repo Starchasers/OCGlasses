@@ -1,4 +1,7 @@
 ### 3D World Widget
+
+this widget requires the water (geolyzer) + sneaking (motion sensor) upgrades
+
 ## EntityTracker3D
 `widget = component.glasses.addEntityTracker3D();`
 
