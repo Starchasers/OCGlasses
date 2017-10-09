@@ -1,5 +1,5 @@
 # Animated
-### rotating monkey head
+### rotating monkey head / Wavefront Object
 `pastebin get mm7QbueM /home/suzanne.obj`
 
 	fh = io.open("/home/suzanne.obj", "r"); 
