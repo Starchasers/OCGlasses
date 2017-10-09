@@ -13,7 +13,7 @@ adds a EntityTracker3D to the 3D World Space
 
 this function is used to setup the tracking
 
-examples:
+### examples
 
 `entityTracker.setTracking("ENTITYTYPE", 32, "Sheep", 0)` 
 
