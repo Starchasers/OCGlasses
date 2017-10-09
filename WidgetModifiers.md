@@ -78,7 +78,7 @@ this example makes our widget rotate around the y-axis, one rotation takes 3seco
 removes easing from list "x" of modifier 4
 
 
-### easing functions [previews](http://easings.net/)
+## easing functions [previews](http://easings.net/)
 * BACK
 * BOUNCE
 * CIRC
@@ -91,12 +91,12 @@ removes easing from list "x" of modifier 4
 * QUINT
 * SINE
 
-### easing types
+## easing types
 * IN
 * OUT
 * INOUT
 
-### loop/repeat modes
+## loop/repeat modes
 * `DEFAULT` only run once 
 * `LOOP` loop/playback the easing back and forth
 * `REPEAT` repeat the easing
