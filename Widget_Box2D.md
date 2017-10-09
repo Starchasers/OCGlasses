@@ -32,3 +32,6 @@ last 2nd color Modifiers are used to determine the rendercolor
   * [getModifiers](WidgetModifierMethods#getModifiers)
   * [removeModifier](WidgetModifierMethods#removeModifier)
   * [setCondition](WidgetModifierConditions)
+* [Modifier Animation](WidgetModifiers#animation)
+  * [setEasing](WidgetModifiers#seteasing)
+  * [removeEasing](WidgetModifiers#removeeasing)
