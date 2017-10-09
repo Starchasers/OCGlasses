@@ -1,5 +1,5 @@
 ## 3D World Widget
-
+![](https://i.imgur.com/s0cEoup.png)
 ### this widget requires [sneaking](Glasses#sneaking) + [swimming](Glasses#swimming) upgrades
 
 ## EntityTracker3D
