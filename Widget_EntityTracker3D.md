@@ -26,6 +26,11 @@ searches for sheeps in a radius of 32 blocks
 
 searches for cobblestone on the groun
 
+`entityTracker.setTracking("ALL", 32, "", 0)` 
+
+tracks everything in a radius of 32 blocks
+
+
 
 ## loadOBJ(data)
 * (String) wavefront object data
