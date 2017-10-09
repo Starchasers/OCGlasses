@@ -59,3 +59,4 @@ loads the model, which is displayed at entities, from the parsed object data
   * [setCondition](WidgetModifierConditions)
 * [Modifier Animation](WidgetModifiers#animation)
   * [setEasing](WidgetModifiers#seteasing)
+  * [removeEasing](WidgetModifiers#removeEasing)
