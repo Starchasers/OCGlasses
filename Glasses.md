@@ -31,6 +31,7 @@ AR Glasses can be Upgraded on an Anvil.
 * OpenComputers Geolyzer
   * costs 20 Levels User XP
   * increases glasses power usage by 1 FE/tick
+  * increases radar range by 16 blocks (max 128 blocks)
   * required for [Swimming Modifier Condition](WidgetModifierConditions#Swimming)
 
 ### Light
