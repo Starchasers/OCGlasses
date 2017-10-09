@@ -1,6 +1,6 @@
-### 3D World Widget
+## 3D World Widget
 
-this widget requires [sneaking](Glasses#sneaking) + [swimming](Glasses#swimming) upgrades
+### this widget requires [sneaking](Glasses#sneaking) + [swimming](Glasses#swimming) upgrades
 
 ## EntityTracker3D
 `widget = component.glasses.addEntityTracker3D();`
