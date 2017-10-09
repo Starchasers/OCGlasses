@@ -18,15 +18,15 @@ this function is used to setup the tracking
 
 ### examples
 
-`entityTracker.setTracking("ENTITYTYPE", 32, "Sheep")` 
+`widget.setTracking("ENTITYTYPE", 32, "Sheep")` 
 
 searches for sheeps in a radius of 32 blocks
 
-`entityTracker.setTracking("ITEMTYPE", 32, "minecraft:cobblestone", 0)` 
+`widget.setTracking("ITEMTYPE", 32, "minecraft:cobblestone", 0)` 
 
 searches for cobblestone on the ground
 
-`entityTracker.setTracking("ALL", 32)` 
+`widget.setTracking("ALL", 32)` 
 
 tracks everything in a radius of 32 blocks
 
