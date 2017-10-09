@@ -57,3 +57,6 @@ removes a vertex
   * [getModifiers](WidgetModifierMethods#getModifiers)
   * [removeModifier](WidgetModifierMethods#removeModifier)
   * [setCondition](WidgetModifierConditions)
+* [Modifier Animation](WidgetModifiers#animation)
+  * [setEasing](WidgetModifiers#seteasing)
+  * [removeEasing](WidgetModifiers#removeeasing)
