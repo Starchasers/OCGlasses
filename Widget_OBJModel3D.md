@@ -1,4 +1,5 @@
-### 3D World Widget
+## 3D World Widget
+![](https://i.imgur.com/vBA4df0.png)
 ## OBJModel3D
 `widget = component.glasses.addOBJModel3D();`
 
