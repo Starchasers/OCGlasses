@@ -31,6 +31,8 @@
 * [Translate](WidgetModifiers#addTranslation)
 
 ### [Widget Animation](WidgetModifiers#animation)
+* [setEasing](WidgetModifiers#seteasing)
+* [removeEasing](WidgetModifiers#removeeasing)
 
 ### [Widget Modifier Conditions](WidgetModifierConditions)
 * [Weather](WidgetModifierConditions#Weather)
