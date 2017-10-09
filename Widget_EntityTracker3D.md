@@ -15,9 +15,13 @@ this function is used to setup the tracking
 
 examples:
 
-`entityTracker.setTracking("ENTITYTYPE", 32, "Sheep", 0)` searches for sheeps in a radius of 32 blocks
+`entityTracker.setTracking("ENTITYTYPE", 32, "Sheep", 0)` 
 
-`entityTracker.setTracking("ITEMTYPE", 32, "minecraft:cobblestone", 0)` searches for cobblestone on the groun
+searches for sheeps in a radius of 32 blocks
+
+`entityTracker.setTracking("ITEMTYPE", 32, "minecraft:cobblestone", 0)` 
+
+searches for cobblestone on the groun
 
 
 ## loadOBJ(data)
