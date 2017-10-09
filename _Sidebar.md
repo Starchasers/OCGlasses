@@ -8,14 +8,14 @@
 * [Events](Terminal_Events)
 
 ## [Widgets](Widgets)
-### [2D Overlay](Widgets2D)
+### [2D Overlay](Widgets#2d-overlay)
 * [Box2D](Widget_Box2D)
 * [Custom2D](Widget_Custom2D)
 * [Item2D](Widget_Item2D)
 * [OBJModel2D](Widget_OBJModel2D)
 * [Text2D](Widget_Text2D)
 
-### [3D World](Widgets3D)
+### [3D World](Widgets#3d-world)
 * [Cube3D](Widget_Cube3D)
 * [Custom3D](Widget_Custom3D)
 * [EntityTracker3D](Widget_EntityTracker3D)
