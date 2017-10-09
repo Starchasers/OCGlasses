@@ -1,6 +1,0 @@
-### [2D Overlay](Widgets2D)
-* [Box2D](Widget_Box2D)
-* [Custom2D](Widget_Custom2D)
-* [Item2D](Widget_Item2D)
-* [OBJModel2D](Widget_OBJModel2D)
-* [Text2D](Widget_Text2D)
