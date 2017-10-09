@@ -28,6 +28,11 @@ requires opencomputers motion sensor
 * `OVERLAY_ACTIVE`
 * `OVERLAY_INACTIVE`
 
+### EntityTracker
+* `IS_FOCUSED_ENTITY`
+
+together with an entity tracker this condition can be used to highlight the current focused entity
+
 
 
 (add required upgrades on a Anvil like when enchanting armor, each upgrade costs 20 levels of XP)
