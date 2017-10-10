@@ -8,13 +8,19 @@
 adds a EntityTracker3D to the 3D World Space
 
 
-## setTracking(trackingtype, radius, type, index)
+## setTrackingType(trackingtype, radius)
 * (String) trackingtype - `NONE`, `ALL`, `UNIQUE`, `ITEM`, `LIVING`, `PLAYER`, `NEUTRAL`, `HOSTILE`
 * (int) radius - area around the player to search for entities
-* (String) type - when using `ITEMTYPE` or `ENTITYTYPE` as trackingtype you can define the item/creature type here
-* (int) index - metaindex for `ITEM` filter
+sets the type and radius of the tracker
 
-this function is used to setup the tracking and may change soon(tm)
+## setTrackingFilter(type, metaindex)
+* (String) type - item/creature name
+* (int) metaindex - metaindex for Items
+sets a filter on the tracker
+
+## setTrackingEntity(uniqueid)
+* (String) uniqueid - entitys unique id
+sets the uuid for the unique filter
 
 ### examples
 
