@@ -5,6 +5,7 @@
 adds a Wavefront Object Model to the 2D Overlay
 
 ## loadOBJ(data)
+`widget.loadObj(objData)`
 * (String) wavefront object data
 
 loads the model from the parsed object data
