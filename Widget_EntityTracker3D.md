@@ -11,28 +11,33 @@ adds a EntityTracker3D to the 3D World Space
 ## setTrackingType(trackingtype, radius)
 * (String) trackingtype - `NONE`, `ALL`, `UNIQUE`, `ITEM`, `LIVING`, `PLAYER`, `NEUTRAL`, `HOSTILE`
 * (int) radius - area around the player to search for entities
+
 sets the type and radius of the tracker
 
 ## setTrackingFilter(type, metaindex)
 * (String) type - item/creature name
 * (int) metaindex - metaindex for Items
+
 sets a filter on the tracker
 
 ## setTrackingEntity(uniqueid)
 * (String) uniqueid - entitys unique id
+
 sets the uuid for the unique filter
 
 ### examples
 
-`widget.setTracking("NEUTRAL", 32, "Sheep")` 
+`widget.setTrackingType("NEUTRAL", 32)` 
+`widget.setTrackingFilter("sheep")
 
 searches for sheeps in a radius of 32 blocks
 
-`widget.setTracking("ITEM", 32, "minecraft:cobblestone", 0)` 
+`widget.setTrackingType("ITEM", 32)`
+`widget.setTrackingFilter("minecraft:cobblestone", 0)` 
 
 searches for cobblestone on the ground
 
-`widget.setTracking("ALL", 32)` 
+`widget.setTrackingType("ALL", 32)` 
 
 tracks everything in a radius of 32 blocks
 
