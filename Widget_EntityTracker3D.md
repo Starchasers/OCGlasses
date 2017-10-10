@@ -23,7 +23,7 @@ sets a filter on the tracker
 ## setTrackingEntity(uniqueid)
 * (String) uniqueid - entitys unique id
 
-sets the uuid for the unique filter
+sets the uuid for the unique filter, "none" or empty String disables the filter
 
 ### examples
 
