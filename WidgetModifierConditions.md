@@ -29,9 +29,17 @@ requires opencomputers motion sensor
 * `OVERLAY_INACTIVE`
 
 ### EntityTracker
+these conditions are only useful for the entity tracker
 * `IS_FOCUSED_ENTITY`
+* `IS_LIVING`
+* `IS_PLAYER`
+* `IS_NEUTRAL`
+* `IS_HOSTILE`
+* `IS_ITEM`
 
-together with an entity tracker this condition can be used to highlight the current focused entity
+
+
+
 
 
 
