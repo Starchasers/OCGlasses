@@ -48,6 +48,15 @@ returns (int) modifierIndex
 moves widget on y axis by 1
 
 
+### updateModifier
+* (int) modifier index
+* (float) values
+
+`widget.updateModifier(index, 0, 1, 0)` // updates red/green/blue or x/y/z
+
+`widget.updateModifier(index, 1, 0, 1, 0)` // updates red/green/blue/alpha or deg/x/y/z
+
+
 # Animation
 Widgets can be animated by binding an easing function to a modifier. So you can animate color / scale changes, movement and rotation with a simple syntax
 
