@@ -4,7 +4,7 @@
 * `IS_LIGHTLEVEL_MIN_[0-15]`
 * `IS_LIGHTLEVEL_MAX_[0-15]`
 
-requires minecraft Daylight Sensor
+requires [upgrade](Glasses#light)
 
 ### Weather
 * `IS_WEATHER_RAIN`
@@ -22,7 +22,7 @@ requires [upgrade](Glasses#swimming)
 * `IS_SNEAKING`
 * `IS_NOT_SNEAKING`
 
-requires opencomputers motion sensor
+requires [upgrade](Glasses#sneaking)
 
 ### OverlayActive
 * `OVERLAY_ACTIVE`
