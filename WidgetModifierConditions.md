@@ -10,13 +10,13 @@ requires minecraft Daylight Sensor
 * `IS_WEATHER_RAIN`
 * `IS_WEATHER_CLEAR`
 
-requires opencomputers tank Upgrade
+requires [upgrade](Glasses#weather)
 
 ### Swimming
 * `IS_SWIMMING`
 * `IS_NOT_SWIMMING`
 
-requires opencomputers geolyzer
+requires [upgrade](Glasses#swimming)
 
 ### Sneaking
 * `IS_SNEAKING`
@@ -36,14 +36,6 @@ these conditions are only useful for the entity tracker
 * `IS_NEUTRAL`
 * `IS_HOSTILE`
 * `IS_ITEM`
-
-
-
-
-
-
-
-(add required upgrades on a Anvil like when enchanting armor, each upgrade costs 20 levels of XP)
 
 
 ## setCondition
