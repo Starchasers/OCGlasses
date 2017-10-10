@@ -40,7 +40,6 @@
 * [Swimming](WidgetModifierConditions#Swimming)
 * [Light](WidgetModifierConditions#Light)
 * [OverlayActive](WidgetModifierConditions#OverlayActive)
-
 * [Entity Tracker](WidgetModifierConditions#entitytracker)
 
 ### [Screenshots](Screenshots)
