@@ -20,7 +20,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 // java version
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
-def simpleVersion = "1.5.4"
+def simpleVersion = "3.3.2"
 
 group= "com.bymarcin.openglasses" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "OpenGlasses-MC1.12.1"
@@ -31,7 +31,7 @@ minecraft {
 		replace "@VERSION@", simpleVersion
 	runDir = "run"
 	version = "14.22.0.2453"
-	mappings = "snapshot_20170806"
+	mappings = "snapshot_20170821"
 }
 
 runClient {

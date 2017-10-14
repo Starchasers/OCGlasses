@@ -5,10 +5,13 @@
   "description": "Addon for Open Computers which adds Augmented Reality features to Minecraft.",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "url": "http://starchasers.pl/OpenGlasses/",
+  "url": "https://github.com/ben-mkiv/OCGlasses",
   "updateUrl": "",
-  "authorList": ["marcin212","magik6000"],
+  "authorList": ["marcin212","magik6000", "ben-mkiv"],
   "credits": "
+    thanks to gigaherz, Ordinastie, EnderIO/AE2/OC Team
+    for sharing/testing/debugging stuff :)
+    original OCG Credits:
     Great thanks to:
     Axoi, for the textures.
     alucard87pl, for help with the wiki.",

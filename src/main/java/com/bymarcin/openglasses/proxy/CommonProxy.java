@@ -7,13 +7,11 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class CommonProxy {
 	
-	public void registermodel(Item item, int meta){
-
-	}
+	public void registermodel(Item item, int meta){}
 	
-	public void init() {
-
-	}
+	public void init() {}
+	
+	public void postInit() {}
 
 	public World getWorld(int dimensionId) {
 		return FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimensionId);

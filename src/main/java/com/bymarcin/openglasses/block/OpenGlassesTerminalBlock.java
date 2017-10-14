@@ -2,11 +2,11 @@ package com.bymarcin.openglasses.block;
 
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
+import com.bymarcin.openglasses.manual.IBlockWithDocumentation;
 import com.bymarcin.openglasses.network.packet.WidgetUpdatePacket;
 import com.bymarcin.openglasses.surface.ServerSurface;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -22,7 +22,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class OpenGlassesTerminalBlock extends BlockContainer {
+public class OpenGlassesTerminalBlock extends BlockContainer implements IBlockWithDocumentation {
 
 	public OpenGlassesTerminalBlock() {
 		super(Material.IRON);
@@ -30,6 +30,14 @@ public class OpenGlassesTerminalBlock extends BlockContainer {
 		setRegistryName("openglassesterminal");
 		setHardness(3.0F);
 		setUnlocalizedName("openglassesterminal");
+	}
+
+	public String getDocumentationName(World world, BlockPos pos){
+		return "Terminal";
+	}
+
+	public String getDocumentationName(ItemStack stack){
+		return "Terminal";
 	}
 
 	@Override
@@ -54,10 +62,10 @@ public class OpenGlassesTerminalBlock extends BlockContainer {
 		if (te == null)
 			return false;
 		ItemStack glassesStack = player.getHeldItemMainhand();
-		if (glassesStack != ItemStack.EMPTY) {
+		if (glassesStack != null) {
 			Item item = glassesStack.getItem();
 			if (item instanceof OpenGlassesItem) {
-				((OpenGlassesItem) item).bindToTerminal(glassesStack, te.getTerminalUUID());
+				((OpenGlassesItem) item).bindToTerminal(glassesStack, te.getTerminalUUID(), player);
 				return true;
 			}
 		}

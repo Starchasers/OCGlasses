@@ -6,8 +6,6 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import com.bymarcin.openglasses.network.NetworkRegistry;
-import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
-import com.bymarcin.openglasses.network.packet.TerminalStatusPacket.TerminalStatus;
 import com.bymarcin.openglasses.network.packet.WidgetUpdatePacket;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 import com.bymarcin.openglasses.utils.Location;
@@ -20,30 +18,31 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 public class ServerSurface {
 	public static ServerSurface instance  = new ServerSurface();
 	
-	HashMap<EntityPlayer,Location> players = new HashMap<EntityPlayer, Location>();
+	public HashMap<EntityPlayer,Location> players = new HashMap<EntityPlayer, Location>();
 	
 	public void subscribePlayer(String playerUUID, Location UUID){
 		EntityPlayerMP player = checkUUID(playerUUID);
-		if(player!=null){
-			OpenGlassesTerminalTileEntity terminal = UUID.getTerminal();
-			if(terminal != null && terminal.getTerminalUUID().equals(UUID)){
-				players.put(player, UUID);
-				sendSync(player, UUID, terminal);
-				sendPowerInfo(UUID, terminal.isPowered()?TerminalStatus.HavePower:TerminalStatus.NoPower);
-				terminal.onGlassesPutOn(player.getDisplayNameString());
-			}
-		}
+		if(player == null) return;
+
+		OpenGlassesTerminalTileEntity terminal = UUID.getTerminal();
+		if(terminal == null) return;
+		if(!terminal.getTerminalUUID().equals(UUID)) return;
+
+		players.put(player, UUID);
+		sendSync(player, UUID, terminal);
+		terminal.onGlassesPutOn(player.getDisplayNameString());
 	}
 	
 	public void unsubscribePlayer(String playerUUID){
 		EntityPlayerMP p = checkUUID(playerUUID);
+
 		Location l = players.remove( p );
-		if(l!=null){
-			OpenGlassesTerminalTileEntity terminal = l.getTerminal();
-			if(terminal!=null){
-				terminal.onGlassesPutOff(p.getDisplayNameString());
-			}
-		}
+		if(l == null) return;
+
+		OpenGlassesTerminalTileEntity terminal = l.getTerminal();
+		if(terminal == null) return;
+
+		terminal.onGlassesPutOff(p.getDisplayNameString());
 	}
 	
 	public String[] getActivePlayers(Location l){
@@ -57,17 +56,8 @@ public class ServerSurface {
 	}
 	
 	public void sendSync(EntityPlayer p,Location coords, OpenGlassesTerminalTileEntity t){
-			WidgetUpdatePacket packet = new WidgetUpdatePacket( ((OpenGlassesTerminalTileEntity)t).widgetList);
+			WidgetUpdatePacket packet = new WidgetUpdatePacket(t.widgetList);
 			NetworkRegistry.packetHandler.sendTo(packet, (EntityPlayerMP) p);
-	}
-	
-	public void sendPowerInfo(Location loc, TerminalStatus status){
-		TerminalStatusPacket packet = new TerminalStatusPacket(status);
-		for(Entry<EntityPlayer, Location> e: players.entrySet()){
-			if(e.getValue().equals(loc)){
-				NetworkRegistry.packetHandler.sendTo(packet, (EntityPlayerMP) e.getKey());
-			}
-		}
 	}
 	
 	public void sendToUUID(WidgetUpdatePacket packet, Location UUID){

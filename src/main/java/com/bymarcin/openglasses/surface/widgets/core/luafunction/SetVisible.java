@@ -13,7 +13,7 @@ public class SetVisible extends LuaFunction{
 		super.call(context, arguments);
 		Widget widget = getSelf().getWidget(); 
 		if(widget !=null){
-			widget.setVisable(arguments.checkBoolean(0));
+			widget.setVisible(arguments.checkBoolean(0));
 			return null;
 		}
 		throw new RuntimeException("Component does not exists!");

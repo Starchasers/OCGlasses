@@ -81,7 +81,7 @@ public class WidgetUpdatePacket extends Packet<WidgetUpdatePacket, IMessage>{
 
 	private void readOnAddAction() throws IOException{
 		widgetList = new HashMap<Integer,Widget>();
-		int size =  readInt();
+		int size = readInt();
 		for(int i=0; i<size ;i++){
 			WidgetType wigetType = WidgetType.values()[readInt()];
 			Widget w = wigetType.getNewInstance();
@@ -118,7 +118,7 @@ public class WidgetUpdatePacket extends Packet<WidgetUpdatePacket, IMessage>{
 	@Override
 	protected IMessage executeOnClient() {
 		switch(type){
-		case AddWigets: ClientSurface.instances.updateWigets(widgetList.entrySet());
+		case AddWigets: ClientSurface.instances.updateWidgets(widgetList.entrySet());
 			break;
 		case RemoveWidgets: ClientSurface.instances.removeWidgets(ids);
 			break;

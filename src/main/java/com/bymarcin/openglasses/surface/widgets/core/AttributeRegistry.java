@@ -5,20 +5,9 @@ import java.util.LinkedList;
 
 import com.bymarcin.openglasses.lua.LuaFunction;
 import com.bymarcin.openglasses.lua.LuaReference;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.I2DVertex;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DPositionable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlpha;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IAttribute;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IViewDistance;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.ILookable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IPositionable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IResizable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IScalable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.ITextable;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IThroughVisibility;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DVertex;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.*;
 import com.bymarcin.openglasses.surface.widgets.core.luafunction.*;
+
 
 public class AttributeRegistry {
 	static{
@@ -27,44 +16,64 @@ public class AttributeRegistry {
 		addAtribute(IAttribute.class, GetID.class);
 		addAtribute(IAttribute.class, IsVisible.class);
 		addAtribute(IAttribute.class, SetVisible.class);
-		addAtribute(IAttribute.class, SetVisibleCompat.class);
+		
+		addAtribute(IAttribute.class, RemoveWidget.class);
+		
+		addAtribute(IAttribute.class, AddColor.class);
+		addAtribute(IAttribute.class, AddTranslation.class);
+		addAtribute(IAttribute.class, AddRotation.class);
+		addAtribute(IAttribute.class, AddScale.class);
+		//addAtribute(IAttribute.class, AddTexture.class);
+		addAtribute(IAttribute.class, RemoveModifier.class);
+		addAtribute(IAttribute.class, GetModifiers.class);		
+		addAtribute(IAttribute.class, SetCondition.class);
+		addAtribute(IAttribute.class, SetEasing.class);
+		addAtribute(IAttribute.class, RemoveEasing.class);
+		addAtribute(IAttribute.class, GetColor.class);
+		addAtribute(IAttribute.class, UpdateModifier.class);
 
-		addAtribute(IAlpha.class, GetAlpha.class);
-		addAtribute(IAlpha.class, SetAlpha.class);
-		
-		addAtribute(IColorizable.class, SetColor.class);
-		addAtribute(IColorizable.class, GetColor.class);
-		
-		addAtribute(IPositionable.class, SetPosition.class);
-		addAtribute(IPositionable.class, GetPosition.class);
-		
+
+		addAtribute(ITracker.class, SetTrackingType.class);
+		addAtribute(ITracker.class, SetTrackingFilter.class);
+		addAtribute(ITracker.class, SetTrackingEntity.class);
+
+		addAtribute(ICustomShape.class, SetGLMODE.class);
+		addAtribute(ICustomShape.class, SetShading.class);
+		addAtribute(ICustomShape.class, SetVertex.class);
+		addAtribute(ICustomShape.class, AddVertex.class);
+		addAtribute(ICustomShape.class, RemoveVertex.class);
+		addAtribute(ICustomShape.class, GetVertexCount.class);
+
+		addAtribute(IOBJModel.class, LoadOBJ.class);
+
+		addAtribute(IAttribute.class, SetHorizontalAlign.class);
+		addAtribute(IAttribute.class, SetVerticalAlign.class);
+
 		addAtribute(IResizable.class, GetSize.class);
 		addAtribute(IResizable.class, SetSize.class);
-		
-		addAtribute(I3DPositionable.class, SetPosition3D.class);
-		addAtribute(I3DPositionable.class, GetPosition3D.class);
 		
 		addAtribute(ITextable.class, SetText.class);
 		addAtribute(ITextable.class, GetText.class);
 		
-		addAtribute(IScalable.class, SetScale.class);
-		addAtribute(IScalable.class, GetScale.class);
-		
+		addAtribute(IItem.class, SetItem.class);
+		addAtribute(IItem.class, GetItem.class);
+
 		addAtribute(IThroughVisibility.class, SetVisibleThroughObjects.class);
 		addAtribute(IThroughVisibility.class, IsVisibleThroughObjects.class);
 		
-		addAtribute(I3DVertex.class, SetVertex.class);
-		addAtribute(I3DVertex.class, GetVertexCount.class);
-		
-		addAtribute(I2DVertex.class, SetVertex.class);
-		addAtribute(I2DVertex.class, GetVertexCount.class);
-		
 		addAtribute(IViewDistance.class, SetViewDistance.class);
 		addAtribute(IViewDistance.class, GetViewDistance.class);
-		
+
+		addAtribute(IViewDistance.class, SetFaceWidgetToPlayer.class);
+
+		addAtribute(IViewDistance.class, GetRenderPosition.class);
+
 		addAtribute(ILookable.class, SetLookingAt.class);
 		addAtribute(ILookable.class, GetLookingAt.class);
-		
+				
+		addAtribute(IPrivate.class, SetOwner.class);
+		addAtribute(IPrivate.class, GetOwner.class);
+		addAtribute(IPrivate.class, GetOwnerUUID.class);		
 	}
 	
 	static HashMap<Class<? extends IAttribute>, LinkedList<Class<? extends LuaFunction>>> attributes;
@@ -98,3 +107,4 @@ public class AttributeRegistry {
 	}
 	
 }
+

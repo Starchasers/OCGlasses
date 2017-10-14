@@ -1,15 +1,22 @@
 package com.bymarcin.openglasses.surface;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.bymarcin.openglasses.surface.widgets.component.face.Text;
+import com.bymarcin.openglasses.event.ClientEventHandler;
+import com.bymarcin.openglasses.item.OpenGlassesItem;
+import com.bymarcin.openglasses.network.NetworkRegistry;
+import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
+import com.bymarcin.openglasses.surface.widgets.component.face.Text2D;
 import com.bymarcin.openglasses.utils.Location;
 
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -23,31 +30,59 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import com.bymarcin.openglasses.utils.OGUtils;
 
 @SideOnly(Side.CLIENT)
 public class ClientSurface {
 	public static ClientSurface instances = new ClientSurface();
+	public static ClientEventHandler eventHandler;
 	public Map<Integer, IRenderableWidget> renderables = new ConcurrentHashMap<Integer, IRenderableWidget>();
 	public Map<Integer, IRenderableWidget> renderablesWorld = new ConcurrentHashMap<Integer, IRenderableWidget>();
-	boolean isPowered = false;
-	public boolean haveGlasses = false;
+	public OpenGlassesItem glasses;
+	public ItemStack glassesStack;
 	public Location lastBind;
-	IRenderableWidget noPowerRender;
+	public static ScaledResolution resolution = new ScaledResolution(Minecraft.getMinecraft());
+	public static ArrayList<Float> renderResolution = null;
+
+	private IRenderableWidget noPowerRender, noLinkRender, widgetLimitRender;
+
 	private ClientSurface() {
-		noPowerRender = getNoPowerRender();
+		this.noPowerRender = getNoPowerRender();
+		this.noLinkRender = getNoLinkRender();
+		this.widgetLimitRender = getWidgetLimitRender();
+		this.resetLocalGlasses();
 	}
-	
-	
-	public void updateWigets(Set<Entry<Integer, Widget>> widgets){
+
+	public void resetLocalGlasses(){
+		this.removeAllWidgets();
+		this.glasses = null;
+		this.glassesStack = null;
+		this.lastBind = null;
+	}
+
+	public void initLocalGlasses(ItemStack glassesStack){
+		this.glassesStack = glassesStack;
+		this.glasses = (OpenGlassesItem) glassesStack.getItem();
+		this.lastBind = OGUtils.getGlassesTerminalUUID(glassesStack);
+	}
+
+	//gets the current widgets and puts them to the correct hashmap
+	public void updateWidgets(Set<Entry<Integer, Widget>> widgets){
 		for(Entry<Integer, Widget> widget : widgets){
 			IRenderableWidget r = widget.getValue().getRenderable();
 			switch(r.getRenderType()){
-			case GameOverlayLocated: renderables.put(widget.getKey(), r);
+			case GameOverlayLocated: 
+				renderables.put(widget.getKey(), r);
 				break;
-			case WorldLocated: renderablesWorld.put(widget.getKey(), r);
+			case WorldLocated: 
+				renderablesWorld.put(widget.getKey(), r);
 				break;
 			}
 		}
+	}
+
+	public int getWidgetCount(){
+		return (renderables.size() + renderablesWorld.size());
 	}
 	
 	public void removeWidgets(List<Integer> ids){
@@ -61,78 +96,177 @@ public class ClientSurface {
 		renderables.clear();
 		renderablesWorld.clear();
 	}
-	
+
+
+
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void onRenderGameOverlay(RenderGameOverlayEvent evt) {
-		if (evt.getType() == ElementType.HELMET && evt instanceof RenderGameOverlayEvent.Post && haveGlasses) {
-			if(!isPowered || !haveGlasses || lastBind == null){ if(noPowerRender !=null)noPowerRender.render(null, 0, 0, 0); return;}
-			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-			GL11.glPushMatrix();
-			GL11.glScaled(evt.getResolution().getScaledWidth_double()/512D, evt.getResolution().getScaledHeight_double()/512D*16D/9D, 0);
+	public void onSizeChange(RenderGameOverlayEvent event) {
+		ScaledResolution newResolution = event.getResolution();
 
-			for(IRenderableWidget renderable : renderables.values()){
-				if(renderable.shouldWidgetBeRendered())
-					renderable.render(null, 0, 0, 0);
-			}
-
-			GL11.glColor3f(1.0f,1.0f,1.0f);
-			GL11.glPopMatrix();
-			GL11.glPopAttrib();
+		if  (newResolution.getScaledWidth() != this.resolution.getScaledWidth()
+		 || newResolution.getScaledHeight() != this.resolution.getScaledHeight()
+		 ||  newResolution.getScaleFactor() != this.resolution.getScaleFactor()) {
+			this.resolution = newResolution;
+			sendResolution();
 		}
 	}
-	
+
+	public void sendResolution(){
+		if(glasses == null) return;
+		if(lastBind == null) return;
+
+		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.GLASSES_SCREEN_SIZE, lastBind, Minecraft.getMinecraft().player, resolution.getScaledWidth(), resolution.getScaledHeight(), resolution.getScaleFactor()));
+	}
+	/*
+	int tick = 0;
 	@SubscribeEvent
-	public void renderWorldLastEvent(RenderWorldLastEvent event)
-	{	
-		if(!isPowered || !haveGlasses || lastBind == null) return;
+	public void onPlayerTick(TickEvent.PlayerTickEvent e){
+		if(ClientSurface.instances.glassesStack == null) return;
+		if(e.player != Minecraft.getMinecraft().player) return;
+
+		ClientSurface.instances.tick++;
+		if(ClientSurface.instances.tick%20 != 0) return;
+
+		ClientSurface.instances.tick = 0;
+		ClientSurface.instances.focusedEntity = OGUtils.getEntityLookingAt(e.player);
+	}*/
+
+	@SubscribeEvent
+	public void onRenderGameOverlay(RenderGameOverlayEvent evt) {
+		if (evt.getType() != ElementType.HELMET) return;
+		if (!(evt instanceof RenderGameOverlayEvent.Post)) return;
+
+		if(!shouldRenderStart()) return;
+		if(renderables.size() < 1) return;
+
+		EntityPlayer player = Minecraft.getMinecraft().player;
+
+		NBTTagCompound tag = glassesStack.getTagCompound();
+		tag.setLong("conditionStates", glasses.getConditionStates(glassesStack, player));
+		
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glPushMatrix();
-		EntityPlayer player= Minecraft.getMinecraft().player;
-		double playerX = player.prevPosX + (player.posX - player.prevPosX) * event.getPartialTicks(); 
-		double playerY = player.prevPosY + (player.posY - player.prevPosY) * event.getPartialTicks();
-		double playerZ = player.prevPosZ + (player.posZ - player.prevPosZ) * event.getPartialTicks();
-		GL11.glTranslated(-playerX, -playerY, -playerZ);
-		GL11.glTranslated(lastBind.x, lastBind.y, lastBind.z);
-		GL11.glDisable(GL11.GL_LIGHTING);
-		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDepthMask(false);
-		//Start Drawing In World
-		
-		for(IRenderableWidget renderable : renderablesWorld.values()){
-			if(renderable.shouldWidgetBeRendered())
-				renderable.render(player, playerX - lastBind.x, playerY - lastBind.y, playerZ - lastBind.z);
+
+		if(renderResolution != null) {
+			GL11.glScalef(resolution.getScaledWidth() / renderResolution.get(0), resolution.getScaledHeight() / renderResolution.get(1), 1);
 		}
-		
-		
-		//Stop Drawing In World
-		GL11.glDepthMask(true);
-		GL11.glEnable(GL11.GL_LIGHTING);
-		GL11.glDisable(GL11.GL_BLEND);
+		for(IRenderableWidget renderable : renderables.values()){
+			if(renderable.shouldWidgetBeRendered(player)
+					&& renderable.isWidgetOwner(glassesStack.getTagCompound().getString("userUUID"))){
+				GL11.glPushMatrix();
+				renderable.render(player, lastBind, tag.getLong("conditionStates"));
+				GL11.glPopMatrix();
+			}			
+		}
 		GL11.glPopMatrix();
 		GL11.glPopAttrib();
 	}
 	
+	public boolean shouldRenderStart(){
+		if(this.glassesStack == null)
+			return false;
+
+		if(getWidgetCount() > glassesStack.getTagCompound().getInteger("widgetLimit") && widgetLimitRender != null){
+			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+			GL11.glPushMatrix();
+			GL11.glDepthMask(false);
+			widgetLimitRender.render(Minecraft.getMinecraft().player, lastBind, ~0);
+			GL11.glPopMatrix();
+			GL11.glPopAttrib();
+			return false;
+		}
+
+		if(glasses.getEnergyStored(glassesStack) == 0 && noPowerRender != null){
+			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+			GL11.glPushMatrix();
+			GL11.glDepthMask(false);
+			noPowerRender.render(Minecraft.getMinecraft().player, lastBind, ~0);
+			GL11.glPopMatrix();
+			GL11.glPopAttrib();
+			return false;
+		}
+		
+		if(lastBind == null && noLinkRender != null) {
+			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+			GL11.glPushMatrix();
+			GL11.glDepthMask(false);
+			noLinkRender.render(Minecraft.getMinecraft().player, lastBind, ~0);
+			GL11.glPopMatrix();
+			GL11.glPopAttrib();
+			return false;
+		}
+		
+		return true;		
+	}		
+	
+	public double[] getEntityPlayerLocation(EntityPlayer e, float partialTicks){
+		double x = e.prevPosX + (e.posX - e.prevPosX) * partialTicks;
+		double y = e.prevPosY + (e.posY - e.prevPosY) * partialTicks;
+		double z = e.prevPosZ + (e.posZ - e.prevPosZ) * partialTicks;
+		return new double[]{x, y, z};
+	}	 	
+	
+	@SubscribeEvent
+	public void renderWorldLastEvent(RenderWorldLastEvent event)	{	
+		if(renderablesWorld.size() < 1) return;		
+		if(!shouldRenderStart()) return;
+
+		EntityPlayer player = Minecraft.getMinecraft().player;
+
+		double[] playerLocation = getEntityPlayerLocation(player, event.getPartialTicks());
+
+		NBTTagCompound tag = glassesStack.getTagCompound();
+		tag.setLong("conditionStates", glasses.getConditionStates(glassesStack, player));
+		
+		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+		GL11.glPushMatrix();
+		
+		GL11.glTranslated(-playerLocation[0], -playerLocation[1], -playerLocation[2]);
+		GL11.glTranslated(lastBind.x, lastBind.y, lastBind.z);
+		
+		GL11.glDepthMask(true);
+		//Start Drawing In World		
+		for(IRenderableWidget renderable : renderablesWorld.values()){
+			if(renderable.shouldWidgetBeRendered(player)
+					&& renderable.isWidgetOwner(glassesStack.getTagCompound().getString("userUUID"))){
+				GL11.glPushMatrix();
+				renderable.render(player, lastBind, tag.getLong("conditionStates"));
+				GL11.glPopMatrix();
+		} }		
+		//Stop Drawing In World
+		GL11.glPopMatrix();		
+		GL11.glPopAttrib();
+	}
+	
 	public static RayTraceResult getBlockCoordsLookingAt(EntityPlayer player){
-		RayTraceResult objectMouseOver;
-		objectMouseOver = player.rayTrace(200, 1);	
-		if(objectMouseOver != null && objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK)
-		{
+		RayTraceResult objectMouseOver = player.rayTrace(200, 1);	
+		if(objectMouseOver != null && objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK){
 			return objectMouseOver;
 		}
 		return null;
 	}
-	
-	public void setPowered(boolean isPowered) {
-		this.isPowered = isPowered;
-	}
-	
+
 	private IRenderableWidget getNoPowerRender(){
-		Text t = new Text();
+		Text2D t = new Text2D();
 		t.setText("NO POWER");
-		t.setAlpha(0.5);
-		t.setScale(1);
-		t.setColor(1, 0, 0);
+		t.WidgetModifierList.addColor(1F, 0F, 0F, 0.5F);
 		return t.getRenderable();
 	}
-	
+
+	private IRenderableWidget getNoLinkRender(){
+		Text2D t = new Text2D();
+		t.setText("NOT LINKED");
+		t.WidgetModifierList.addColor(1F, 1F, 1F, 0.7F);
+		return t.getRenderable();
+	}
+
+	private IRenderableWidget getWidgetLimitRender(){
+		Text2D t = new Text2D();
+		t.setText("WIDGET LIMIT REACHED, please remove widgets to get rid of this message xD");
+		t.WidgetModifierList.addColor(1F, 1F, 1F, 0.7F);
+		return t.getRenderable();
+	}
+
 }

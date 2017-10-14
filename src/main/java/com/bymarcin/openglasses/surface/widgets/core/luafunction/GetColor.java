@@ -5,16 +5,18 @@ import li.cil.oc.api.machine.Context;
 
 import com.bymarcin.openglasses.lua.LuaFunction;
 import com.bymarcin.openglasses.surface.Widget;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.IColorizable;
 
 public class GetColor extends LuaFunction{
 
 	@Override
 	public Object[] call(Context context, Arguments arguments) {
 		super.call(context, arguments);
-		Widget widget = getSelf().getWidget(); 
-		if(widget instanceof IColorizable){
-			return new Object[]{((IColorizable) widget).getColorR(),((IColorizable) widget).getColorG(),((IColorizable) widget).getColorB()};
+		Widget widget = getSelf().getWidget();
+		if(widget != null){
+			int index = arguments.checkInteger(0);
+			float[] col = widget.WidgetModifierList.getCurrentColorFloat(index);
+
+			return new Object[]{ col[0], col[1], col[2], col[3] };
 		}
 		throw new RuntimeException("Component does not exists!");
 	}

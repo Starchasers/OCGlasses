@@ -1,31 +1,21 @@
 package com.bymarcin.openglasses.surface;
 
-import com.bymarcin.openglasses.surface.widgets.component.face.Dot;
-import com.bymarcin.openglasses.surface.widgets.component.face.Quad;
-import com.bymarcin.openglasses.surface.widgets.component.face.SquareWidget;
-import com.bymarcin.openglasses.surface.widgets.component.face.Text;
-import com.bymarcin.openglasses.surface.widgets.component.face.TriangleWidget;
-import com.bymarcin.openglasses.surface.widgets.component.world.Cube3D;
-import com.bymarcin.openglasses.surface.widgets.component.world.Dot3D;
-import com.bymarcin.openglasses.surface.widgets.component.world.FloatingText;
-import com.bymarcin.openglasses.surface.widgets.component.world.Line3D;
-import com.bymarcin.openglasses.surface.widgets.component.world.Quad3D;
-import com.bymarcin.openglasses.surface.widgets.component.world.Triangle3D;
+import com.bymarcin.openglasses.surface.widgets.component.face.*;
+import com.bymarcin.openglasses.surface.widgets.component.world.*;
 
 public enum WidgetType {
-	SQUARE(SquareWidget.class),
-	TRIANGLE(TriangleWidget.class),
-	DOT(Dot.class),
-	TEXT(Text.class),
 	CUBE3D(Cube3D.class),
-	FLOATINGTEXT(FloatingText.class),
-	TRIANGLE3D(Triangle3D.class),
-	QUAD3D(Quad3D.class),
-	DOT3D(Dot3D.class),
-	LINE3D(Line3D.class),
-	QUAD(Quad.class)
-	;
-	
+	BOX2D(Box2D.class),
+	TEXT2D(Text2D.class),
+	TEXT3D(Text3D.class),
+	CUSTOM2D(Custom2D.class),
+	CUSTOM3D(Custom3D.class),
+	ITEM2D(Item2D.class),
+	ITEM3D(Item3D.class),
+	OBJMODEL2D(OBJModel2D.class),
+	OBJMODEL3D(OBJModel3D.class),
+	ENTITYTRACKER3D(EntityTracker3D.class);
+
 	Class<? extends Widget> clazz;
 	private WidgetType(Class<? extends Widget> cl) {
 		clazz = cl;
