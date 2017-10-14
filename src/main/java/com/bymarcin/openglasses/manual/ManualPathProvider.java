@@ -19,22 +19,22 @@ public class ManualPathProvider implements PathProvider {
 
     public static void initialize() {
         Manual.addProvider(new ManualPathProvider());
-        Manual.addProvider(new ManualContentProvider("openglasses", "doc/"));
+        Manual.addProvider(new ManualContentProvider());
         Manual.addTab(new TextureTabIconRenderer(new ResourceLocation(OpenGlasses.MODID, "textures/blocks/glasses_side.png")),
                 "openGlasses", "_Sidebar");
     }
 
     @Override
     public String pathFor(ItemStack stack) {
-        if(stack == null || stack.getItem() == null) return null;
+        if(stack == null) return null;
 
         if(stack.getItem() instanceof IItemWithDocumentation) {
-            return makePath(((IItemWithDocumentation) stack.getItem()).getDocumentationName(stack));
+            return ((IItemWithDocumentation) stack.getItem()).getDocumentationName(stack);
         }
         if(stack.getItem() instanceof ItemBlock) {
             Block block = Block.getBlockFromItem(stack.getItem());
-            if(block != null && block instanceof IBlockWithDocumentation) {
-                return makePath(((IBlockWithDocumentation) block).getDocumentationName(stack));
+            if(block instanceof IBlockWithDocumentation) {
+                return ((IBlockWithDocumentation) block).getDocumentationName(stack);
             }
         }
         return null;
@@ -45,13 +45,10 @@ public class ManualPathProvider implements PathProvider {
         if(world == null) return null;
 
         Block block = world.getBlockState(pos).getBlock();
-        if(block != null && block instanceof IBlockWithDocumentation) {
-            return makePath(((IBlockWithDocumentation) block).getDocumentationName(world, pos));
+        if(block instanceof IBlockWithDocumentation) {
+            return ((IBlockWithDocumentation) block).getDocumentationName(world, pos);
         }
         return null;
     }
 
-    private String makePath(String documentationName) {
-        return documentationName;
-    }
 }
