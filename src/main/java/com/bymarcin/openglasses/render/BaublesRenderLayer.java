@@ -17,7 +17,7 @@ import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
 import net.minecraftforge.fml.common.Optional;
 
-@Optional.Interface(iface="baubles.api.render.IRenderBauble",modid="Baubles")
+@Optional.Interface(iface="baubles.api.render.IRenderBauble",modid="baubles")
 public class BaublesRenderLayer implements IRenderBauble, LayerRenderer<EntityLivingBase> {
 	static ModelBiped model;
 	static ResourceLocation texture;

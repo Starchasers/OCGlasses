@@ -8,7 +8,7 @@ import baubles.api.IBauble;
 
 import net.minecraftforge.fml.common.Optional;
 
-@Optional.Interface(iface="baubles.api.IBauble",modid="Baubles")
+@Optional.Interface(iface="baubles.api.IBauble",modid="baubles")
 public class OpenGlassesBaubleItem extends OpenGlassesItem implements IBauble {	
 	@Override
     public BaubleType getBaubleType(ItemStack itemstack) {

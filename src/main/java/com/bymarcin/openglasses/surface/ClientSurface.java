@@ -165,7 +165,7 @@ public class ClientSurface {
 	}
 	
 	public boolean shouldRenderStart(){
-		if(this.glassesStack == null)
+		if(this.glassesStack == null || this.glasses == null)
 			return false;
 
 		if(getWidgetCount() > glassesStack.getTagCompound().getInteger("widgetLimit") && widgetLimitRender != null){

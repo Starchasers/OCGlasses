@@ -50,9 +50,16 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
-		ItemStack is = new ItemStack(this);
+		ItemStack glasses = new ItemStack(this);
+		ItemStack creativeGlasses;
 
-		NBTTagCompound tag = is.getTagCompound();
+		if(glasses.getTagCompound() == null)
+			glasses.setTagCompound(new NBTTagCompound());
+
+		creativeGlasses = glasses.copy();
+
+		NBTTagCompound tag = creativeGlasses.getTagCompound();
+
 		tag.setInteger("Energy", 5000000);
 		tag.setInteger("EnergyCapacity", 5000000);
 		tag.setInteger("widgetLimit", 255);
@@ -63,8 +70,8 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		tag.setBoolean("motionsensor", true);
 		tag.setBoolean("geolyzer", true);
 
-		subItems.add(new ItemStack(this));
-		subItems.add(is);
+		subItems.add(glasses);
+		subItems.add(creativeGlasses);
 	}
 
 	@Override
@@ -78,8 +85,9 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		tag.setInteger("widgetLimit", 9); //default to max 9 Widgets
 		tag.setInteger("upkeepCost", 1);  //default to upkeep cost of 1FE / tick
 		tag.setInteger("radarRange", 0);
+		tag.setInteger("Energy", 0);
 		tag.setInteger("EnergyCapacity", 50000); //set the default EnergyBuffer to 50k FE
-		return new EnergyCapabilityProvider(stack, this);
+		return new EnergyCapabilityProvider(stack);
 	}
 
 	@Override
@@ -256,7 +264,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 	private static class EnergyCapabilityProvider implements ICapabilityProvider{
 		public final EnergyStorage storage;
 
-		public EnergyCapabilityProvider(final ItemStack stack, OpenGlassesItem item){
+		public EnergyCapabilityProvider(final ItemStack stack){
 			this.storage = new EnergyStorage(0, 1000, 1000){
 				@Override
 				public int getEnergyStored(){
@@ -302,6 +310,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 			return this.getCapability(capability, facing) != null;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public <T> T getCapability(Capability<T> capability, EnumFacing facing){
 			if(capability == CapabilityEnergy.ENERGY){

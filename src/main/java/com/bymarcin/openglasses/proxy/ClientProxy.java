@@ -1,5 +1,6 @@
 package com.bymarcin.openglasses.proxy;
 
+import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.event.ClientEventHandler;
 import com.bymarcin.openglasses.manual.ManualPathProvider;
 import com.bymarcin.openglasses.render.BaublesRenderLayer;
@@ -13,7 +14,6 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Loader;
 
 import java.util.Map;
 
@@ -32,7 +32,7 @@ public class ClientProxy extends CommonProxy {
 	
 	@Override
 	public void postInit() {
-		if(Loader.isModLoaded("Baubles")){
+		if(OpenGlasses.baubles){
 			Map<String, RenderPlayer> skinMap = Minecraft.getMinecraft().getRenderManager().getSkinMap();
 			RenderPlayer render;
 			render = skinMap.get("default");

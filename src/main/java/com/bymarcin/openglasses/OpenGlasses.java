@@ -40,13 +40,14 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
+import baubles.api.BaubleType;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import java.util.concurrent.Callable;
 
-@Mod(modid = OpenGlasses.MODID, version = OpenGlasses.VERSION, dependencies = "required-after:opencomputers@[1.7.0,);after:Baubles;")
+@Mod(modid = OpenGlasses.MODID, version = OpenGlasses.VERSION, dependencies = "required-after:opencomputers@[1.7.0,);after:baubles;")
 public class OpenGlasses
 {
 	public static final String MODID = "openglasses";
@@ -65,7 +66,7 @@ public class OpenGlasses
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event){
-		if(Loader.isModLoaded("Baubles")) this.baubles = true;
+		if(Loader.isModLoaded("baubles")) OpenGlasses.baubles = true;
 
 		NetworkRegistry.initialize();
 		MinecraftForge.EVENT_BUS.register(this);
@@ -75,12 +76,10 @@ public class OpenGlasses
 
 		GameRegistry.registerTileEntity(OpenGlassesTerminalTileEntity.class, "openglassesterminalte");
 
-		openGlasses = getOGCObject(this.baubles);
+		openGlasses = getOGCObject();
 
 
 		proxy.init();
-
-		WidgetModifiers WidgetModifierList = new WidgetModifiers();
 	}
 
 	@SubscribeEvent
@@ -89,8 +88,8 @@ public class OpenGlasses
 		proxy.registermodel(openGlasses, 0);
 	}
 
-	public Item getOGCObject(boolean bauble){
-		if(bauble == true)
+	public Item getOGCObject(){
+		if(OpenGlasses.baubles)
 			return new OpenGlassesBaubleItem();
 		else
 			return new OpenGlassesItem();
@@ -122,7 +121,7 @@ public class OpenGlasses
 	}
 
 	public static ItemStack getGlassesStackBaubles(EntityPlayer e){
-		if(!Loader.isModLoaded("Baubles")) return null;
+		if(!Loader.isModLoaded("baubles")) return null;
 
 		IBaublesItemHandler handler = BaublesApi.getBaublesHandler(e);
 		if (handler == null) return null;

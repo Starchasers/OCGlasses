@@ -91,6 +91,7 @@ public class ClientEventHandler {
 
 	private void onInteractEvent(EventType type, PlayerInteractEvent event){
 		if(ClientSurface.instances.glasses == null) return;
+		if(ClientSurface.instances.lastBind == null) return;
 		if(!event.getSide().isClient()) return;
 		if(!event.getHand().equals(EnumHand.MAIN_HAND)) return;
 
