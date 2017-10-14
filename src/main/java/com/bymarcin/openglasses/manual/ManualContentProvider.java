@@ -9,13 +9,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 public class ManualContentProvider implements ContentProvider {
     @Override
     public Iterable<String> getContent(String path) {
-        Logger.getLogger("foo").info(path);
-
         if(path.contains("#"))
             path = path.substring(0, path.indexOf("#"));
 
