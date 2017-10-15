@@ -17,6 +17,15 @@ fires when user puts its glasses on/off
 
 fires when user interacts in the world
 
+* INTERACT_WORLD__BLOCK_RIGHT
+* INTERACT_WORLD_BLOCK_LEFT
+
+`EVENT`, `ID`, `USER`, `PLAYER_POSITION_X`, `PLAYER_POSITION_Y`, `PLAYER_POSITION_Z`, `PLAYER_LOOKAT_X`, `PLAYER_LOOKAT_Y`, `PLAYER_LOOKAT_Z`, `BLOCK_POSITION_X`, `BLOCK_POSITION_Y`, `BLOCK_POSITION_Z`
+
+fires when user interacts with a block in the world, requires [Geolyzer Upgrade](Glasses#geolyzer)
+
+
+
 * INTERACT_OVERLAY
 
 `EVENT`, `ID`, `USER`, `X`, `Y`, `BUTTON`
