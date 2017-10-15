@@ -20,6 +20,8 @@ searches for all livings in a radius of 32 blocks around the player
 * (String) type - item/creature name
 * (int) metaindex - metaindex for Items
 
+`widget.setTrackingFilter("sheep")`
+
 sets a filter on the tracker
 
 ## setTrackingEntity(uniqueid)
