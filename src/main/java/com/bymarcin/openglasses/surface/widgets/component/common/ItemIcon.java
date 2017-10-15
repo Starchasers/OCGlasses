@@ -19,6 +19,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.model.pipeline.LightUtil;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
@@ -32,20 +33,22 @@ public abstract class ItemIcon extends WidgetGLWorld implements IItem {
     public void writeData(ByteBuf buff) {
         super.writeData(buff);
 
-        int itemid = 0;
-        if(itmStack != null)
-            itemid = Item.getIdFromItem(itmStack.getItem());
+        if(itmStack != null) {
+            ByteBufUtils.writeUTF8String(buff, itmStack.getItem().getRegistryName().toString());
+            buff.writeInt(itmStack.getMetadata());
+        }
+        else
+            ByteBufUtils.writeUTF8String(buff, "none");
 
-        buff.writeInt(itemid);
     }
 
     @Override
     public void readData(ByteBuf buff) {
         super.readData(buff);
 
-        int itemid = buff.readInt();
-        if(itemid > 0)
-            setItem(new ItemStack(new Item().getItemById(itemid)));
+        String item = ByteBufUtils.readUTF8String(buff);
+        if(!item.equals("none"))
+            setItem(item, buff.readInt());
     }
 
     @Override
