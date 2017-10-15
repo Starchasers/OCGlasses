@@ -103,7 +103,7 @@ public class ClientEventHandler {
 		if(!event.getSide().isClient()) return;
 		if(!event.getHand().equals(EnumHand.MAIN_HAND)) return;
 
-		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(type, ClientSurface.instances.lastBind, event.getEntityPlayer(), event.getPos()));
+		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(type, ClientSurface.instances.lastBind, event.getEntityPlayer(), event.getPos(), event.getFace()));
 	}
 
 	@SubscribeEvent

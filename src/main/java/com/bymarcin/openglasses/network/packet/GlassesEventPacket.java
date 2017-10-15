@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,6 +29,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	Location UUID;
 	String player;
 	BlockPos eventPos;
+	EnumFacing facing;
 	int x, y, mb;
 	
 	public GlassesEventPacket(EventType eventType, Location UUID, EntityPlayer player) {
@@ -36,11 +38,10 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		this.UUID = UUID;
 	}
 
-	public GlassesEventPacket(EventType eventType, Location UUID, EntityPlayer player, BlockPos eventPosition) {
-		this.player = player.getGameProfile().getId().toString();
-		this.eventType = eventType;
-		this.UUID = UUID;
+	public GlassesEventPacket(EventType eventType, Location UUID, EntityPlayer player, BlockPos eventPosition, EnumFacing face) {
+		this(eventType, UUID, player);
 		this.eventPos = eventPosition;
+		this.facing = face;
 	}
 
 	public GlassesEventPacket(EventType eventType, Location UUID, EntityPlayer player, int x, int y, int mb) {
@@ -70,6 +71,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 			case INTERACT_WORLD_BLOCK_LEFT:
 			case INTERACT_WORLD_BLOCK_RIGHT:
 				this.eventPos = new BlockPos(readInt(), readInt(), readInt());
+				this.facing = EnumFacing.values()[readInt()];
 				break;
 		}
 	}
@@ -98,6 +100,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 				writeInt(this.eventPos.getX());
 				writeInt(this.eventPos.getY());
 				writeInt(this.eventPos.getZ());
+				writeInt(this.facing.ordinal());
 				break;
 		}
 	}
@@ -130,7 +133,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 							playerMP.getName(),
 							playerMP.posX, playerMP.posY, playerMP.posZ,
 							look.x, look.y, look.z,
-							playerMP.getEyeHeight(), this.eventPos
+							playerMP.getEyeHeight(), this.eventPos, this.facing
 					);
 				break;
 			case INTERACT_WORLD_LEFT:
