@@ -2,7 +2,7 @@
 * 50k FE Energy Buffer (can be [upgraded](Glasses#energy-capacity))
   * consumes power when worn (1 FE/tick without upgrades)
   * can be charged in OpenComputers charger or by any ForgeEnergy compatible device (like EnderIO Wireless Charger)
-* handles up to 9 different widgets  (can be [upgraded](Glasses#widget-limit))
+* handles up to 9 different widgets  (can be [upgraded](Glasses#widget-limit) up to 255)
 
 # usage
 link the glasses by rightclicking a Glasses Terminal with them.
