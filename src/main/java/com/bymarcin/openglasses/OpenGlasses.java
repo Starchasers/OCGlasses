@@ -162,8 +162,8 @@ public class OpenGlasses
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event){
 		//register loot disks
-		li.cil.oc.api.Items.registerFloppy("openGlasses Demo", EnumDyeColor.GREEN, new OCLootDiskFileSystem("ocglasses"), true);
-		IMC.registerProgramDiskLabel("ocglasses", "ocglasses", "Lua 5.2", "Lua 5.3", "LuaJ");
+		li.cil.oc.api.Items.registerFloppy("openGlasses Demo", EnumDyeColor.GREEN, new OCLootDiskFileSystem("openglasses-demo"), true);
+		IMC.registerProgramDiskLabel("openglasses-demo", "openglasses-demo", "Lua 5.2", "Lua 5.3", "LuaJ");
 
 		li.cil.oc.api.Items.registerFloppy("wavefront objects", EnumDyeColor.BLUE, new OCLootDiskFileSystem("wavefrontObjects"), true);
 		IMC.registerProgramDiskLabel("wavefrontObjects", "wavefrontObjects", "Lua 5.2", "Lua 5.3", "LuaJ");
