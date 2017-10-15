@@ -1,9 +1,7 @@
-require ("package").loaded.ar = nil
-
 component = require("component")
 event = require("event")
 
-ar = require("openglasses/ar")
+ar = require("openglasses/openglasses-demo")
 
 g = component.glasses
 g.removeAll()
@@ -53,58 +51,58 @@ fMM.setCondition(3, "OVERLAY_ACTIVE", true)
 fMM.setCondition(4, "OVERLAY_ACTIVE", true)
 
 fMMS = ar:addToOverlay("mainmenue", "Text2D")
-fMMS.setText("openGlasses Demo v2")
+fMMS.setText("openGlasses Demo v3")
 fMMS.addColor(1, 1, 1, 0.2)
 fMMS.addColor(1, 1, 1, 0.8)
 fMMS.setCondition(2, "OVERLAY_ACTIVE", true)
 fMMS.addTranslation(2, 2, 0)
 
 function addButton(x, y, w, h, text, cb, widget, r, g, b)
-  local alpha = 0.1
-  local buttonIndex = #buttons + 1
-  buttons[buttonIndex] = {}
-  buttons[buttonIndex].el = {}
-  buttons[buttonIndex].el[1] = ar:addToOverlay("buttons", "Box2D")
-  buttons[buttonIndex].el[1].setSize(w, h)
-  buttons[buttonIndex].el[1].addTranslation(x, y, 0)
-  buttons[buttonIndex].el[1].addColor(r, g, b, alpha)
-  buttons[buttonIndex].el[1].addColor(r, g, b, alpha+0.1)
-  buttons[buttonIndex].el[1].addColor(r, g, b, alpha+0.3)
-  buttons[buttonIndex].el[1].addColor(r, g, b, alpha+0.1)
-  buttons[buttonIndex].el[1].setCondition(5, "OVERLAY_ACTIVE", true)
-  buttons[buttonIndex].el[1].setCondition(6, "OVERLAY_ACTIVE", true)
-  buttons[buttonIndex].el[2] = ar:addToOverlay("buttons", "Text2D")
-  buttons[buttonIndex].el[2].setText(text)
-  buttons[buttonIndex].el[2].addTranslation(x+2, y+3, 0)
-  buttons[buttonIndex].el[2].addScale(0.8, 0.8, 0.8)
-  buttons[buttonIndex].r = r
-  buttons[buttonIndex].g = g
-  buttons[buttonIndex].b = b
-  buttons[buttonIndex].x = x
-  buttons[buttonIndex].y = y
-  buttons[buttonIndex].w = w
-  buttons[buttonIndex].h = h
-  buttons[buttonIndex].widget = widget
-  buttons[buttonIndex].text = text
-  buttons[buttonIndex].cb = cb
-  return buttons[buttonIndex]
+	local alpha = 0.1
+	local buttonIndex = #buttons + 1
+	buttons[buttonIndex] = {}
+	buttons[buttonIndex].el = {}
+	buttons[buttonIndex].el[1] = ar:addToOverlay("buttons", "Box2D")
+	buttons[buttonIndex].el[1].setSize(w, h)
+	buttons[buttonIndex].el[1].addTranslation(x, y, 0)
+	buttons[buttonIndex].el[1].addColor(r, g, b, alpha)
+	buttons[buttonIndex].el[1].addColor(r, g, b, alpha+0.1)
+	buttons[buttonIndex].el[1].addColor(r, g, b, alpha+0.3)
+	buttons[buttonIndex].el[1].addColor(r, g, b, alpha+0.1)
+	buttons[buttonIndex].el[1].setCondition(5, "OVERLAY_ACTIVE", true)
+	buttons[buttonIndex].el[1].setCondition(6, "OVERLAY_ACTIVE", true)
+	buttons[buttonIndex].el[2] = ar:addToOverlay("buttons", "Text2D")
+	buttons[buttonIndex].el[2].setText(text)
+	buttons[buttonIndex].el[2].addTranslation(x+2, y+3, 0)
+	buttons[buttonIndex].el[2].addScale(0.8, 0.8, 0.8)
+	buttons[buttonIndex].r = r
+	buttons[buttonIndex].g = g
+	buttons[buttonIndex].b = b
+	buttons[buttonIndex].x = x
+	buttons[buttonIndex].y = y
+	buttons[buttonIndex].w = w
+	buttons[buttonIndex].h = h
+	buttons[buttonIndex].widget = widget
+	buttons[buttonIndex].text = text
+	buttons[buttonIndex].cb = cb
+	return buttons[buttonIndex]
 end
 
 function configWidget(i, status)
-  local alpha = 0.1
+	local alpha = 0.1
 
-  if status == "active" then
-	alpha = 0.5
-  end
+	if status == "active" then
+		alpha = 0.5
+	end
 
-  for j=1,4 do buttons[i].el[1].removeModifier(3) end
+	for j=1,4 do buttons[i].el[1].removeModifier(3) end
 
-  buttons[i].el[1].addColor(buttons[i].r, buttons[i].g, buttons[i].b, alpha)
-  buttons[i].el[1].addColor(buttons[i].r, buttons[i].g, buttons[i].b, alpha+0.1)
-  buttons[i].el[1].addColor(buttons[i].r, buttons[i].g, buttons[i].b, alpha+0.3)
-  buttons[i].el[1].addColor(buttons[i].r, buttons[i].g, buttons[i].b, alpha+0.1)
-  buttons[i].el[1].setCondition(5, "OVERLAY_ACTIVE", true)
-  buttons[i].el[1].setCondition(6, "OVERLAY_ACTIVE", true)
+	buttons[i].el[1].addColor(buttons[i].r, buttons[i].g, buttons[i].b, alpha)
+	buttons[i].el[1].addColor(buttons[i].r, buttons[i].g, buttons[i].b, alpha+0.1)
+	buttons[i].el[1].addColor(buttons[i].r, buttons[i].g, buttons[i].b, alpha+0.3)
+	buttons[i].el[1].addColor(buttons[i].r, buttons[i].g, buttons[i].b, alpha+0.1)
+	buttons[i].el[1].setCondition(5, "OVERLAY_ACTIVE", true)
+	buttons[i].el[1].setCondition(6, "OVERLAY_ACTIVE", true)
 end
 
 selectedWidget = false
@@ -117,7 +115,7 @@ function printTable(t, x)
 	local term = require("term")
 	local suffix = ""
 	for f=1,x do
-	  suffix = " "..suffix
+		suffix = " "..suffix
 	end
 
 	local output = false
@@ -150,10 +148,10 @@ function removeWidget(bar)
 	bar = selectedWidget
 	selectWidget(selectedWidget)       -- deselect the widget
 	for i=1,#buttons do
-	  if buttons[i].widget == buttons[bar].widget then
-		buttons[i].el[1].removeWidget()  -- remove button in menue
-		buttons[i].el[2].removeWidget()  -- remove button in menue
-	  end
+		if buttons[i].widget == buttons[bar].widget then
+			buttons[i].el[1].removeWidget()  -- remove button in menue
+			buttons[i].el[2].removeWidget()  -- remove button in menue
+		end
 	end
 
 	buttons[bar].widget.removeWidget() -- remove widget from world/overlay
@@ -202,7 +200,7 @@ s = 0
 function addWidgetWorld(i)
 	local w = ar:addToWorld("world", ar.WORLD_WIDGETS[i].name)
 	addButton(0, 22 + s * 12, 70, 10, ar.WORLD_WIDGETS[i].name, function(foo) selectWidget(foo) end, w, 0, 0, 1)
-    s = s + 1
+	s = s + 1
 end
 
 function addWidgetOverlay(i)
@@ -214,30 +212,31 @@ function addWidgetOverlay(i)
 		w.addRotation(180, 0, 0, 1)
 	end
 	addButton(0, 22 + s * 12, 70, 10, ar.OVERLAY_WIDGETS[i].name, function(foo) selectWidget(foo) end, w, 0, 0, 1)
-    s = s + 1
+	s = s + 1
 end
 
 for i=1,#ar.OVERLAY_WIDGETS do
-  addButton(resolution.x - 70, 10 + i * 12, 70, 10, ar.OVERLAY_WIDGETS[i].name, function() addWidgetOverlay(i) end, nil, 0, 1, 0)
+	addButton(resolution.x - 70, 10 + i * 12, 70, 10, ar.OVERLAY_WIDGETS[i].name, function() addWidgetOverlay(i) end, nil, 0, 1, 0)
 end
 
 for i=1,#ar.WORLD_WIDGETS do
-  addButton(resolution.x - 70, 10 + (1+i+#ar.OVERLAY_WIDGETS) * 12, 70, 10, ar.WORLD_WIDGETS[i].name, function() addWidgetWorld(i) end, nil, 0, 1, 0)
+	addButton(resolution.x - 70, 10 + (1+i+#ar.OVERLAY_WIDGETS) * 12, 70, 10, ar.WORLD_WIDGETS[i].name, function() addWidgetWorld(i) end, nil, 0, 1, 0)
 end
 
 function clickEvent(id, device, user, x, y, button, maxX, maxY)
-  for i=1,#buttons do
-	local tmpX = math.floor(buttons[i].x)
-	local tmpY = math.floor(buttons[i].y)
-    local tmpXM = math.floor(tmpX + buttons[i].w)
-    local tmpYM = math.floor(tmpY + buttons[i].h)
+	for i=1,#buttons do
+		local tmpX = math.floor(buttons[i].x)
+		local tmpY = math.floor(buttons[i].y)
+		local tmpXM = math.floor(tmpX + buttons[i].w)
+		local tmpYM = math.floor(tmpY + buttons[i].h)
 
-    if tmpX <= x and tmpXM >= x and tmpY <= y and tmpYM >= y then
-         buttons[i].cb(i)
-    end
-  end
+		if tmpX <= x and tmpXM >= x and tmpY <= y and tmpYM >= y then
+			buttons[i].cb(i)
+		end
+	end
 end
 
 event.listen("interact_overlay", clickEvent)
+print("\n# openGlasses Demo loaded, close with [CTRL] + [C]")
 event.pull("interrupted")
 event.ignore("interact_overlay", clickEvent)

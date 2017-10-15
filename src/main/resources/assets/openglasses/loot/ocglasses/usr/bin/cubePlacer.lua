@@ -43,7 +43,6 @@ end
 
 
 event.listen("interact_world_block_right", setBlock)
-
+print("\n# cubePlacer loaded, close with [CTRL] + [C]")
 event.pull("interrupted")
-
 event.ignore("interact_world_block_right", setBlock)
