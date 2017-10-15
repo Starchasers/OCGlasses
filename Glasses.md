@@ -36,7 +36,7 @@ AR Glasses can be Upgraded on an Anvil.
   * increases glasses power usage by 1 FE/tick
   * increases radar range by 16 blocks (max 128 blocks)
   * required for [Swimming Modifier Condition](WidgetModifierConditions#Swimming) and [EntityTracker](Widget_EntityTracker3D)
-  * enables new [events](Events) `INTERACT_WORLD__BLOCK_RIGHT` and `INTERACT_WORLD_BLOCK_LEFT` for interactions with block in the world
+  * enables new [events](Terminal_Events) `INTERACT_WORLD__BLOCK_RIGHT` and `INTERACT_WORLD_BLOCK_LEFT` for interactions with block in the world
 
 ## Daylight Sensor
 ### Light
