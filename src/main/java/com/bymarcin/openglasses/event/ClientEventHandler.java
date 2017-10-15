@@ -7,14 +7,11 @@ import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket.EventType;
 import com.bymarcin.openglasses.surface.ClientSurface;
 
-import com.bymarcin.openglasses.utils.Location;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
