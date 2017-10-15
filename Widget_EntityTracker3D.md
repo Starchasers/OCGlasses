@@ -32,11 +32,13 @@ sets the uuid for the unique filter, "none" or empty String disables the filter
 ### examples
 
 `widget.setTrackingType("NEUTRAL", 32)` 
+
 `widget.setTrackingFilter("sheep")
 
 searches for sheeps in a radius of 32 blocks
 
 `widget.setTrackingType("ITEM", 32)`
+
 `widget.setTrackingFilter("minecraft:cobblestone", 0)` 
 
 searches for cobblestone on the ground
