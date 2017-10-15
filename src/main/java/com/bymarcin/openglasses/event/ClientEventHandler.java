@@ -7,11 +7,14 @@ import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket.EventType;
 import com.bymarcin.openglasses.surface.ClientSurface;
 
+import com.bymarcin.openglasses.utils.Location;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -71,7 +74,11 @@ public class ClientEventHandler {
 
 	@SubscribeEvent
 	public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock e){
-		onInteractEvent(EventType.INTERACT_WORLD_LEFT, e);
+		if(ClientSurface.instances.glassesStack == null) return;
+		if(ClientSurface.instances.glassesStack.getTagCompound().getBoolean("geolyzer"))
+			onInteractEvent(EventType.INTERACT_WORLD_BLOCK_LEFT, e);
+		else
+			onInteractEvent(EventType.INTERACT_WORLD_LEFT, e);
 	}
 
 	@SubscribeEvent
@@ -86,21 +93,25 @@ public class ClientEventHandler {
 
 	@SubscribeEvent
 	public void onRightClickBlock(PlayerInteractEvent.RightClickBlock e){
-		onInteractEvent(EventType.INTERACT_WORLD_RIGHT, e);
+		if(ClientSurface.instances.glassesStack == null) return;
+		if(ClientSurface.instances.glassesStack.getTagCompound().getBoolean("geolyzer"))
+			onInteractEvent(EventType.INTERACT_WORLD_BLOCK_RIGHT, e);
+		else
+			onInteractEvent(EventType.INTERACT_WORLD_RIGHT, e);
 	}
 
 	private void onInteractEvent(EventType type, PlayerInteractEvent event){
-		if(ClientSurface.instances.glasses == null) return;
+		if(ClientSurface.instances.glassesStack == null) return;
 		if(ClientSurface.instances.lastBind == null) return;
 		if(!event.getSide().isClient()) return;
 		if(!event.getHand().equals(EnumHand.MAIN_HAND)) return;
 
-		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(type, ClientSurface.instances.lastBind, event.getEntityPlayer()));
+		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(type, ClientSurface.instances.lastBind, event.getEntityPlayer(), event.getPos()));
 	}
 
 	@SubscribeEvent
 	public void onKeyInput(InputEvent.KeyInputEvent event) {
-		if(ClientSurface.instances.glasses == null) return;
+		if(ClientSurface.instances.glassesStack == null) return;
 		if(!interactGUIKey.isPressed()) return;
 
 		ClientSurface.instances.glassesStack.getTagCompound().setBoolean("overlayActive", true);

@@ -51,12 +51,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
 		ItemStack glasses = new ItemStack(this);
-		ItemStack creativeGlasses;
-
-		if(glasses.getTagCompound() == null)
-			glasses.setTagCompound(new NBTTagCompound());
-
-		creativeGlasses = glasses.copy();
+		ItemStack creativeGlasses = glasses.copy();
 
 		NBTTagCompound tag = creativeGlasses.getTagCompound();
 
@@ -258,7 +253,9 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 	}
 
 	public double getEnergyStored(ItemStack glassesStack){
-		return glassesStack.getCapability(CapabilityEnergy.ENERGY, null).getEnergyStored();
+		IEnergyStorage storage = glassesStack.getCapability(CapabilityEnergy.ENERGY, null);
+		if(storage == null) return 0;
+		return storage.getEnergyStored();
 	}
 
 	private static class EnergyCapabilityProvider implements ICapabilityProvider{

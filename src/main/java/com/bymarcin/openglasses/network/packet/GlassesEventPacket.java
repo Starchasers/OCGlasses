@@ -19,7 +19,7 @@ import com.bymarcin.openglasses.utils.Location;
 public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	public enum EventType{
 		EQUIPED_GLASSES, UNEQUIPED_GLASSES,
-		INTERACT_WORLD_RIGHT, INTERACT_WORLD_LEFT,
+		INTERACT_WORLD_RIGHT, INTERACT_WORLD_LEFT, INTERACT_WORLD_BLOCK_RIGHT, INTERACT_WORLD_BLOCK_LEFT,
 		INTERACT_OVERLAY,
 		GLASSES_SCREEN_SIZE
 	}
@@ -27,12 +27,20 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	EventType eventType;
 	Location UUID;
 	String player;
+	BlockPos eventPos;
 	int x, y, mb;
 	
 	public GlassesEventPacket(EventType eventType, Location UUID, EntityPlayer player) {
 		this.player = player.getGameProfile().getId().toString();
 		this.eventType = eventType;
 		this.UUID = UUID;
+	}
+
+	public GlassesEventPacket(EventType eventType, Location UUID, EntityPlayer player, BlockPos eventPosition) {
+		this.player = player.getGameProfile().getId().toString();
+		this.eventType = eventType;
+		this.UUID = UUID;
+		this.eventPos = eventPosition;
 	}
 
 	public GlassesEventPacket(EventType eventType, Location UUID, EntityPlayer player, int x, int y, int mb) {
@@ -59,6 +67,9 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 				this.y = readInt();
 				this.mb = readInt();
 				break;
+			case INTERACT_WORLD_BLOCK_LEFT:
+			case INTERACT_WORLD_BLOCK_RIGHT:
+				this.eventPos = new BlockPos(readInt(), readInt(), readInt());
 		}
 	}
 
@@ -81,6 +92,11 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 				writeInt(y);
 				writeInt(mb);
 				break;
+			case INTERACT_WORLD_BLOCK_LEFT:
+			case INTERACT_WORLD_BLOCK_RIGHT:
+				writeInt(this.eventPos.getX());
+				writeInt(this.eventPos.getY());
+				writeInt(this.eventPos.getZ());
 		}
 	}
 
@@ -93,6 +109,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	protected IMessage executeOnServer() {
 		EntityPlayerMP playerMP;
 		OpenGlassesTerminalTileEntity terminal;
+		Vec3d look;
 
 		switch(eventType) {
 			case EQUIPED_GLASSES:
@@ -101,12 +118,25 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 			case UNEQUIPED_GLASSES:
 				ServerSurface.instance.unsubscribePlayer(player);
 				break;
+			case INTERACT_WORLD_BLOCK_LEFT:
+			case INTERACT_WORLD_BLOCK_RIGHT:
+				playerMP = ServerSurface.instance.checkUUID(player);
+				look = playerMP.getLookVec();
+				terminal = UUID.getTerminal();
+				if (terminal != null)
+					terminal.sendInteractEventWorldBlock(eventType.name(),
+							playerMP.getName(),
+							playerMP.posX, playerMP.posY, playerMP.posZ,
+							look.x, look.y, look.z,
+							playerMP.getEyeHeight(), this.eventPos
+					);
+				break;
 			case INTERACT_WORLD_LEFT:
 			case INTERACT_WORLD_RIGHT:
 				playerMP = ServerSurface.instance.checkUUID(player);
-				Vec3d look = playerMP.getLookVec();
+				look = playerMP.getLookVec();
 				terminal = UUID.getTerminal();
-				if (playerMP != null && terminal != null)
+				if (terminal != null)
 					terminal.sendInteractEventWorld(eventType.name(),
 							playerMP.getName(),
 							playerMP.posX, playerMP.posY, playerMP.posZ,

@@ -27,6 +27,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.Optional;
 
 @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers")
@@ -39,6 +40,11 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 
 	public OpenGlassesTerminalTileEntity() {
 		node = API.network.newNode(this, Visibility.Network).withComponent(getComponentName()).withConnector().create();
+	}
+
+	public void sendInteractEventWorldBlock(String eventType, String name, double x, double y, double z, double lx, double ly, double lz, double eyeh, BlockPos pos){
+		if(node == null) return;
+		node.sendToReachable("computer.signal", eventType.toLowerCase(), name, x - getPos().getX(), y  - getPos().getY(), z - getPos().getZ(), lx, ly, lz, eyeh, pos.getX() - getPos().getX(), pos.getY() - getPos().getY(), pos.getZ() - getPos().getZ());
 	}
 
 	public void sendInteractEventWorld(String eventType, String name, double x, double y, double z, double lx, double ly, double lz, double eyeh){

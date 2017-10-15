@@ -9,7 +9,6 @@ import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
 import com.bymarcin.openglasses.network.packet.WidgetUpdatePacket;
 import com.bymarcin.openglasses.proxy.CommonProxy;
-import com.bymarcin.openglasses.surface.WidgetModifiers;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 import li.cil.oc.api.fs.FileSystem;
 import li.cil.oc.api.IMC;
@@ -40,7 +39,6 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
-import baubles.api.BaubleType;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.oredict.ShapedOreRecipe;
