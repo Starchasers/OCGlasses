@@ -46,26 +46,23 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		setRegistryName("openglasses");
 	}
 
-
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
-		ItemStack glasses = new ItemStack(this);
-		ItemStack creativeGlasses = glasses.copy();
+		//configure creative glasses
+		ItemStack creativeGlasses = OpenGlasses.glassesStack.copy();
+		NBTTagCompound creativeTag = creativeGlasses.getTagCompound();
+		creativeTag.setInteger("Energy", 5000000);
+		creativeTag.setInteger("EnergyCapacity", 5000000);
+		creativeTag.setInteger("widgetLimit", 255);
+		creativeTag.setInteger("upkeepCost", 0);
+		creativeTag.setInteger("radarRange", 128); //set the maximum radar range to 128
+		creativeTag.setBoolean("daylightDetector", true);
+		creativeTag.setBoolean("tankUpgrade", true);
+		creativeTag.setBoolean("motionsensor", true);
+		creativeTag.setBoolean("geolyzer", true);
 
-		NBTTagCompound tag = creativeGlasses.getTagCompound();
-
-		tag.setInteger("Energy", 5000000);
-		tag.setInteger("EnergyCapacity", 5000000);
-		tag.setInteger("widgetLimit", 255);
-		tag.setInteger("upkeepCost", 0);
-		tag.setInteger("radarRange", 128); //set the maximum radar range to 128
-		tag.setBoolean("daylightDetector", true);
-		tag.setBoolean("tankUpgrade", true);
-		tag.setBoolean("motionsensor", true);
-		tag.setBoolean("geolyzer", true);
-
-		subItems.add(glasses);
+		subItems.add(OpenGlasses.glassesStack);
 		subItems.add(creativeGlasses);
 	}
 
@@ -73,15 +70,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 	public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt){
 		if(nbt != null)
 			stack.setTagCompound(nbt);
-		else
-			stack.setTagCompound(new NBTTagCompound());
 
-		NBTTagCompound tag = stack.getTagCompound();
-		tag.setInteger("widgetLimit", 9); //default to max 9 Widgets
-		tag.setInteger("upkeepCost", 1);  //default to upkeep cost of 1FE / tick
-		tag.setInteger("radarRange", 0);
-		tag.setInteger("Energy", 0);
-		tag.setInteger("EnergyCapacity", 50000); //set the default EnergyBuffer to 50k FE
 		return new EnergyCapabilityProvider(stack);
 	}
 

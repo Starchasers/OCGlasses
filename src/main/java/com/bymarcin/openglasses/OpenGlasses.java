@@ -21,6 +21,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -57,6 +58,7 @@ public class OpenGlasses
 	public static CreativeTabs creativeTab = CreativeTabs.REDSTONE;
 
 	public static Item openGlasses;
+	public static ItemStack glassesStack;
 	public static OpenGlassesTerminalBlock openTerminal;
 	public static Item openTerminalItem;
 
@@ -75,7 +77,15 @@ public class OpenGlasses
 		GameRegistry.registerTileEntity(OpenGlassesTerminalTileEntity.class, "openglassesterminalte");
 
 		openGlasses = getOGCObject();
+		glassesStack = new ItemStack(openGlasses);
+		glassesStack.setTagCompound(new NBTTagCompound());
 
+		NBTTagCompound glassesTag = glassesStack.getTagCompound();
+		glassesTag.setInteger("widgetLimit", 9); //default to max 9 Widgets
+		glassesTag.setInteger("upkeepCost", 1);  //default to upkeep cost of 1FE / tick
+		glassesTag.setInteger("radarRange", 0);
+		glassesTag.setInteger("Energy", 0);
+		glassesTag.setInteger("EnergyCapacity", 50000); //set the default EnergyBuffer to 50k FE
 
 		proxy.init();
 	}
@@ -172,7 +182,7 @@ public class OpenGlasses
 		ItemStack screen = Items.get("screen3").createItemStack(1);
 		ItemStack cpu = Items.get("cpu3").createItemStack(1);
 
-		ShapedOreRecipe r1 = new ShapedOreRecipe(new ResourceLocation(OpenGlasses.MODID, "openglasses"), new ItemStack(openGlasses), "SCS", " W ", "   ", 'S', screen, 'W', wlanCard, 'C', graphics);
+		ShapedOreRecipe r1 = new ShapedOreRecipe(new ResourceLocation(OpenGlasses.MODID, "openglasses"), glassesStack, "SCS", " W ", "   ", 'S', screen, 'W', wlanCard, 'C', graphics);
 		ShapedOreRecipe r2 = new ShapedOreRecipe(new ResourceLocation(OpenGlasses.MODID, "openterminal"), new ItemStack(openTerminal), "R  ", "S  ", "M  ", 'S', server, 'R', ram, 'M', cpu);
 		r1.setRegistryName(OpenGlasses.MODID, "openglasses");
 		r2.setRegistryName(OpenGlasses.MODID, "openterminal");
