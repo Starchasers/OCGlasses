@@ -70,6 +70,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 			case INTERACT_WORLD_BLOCK_LEFT:
 			case INTERACT_WORLD_BLOCK_RIGHT:
 				this.eventPos = new BlockPos(readInt(), readInt(), readInt());
+				break;
 		}
 	}
 
@@ -97,6 +98,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 				writeInt(this.eventPos.getX());
 				writeInt(this.eventPos.getY());
 				writeInt(this.eventPos.getZ());
+				break;
 		}
 	}
 
