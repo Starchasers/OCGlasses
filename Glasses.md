@@ -14,19 +14,22 @@ Check your Minecraft control settings for the OpenGlasses Hotkey to interact wit
 # Upgrades
 AR Glasses can be Upgraded on an Anvil.
 
-## Sensors
+# Sensors
+## Tank Upgrade
 ### Weather
-* OpenComputers Tank Upgrade
+  * OpenComputers Tank Upgrade
   * costs 20 Levels User XP
   * increases glasses power usage by 1 FE/tick
   * required for [Weather Modifier Condition](WidgetModifierConditions#Weather)
 
+## Motion Sensor
 ### Sneaking
-* OpenComputers Motion Sensor
+  * OpenComputers Motion Sensor
   * costs 20 Levels User XP
   * increases glasses power usage by 1 FE/tick
   * required for [Sneaking Modifier Condition](WidgetModifierConditions#Sneaking) and [EntityTracker](Widget_EntityTracker3D)
 
+## Geolyzer
 ### Swimming
 * OpenComputers Geolyzer
   * costs 20 Levels User XP
@@ -34,6 +37,7 @@ AR Glasses can be Upgraded on an Anvil.
   * increases radar range by 16 blocks (max 128 blocks)
   * required for [Swimming Modifier Condition](WidgetModifierConditions#Swimming) and [EntityTracker](Widget_EntityTracker3D)
 
+## Daylight Sensor
 ### Light
 * Minecraft Daylight Sensor
   * costs 20 Levels User XP
