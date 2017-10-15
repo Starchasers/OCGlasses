@@ -12,7 +12,9 @@ adds a EntityTracker3D to the 3D World Space
 * (String) trackingtype - `NONE`, `ALL`, `UNIQUE`, `ITEM`, `LIVING`, `PLAYER`, `NEUTRAL`, `HOSTILE`
 * (int) radius - area around the player to search for entities
 
-sets the type and radius of the tracker
+`widget.setTrackingType('LIVING', 32)`
+
+searches for all livings in a radius of 32 blocks around the player
 
 ## setTrackingFilter(type, metaindex)
 * (String) type - item/creature name
