@@ -25,21 +25,21 @@
 
 
 ### [Widget Modifiers](WidgetModifiers)
-* [Color](WidgetModifiers#addColor)
-* [Rotation](WidgetModifiers#addRotation)
-* [Scale](WidgetModifiers#addScale)
-* [Translate](WidgetModifiers#addTranslation)
+* [Color](WidgetModifiers#addcolor)
+* [Rotation](WidgetModifiers#addrotation)
+* [Scale](WidgetModifiers#addscale)
+* [Translate](WidgetModifiers#addtranslation)
 
 ### [Widget Animation](WidgetModifiers#animation)
 * [setEasing](WidgetModifiers#seteasing)
 * [removeEasing](WidgetModifiers#removeeasing)
 
 ### [Widget Modifier Conditions](WidgetModifierConditions)
-* [Weather](WidgetModifierConditions#Weather)
-* [Sneaking](WidgetModifierConditions#Sneaking)
-* [Swimming](WidgetModifierConditions#Swimming)
-* [Light](WidgetModifierConditions#Light)
-* [OverlayActive](WidgetModifierConditions#OverlayActive)
+* [Weather](WidgetModifierConditions#weather)
+* [Sneaking](WidgetModifierConditions#sneaking)
+* [Swimming](WidgetModifierConditions#swimming)
+* [Light](WidgetModifierConditions#light)
+* [OverlayActive](WidgetModifierConditions#overlayactive)
 * [Entity Tracker](WidgetModifierConditions#entitytracker)
 
 ### [Screenshots](Screenshots)
