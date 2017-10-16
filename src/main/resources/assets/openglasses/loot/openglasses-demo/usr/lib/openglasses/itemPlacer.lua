@@ -1,6 +1,7 @@
 component = require("component")
 event = require("event")
 sides = require("sides")
+serialization = require("serialization")
 
 glassesTerminal = component.glasses
 glassesTerminal.removeAll()
@@ -53,10 +54,44 @@ end
 itemMargin = 4
 itemScale = 32
 itemPadding = 2
+itemWorldScale = 0.7
+itemWorldTextScale = 0.05
+
+function placeItem(foo)
+    foo.widgetText = glassesTerminal.addText3D()
+    foo.widgetText.setText(foo.label)
+    foo.widgetText.addTranslation(foo.x, foo.y + 1, foo.z)
+    foo.widgetText.addTranslation(0.5, 0, 0.5)
+    foo.widgetText.addColor(1, 1, 1, 0.8)
+    foo.widgetText.addScale(itemWorldTextScale, itemWorldTextScale, itemWorldTextScale)
+
+    foo.widget = glassesTerminal.addItem3D()
+    foo.widget.setItem(foo.name, foo.damage)
+    foo.widget.addTranslation(foo.x, foo.y, foo.z)
+    foo.widget.addColor(1, 1, 1, 0.8)
+
+    local rotateWidget = false
+    local m = (itemWorldScale/2)
+
+    foo.widget.addTranslation(0.5, 0.5, 0.5)
+
+    if rotateWidget == true then
+        foo.widget.setEasing(foo.widget.addRotation(0, 0, 1, 0), "LINEAR", "INOUT", 3000, "deg", 0, 359.99, "REPEAT")
+    else
+        foo.widget.setFaceWidgetToPlayer(true)
+    end
+
+    foo.widget.addTranslation(-m, -m, -m)
+
+    foo.widget.addScale(itemWorldScale, itemWorldScale, itemWorldScale)
+
+    return foo
+end
+
 
 function setItem(EVENT, ID, USER, PLAYER_POSITION_X, PLAYER_POSITION_Y, PLAYER_POSITION_Z, PLAYER_LOOKAT_X, PLAYER_LOOKAT_Y, PLAYER_LOOKAT_Z, ROTATION, BLOCK_POSITION_X, BLOCK_POSITION_Y, BLOCK_POSITION_Z, BLOCK_SIDE)
     if selectedItem == false then
-        return false
+        return
     end
 
     local foo = { x = BLOCK_POSITION_X, y = BLOCK_POSITION_Y, z = BLOCK_POSITION_Z }
@@ -71,13 +106,13 @@ function setItem(EVENT, ID, USER, PLAYER_POSITION_X, PLAYER_POSITION_Y, PLAYER_P
     local i = checkPosition(foo)
 
     if i == false then
-        foo.widget = glassesTerminal.addItem3D()
-        foo.widget.setItem(ITEMS[selectedItem].name, ITEMS[selectedItem].damage)
-        foo.widget.addTranslation(foo.x, foo.y, foo.z)
-        foo.widget.addColor(1, 1, 1, 0.3)
-        table.insert(BLOCKS, foo)
+        foo.name = ITEMS[selectedItem].name
+        foo.label = ITEMS[selectedItem].label
+        foo.damage = ITEMS[selectedItem].damage
+        table.insert(BLOCKS, placeItem(foo))
     else
         BLOCKS[i].widget.removeWidget()
+        BLOCKS[i].widgetText.removeWidget()
         table.remove(BLOCKS, i)
     end
 end
@@ -88,4 +123,32 @@ function touchEvent(EVENT, ID, USER, X, Y, BUTTON)
             xItem = ( i * (itemScale + (2*itemMargin) + (2*itemPadding)) )
             if X < (xItem+itemScale+(2*itemMargin)+(2*itemPadding)) and X >= xItem then
                 selectItem(i); end; end; end
+end
+
+-- load blocks from config file
+function loadWidgets()
+    io.write("reading config...")
+    local fh = io.open("/home/itemPlacer.cfg", "r")
+    if fh ~= nil then
+        BLOCKS = serialization.unserialize(fh:read())
+        fh:close()
+        for i=1,#BLOCKS do placeItem(BLOCKS[i]); end
+        print(" done!")
+    else
+        print(" no config found!")
+    end
+end
+
+-- save blocks to config file
+function saveWidgets()
+    io.write("saving data...")
+    for i=1,#BLOCKS do
+        BLOCKS[i].widget = nil
+        BLOCKS[i].widgetText = nil
+    end
+
+    local fh = io.open("/home/itemPlacer.cfg", "w")
+    fh:write(serialization.serialize(BLOCKS))
+    fh:close()
+    print(" done!")
 end
