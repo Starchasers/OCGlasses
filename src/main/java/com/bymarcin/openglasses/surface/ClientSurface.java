@@ -30,7 +30,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.bymarcin.openglasses.utils.OGUtils;
+import com.bymarcin.openglasses.utils.utilsCommon;
 
 @SideOnly(Side.CLIENT)
 public class ClientSurface {
@@ -63,7 +63,7 @@ public class ClientSurface {
 	public void initLocalGlasses(ItemStack glassesStack){
 		this.glassesStack = glassesStack;
 		this.glasses = (OpenGlassesItem) glassesStack.getItem();
-		this.lastBind = OGUtils.getGlassesTerminalUUID(glassesStack);
+		this.lastBind = utilsCommon.getGlassesTerminalUUID(glassesStack);
 	}
 
 	//gets the current widgets and puts them to the correct hashmap
@@ -97,17 +97,15 @@ public class ClientSurface {
 		renderablesWorld.clear();
 	}
 
-
-
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onSizeChange(RenderGameOverlayEvent event) {
 		ScaledResolution newResolution = event.getResolution();
 
-		if  (newResolution.getScaledWidth() != this.resolution.getScaledWidth()
-		 || newResolution.getScaledHeight() != this.resolution.getScaledHeight()
-		 ||  newResolution.getScaleFactor() != this.resolution.getScaleFactor()) {
-			this.resolution = newResolution;
+		if  (newResolution.getScaledWidth() != ClientSurface.resolution.getScaledWidth()
+		 || newResolution.getScaledHeight() != ClientSurface.resolution.getScaledHeight()
+		 ||  newResolution.getScaleFactor() != ClientSurface.resolution.getScaleFactor()) {
+			ClientSurface.resolution = newResolution;
 			sendResolution();
 		}
 	}
@@ -116,21 +114,8 @@ public class ClientSurface {
 		if(glasses == null) return;
 		if(lastBind == null) return;
 
-		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.GLASSES_SCREEN_SIZE, lastBind, Minecraft.getMinecraft().player, resolution.getScaledWidth(), resolution.getScaledHeight(), resolution.getScaleFactor()));
+		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.GLASSES_SCREEN_SIZE, lastBind, Minecraft.getMinecraft().player, ClientSurface.resolution.getScaledWidth(), ClientSurface.resolution.getScaledHeight(), ClientSurface.resolution.getScaleFactor()));
 	}
-	/*
-	int tick = 0;
-	@SubscribeEvent
-	public void onPlayerTick(TickEvent.PlayerTickEvent e){
-		if(ClientSurface.instances.glassesStack == null) return;
-		if(e.player != Minecraft.getMinecraft().player) return;
-
-		ClientSurface.instances.tick++;
-		if(ClientSurface.instances.tick%20 != 0) return;
-
-		ClientSurface.instances.tick = 0;
-		ClientSurface.instances.focusedEntity = OGUtils.getEntityLookingAt(e.player);
-	}*/
 
 	@SubscribeEvent
 	public void onRenderGameOverlay(RenderGameOverlayEvent evt) {
@@ -150,7 +135,7 @@ public class ClientSurface {
 		GL11.glDepthMask(false);
 
 		if(renderResolution != null) {
-			GL11.glScalef(resolution.getScaledWidth() / renderResolution.get(0), resolution.getScaledHeight() / renderResolution.get(1), 1);
+			GL11.glScalef(ClientSurface.resolution.getScaledWidth() / renderResolution.get(0), ClientSurface.resolution.getScaledHeight() / renderResolution.get(1), 1);
 		}
 		for(IRenderableWidget renderable : renderables.values()){
 			if(renderable.shouldWidgetBeRendered(player)

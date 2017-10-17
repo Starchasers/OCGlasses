@@ -4,23 +4,21 @@ import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IEasing;
 import com.bymarcin.openglasses.surface.widgets.core.modifiers.*;
+import com.bymarcin.openglasses.utils.PlayerStats;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.player.EntityPlayer;
 import java.util.ArrayList;
 
-import com.bymarcin.openglasses.utils.OGUtils;
+import com.bymarcin.openglasses.utils.utilsCommon;
+import com.bymarcin.openglasses.lib.chickenbones.Matrix4;
 
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
+
+import javax.vecmath.Vector3f;
 
 public class WidgetModifiers {
-	public ArrayList<WidgetModifier> modifiers = new ArrayList<WidgetModifier>();
+	public ArrayList<WidgetModifier> modifiers = new ArrayList<>();
 	public long lastConditionStates;
 	private Vec3d lastOffset = new Vec3d(0, 0, 0);
 
@@ -50,6 +48,11 @@ public class WidgetModifiers {
 		this.modifiers.add(new WidgetModifierTranslate(x, y, z));
 		return this.modifiers.size();
 	}
+
+	public int addAutoTranslate(float x, float y){
+		this.modifiers.add(new WidgetModifierAutoTranslate(x, y));
+		return this.modifiers.size();
+	}
 		
 	public int addScale(float x, float y, float z){
 		this.modifiers.add(new WidgetModifierScale(x, y, z));
@@ -71,22 +74,22 @@ public class WidgetModifiers {
 		return this.modifiers.size();
 	}
 
-	public void revoke(long conditionsstates){
+	public void revoke(long conditionStates){
 		int i = modifiers.size();
 		while(i > 0) {
 			i--;
-			modifiers.get(i).revoke(conditionsstates);
+			modifiers.get(i).revoke(conditionStates);
 		}
 	}
 
-	public void revoke(long conditionsstates, ArrayList<WidgetModifier.WidgetModifierType> modifierTypes){
+	public void revoke(long conditionStates, ArrayList<WidgetModifier.WidgetModifierType> modifierTypes){
 		int i = modifiers.size();
 		WidgetModifier e;
 		while(i > 0) {
 			i--;
 			e = modifiers.get(i);
 			for(WidgetModifier.WidgetModifierType x : modifierTypes) if(e.getType().equals(x))
-				e.revoke(conditionsstates);
+				e.revoke(conditionStates);
 		}
 	}
 
@@ -100,7 +103,7 @@ public class WidgetModifiers {
 	
 	public int getCurrentColor(long conditionStates, int index){
 		float[] col = getCurrentColorFloat(conditionStates, index);
-		return OGUtils.getIntFromColor(col[0], col[1], col[2], col[3]);
+		return utilsCommon.getIntFromColor(col[0], col[1], col[2], col[3]);
 	}
 
 	public float[] getCurrentColorFloat(int index){
@@ -142,34 +145,31 @@ public class WidgetModifiers {
 			this.modifiers.get(i).apply(conditionStates);
 	}
 
-	public Vec3d getRenderPosition(long conditionStates, Vec3d offset){
-		Vector4f renderPosition = this.generateGlMatrix(conditionStates);
+	public Vec3d getRenderPosition(long conditionStates, Vec3d offset, int w, int h, int d){
+		Vec3d renderPosition = this.generateGlMatrix(conditionStates, w, h, d);
 		this.lastOffset = offset;
-		renderPosition.x += offset.x;
-		renderPosition.y += offset.y;
-		renderPosition.z += offset.z;
 
-		return new Vec3d(renderPosition.x, renderPosition.y, renderPosition.z);
+		return new Vec3d(renderPosition.x + offset.x, renderPosition.y + offset.y, renderPosition.z + offset.z);
 	}
 
-	@SideOnly(Side.SERVER)
-	public Vec3d getRenderPosition(String ForPlayerName){
-		EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(ForPlayerName);
-
+	public Vec3d getRenderPosition(EntityPlayer player){
 		long conditions = ((OpenGlassesItem) OpenGlasses.getGlasses(player)).getConditionStates(OpenGlasses.getGlassesStack(player), player);
-		return this.getRenderPosition(conditions, this.lastOffset);
+		PlayerStats s = OpenGlasses.proxy.getPlayerStats(player.getUniqueID());
+		return this.getRenderPosition(conditions, this.lastOffset, s.screenWidth, s.screenHeight, 0);
 	}
 
-
-
-	public Vector4f generateGlMatrix(long conditionStates){
-		Matrix4f m = new Matrix4f();
+	public Vec3d generateGlMatrix(long conditionStates, float w, float h, float d){
+		Matrix4 m = new Matrix4();
 		Object[] b;
 		for(int i=0, count = this.modifiers.size(); i < count; i++)
 			if(this.modifiers.get(i).shouldApplyModifier(conditionStates)) switch(this.modifiers.get(i).getType()){
+				case AUTOTRANSLATE:
+					b = this.modifiers.get(i).getValues();
+					m.translate(new Vector3f((float) b[0]*(w/100F), (float) b[1]*(h / 100F), d));
+					break;
 				case TRANSLATE:
 					b = this.modifiers.get(i).getValues();
-					m.translate(new Vector3f((float) b[0], (float) b[1], (float) b[2])); 
+					m.translate(new Vector3f((float) b[0], (float) b[1], (float) b[2]));
 					break;
 				case SCALE:
 					b = this.modifiers.get(i).getValues();
@@ -181,7 +181,7 @@ public class WidgetModifiers {
 					break;
 		}
 		
-		return m.transform(m, new Vector4f(0F, 0F, 0F, 1F), null);
+		return m.apply(new Vec3d(0F, 0F, 0F));
 	}
 		
 	public void writeData(ByteBuf buff){
@@ -202,6 +202,7 @@ public class WidgetModifiers {
 				case SCALE: modifiersNew.add(new WidgetModifierScale(0F, 0F, 0F)); break;
 				case ROTATE: modifiersNew.add(new WidgetModifierRotate(0F, 0F, 0F, 0F)); break;
 				case TEXTURE: modifiersNew.add(new WidgetModifierTexture(null)); break;
+				case AUTOTRANSLATE: modifiersNew.add(new WidgetModifierAutoTranslate(0F, 0F)); break;
 				default: modifiersNew.remove(i); return; //remove modifier if we get bs
 			}
 			modifiersNew.get(i).readData(buff);

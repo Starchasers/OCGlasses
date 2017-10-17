@@ -4,8 +4,8 @@ import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.WidgetGLOverlay;
 import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.ITextable;
+import com.bymarcin.openglasses.utils.utilsClient;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -16,9 +16,11 @@ import net.minecraft.client.renderer.GlStateManager;
 
 import com.bymarcin.openglasses.utils.Location;
 public class Text2D extends WidgetGLOverlay implements ITextable{
-	String text="";
+	String text;
 
-	public Text2D() {}
+	public Text2D() {
+		text = "";
+	}
 
 	@Override
 	public void writeData(ByteBuf buff) {
@@ -29,7 +31,16 @@ public class Text2D extends WidgetGLOverlay implements ITextable{
 	@Override
 	public void readData(ByteBuf buff) {
 		super.readData(buff);
-		this.text = ByteBufUtils.readUTF8String(buff);
+		this.setText(ByteBufUtils.readUTF8String(buff));
+
+		setSize(0D, 0D);
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void setSize(double w, double h){
+		FontRenderer fontRender = utilsClient.fontRenderer();
+		super.setSize(fontRender.getStringWidth(this.getText()), fontRender.FONT_HEIGHT);
 	}
 
 	@Override
@@ -46,44 +57,43 @@ public class Text2D extends WidgetGLOverlay implements ITextable{
 	class RenderText extends RenderableGLWidget{
 		@Override
 		public void render(EntityPlayer player, Location glassesTerminalLocation, long conditionStates) {
-			FontRenderer fontRender = Minecraft.getMinecraft().fontRenderer;
+			FontRenderer fontRender = utilsClient.fontRenderer();
 
 			int currentColor = this.preRender(conditionStates);
 			this.applyModifiers(conditionStates);
-
-			float offsetX = 0, offsetY = 0;
-			switch(this.getHorizontalAlign()) {
-				case CENTER:
-					offsetX = (float) -fontRender.getStringWidth(text);
-					offsetX/= 2F;
-					break;
-
-				case RIGHT:
-					offsetX = (float) -fontRender.getStringWidth(text);
-					break;
-			}
-
-			switch(this.getVerticalAlign()) {
-				case MIDDLE:
-					offsetY = (float) -fontRender.FONT_HEIGHT;
-					offsetY/= 2F;
-					break;
-				case BOTTOM:
-					offsetY = (float) -fontRender.FONT_HEIGHT;
-					break;
-			}
-
-			GL11.glTranslatef(offsetX, offsetY, 0F);
+			this.applyAlignments();
 
 			fontRender.drawString(text, 0, 0, currentColor);
 			GlStateManager.disableAlpha();
 			this.postRender();
 		}
+
+		public void applyAlignments(){
+			switch(this.getHorizontalAlign()) {
+				case CENTER:
+					GL11.glTranslatef((-width/2F), 0F, 0F);
+					break;
+				case RIGHT:
+					GL11.glTranslatef(-width, 0F, 0F);
+					break;
+			}
+
+			switch(this.getVerticalAlign()) {
+				case MIDDLE:
+					GL11.glTranslatef(0F, (-height/2F), 0F);
+					break;
+				case BOTTOM:
+					GL11.glTranslatef(0F, -height, 0F);
+					break;
+			}
+		}
+
+
 	}
 
 	@Override
 	public void setText(String text) {
-		this.text = text;	
+		this.text = text;
 	}
 
 	@Override

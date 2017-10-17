@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 
 public abstract class WidgetModifier{
 	public enum WidgetModifierType {
-		TRANSLATE, COLOR, SCALE, ROTATE, TEXTURE
+		TRANSLATE, COLOR, SCALE, ROTATE, TEXTURE, AUTOTRANSLATE
 	}
 
 	public long conditions = 0;

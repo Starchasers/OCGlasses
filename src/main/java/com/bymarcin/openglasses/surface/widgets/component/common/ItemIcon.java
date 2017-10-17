@@ -102,6 +102,9 @@ public abstract class ItemIcon extends WidgetGLWorld implements IItem {
                 GL11.glRotated(180.0D, 0.0D, 0.0D, 1.0D);
                 GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
             }
+            else if(rendertype == RenderType.GameOverlayLocated){
+                this.applyAlignments();
+            }
 
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder vertexbuffer = tessellator.getBuffer();
@@ -114,6 +117,26 @@ public abstract class ItemIcon extends WidgetGLWorld implements IItem {
             renderQuads(vertexbuffer, ibakedmodel.getQuads(null, null, 0L), alphaColor);
             tessellator.draw();
             this.postRender();
+        }
+
+        public void applyAlignments(){
+            switch(this.getHorizontalAlign()) {
+                case CENTER:
+                    GL11.glTranslatef(-0.5F, 0F, 0F);
+                    break;
+                case RIGHT:
+                    GL11.glTranslatef(-1F, 0F, 0F);
+                    break;
+            }
+
+            switch(this.getVerticalAlign()) {
+                case MIDDLE:
+                    GL11.glTranslatef(0F, -0.5F, 0F);
+                    break;
+                case BOTTOM:
+                    GL11.glTranslatef(0F, -1F, 0F);
+                    break;
+            }
         }
 
         private  void renderQuads(BufferBuilder renderer, List<BakedQuad> quads, int color) {

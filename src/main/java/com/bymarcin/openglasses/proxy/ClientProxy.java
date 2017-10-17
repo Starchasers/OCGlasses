@@ -6,7 +6,9 @@ import com.bymarcin.openglasses.manual.ManualPathProvider;
 import com.bymarcin.openglasses.render.BaublesRenderLayer;
 import com.bymarcin.openglasses.surface.ClientSurface;
 
+import com.bymarcin.openglasses.utils.PlayerStats;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -16,6 +18,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class ClientProxy extends CommonProxy {	
 	@Override
@@ -50,6 +53,18 @@ public class ClientProxy extends CommonProxy {
 			return null;
 		} else
 			return Minecraft.getMinecraft().world;
+	}
+
+	@Override
+	public EntityPlayer getPlayer(String username) {
+		return Minecraft.getMinecraft().player;
+	}
+
+	@Override
+	public PlayerStats getPlayerStats(UUID uuid) {
+		PlayerStats s = new PlayerStats(getPlayer(""));
+		s.setScreen(ClientSurface.resolution.getScaledWidth(), ClientSurface.resolution.getScaledHeight(), (double) ClientSurface.resolution.getScaleFactor());
+		return s;
 	}
 
 	@Override

@@ -6,10 +6,12 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import com.bymarcin.openglasses.network.NetworkRegistry;
+import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
 import com.bymarcin.openglasses.network.packet.WidgetUpdatePacket;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 import com.bymarcin.openglasses.utils.Location;
 
+import com.bymarcin.openglasses.utils.PlayerStats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 
@@ -18,8 +20,10 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 public class ServerSurface {
 	public static ServerSurface instance  = new ServerSurface();
 	
-	public HashMap<EntityPlayer,Location> players = new HashMap<EntityPlayer, Location>();
-	
+	public HashMap<EntityPlayer,Location> players = new HashMap<>();
+	public HashMap<UUID, PlayerStats> playerStats = new HashMap<>();
+
+
 	public void subscribePlayer(String playerUUID, Location UUID){
 		EntityPlayerMP player = checkUUID(playerUUID);
 		if(player == null) return;
@@ -29,14 +33,18 @@ public class ServerSurface {
 		if(!terminal.getTerminalUUID().equals(UUID)) return;
 
 		players.put(player, UUID);
+		playerStats.put(player.getUniqueID(), new PlayerStats(player));
 		sendSync(player, UUID, terminal);
+
 		terminal.onGlassesPutOn(player.getDisplayNameString());
+		requestResolutionEvent(player);
 	}
 	
 	public void unsubscribePlayer(String playerUUID){
 		EntityPlayerMP p = checkUUID(playerUUID);
 
-		Location l = players.remove( p );
+		Location l = players.remove(p);
+		playerStats.remove(p.getUniqueID());
 		if(l == null) return;
 
 		OpenGlassesTerminalTileEntity terminal = l.getTerminal();
@@ -68,8 +76,16 @@ public class ServerSurface {
 		}
 	}
 
+	public void requestResolutionEvent(EntityPlayerMP player){
+		NetworkRegistry.packetHandler.sendTo(new TerminalStatusPacket(TerminalStatusPacket.TerminalEvent.ASYNC_SCREEN_SIZES), player);
+	}
+
 	public EntityPlayerMP checkUUID(String uuid){
 		return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(UUID.fromString(uuid));	
+	}
+
+	public EntityPlayerMP checkPlayerName(String name){
+		return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(name);
 	}
 
 }

@@ -9,8 +9,8 @@ import io.netty.buffer.ByteBuf;
 import java.util.ArrayList;
 
 public class WidgetModifierTranslate extends WidgetModifier implements IEasing {
-	private float x, y, z;
-	private float renderX, renderY, renderZ;
+	public float x, y, z;
+	public float renderX, renderY, renderZ;
 
 	private ArrayList<ArrayList> easingListX, easingListY, easingListZ;
 
@@ -43,6 +43,7 @@ public class WidgetModifierTranslate extends WidgetModifier implements IEasing {
 				break;
 		}
 	}
+
 	public WidgetModifierTranslate(float x, float y, float z){
 		this.easingListX = new ArrayList<ArrayList>();
 		this.easingListY = new ArrayList<ArrayList>();
@@ -73,7 +74,7 @@ public class WidgetModifierTranslate extends WidgetModifier implements IEasing {
 		GL11.glTranslatef(renderX, renderY, renderZ);
 	}
 
-	private void applyEasings(){
+	public void applyEasings(){
 		this.renderX = Easing.applyEasing(this.easingListX, this.x);
 		this.renderY = Easing.applyEasing(this.easingListY, this.y);
 		this.renderZ = Easing.applyEasing(this.easingListZ, this.z);

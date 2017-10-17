@@ -1,6 +1,6 @@
 package com.bymarcin.openglasses.surface.widgets.core.luafunction;
 
-import com.bymarcin.openglasses.surface.WidgetGLWorld;
+import com.bymarcin.openglasses.surface.WidgetGLOverlay;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Context;
 
@@ -12,9 +12,9 @@ public class GetRenderPosition extends LuaFunction{
     @Override
     public Object[] call(Context context, Arguments arguments) {
         super.call(context, arguments);
-        WidgetGLWorld widget = (WidgetGLWorld) getSelf().getWidget();
-        if(widget instanceof WidgetGLWorld){
-            Vec3d renderPosition = getSelf().getWidget().WidgetModifierList.getRenderPosition(arguments.checkString(0));
+        WidgetGLOverlay widget = (WidgetGLOverlay) getSelf().getWidget();
+        if(widget instanceof WidgetGLOverlay){
+            Vec3d renderPosition = widget.getRenderPosition(arguments.checkString(0));
 
             return new Object[] { renderPosition.x, renderPosition.y, renderPosition.z };
         }

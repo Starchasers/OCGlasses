@@ -15,6 +15,7 @@ import com.bymarcin.openglasses.surface.widgets.component.face.*;
 import com.bymarcin.openglasses.surface.widgets.component.world.*;
 import com.bymarcin.openglasses.utils.Location;
 
+import com.bymarcin.openglasses.utils.PlayerStats;
 import li.cil.oc.api.API;
 import li.cil.oc.api.Network;
 import li.cil.oc.api.machine.Arguments;
@@ -55,10 +56,10 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 
 	public void sendInteractEventOverlay(String eventType, String name, double button, double x, double y){
 		if(node == null) return;
-		node.sendToReachable("computer.signal", eventType.toLowerCase(), name, button, x, y);
+		node.sendToReachable("computer.signal", eventType.toLowerCase(), name, x, y, button);
 	}
 
-	public void sendChangeSizeEvent(String eventType, String player, int width, int height, int scaleFactor){
+	public void sendChangeSizeEvent(String eventType, String player, int width, int height, double scaleFactor){
 		if(node == null) return;
 		node.sendToReachable("computer.signal", eventType.toLowerCase(), player, width, height, scaleFactor);
 	}
@@ -81,35 +82,40 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 	}
 	
 	public void onGlassesPutOff(String user){
-		if(node!=null){
-			node.sendToReachable("computer.signal","glasses_off",user);
-		}
+		if(node == null) return;
+		node.sendToReachable("computer.signal","glasses_off",user);
 	}
 
 	@Callback(direct = true)
 	@Optional.Method(modid = "opencomputers")
 	public Object[] getConnectedPlayers(Context context, Arguments args) {
-		Object[] ret = ServerSurface.instance.getActivePlayers(getTerminalUUID());
-		return ret;
+		Object[] ret = new Object[ServerSurface.instance.playerStats.size()];
+		int i = 0;
+		for(Entry<UUID, PlayerStats> e : ServerSurface.instance.playerStats.entrySet()){
+			PlayerStats s = e.getValue();
+			ret[i] = new Object[]{ s.name, s.uuid, s.screenWidth, s.screenHeight, s.guiScale };
+			i++;
+		}
+
+		return new Object[]{ ret };
 	}
 
 	@Callback(direct = true)
 	@Optional.Method(modid = "opencomputers")
 	public Object[] requestResolutionEvents(Context context, Arguments args) {
-		TerminalStatusPacket packet = new TerminalStatusPacket(TerminalStatusPacket.TerminalEvent.ASYNC_SCREEN_SIZES);
 		String user = args.checkString(0).toLowerCase();
 		int i=0;
 		for(Entry<EntityPlayer, Location> e: ServerSurface.instance.players.entrySet()){
 			if(user.length() == 0
 					|| user.equals(e.getKey().getDisplayNameString().toLowerCase()))
-				if(e.getValue().equals(getTerminalUUID())){
-				NetworkRegistry.packetHandler.sendTo(packet, (EntityPlayerMP) e.getKey());
-				i++;
+				if(e.getValue().equals(getTerminalUUID())) {
+					ServerSurface.instance.requestResolutionEvent((EntityPlayerMP) e.getKey());
+					i++;
+
 			}
 		}
 		return new Object[]{ i };
 	}
-
 
 	@Callback(direct = true)
 	@Optional.Method(modid = "opencomputers")

@@ -3,6 +3,7 @@ package com.bymarcin.openglasses.network.packet;
 import java.io.IOException;
 
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
+import com.bymarcin.openglasses.utils.PlayerStats;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
@@ -30,7 +31,8 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	String player;
 	BlockPos eventPos;
 	EnumFacing facing;
-	int x, y, mb;
+	int x, y;
+	double mb;
 	
 	public GlassesEventPacket(EventType eventType, Location UUID, EntityPlayer player) {
 		this.player = player.getGameProfile().getId().toString();
@@ -66,7 +68,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 			case GLASSES_SCREEN_SIZE:
 				this.x = readInt();
 				this.y = readInt();
-				this.mb = readInt();
+				this.mb = readDouble();
 				break;
 			case INTERACT_WORLD_BLOCK_LEFT:
 			case INTERACT_WORLD_BLOCK_RIGHT:
@@ -93,7 +95,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 			case INTERACT_OVERLAY:
 				writeInt(x);
 				writeInt(y);
-				writeInt(mb);
+				writeDouble(mb);
 				break;
 			case INTERACT_WORLD_BLOCK_LEFT:
 			case INTERACT_WORLD_BLOCK_RIGHT:
@@ -119,6 +121,8 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		switch(eventType) {
 			case EQUIPED_GLASSES:
 				ServerSurface.instance.subscribePlayer(player, UUID);
+				//request client resolution once the player puts glasses on
+				//UUID.getTerminal().requestResolutionEvent(ServerSurface.instance.checkUUID(player));
 				break;
 			case UNEQUIPED_GLASSES:
 				ServerSurface.instance.unsubscribePlayer(player);
@@ -153,13 +157,18 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 				playerMP = ServerSurface.instance.checkUUID(player);
 				terminal = UUID.getTerminal();
 				if(playerMP != null && terminal != null)
-					terminal.sendInteractEventOverlay(eventType.name(), playerMP.getName(), x, y, mb);
+					terminal.sendInteractEventOverlay(eventType.name(), playerMP.getName(), mb, x, y);
 				break;
 			case GLASSES_SCREEN_SIZE:
 				playerMP = ServerSurface.instance.checkUUID(player);
-				terminal = UUID.getTerminal();
-				if(playerMP != null && terminal != null)
-					terminal.sendChangeSizeEvent(eventType.name(), playerMP.getName(), x, y, mb);
+				if(playerMP != null) {
+					PlayerStats stats = ServerSurface.instance.playerStats.get(playerMP.getUniqueID());
+					terminal = UUID.getTerminal();
+					if(stats != null)
+						stats.setScreen(x, y, mb);
+					if(terminal != null)
+						terminal.sendChangeSizeEvent(eventType.name(), playerMP.getName(), x, y, mb);
+				}
 				break;
 			default:
 				break;

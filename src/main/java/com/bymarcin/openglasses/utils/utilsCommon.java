@@ -9,7 +9,7 @@ import net.minecraft.util.math.BlockPos;
 
 import net.minecraft.entity.player.EntityPlayer;
 
-public class OGUtils {
+public class utilsCommon {
 	
 	public static int getIntFromColor(float red, float green, float blue, float alpha){
 	    int R = Math.round(255 * red);

@@ -23,7 +23,7 @@ public class AttributeRegistry {
 		addAtribute(IAttribute.class, AddTranslation.class);
 		addAtribute(IAttribute.class, AddRotation.class);
 		addAtribute(IAttribute.class, AddScale.class);
-		//addAtribute(IAttribute.class, AddTexture.class);
+		addAtribute(IAttribute.class, AddAutoTranslation.class);
 		addAtribute(IAttribute.class, RemoveModifier.class);
 		addAtribute(IAttribute.class, GetModifiers.class);		
 		addAtribute(IAttribute.class, SetCondition.class);
@@ -31,7 +31,7 @@ public class AttributeRegistry {
 		addAtribute(IAttribute.class, RemoveEasing.class);
 		addAtribute(IAttribute.class, GetColor.class);
 		addAtribute(IAttribute.class, UpdateModifier.class);
-
+		addAtribute(IAttribute.class, GetRenderPosition.class);
 
 		addAtribute(ITracker.class, SetTrackingType.class);
 		addAtribute(ITracker.class, SetTrackingFilter.class);
@@ -46,15 +46,19 @@ public class AttributeRegistry {
 
 		addAtribute(IOBJModel.class, LoadOBJ.class);
 
-		addAtribute(IAttribute.class, SetHorizontalAlign.class);
-		addAtribute(IAttribute.class, SetVerticalAlign.class);
 
 		addAtribute(IResizable.class, GetSize.class);
 		addAtribute(IResizable.class, SetSize.class);
 		
 		addAtribute(ITextable.class, SetText.class);
 		addAtribute(ITextable.class, GetText.class);
-		
+		addAtribute(ITextable.class, GetSize.class);
+		addAtribute(ITextable.class, SetHorizontalAlign.class);
+		addAtribute(ITextable.class, SetVerticalAlign.class);
+
+
+		addAtribute(IItem.class, SetHorizontalAlign.class);
+		addAtribute(IItem.class, SetVerticalAlign.class);
 		addAtribute(IItem.class, SetItem.class);
 		addAtribute(IItem.class, GetItem.class);
 
@@ -65,8 +69,6 @@ public class AttributeRegistry {
 		addAtribute(IViewDistance.class, GetViewDistance.class);
 
 		addAtribute(IViewDistance.class, SetFaceWidgetToPlayer.class);
-
-		addAtribute(IViewDistance.class, GetRenderPosition.class);
 
 		addAtribute(ILookable.class, SetLookingAt.class);
 		addAtribute(ILookable.class, GetLookingAt.class);

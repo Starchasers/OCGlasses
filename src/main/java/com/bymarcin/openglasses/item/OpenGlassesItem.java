@@ -5,13 +5,12 @@ import java.util.List;
 import com.bymarcin.openglasses.manual.IItemWithDocumentation;
 import com.bymarcin.openglasses.surface.ClientSurface;
 import com.bymarcin.openglasses.surface.WidgetModifierConditionType;
-import com.bymarcin.openglasses.utils.OGUtils;
+import com.bymarcin.openglasses.utils.utilsCommon;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,7 +31,6 @@ import net.minecraft.util.EnumFacing;
 
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation {
@@ -185,14 +183,14 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		}
 
 		if(tag.getBoolean("geolyzer") && (((checkConditions >>> WidgetModifierConditionType.IS_SWIMMING) & 1) != 0 || ((checkConditions >>> WidgetModifierConditionType.IS_NOT_SWIMMING) & 1) != 0)){
-			if(OGUtils.isPlayerSwimming(player))
+			if(utilsCommon.isPlayerSwimming(player))
 				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_SWIMMING);
 			else
 				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_NOT_SWIMMING);
 		}
 
 		if(tag.getBoolean("daylightDetector")) {
-			int lightLevel = OGUtils.getLightLevelPlayer(player);
+			int lightLevel = utilsCommon.getLightLevelPlayer(player);
 
 			for (int i = WidgetModifierConditionType.IS_LIGHTLEVEL_MIN_0, l = 0; i < WidgetModifierConditionType.IS_LIGHTLEVEL_MIN_15; i++, l++)
 				if (((checkConditions >>> i) & 1) != 0 && lightLevel >= l)

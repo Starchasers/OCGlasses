@@ -1,6 +1,6 @@
 package com.bymarcin.openglasses.surface;
 
-import net.minecraft.client.Minecraft;
+import com.bymarcin.openglasses.OpenGlasses;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -11,7 +11,7 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IPrivate;
 import net.minecraft.entity.player.EntityPlayer;
 
 import net.minecraft.util.math.RayTraceResult;
-import com.bymarcin.openglasses.utils.OGUtils;
+import com.bymarcin.openglasses.utils.utilsCommon;
 import com.bymarcin.openglasses.utils.Location;
 
 import io.netty.buffer.ByteBuf;
@@ -19,6 +19,7 @@ import io.netty.buffer.ByteBuf;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import org.lwjgl.opencl.CL;
 import org.lwjgl.opengl.GL11;
 
 public abstract class WidgetGLOverlay extends Widget implements IResizable, IPrivate {
@@ -133,6 +134,11 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 		this.halign = HAlignment.valueOf(align.toUpperCase());
 	}
 
+	public Vec3d getRenderPosition(String ForPlayerName){
+		Vec3d pos = this.WidgetModifierList.getRenderPosition(OpenGlasses.proxy.getPlayer(ForPlayerName));
+
+		return new Vec3d(pos.x+margin.x, pos.y+margin.y, pos.z+margin.z);
+	}
 
 	@SideOnly(Side.CLIENT)
 	public class RenderableGLWidget implements IRenderableWidget {		
@@ -218,64 +224,28 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 			if(terminal == null) return;
 
 			Vec3d renderOrigin = new Vec3d(terminal.x, terminal.y, terminal.z);
-			Vec3d renderPosition = WidgetModifierList.getRenderPosition(conditionStates, renderOrigin);
-			x = (float) renderPosition.x;
-			y = (float) renderPosition.y;
-			z = (float) renderPosition.z;
-		}
-
-		public Vec3d alignedOrigin(){
-			if(getRenderType() != RenderType.GameOverlayLocated)
-				return new Vec3d(0, 0, 0);
-
-			float x = 0, y = 0, z = 0;
-
-			switch (halign) {
-				case CENTER:
-					x+=(ClientSurface.instances.resolution.getScaledWidth() / 2);
-					break;
-				case RIGHT:
-					x+=ClientSurface.instances.resolution.getScaledWidth();
-					break;
-				default:
-				case LEFT:
-					break;
-			}
-
-			switch (valign) {
-				case MIDDLE:
-					y+=(ClientSurface.instances.resolution.getScaledHeight() / 2);
-					break;
-				case BOTTOM:
-					y+=ClientSurface.instances.resolution.getScaledHeight();
-					break;
-				default:
-				case TOP:
-					break;
-			}
-
-			return new Vec3d(x, y, z);
+			Vec3d renderPosition = WidgetModifierList.getRenderPosition(conditionStates, renderOrigin, ClientSurface.resolution.getScaledWidth(), ClientSurface.resolution.getScaledHeight(), 1);
+			x = (float) (renderPosition.x + margin.x);
+			y = (float) (renderPosition.y + margin.y);
+			z = (float) (renderPosition.z + margin.z);
 		}
 
 		public int applyModifiers(long conditionStates){
 			WidgetModifierList.apply(conditionStates);
-			margin = alignedOrigin();
-			GL11.glTranslated(margin.x, margin.y, margin.z);
 
 			return WidgetModifierList.getCurrentColor(WidgetModifierList.lastConditionStates, 0);
 		}
-		
-		
+
 		public void addPlayerRotation(EntityPlayer player){
 			if(!faceWidgetToPlayer) return;
-			if(player == null) player = Minecraft.getMinecraft().player;
+			if(player == null) player = OpenGlasses.proxy.getPlayer("");
 			GL11.glRotated(player.rotationYaw,0.0D,1.0D,0.0D);
 			GL11.glRotated(-player.rotationPitch,1.0D,0.0D,0.0D);
 		}
 
 		public void removePlayerRotation(EntityPlayer player){
 			if(!faceWidgetToPlayer) return;
-			if(player == null) player = Minecraft.getMinecraft().player;
+			if(player == null) player = OpenGlasses.proxy.getPlayer("");
 			GL11.glRotated(player.rotationPitch,1.0D,0.0D,0.0D);
 			GL11.glRotated(-player.rotationYaw,0.0D,1.0D,0.0D);
 		}
@@ -353,7 +323,7 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 		@Override
 		public boolean shouldWidgetBeRendered(EntityPlayer player) {
 			if(getRenderType() == RenderType.WorldLocated) {
-				if (x != 0 && y != 0 && z != 0 && !OGUtils.inRange(player, x, y, z, viewDistance)) return false;
+				if (x != 0 && y != 0 && z != 0 && !utilsCommon.inRange(player, x, y, z, viewDistance)) return false;
 			}
 
 			RayTraceResult pos = ClientSurface.getBlockCoordsLookingAt(player);
@@ -378,7 +348,8 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 
 			return false;
 		}
-		
+
+
 		@Override
 		public RenderType getRenderType() {
 			return rendertype;
