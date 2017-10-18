@@ -19,7 +19,6 @@ import io.netty.buffer.ByteBuf;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import org.lwjgl.opencl.CL;
 import org.lwjgl.opengl.GL11;
 
 public abstract class WidgetGLOverlay extends Widget implements IResizable, IPrivate {
@@ -348,7 +347,6 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 
 			return false;
 		}
-
 
 		@Override
 		public RenderType getRenderType() {

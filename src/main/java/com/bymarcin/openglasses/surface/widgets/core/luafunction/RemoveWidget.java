@@ -14,9 +14,9 @@ public class RemoveWidget extends LuaFunction{
 		Widget widget = getSelf().getWidget();
 		if(widget != null){
 			getSelf().getTerminal().removeWidget(getSelf().getWidgetRef());
-			return null;
+			return new Object[]{ true };
 		}
-		throw new RuntimeException("Component does not exists!");
+		throw new RuntimeException("widget does not exists!");
 	}
 
 	@Override
