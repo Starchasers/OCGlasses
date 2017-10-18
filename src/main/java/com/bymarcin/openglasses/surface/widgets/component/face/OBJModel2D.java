@@ -1,8 +1,9 @@
 package com.bymarcin.openglasses.surface.widgets.component.face;
 import com.bymarcin.openglasses.surface.RenderType;
 import com.bymarcin.openglasses.surface.WidgetType;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IAutoTranslateable;
 
-public class OBJModel2D extends com.bymarcin.openglasses.surface.widgets.component.common.OBJModelOC {
+public class OBJModel2D extends com.bymarcin.openglasses.surface.widgets.component.common.OBJModelOC implements IAutoTranslateable  {
     public OBJModel2D(){
         this.rendertype = RenderType.GameOverlayLocated;
     }

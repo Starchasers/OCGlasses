@@ -3,6 +3,8 @@ package com.bymarcin.openglasses.surface.widgets.component.face;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.surface.WidgetGLOverlay;
 import com.bymarcin.openglasses.surface.WidgetType;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IAlignable;
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IAutoTranslateable;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.ITextable;
 import com.bymarcin.openglasses.utils.utilsClient;
 import io.netty.buffer.ByteBuf;
@@ -15,7 +17,7 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.renderer.GlStateManager;
 
 import com.bymarcin.openglasses.utils.Location;
-public class Text2D extends WidgetGLOverlay implements ITextable{
+public class Text2D extends WidgetGLOverlay implements ITextable, IAutoTranslateable, IAlignable {
 	String text;
 
 	public Text2D() {

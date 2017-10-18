@@ -11,11 +11,15 @@ public class SetItem extends LuaFunction{
 	@Override
 	public Object[] call(Context context, Arguments arguments) {
 		super.call(context, arguments);
-		Widget widget = getSelf().getWidget(); 
+		Widget widget = getSelf().getWidget();
 		if(widget instanceof IItem){
-			((IItem) widget).setItem(arguments.checkString(0), arguments.checkInteger(1));					
-			getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());	
-			return null;
+			int metaIndex = 0;
+			if(arguments.count() >= 2)
+				metaIndex = arguments.checkInteger(1);
+
+			((IItem) widget).setItem(arguments.checkString(0), metaIndex);
+			getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());
+			return new Object[]{ true };
 		}
 		throw new RuntimeException("Component does not exists!");
 	}
@@ -25,5 +29,5 @@ public class SetItem extends LuaFunction{
 		// TODO Auto-generated method stub
 		return "setItem";
 	}
-	
+
 }

@@ -18,6 +18,7 @@ function checkPosition(bar)
 end
 
 
+
 ITEMS = {}
 
 function checkItem(item)
@@ -33,21 +34,17 @@ selectedItemWidget = glassesTerminal.addText2D()
 
 function deselectItem()
     if selectedItem ~= false then
-        local index = selectedItem
-        ITEMS[index].widgetBox.updateModifier(2, 0.3, 0.3, 0.3, 0.8)
-        ITEMS[index].widgetBox.updateModifier(3, 0.3, 0.3, 0.3, 0.7)
+        ITEMS[selectedItem].widgetBox.updateModifier(1, 0.3, 0.3, 0.3, 0.8)
+        ITEMS[selectedItem].widgetBox.updateModifier(2, 0.3, 0.3, 0.3, 0.7)
         selectedItem = false
         selectedItemWidget.setText("no item selected")
-        return index
     end
 end
 
 function selectItem(index)
-    if deselectItem() == index then
-        return; end
-
-    ITEMS[index].widgetBox.updateModifier(2, 0.3, 0.8, 0.3, 0.8)
-    ITEMS[index].widgetBox.updateModifier(3, 0.3, 0.8, 0.3, 0.7)
+    deselectItem()
+    ITEMS[index].widgetBox.updateModifier(1, 0.3, 0.8, 0.3, 0.8)
+    ITEMS[index].widgetBox.updateModifier(2, 0.3, 0.8, 0.3, 0.7)
 
     selectedItem = index
     selectedItemWidget.setText("using item: " .. ITEMS[index].label)
@@ -91,6 +88,13 @@ function placeItem(foo)
     return foo
 end
 
+function updateOverlayWidgetsPositions(EVENT, ID, USER, WIDTH, HEIGHT, GUI_SCALE)
+    for i=1,#ITEMS do
+        ITEMS[i].x, ITEMS[i].y, ITEMS[i].z = ITEMS[i].widgetBox.getRenderPosition(USER)
+    end
+end
+
+
 function setItem(EVENT, ID, USER, PLAYER_POSITION_X, PLAYER_POSITION_Y, PLAYER_POSITION_Z, PLAYER_LOOKAT_X, PLAYER_LOOKAT_Y, PLAYER_LOOKAT_Z, ROTATION, BLOCK_POSITION_X, BLOCK_POSITION_Y, BLOCK_POSITION_Z, BLOCK_SIDE)
     if selectedItem == false then
         return
@@ -117,6 +121,14 @@ function setItem(EVENT, ID, USER, PLAYER_POSITION_X, PLAYER_POSITION_Y, PLAYER_P
         BLOCKS[i].widgetText.removeWidget()
         table.remove(BLOCKS, i)
     end
+end
+
+function touchEvent(EVENT, ID, USER, X, Y, BUTTON)
+    for i=1,#ITEMS do
+        if Y <= ( itemScale + (2*itemMargin) + (2*itemPadding)) then
+            xItem = ITEMS[i].x
+            if X < (xItem+itemScale+(2*itemMargin)+(2*itemPadding)) and X >= xItem then
+                selectItem(i); end; end; end
 end
 
 -- load blocks from config file
@@ -146,96 +158,3 @@ function saveWidgets()
     fh:close()
     print(" done!")
 end
-
-function getItemsFromTransposer(transposer)
-    print("checking inventorys at transposer " .. transposer.address)
-    for side=0,(#sides-1) do
-        local size = transposer.getInventorySize(side)
-        if size ~= nil then
-            io.write("inventory found at side " .. sides[side] .. " (size: " .. size .. ") scanning: ")
-
-            for slot=1,size do
-                io.write(".")
-                local item = transposer.getStackInSlot(side, slot)
-                if item ~= nil and checkItem(item) == false then
-                    table.insert(ITEMS, item);
-                end; end
-            print(" done!")
-        end
-    end
-end
-
-function getItemsFromDatabase(database)
-    print("checking database")
-    local size = 0
-
-    --determine database size
-    if pcall(function() database.get(81); end) then
-        size = 81
-    elseif pcall(function() database.get(25); end) then
-        size = 25
-    elseif pcall(function() database.get(9); end) then
-        size = 9
-    else
-        print("what the heck of a database is this? computer says NO! not going to scan it -.-")
-        return
-    end
-
-    if size ~= nil and size > 0 then
-        io.write("database found (size: " .. size .. ") scanning: ")
-
-        for slot=1,size do
-            io.write(".")
-            local item = database.get(slot)
-            if item ~= nil and checkItem(item) == false then
-                table.insert(ITEMS, item); end
-        end
-
-        print(" done!")
-    end
-end
-
-USERS = {}
-
-function touchEvent(EVENT, ID, USER, X, Y, BUTTON)
-    local index = addUser(USER)
-    local itemSize = ( itemScale + (2*itemMargin) + (2*itemPadding))
-    for i=1,#ITEMS do
-        if Y <= itemSize then
-            local xItem = ITEMS[i].x
-            xItem = (xItem - (USERS[index].w/2))
-            if X < (xItem+itemSize) and X >= xItem then
-                selectItem(i); end; end; end
-end
-
-function getUser(username)
-    for i=1,#USERS do
-        if USERS[i].name == username then
-            return i; end; end
-
-    return false;
-end
-
-function addUser(username)
-    local index = getUser(username)
-    if index ~= false then
-        return index; end
-
-    local foo = {}
-    foo.name = username
-
-    table.insert(USERS, foo)
-
-    return #USERS
-end
-
-
-function updateClientResolution(EVENT, ID, USER, WIDTH, HEIGHT, GUI_SCALE)
-    local index = addUser(USER)
-    USERS[index].w = WIDTH
-    USERS[index].h = HEIGHT
-    USERS[index].scale = GUI_SCALE
-end
-
-
-

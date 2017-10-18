@@ -1,5 +1,6 @@
 package com.bymarcin.openglasses.surface.widgets.component.face;
 
+import com.bymarcin.openglasses.surface.widgets.core.attribute.IAutoTranslateable;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,7 +17,7 @@ import com.bymarcin.openglasses.utils.Location;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
-public class Box2D extends WidgetGLOverlay {
+public class Box2D extends WidgetGLOverlay implements IAutoTranslateable {
 	public Box2D() {}
 
 	@Override

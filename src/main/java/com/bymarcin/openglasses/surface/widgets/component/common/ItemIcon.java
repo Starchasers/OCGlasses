@@ -97,12 +97,16 @@ public abstract class ItemIcon extends WidgetGLWorld implements IItem {
 
             if(rendertype == RenderType.WorldLocated) {
                 GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-                GL11.glRotated(180.0D, 0.0D, 0.0D, 1.0D);
-                this.addPlayerRotation(player);
-                GL11.glRotated(180.0D, 0.0D, 0.0D, 1.0D);
+                GL11.glRotated(180D, 0, 1D, 0D);
+                if(faceWidgetToPlayer) {
+                    GL11.glRotated(player.rotationYaw, 0.0D, -1.0D, 0.0D);
+                    GL11.glRotated(180D, 0, 1D, 0D);
+                    GL11.glRotated(player.rotationPitch, 1.0D, 0.0D, 0.0D);
+                    GL11.glRotated(180D, 0, 1D, 0D);
+                }
                 GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
             }
-            else if(rendertype == RenderType.GameOverlayLocated){
+            else {
                 this.applyAlignments();
                 GL11.glTranslatef(0F, 1F, 0F);
                 GL11.glRotated(180, 1, 0, 0);
