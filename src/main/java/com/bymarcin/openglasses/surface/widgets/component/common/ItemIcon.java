@@ -104,6 +104,8 @@ public abstract class ItemIcon extends WidgetGLWorld implements IItem {
             }
             else if(rendertype == RenderType.GameOverlayLocated){
                 this.applyAlignments();
+                GL11.glTranslatef(0F, 1F, 0F);
+                GL11.glRotated(180, 1, 0, 0);
             }
 
             Tessellator tessellator = Tessellator.getInstance();
