@@ -27,8 +27,8 @@ import org.lwjgl.opengl.GL11;
 import java.util.List;
 
 public abstract class ItemIcon extends WidgetGLWorld implements IItem {
-    public ItemStack itmStack = null;
-    public IBakedModel ibakedmodel = null;
+    private ItemStack itmStack = null;
+    private IBakedModel ibakedmodel = null;
     @Override
     public void writeData(ByteBuf buff) {
         super.writeData(buff);
@@ -39,7 +39,6 @@ public abstract class ItemIcon extends WidgetGLWorld implements IItem {
         }
         else
             ByteBufUtils.writeUTF8String(buff, "none");
-
     }
 
     @Override
@@ -47,27 +46,22 @@ public abstract class ItemIcon extends WidgetGLWorld implements IItem {
         super.readData(buff);
 
         String item = ByteBufUtils.readUTF8String(buff);
-        if(!item.equals("none"))
+        if(!item.equals("none")) {
             setItem(item, buff.readInt());
-    }
-
-    @Override
-    public void setItem(ItemStack newItem) {
-        if(newItem == null)	return;
-        this.itmStack = newItem;
-        if(Minecraft.getMinecraft().world.isRemote) {
-            this.ibakedmodel = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getItemModel(this.itmStack);
         }
     }
 
     @Override
-    public void setItem(String newItem, int meta) {
-        setItem(new ItemStack(new Item().getByNameOrId(newItem), 1, meta));
+    public boolean setItem(ItemStack newItem) {
+        if(newItem == null || newItem.getItem() == null) return false;
+        this.itmStack = newItem;
+        this.ibakedmodel = null;
+        return true;
     }
 
     @Override
-    public void setItem(String newItem) {
-        setItem(new ItemStack(new Item().getByNameOrId(newItem)));
+    public boolean setItem(String newItem, int meta) {
+        return setItem(new ItemStack(Item.getByNameOrId(newItem), 1, meta));
     }
 
     @Override
@@ -84,7 +78,8 @@ public abstract class ItemIcon extends WidgetGLWorld implements IItem {
     private class RenderableItemIcon extends RenderableGLWidget{
         @Override
         public void render(EntityPlayer player, Location glassesTerminalLocation, long conditionStates) {
-            if(ibakedmodel == null) return;
+            if(itmStack == null) return;
+            if(ibakedmodel == null) ibakedmodel = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getItemModel(itmStack);
 
             Minecraft mc = Minecraft.getMinecraft();
             TextureManager tm = mc.getTextureManager();
@@ -125,7 +120,7 @@ public abstract class ItemIcon extends WidgetGLWorld implements IItem {
             this.postRender();
         }
 
-        public void applyAlignments(){
+        private void applyAlignments(){
             switch(this.getHorizontalAlign()) {
                 case CENTER:
                     GL11.glTranslatef(-0.5F, 0F, 0F);

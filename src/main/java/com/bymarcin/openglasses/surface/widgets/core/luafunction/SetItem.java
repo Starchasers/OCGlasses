@@ -17,9 +17,15 @@ public class SetItem extends LuaFunction{
 			if(arguments.count() >= 2)
 				metaIndex = arguments.checkInteger(1);
 
+<<<<<<< HEAD
 			((IItem) widget).setItem(arguments.checkString(0), metaIndex);
 			getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());
 			return new Object[]{ true };
+=======
+			boolean ret = ((IItem) widget).setItem(arguments.checkString(0), metaIndex);
+			getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());	
+			return new Object[]{ ret };
+>>>>>>> 92098ec... lua setItem method now returns false if the item couldnt be found, true if everything worked fine
 		}
 		throw new RuntimeException("Component does not exists!");
 	}
