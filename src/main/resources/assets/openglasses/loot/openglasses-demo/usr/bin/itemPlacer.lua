@@ -7,52 +7,8 @@ itemMargin = 4
 itemScale = 32
 itemPadding = 2
 
-function getItemsFromTransposer(transposer)
-    print("checking inventorys at transposer " .. transposer.address)
-    for side=0,(#sides-1) do
-        local size = transposer.getInventorySize(side)
-        if size ~= nil then
-            io.write("inventory found at side " .. sides[side] .. " (size: " .. size .. ") scanning: ")
-
-            for slot=1,size do
-                io.write(".")
-                local item = transposer.getStackInSlot(side, slot)
-                if item ~= nil and checkItem(item) == false then
-                    table.insert(ITEMS, item);
-                end; end
-            print(" done!")
-        end
-    end
-end
-
-function getItemsFromDatabase(database)
-    print("checking database")
-
-    --determine database size
-    if pcall(function() database.get(81); end) then
-        size = 81
-    elseif pcall(function() database.get(25); end) then
-        size = 25
-    elseif pcall(function() database.get(9); end) then
-        size = 9
-    else
-        print("what the heck of a database is this? computer says NO! not going to scan it -.-")
-        return
-    end
-
-    if size ~= nil and size > 0 then
-        io.write("database found (size: " .. size .. ") scanning: ")
-
-        for slot=1,size do
-            io.write(".")
-            local item = database.get(slot)
-            if item ~= nil and checkItem(item) == false then
-                table.insert(ITEMS, item); end
-        end
-
-        print(" done!")
-    end
-end
+playerName = "ben_mkiv"
+rotateWidget = true
 
 -- read items from transposers
 for address,type in pairs(component.list("transposer")) do
@@ -62,6 +18,13 @@ for address,type in pairs(component.list("transposer")) do
 for address,type in pairs(component.list("database")) do
     getItemsFromDatabase(component.proxy(address)); end
 
+
+-- read items from ae2
+for address,type in pairs(component.list("me_controller")) do
+    getItemsFromAE2(component.proxy(address));
+end
+--for address,type in pairs(component.list("me_interface")) do
+--    getItemsFromAE2(component.proxy(address)); end
 
 
 itemSize = (itemScale + 2*(itemPadding+itemMargin))
@@ -83,9 +46,10 @@ for i=1,#ITEMS do
     ITEMS[i].widget.addTranslation(-(#ITEMS*itemSize/2), 0, 0);
     ITEMS[i].widget.addTranslation(((i-1)*itemSize)+itemPadding, itemMargin+itemPadding, 0)
     ITEMS[i].widget.addScale(itemScale, itemScale, itemScale)
+    os.sleep(0)
 end
 
-updateOverlayWidgetsPositions(nil, nil, "ben_mkiv", nil, nil, nil);
+updateOverlayWidgetsPositions(nil, nil, playerName, nil, nil, nil);
 
 selectedItemWidget.addTranslation(itemMargin, itemSize, 0)
 selectedItemWidget.addAutoTranslation(50, 0)

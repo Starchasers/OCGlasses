@@ -6,6 +6,7 @@ serialization = require("serialization")
 glassesTerminal = component.glasses
 glassesTerminal.removeAll()
 
+rotateWidget = false
 
 BLOCKS = {}
 
@@ -16,8 +17,6 @@ function checkPosition(bar)
 
     return false
 end
-
-
 
 ITEMS = {}
 
@@ -34,15 +33,20 @@ selectedItemWidget = glassesTerminal.addText2D()
 
 function deselectItem()
     if selectedItem ~= false then
-        ITEMS[selectedItem].widgetBox.updateModifier(1, 0.3, 0.3, 0.3, 0.8)
-        ITEMS[selectedItem].widgetBox.updateModifier(2, 0.3, 0.3, 0.3, 0.7)
+        local index = selectedItem
+        ITEMS[index].widgetBox.updateModifier(1, 0.3, 0.3, 0.3, 0.8)
+        ITEMS[index].widgetBox.updateModifier(2, 0.3, 0.3, 0.3, 0.7)
         selectedItem = false
         selectedItemWidget.setText("no item selected")
+        return index
     end
+    return false
 end
 
 function selectItem(index)
-    deselectItem()
+    if index == deselectItem() then
+        return; end
+
     ITEMS[index].widgetBox.updateModifier(1, 0.3, 0.8, 0.3, 0.8)
     ITEMS[index].widgetBox.updateModifier(2, 0.3, 0.8, 0.3, 0.7)
 
@@ -70,7 +74,6 @@ function placeItem(foo)
     foo.widget.addTranslation(foo.x, foo.y, foo.z)
     foo.widget.addColor(1, 1, 1, 0.8)
 
-    local rotateWidget = false
     local m = (itemWorldScale/2)
 
     foo.widget.addTranslation(0.5, 0.5, 0.5)
@@ -157,4 +160,68 @@ function saveWidgets()
     fh:write(serialization.serialize(BLOCKS))
     fh:close()
     print(" done!")
+end
+
+
+function getItemsFromTransposer(transposer)
+    print("checking inventorys at transposer " .. transposer.address)
+    for side=0,(#sides-1) do
+        local size = transposer.getInventorySize(side)
+        if size ~= nil then
+            io.write("inventory found at side " .. sides[side] .. " (size: " .. size .. ") scanning: ")
+
+            for slot=1,size do
+                io.write(".")
+                local item = transposer.getStackInSlot(side, slot)
+                if item ~= nil and checkItem(item) == false then
+                    table.insert(ITEMS, item);
+                end; end
+            print(" done!")
+        end
+    end
+end
+
+function getItemsFromDatabase(database)
+    print("checking database")
+
+    --determine database size
+    if pcall(function() database.get(81); end) then
+        size = 81
+    elseif pcall(function() database.get(25); end) then
+        size = 25
+    elseif pcall(function() database.get(9); end) then
+        size = 9
+    else
+        print("what the heck of a database is this? computer says NO! not going to scan it -.-")
+        return
+    end
+
+    if size ~= nil and size > 0 then
+        io.write("database found (size: " .. size .. ") scanning: ")
+
+        for slot=1,size do
+            io.write(".")
+            local item = database.get(slot)
+            if item ~= nil and checkItem(item) == false then
+                table.insert(ITEMS, item); end
+        end
+
+        print(" done!")
+    end
+end
+
+function getItemsFromAE2(ae2)
+    print("checking ae2")
+
+    if ae2 ~= nil then
+        io.write("AE2, scanning: ")
+        local items = ae2.getItemsInNetwork()
+
+        for i=1,#items do
+            io.write(".")
+            table.insert(ITEMS, items[i])
+        end
+
+        print(" done!")
+    end
 end
