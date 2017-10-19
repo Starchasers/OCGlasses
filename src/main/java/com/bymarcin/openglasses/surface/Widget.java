@@ -106,11 +106,13 @@ public abstract class Widget implements IAttribute{
 	
 	//sets widget owner and returns the uuid
 	public UUID setOwner(String playerName) {
-		EntityPlayerMP newOwner = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(playerName);
-		if(newOwner != null)
-			this.widgetOwner = newOwner.getGameProfile().getId();
-		else
+		if(playerName.length() == 0)
 			this.widgetOwner = null;
+		else {
+			EntityPlayerMP newOwner = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(playerName);
+			if (newOwner != null)
+				this.widgetOwner = newOwner.getGameProfile().getId();
+		}
 		
 		return this.getOwnerUUID();
 	}
