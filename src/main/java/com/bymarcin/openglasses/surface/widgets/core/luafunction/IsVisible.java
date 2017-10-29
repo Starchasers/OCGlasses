@@ -13,7 +13,7 @@ public class IsVisible extends LuaFunction{
 		super.call(context, arguments);
 		Widget widget = getSelf().getWidget(); 
 		if(widget != null){
-			return new Object[]{widget.isVisible()};
+			return new Object[]{ widget.isVisible() };
 		}
 		throw new RuntimeException("Component does not exists!");
 	}
