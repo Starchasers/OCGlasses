@@ -47,6 +47,8 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+		if(!this.isInCreativeTab(tab)) return;
+
 		//configure creative glasses
 		ItemStack creativeGlasses = OpenGlasses.glassesStack.copy();
 		NBTTagCompound creativeTag = creativeGlasses.getTagCompound();
