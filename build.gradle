@@ -20,18 +20,18 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 // java version
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
-def simpleVersion = "1.5.4"
+def simpleVersion = "1.5.5"
 
 group= "com.bymarcin.openglasses" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "OpenGlasses-MC1.12.1"
+archivesBaseName = "OpenGlasses-MC1.12.2"
 version = simpleVersion
 
 minecraft {
 	 replaceIn "com/bymarcin/openglasses/OpenGlasses.java"
 		replace "@VERSION@", simpleVersion
 	runDir = "run"
-	version = "14.22.0.2453"
-	mappings = "snapshot_20170806"
+	version = "14.23.2.2611"
+	mappings = "snapshot_20180130"
 }
 
 runClient {
@@ -46,7 +46,7 @@ repositories {
     maven { url = "http://maven.cil.li/" }
 }
 dependencies {
-    provided  "li.cil.oc:OpenComputers:MC1.12.1-1.7.0.4"
+    provided  "li.cil.oc:OpenComputers:MC1.12.1-1.7.1.54"
 }
 
 processResources
