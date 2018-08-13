@@ -21,7 +21,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
 
-def simpleVersion = "1.5.5"
+def simpleVersion = "2.0.0"
 
 
 group= "com.bymarcin.openglasses" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
