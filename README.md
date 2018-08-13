@@ -1,4 +1,4 @@
-fork of OpenGlasses Mod
+OpenGlasses Mod
 =======================
 
 mod for minecraft and addon for Open Computers
