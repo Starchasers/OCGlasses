@@ -8,6 +8,7 @@ import com.bymarcin.openglasses.OpenGlasses;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+import org.apache.logging.log4j.LogManager;
 
 
 public class NetworkRegistry {
@@ -23,7 +24,7 @@ public class NetworkRegistry {
 			packetsID.add(new RPacket(id, handleOn));
 			packetHandler.registerMessage(clazz, clazz, id, handleOn);
 		} else {
-			OpenGlasses.logger.error("Packet ID:" + id + "try overwritting other packet!");
+			LogManager.getLogger(OpenGlasses.MODID).error("Packet ID:" + id + "try overwritting other packet!");
 		}
 	}
 

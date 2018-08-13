@@ -2,20 +2,25 @@ package com.bymarcin.openglasses.proxy;
 
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.event.ClientEventHandler;
+import com.bymarcin.openglasses.manual.ManualPathProvider;
+import com.bymarcin.openglasses.render.BaublesRenderLayer;
 import com.bymarcin.openglasses.surface.ClientSurface;
 
+import com.bymarcin.openglasses.utils.PlayerStats;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.world.World;
 
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 
+import java.util.Map;
+import java.util.UUID;
 
-public class ClientProxy extends CommonProxy {
-	
+public class ClientProxy extends CommonProxy {	
 	@Override
 	public void registermodel(Item item, int meta){
 		ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(item.getRegistryName(), "inventory"));
@@ -23,9 +28,23 @@ public class ClientProxy extends CommonProxy {
 	
 	@Override
 	public void init() {
-		ClientEventHandler eh = new ClientEventHandler();
-	 	MinecraftForge.EVENT_BUS.register(eh);
-		MinecraftForge.EVENT_BUS.register(ClientSurface.instances);
+		ClientSurface.eventHandler = new ClientEventHandler();
+		MinecraftForge.EVENT_BUS.register(ClientSurface.eventHandler);
+		MinecraftForge.EVENT_BUS.register(ClientSurface.instances);  //register client events
+	}
+	
+	@Override
+	public void postInit() {
+		if(OpenGlasses.baubles){
+			Map<String, RenderPlayer> skinMap = Minecraft.getMinecraft().getRenderManager().getSkinMap();
+			RenderPlayer render;
+			render = skinMap.get("default");
+			render.addLayer(new BaublesRenderLayer());
+			render = skinMap.get("slim");
+			render.addLayer(new BaublesRenderLayer());
+		}
+
+		ManualPathProvider.initialize();
 	}
 
 	@Override
@@ -34,6 +53,18 @@ public class ClientProxy extends CommonProxy {
 			return null;
 		} else
 			return Minecraft.getMinecraft().world;
+	}
+
+	@Override
+	public EntityPlayer getPlayer(String username) {
+		return Minecraft.getMinecraft().player;
+	}
+
+	@Override
+	public PlayerStats getPlayerStats(UUID uuid) {
+		PlayerStats s = new PlayerStats(getPlayer(""));
+		s.setScreen(ClientSurface.resolution.getScaledWidth(), ClientSurface.resolution.getScaledHeight(), (double) ClientSurface.resolution.getScaleFactor());
+		return s;
 	}
 
 	@Override

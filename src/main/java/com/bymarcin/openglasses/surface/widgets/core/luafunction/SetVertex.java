@@ -1,12 +1,11 @@
 package com.bymarcin.openglasses.surface.widgets.core.luafunction;
 
+import com.bymarcin.openglasses.surface.widgets.core.attribute.ICustomShape;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Context;
 
 import com.bymarcin.openglasses.lua.LuaFunction;
 import com.bymarcin.openglasses.surface.Widget;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.I2DVertex;
-import com.bymarcin.openglasses.surface.widgets.core.attribute.I3DVertex;
 
 public class SetVertex extends LuaFunction{
 
@@ -14,16 +13,9 @@ public class SetVertex extends LuaFunction{
 	public Object[] call(Context context, Arguments arguments) {
 		super.call(context, arguments);
 		Widget widget = getSelf().getWidget(); 
-		if(widget instanceof I3DVertex){
-			if(arguments.checkInteger(0)>0 && arguments.checkInteger(0)<=((I3DVertex) widget).getVertexCount()){
-				((I3DVertex) widget).setVertex(arguments.checkInteger(0)-1, arguments.checkDouble(1), arguments.checkDouble(2), arguments.checkDouble(3));
-				getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());	
-				return null;
-			}
-			throw new RuntimeException("Vertex not exist!");
-		}else if(widget instanceof I2DVertex){
-			if(arguments.checkInteger(0)>0 && arguments.checkInteger(0)<=((I2DVertex) widget).getVertexCount()){
-				((I2DVertex) widget).setVertex(arguments.checkInteger(0)-1, arguments.checkDouble(1), arguments.checkDouble(2));
+		if(widget instanceof ICustomShape){
+			if(arguments.checkInteger(0)>0 && arguments.checkInteger(0)<=((ICustomShape) widget).getVertexCount()){
+				((ICustomShape) widget).setVertex(arguments.checkInteger(0)-1, (float) arguments.checkDouble(1), (float) arguments.checkDouble(2), (float) arguments.checkDouble(3));
 				getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());	
 				return null;
 			}

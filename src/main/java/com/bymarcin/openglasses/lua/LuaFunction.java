@@ -39,6 +39,9 @@ public abstract class LuaFunction implements Value{
 	}
 
 	//TODO context.node().canBeReachedFrom(getSelf().getTerminal().node());
+	//whut? adding range to glasses or what is this about to do?
+	//should only be added if we can add the GlassesTerminal as Update to a Tablet so that
+	//mobile use is still a thing
 
 	@Override
 	public Object apply(Context context, Arguments arguments) {

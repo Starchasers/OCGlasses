@@ -19,10 +19,8 @@ public class Location {
 		this.dimID = dimID;
 		this.uniqueKey = uniqueKey;
 	}
-	
-	
-	public Location() {}
 
+	public Location() {}
 
 	@Override
 	public boolean equals(Object arg0) {
