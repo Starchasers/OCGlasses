@@ -7,6 +7,7 @@ import com.bymarcin.openglasses.render.BaublesRenderLayer;
 import com.bymarcin.openglasses.surface.ClientSurface;
 
 import com.bymarcin.openglasses.utils.PlayerStats;
+import com.google.common.util.concurrent.ListenableFuture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -71,4 +72,16 @@ public class ClientProxy extends CommonProxy {
 	public int getCurrentClientDimension() {
 		return Minecraft.getMinecraft().world.provider.getDimension();
 	}
+
+
+	@Override
+	public boolean isCallingFromMinecraftThread() {
+		return Minecraft.getMinecraft().isCallingFromMinecraftThread();
+	}
+
+	@Override
+	public ListenableFuture<Object> addScheduledTask(Runnable runnable) {
+		return Minecraft.getMinecraft().addScheduledTask(runnable);
+	}
+
 }

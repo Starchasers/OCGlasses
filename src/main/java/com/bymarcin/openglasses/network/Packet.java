@@ -1,5 +1,6 @@
 package com.bymarcin.openglasses.network;
 
+import com.bymarcin.openglasses.OpenGlasses;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
@@ -7,8 +8,10 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IThreadListener;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -213,6 +216,20 @@ public abstract class Packet<T extends Packet<T, RES>, RES extends IMessage> imp
 
 	@Override
 	public final RES onMessage(T message, MessageContext ctx) {
+		IThreadListener listener = FMLCommonHandler.instance().getWorldThread(ctx.netHandler);
+		if(listener == null){
+			listener = OpenGlasses.proxy;
+		}
+
+		if(listener.isCallingFromMinecraftThread()){
+			return  executePacket(message, ctx);
+		}else{
+			listener.addScheduledTask(()-> this.executePacket(message, ctx));
+			return null;
+		}
+	}
+
+	private RES executePacket(T message, MessageContext ctx){
 		if (ctx.side == Side.SERVER) {
 			return message.executeOnServer();
 		}
