@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         mavenCentral()
+	jcenter()
         maven {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
@@ -12,6 +13,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+	classpath 'com.palominolabs.gradle.task:gradle-git-clone-task:0.0.3'
     }
 }
 
@@ -71,3 +73,12 @@ processResources
         exclude 'mcmod.info'
     }
 }
+
+task syncGitWiki(type: com.palominolabs.gradle.task.git.clone.GitCloneTask) {
+	dir = file("src/main/resources/assets/openglasses/doc")
+	uri = 'https://github.com/StarChasers/OCGlasses.wiki.git'
+	treeish = "origin/master"
+	forceFetch = true
+}
+
+build.dependsOn(syncGitWiki)
