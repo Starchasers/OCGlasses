@@ -12,6 +12,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -159,11 +160,12 @@ public class EntityTracker3D extends OBJModel3D implements ITracker {
                 case ALL:
                 case PLAYER:
                 case LIVING:
-                    for (EntityPlayer e : (ArrayList<EntityPlayer>) getAllEntities(player.getPositionVector(), trackingRange, player.world, EntityPlayer.class, bounds)) {
+                    for (EntityPlayerMP e : (ArrayList<EntityPlayerMP>) getAllEntities(player.getPositionVector(), trackingRange, player.world, EntityPlayerMP.class, bounds)) {
                         if (!checkRender(e)) continue;
                         if (e == player) continue;
                         renderTarget(e.getPositionVector(), player, customRenderConditions(conditionStates, e, focusedEntity));
-            }   }
+                    }
+            }
 
             switch(trackingType) {
                 case ALL:
