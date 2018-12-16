@@ -221,11 +221,8 @@ public class EntityTracker3D extends OBJModel3D implements ITracker {
                     if(!(e instanceof EntityMob))
                         return false;
 
-                    if(trackingEntityName.length() == 0)
-                        return true;
-
-                    if(!e.getName().toLowerCase().equals(trackingEntityName))
-                        return false;
+                    if(trackingEntityName.length() > 0)
+                        return e.getName().toLowerCase().equals(trackingEntityName);
 
                     return true;
 
@@ -234,7 +231,7 @@ public class EntityTracker3D extends OBJModel3D implements ITracker {
                     if(!(e instanceof EntityLivingBase))
                         return false;
 
-                    if(trackingEntityName.length() != 0)
+                    if(trackingEntityName.length() > 0)
                         return e.getName().toLowerCase().equals(trackingEntityName);
 
                     return true;
@@ -246,11 +243,8 @@ public class EntityTracker3D extends OBJModel3D implements ITracker {
                     if(e instanceof EntityMob)
                         return false;
 
-                    if(trackingEntityName.length() == 0)
-                        return true;
-
-                    if(!e.getName().toLowerCase().equals(trackingEntityName))
-                        return false;
+                    if(trackingEntityName.length() > 0)
+                        return e.getName().toLowerCase().equals(trackingEntityName);
 
                     return true;
 
