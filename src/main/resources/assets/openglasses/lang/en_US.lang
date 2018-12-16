@@ -2,3 +2,4 @@ tile.openglassesterminal.name=Glasses Terminal
 item.openglasses.name=AR Glasses
 key.categories.openglasses=OpenGlasses
 key.interact=Enable OG Pointer
+itemGroup.openglasses=OpenGlasses

@@ -44,6 +44,17 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		setRegistryName("openglasses");
 	}
 
+	public static void initGlassesStack(ItemStack glassesStack){
+		glassesStack.setTagCompound(new NBTTagCompound());
+
+		NBTTagCompound glassesTag = glassesStack.getTagCompound();
+		glassesTag.setInteger("widgetLimit", 9); //default to max 9 Widgets
+		glassesTag.setInteger("upkeepCost", 1);  //default to upkeep cost of 1FE / tick
+		glassesTag.setInteger("radarRange", 0);
+		glassesTag.setInteger("Energy", 0);
+		glassesTag.setInteger("EnergyCapacity", 50000); //set the default EnergyBuffer to 50k FE
+	}
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
@@ -86,7 +97,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 
 		NBTTagCompound tag = stack.getTagCompound();
 
-		if(tag.getLong("uniqueKey") > 0L){
+		if(tag.getLong("uniqueKey") != 0L){
 			tooltip.add("linked to: X: " + tag.getInteger("X") + ", Y: " + tag.getInteger("Y") + ", Z: " + tag.getInteger("Z") + " (DIM: " + tag.getInteger("DIM") +")");
 			tooltip.add("terminal: " + tag.getLong("uniqueKey"));
 			tooltip.add("user: " + tag.getString("user"));
@@ -135,6 +146,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		return "Glasses";
 	}
 
+	@SideOnly(Side.SERVER)
 	public void bindToTerminal(ItemStack glassesStack, Location uuid, EntityPlayer player) {
 		NBTTagCompound tag = glassesStack.getTagCompound();
 		tag.setInteger("X", uuid.x);
@@ -210,6 +222,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 	// Forge Energy
 
 	@Override
+    @SideOnly(Side.SERVER)
 	public void onUpdate(ItemStack glassesStack, World world, Entity entity, int slot, boolean isCurrentItem) {
 		if(world.isRemote) return;
 		if (!(entity instanceof EntityPlayer)) return;
@@ -236,6 +249,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		return 1 - (((double) 1 / storage.getMaxEnergyStored()) * storage.getEnergyStored());
 	}
 
+	@SideOnly(Side.SERVER)
 	public int consumeEnergy(ItemStack glassesStack){
 		IEnergyStorage storage = glassesStack.getCapability(CapabilityEnergy.ENERGY, null);
 		return storage.extractEnergy(glassesStack.getTagCompound().getInteger("upkeepCost"), false);

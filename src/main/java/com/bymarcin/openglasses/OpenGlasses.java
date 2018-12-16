@@ -21,7 +21,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -55,8 +54,6 @@ public class OpenGlasses
 	@SidedProxy(clientSide = "com.bymarcin.openglasses.proxy.ClientProxy", serverSide = "com.bymarcin.openglasses.proxy.CommonProxy")
 	public static CommonProxy proxy;
 
-	public static CreativeTabs creativeTab = CreativeTabs.REDSTONE;
-
 	public static Item openGlasses;
 	public static ItemStack glassesStack;
 	public static OpenGlassesTerminalBlock openTerminal;
@@ -78,14 +75,7 @@ public class OpenGlasses
 
 		openGlasses = getOGCObject();
 		glassesStack = new ItemStack(openGlasses);
-		glassesStack.setTagCompound(new NBTTagCompound());
-
-		NBTTagCompound glassesTag = glassesStack.getTagCompound();
-		glassesTag.setInteger("widgetLimit", 9); //default to max 9 Widgets
-		glassesTag.setInteger("upkeepCost", 1);  //default to upkeep cost of 1FE / tick
-		glassesTag.setInteger("radarRange", 0);
-		glassesTag.setInteger("Energy", 0);
-		glassesTag.setInteger("EnergyCapacity", 50000); //set the default EnergyBuffer to 50k FE
+		OpenGlassesItem.initGlassesStack(glassesStack);
 
 		proxy.init();
 	}
@@ -111,12 +101,9 @@ public class OpenGlasses
 	}
 
 	public static boolean isGlassesStack(ItemStack stack){
-		Item glasses = stack!=null?stack.getItem():null;
+		Item stackItem = stack!=null ? stack.getItem() : null;
 
-		if(glasses instanceof OpenGlassesItem)
-			return true;
-		else
-			return false;
+		return stackItem instanceof OpenGlassesItem ? true : false;
 	}
 
 	public static ItemStack getGlassesStack(EntityPlayer e){
@@ -124,20 +111,19 @@ public class OpenGlasses
 
 		if(isGlassesStack(glassesStack))
 			return glassesStack;
-		else
+		else if(OpenGlasses.baubles)
 			return getGlassesStackBaubles(e);
+
+		return null;
 	}
 
 	public static ItemStack getGlassesStackBaubles(EntityPlayer e){
-		if(!Loader.isModLoaded("baubles")) return null;
-
 		IBaublesItemHandler handler = BaublesApi.getBaublesHandler(e);
 		if (handler == null) return null;
 
-		ItemStack glassesStack = handler.getStackInSlot(4);
-		if(!isGlassesStack(glassesStack)) return null;
+		ItemStack baublesStack = handler.getStackInSlot(4);
 
-		return glassesStack;
+		return isGlassesStack(baublesStack) ? baublesStack : null;
 	}
 
 	@EventHandler
@@ -208,5 +194,12 @@ public class OpenGlasses
 			return li.cil.oc.api.FileSystem.asReadOnly(li.cil.oc.api.FileSystem.fromClass(OpenGlasses.class, MODID, "loot/" + this.name));
 		}
 	}
+
+    public static CreativeTabs creativeTab = new CreativeTabs("openglasses"){
+        @Override
+        public ItemStack getTabIconItem(){
+            return new ItemStack(OpenGlasses.openTerminalItem);
+        }
+    };
 
 }
