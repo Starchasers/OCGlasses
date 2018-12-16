@@ -17,7 +17,7 @@ import com.bymarcin.openglasses.utils.Location;
 import java.util.ArrayList;
 
 public abstract class CustomShape extends WidgetGLWorld implements ICustomShape {
-    public static ArrayList<ArrayList> vectors;
+    public ArrayList<ArrayList> vectors;
     public boolean gl_strips;
     public boolean smooth_shading;
 
