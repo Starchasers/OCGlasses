@@ -6,9 +6,11 @@ import com.bymarcin.openglasses.utils.Location;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
@@ -160,7 +162,7 @@ public class EntityTracker3D extends OBJModel3D implements ITracker {
                 case ALL:
                 case PLAYER:
                 case LIVING:
-                    for (EntityPlayerMP e : (ArrayList<EntityPlayerMP>) getAllEntities(player.getPositionVector(), trackingRange, player.world, EntityPlayerMP.class, bounds)) {
+                    for (EntityPlayer e : (ArrayList<EntityPlayer>) getAllEntities(player.getPositionVector(), trackingRange, player.world, EntityPlayer.class, bounds)) {
                         if (!checkRender(e)) continue;
                         if (e == player) continue;
                         renderTarget(e.getPositionVector(), player, customRenderConditions(conditionStates, e, focusedEntity));
@@ -188,10 +190,10 @@ public class EntityTracker3D extends OBJModel3D implements ITracker {
             if(e instanceof EntityMob)
                 customConditions |= ((long) 1 << WidgetModifierConditionType.IS_HOSTILE);
 
-            if(!(e instanceof EntityMob) && (e instanceof EntityLiving))
+            if(!(e instanceof EntityMob) && (e instanceof EntityLivingBase))
                 customConditions |= ((long) 1 << WidgetModifierConditionType.IS_NEUTRAL);
 
-            if(e instanceof EntityLiving)
+            if(e instanceof EntityLivingBase)
                 customConditions |= ((long) 1 << WidgetModifierConditionType.IS_LIVING);
 
             if(e instanceof EntityItem)
@@ -227,20 +229,18 @@ public class EntityTracker3D extends OBJModel3D implements ITracker {
 
                     return true;
 
+                case PLAYER:
                 case LIVING:
-                    if(!(e instanceof EntityLiving))
+                    if(!(e instanceof EntityLivingBase))
                         return false;
 
-                    if(trackingEntityName.length() == 0)
-                        return true;
-
-                    if(!e.getName().toLowerCase().equals(trackingEntityName))
-                        return false;
+                    if(trackingEntityName.length() != 0)
+                        return e.getName().toLowerCase().equals(trackingEntityName);
 
                     return true;
 
                 case NEUTRAL:
-                    if(!(e instanceof EntityLiving))
+                    if(!(e instanceof EntityLivingBase))
                         return false;
 
                     if(e instanceof EntityMob)
