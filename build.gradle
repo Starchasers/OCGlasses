@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         mavenCentral()
-	jcenter()
+        jcenter()
         maven {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
@@ -13,7 +13,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-	classpath 'com.palominolabs.gradle.task:gradle-git-clone-task:0.0.3'
+        classpath 'com.palominolabs.gradle.task:gradle-git-clone-task:0.0.3'
     }
 }
 
@@ -25,17 +25,19 @@ targetCompatibility = "1.8"
 
 def simpleVersion = "2.0." + System.getenv("BUILD_NUMBER")
 
+def openComputersVersion = "MC1.12.1-1.7.1.54"
+def baublesVersion = "1.12-1.5.2"
 
 group= "com.bymarcin.openglasses" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "OpenGlasses-MC1.12.2"
 version = simpleVersion
 
 minecraft {
-	 replaceIn "com/bymarcin/openglasses/OpenGlasses.java"
-		replace "@VERSION@", simpleVersion
-	runDir = "run"
-	version = "14.23.2.2611"
-	mappings = "snapshot_20180130"
+    replaceIn "com/bymarcin/openglasses/OpenGlasses.java"
+    replace "@VERSION@", simpleVersion
+    runDir = "run"
+    version = "14.23.2.2611"
+    mappings = "snapshot_20180130"
 
 }
 
@@ -48,37 +50,39 @@ runServer {
 }
 
 repositories {
-    maven { url = "http://maven.cil.li/" }
+    maven { url = "http://maven.cil.li/" }          // OpenComputers
+    maven { url = "https://maven.mcmoddev.com/" }   // Baubles
 }
 dependencies {
-    provided  "li.cil.oc:OpenComputers:MC1.12.1-1.7.1.54"
+    provided "li.cil.oc:OpenComputers:${openComputersVersion}"
+    compileOnly "com.azanor:Baubles:${baublesVersion}"
 }
 
 processResources
-{
-    // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+        {
+            // this will ensure that this task is redone when the versions change.
+            inputs.property "version", project.version
+            inputs.property "mcversion", project.minecraft.version
 
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-                
-        // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-        
-    // copy everything else, thats not the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
-}
+            // replace stuff in mcmod.info, nothing else
+            from(sourceSets.main.resources.srcDirs) {
+                include 'mcmod.info'
+
+                // replace version and mcversion
+                expand 'version':project.version, 'mcversion':project.minecraft.version
+            }
+
+            // copy everything else, thats not the mcmod.info
+            from(sourceSets.main.resources.srcDirs) {
+                exclude 'mcmod.info'
+            }
+        }
 
 task syncGitWiki(type: com.palominolabs.gradle.task.git.clone.GitCloneTask) {
-	dir = file("src/main/resources/assets/openglasses/doc")
-	uri = 'https://github.com/StarChasers/OCGlasses.wiki.git'
-	treeish = "origin/master"
-	forceFetch = true
+    dir = file("src/main/resources/assets/openglasses/doc")
+    uri = 'https://github.com/StarChasers/OCGlasses.wiki.git'
+    treeish = "origin/master"
+    forceFetch = true
 }
 
 build.dependsOn(syncGitWiki)
