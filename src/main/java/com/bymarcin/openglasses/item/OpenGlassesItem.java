@@ -146,9 +146,11 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		return "Glasses";
 	}
 
-	@SideOnly(Side.SERVER)
 	public void bindToTerminal(ItemStack glassesStack, Location uuid, EntityPlayer player) {
-		NBTTagCompound tag = glassesStack.getTagCompound();
+		if(player.world.isRemote)
+		    return;
+
+	    NBTTagCompound tag = glassesStack.getTagCompound();
 		tag.setInteger("X", uuid.x);
 		tag.setInteger("Y", uuid.y);
 		tag.setInteger("Z", uuid.z);
@@ -222,7 +224,6 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 	// Forge Energy
 
 	@Override
-    @SideOnly(Side.SERVER)
 	public void onUpdate(ItemStack glassesStack, World world, Entity entity, int slot, boolean isCurrentItem) {
 		if(world.isRemote) return;
 		if (!(entity instanceof EntityPlayer)) return;
@@ -249,7 +250,6 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		return 1 - (((double) 1 / storage.getMaxEnergyStored()) * storage.getEnergyStored());
 	}
 
-	@SideOnly(Side.SERVER)
 	public int consumeEnergy(ItemStack glassesStack){
 		IEnergyStorage storage = glassesStack.getCapability(CapabilityEnergy.ENERGY, null);
 		return storage.extractEnergy(glassesStack.getTagCompound().getInteger("upkeepCost"), false);

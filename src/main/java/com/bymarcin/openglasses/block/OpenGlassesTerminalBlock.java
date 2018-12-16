@@ -57,7 +57,6 @@ public class OpenGlassesTerminalBlock extends BlockContainer implements IBlockWi
 	}
 
 	@Override
-	@SideOnly(Side.SERVER)
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (player.isSneaking() || world.isRemote)
 			return false;
