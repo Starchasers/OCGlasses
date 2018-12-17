@@ -1,9 +1,13 @@
 package com.bymarcin.openglasses.tileentity;
 
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import com.bymarcin.openglasses.lib.McJty.font.FontLoader;
+import com.bymarcin.openglasses.lib.McJty.font.TrueTypeFont;
 import com.bymarcin.openglasses.lua.LuaReference;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.WidgetUpdatePacket;
@@ -241,6 +245,19 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 	public Object[] addBox2D(Context context, Arguments args){
 		Widget w = new Box2D();
 		return addWidget(w);
+	}
+
+	@Callback(direct = true)
+	@Optional.Method(modid = "opencomputers")
+	public Object[] getFonts(Context context, Arguments args){
+		ArrayList<String> fonts = new ArrayList<>();
+
+		fonts.add("THIS IS A CLIENT LIST");
+
+		for(Font font : TrueTypeFont.getFonts())
+			fonts.add(font.getFontName());
+
+		return new Object[]{ fonts.toArray() };
 	}
 
 	@Callback(direct = true)

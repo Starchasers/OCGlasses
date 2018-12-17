@@ -51,10 +51,13 @@ public class AttributeRegistry {
 
 		addAtribute(IResizable.class, GetSize.class);
 		addAtribute(IResizable.class, SetSize.class);
-		
+
+		addAtribute(ITextable.class, SetFont.class);
 		addAtribute(ITextable.class, SetText.class);
 		addAtribute(ITextable.class, GetText.class);
 		addAtribute(ITextable.class, GetSize.class);
+		addAtribute(ITextable.class, SetAntialias.class);
+		addAtribute(ITextable.class, SetFontSize.class);
 
 		addAtribute(IItem.class, SetItem.class);
 		addAtribute(IItem.class, GetItem.class);
