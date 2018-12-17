@@ -2,6 +2,7 @@ package com.bymarcin.openglasses;
 
 import com.bymarcin.openglasses.block.OpenGlassesTerminalBlock;
 import com.bymarcin.openglasses.event.AnvilEvent;
+import com.bymarcin.openglasses.integration.opencomputers.ocProgramDisks;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.item.OpenGlassesBaubleItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
@@ -10,13 +11,10 @@ import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
 import com.bymarcin.openglasses.network.packet.WidgetUpdatePacket;
 import com.bymarcin.openglasses.proxy.CommonProxy;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
-import li.cil.oc.api.fs.FileSystem;
-import li.cil.oc.api.IMC;
 import li.cil.oc.api.Items;
 
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -28,7 +26,6 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -42,8 +39,6 @@ import baubles.api.cap.IBaublesItemHandler;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.oredict.ShapedOreRecipe;
-
-import java.util.concurrent.Callable;
 
 @Mod(modid = OpenGlasses.MODID, version = OpenGlasses.VERSION, dependencies = "required-after:opencomputers@[1.7.1,);after:baubles;")
 public class OpenGlasses
@@ -147,17 +142,15 @@ public class OpenGlasses
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event){
-		//register loot disks
-		li.cil.oc.api.Items.registerFloppy("openGlasses Demo", EnumDyeColor.GREEN, new OCLootDiskFileSystem("openglasses-demo"), true);
-		IMC.registerProgramDiskLabel("openglasses-demo", "openglasses-demo", "Lua 5.2", "Lua 5.3", "LuaJ");
-
-		li.cil.oc.api.Items.registerFloppy("wavefront objects", EnumDyeColor.BLUE, new OCLootDiskFileSystem("wavefrontObjects"), true);
-		IMC.registerProgramDiskLabel("wavefrontObjects", "wavefrontObjects", "Lua 5.2", "Lua 5.3", "LuaJ");
+		ocProgramDisks.register();
+		//ocAssembler.register();
 
 		MinecraftForge.EVENT_BUS.register(AnvilEvent.instances);  //register anvil event
 
 		proxy.postInit();
 	}
+
+
 
 	@SubscribeEvent
 	public void registerRecipes(RegistryEvent.Register<IRecipe> event) {
@@ -179,20 +172,6 @@ public class OpenGlasses
 		r2.setRegistryName(OpenGlasses.MODID, "openterminal");
 		event.getRegistry().register(r1);
 		event.getRegistry().register(r2);
-	}
-
-
-	private static class OCLootDiskFileSystem implements Callable<FileSystem> {
-		private final String name;
-		OCLootDiskFileSystem(String name) {
-			this.name = name;
-		}
-
-		@Override
-		@Optional.Method(modid = "opencomputers")
-		public FileSystem call() throws Exception {
-			return li.cil.oc.api.FileSystem.asReadOnly(li.cil.oc.api.FileSystem.fromClass(OpenGlasses.class, MODID, "loot/" + this.name));
-		}
 	}
 
     public static CreativeTabs creativeTab = new CreativeTabs("openglasses"){

@@ -34,7 +34,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 
 public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation {
-	public OpenGlassesItem() {
+    public OpenGlassesItem() {
 		super(ArmorMaterial.IRON, 0, EntityEquipmentSlot.HEAD);
 		setMaxDamage(0);
 		setMaxStackSize(1);
@@ -79,8 +79,13 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 
 	@Override
 	public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt){
-		if(nbt != null)
-			stack.setTagCompound(nbt);
+		if(stack.getTagCompound() == null)
+			stack.setTagCompound(new NBTTagCompound());
+
+		if(nbt != null) {
+			NBTTagCompound stackNBT = stack.getTagCompound();
+			stackNBT.merge(nbt);
+		}
 
 		return new EnergyCapabilityProvider(stack);
 	}
@@ -112,18 +117,28 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 			tooltip.add("lightsensor: not installed");
 			tooltip.add("(install on anvil with minecraft daylight sensor)");
 		}
+
 		if(tag.getBoolean("tankUpgrade"))
 			tooltip.add("rainsensor: installed");
 		else {
 			tooltip.add("rainsensor: not installed");
 			tooltip.add("(install on anvil with opencomputers tank upgrade)");
 		}
+
 		if(tag.getBoolean("motionsensor"))
 			tooltip.add("sneak detection: installed");
 		else {
 			tooltip.add("sneak detection: not installed");
 			tooltip.add("(install on anvil with opencomputers motionsensor)");
 		}
+
+		if(tag.getBoolean("nightvision"))
+			tooltip.add("nightvision: installed");
+		else {
+			//tooltip.add("nightvision not installed");
+			//tooltip.add("(install on anvil with ???)");
+		}
+
 		if(tag.getBoolean("geolyzer")) {
 			tooltip.add("geolyzer: installed");
 			tooltip.add("radar Range: " + tag.getInteger("radarRange"));
