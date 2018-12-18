@@ -122,7 +122,7 @@ public class ClientSurface {
 		if (evt.getType() != ElementType.HELMET) return;
 		if (!(evt instanceof RenderGameOverlayEvent.Post)) return;
 
-		if(!shouldRenderStart()) return;
+		if(!shouldRenderStart(RenderType.GameOverlayLocated)) return;
 		if(renderables.size() < 1) return;
 
 		EntityPlayer player = Minecraft.getMinecraft().player;
@@ -149,37 +149,43 @@ public class ClientSurface {
 		GL11.glPopAttrib();
 	}
 
-	public boolean shouldRenderStart(){
+	public boolean shouldRenderStart(RenderType renderEvent){
 		if(this.glassesStack == null || this.glasses == null)
 			return false;
 
 		if(getWidgetCount() > glassesStack.getTagCompound().getInteger("widgetLimit") && widgetLimitRender != null){
-			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-			GL11.glPushMatrix();
-			GL11.glDepthMask(false);
-			widgetLimitRender.render(Minecraft.getMinecraft().player, lastBind, ~0);
-			GL11.glPopMatrix();
-			GL11.glPopAttrib();
+			if(renderEvent.equals(RenderType.GameOverlayLocated)) {
+				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+				GL11.glPushMatrix();
+				GL11.glDepthMask(false);
+				widgetLimitRender.render(Minecraft.getMinecraft().player, lastBind, ~0);
+				GL11.glPopMatrix();
+				GL11.glPopAttrib();
+			}
 			return false;
 		}
 
 		if(glasses.getEnergyStored(glassesStack) == 0 && noPowerRender != null){
-			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-			GL11.glPushMatrix();
-			GL11.glDepthMask(false);
-			noPowerRender.render(Minecraft.getMinecraft().player, lastBind, ~0);
-			GL11.glPopMatrix();
-			GL11.glPopAttrib();
+			if(renderEvent.equals(RenderType.GameOverlayLocated)) {
+				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+				GL11.glPushMatrix();
+				GL11.glDepthMask(false);
+				noPowerRender.render(Minecraft.getMinecraft().player, lastBind, ~0);
+				GL11.glPopMatrix();
+				GL11.glPopAttrib();
+			}
 			return false;
 		}
 
 		if(lastBind == null && noLinkRender != null) {
-			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-			GL11.glPushMatrix();
-			GL11.glDepthMask(false);
-			noLinkRender.render(Minecraft.getMinecraft().player, lastBind, ~0);
-			GL11.glPopMatrix();
-			GL11.glPopAttrib();
+			if(renderEvent.equals(RenderType.GameOverlayLocated)) {
+				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+				GL11.glPushMatrix();
+				GL11.glDepthMask(false);
+				noLinkRender.render(Minecraft.getMinecraft().player, lastBind, ~0);
+				GL11.glPopMatrix();
+				GL11.glPopAttrib();
+			}
 			return false;
 		}
 
@@ -196,7 +202,7 @@ public class ClientSurface {
 	@SubscribeEvent
 	public void renderWorldLastEvent(RenderWorldLastEvent event)	{
 		if(renderablesWorld.size() < 1) return;
-		if(!shouldRenderStart()) return;
+		if(!shouldRenderStart(RenderType.WorldLocated)) return;
 
 		EntityPlayer player = Minecraft.getMinecraft().player;
 
