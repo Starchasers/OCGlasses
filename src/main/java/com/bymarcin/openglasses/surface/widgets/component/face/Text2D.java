@@ -37,10 +37,12 @@ public class Text2D extends TextWidget implements IAutoTranslateable {
 			if(getText().length() < 1) return;
 
 			updateStringDimensions();
+			updateAlignments();
 
 			int currentColor = this.preRender(conditionStates);
 			this.applyModifiers(conditionStates);
-			this.applyAlignments();
+
+			GL11.glTranslatef(offsetX, offsetY, 0F);
 
 			drawString(currentColor);
 
@@ -48,24 +50,6 @@ public class Text2D extends TextWidget implements IAutoTranslateable {
 			this.postRender();
 		}
 
-		public void applyAlignments(){
-			switch(this.getHorizontalAlign()) {
-				case CENTER:
-					GL11.glTranslatef((-stringWidth/2F), 0F, 0F);
-					break;
-				case RIGHT:
-					GL11.glTranslatef(-stringWidth, 0F, 0F);
-					break;
-			}
 
-			switch(this.getVerticalAlign()) {
-				case MIDDLE:
-					GL11.glTranslatef(0F, (-stringHeight/2F), 0F);
-					break;
-				case BOTTOM:
-					GL11.glTranslatef(0F, -stringHeight, 0F);
-					break;
-			}
-		}
 	}
 }

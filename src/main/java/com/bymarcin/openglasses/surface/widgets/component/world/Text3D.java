@@ -34,41 +34,37 @@ public class Text3D extends TextWidget {
 	@SideOnly(Side.CLIENT)
 	class RenderableFloatingText extends RenderableGLWidget{
 		final float scale = 0.1F;
-		double offsetX, offsetY;
+
 
 		@Override
 		public void render(EntityPlayer player, Location glassesTerminalLocation, long conditionStates) {
 			if(getText().length() < 1) return;
 
 			updateStringDimensions();
-
-			offsetY = stringHeight / 2D;
-			offsetX = stringWidth / 2D;
+			updateAlignments();
 
 			int currentColor = this.preRender(conditionStates);
-			this.applyModifiers(conditionStates);
 
 			// center text on current block position
 			GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+			this.applyModifiers(conditionStates);
+
+
+			if(faceWidgetToPlayer) {
+				GL11.glRotated(-player.rotationYaw, 0.0D, 1.0D, 0.0D);
+				GL11.glRotated(player.rotationPitch, 1.0D, 0.0D, 0.0D);
+			}
 
 			GL11.glScalef(scale, scale, scale);
 
-			//align and rotate text facing the player
-			GL11.glTranslated(offsetX, offsetY, 0.0D);
-			GL11.glRotated(180.0D, 0.0D, 0.0D, 1.0D);
-			GL11.glTranslated(offsetX, offsetY, 0.0D);
-
-			this.addPlayerRotation(player);
-
 			GL11.glTranslated(-offsetX, -offsetY, 0.0D);
 
+			GL11.glRotated(180.0D, 0.0D, 0.0D, 1.0D);
 			drawString(currentColor);
 
 			GlStateManager.disableAlpha();
 			this.postRender();
 		}
-
-
 	}
 
 

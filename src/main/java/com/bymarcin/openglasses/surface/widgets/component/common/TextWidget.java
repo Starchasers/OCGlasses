@@ -19,6 +19,7 @@ public abstract class TextWidget extends WidgetGLWorld implements ITextable, IAl
     boolean antialias;
     float fontSize;
     public float stringWidth, stringHeight;
+    public float offsetX, offsetY;
     static ArrayList<TrueTypeFont> fontRenderer = new ArrayList<>();
 
     public TextWidget(){
@@ -46,6 +47,32 @@ public abstract class TextWidget extends WidgetGLWorld implements ITextable, IAl
         else {
             stringWidth = getFont(getFontName()).getWidth(getText());
             stringHeight = getFont(getFontName()).getHeight();
+        }
+    }
+
+    public void updateAlignments() {
+        switch (halign) {
+            case LEFT:
+                offsetX = -stringWidth;
+                break;
+            case CENTER:
+                offsetX = -stringWidth / 2F;
+                break;
+            case RIGHT:
+                offsetX = 0;
+                break;
+        }
+
+        switch (valign) {
+            case TOP:
+                offsetY = -stringHeight;
+                break;
+            case MIDDLE:
+                offsetY = -stringHeight / 2F;
+                break;
+            case BOTTOM:
+                offsetY = 0;
+                break;
         }
     }
 
