@@ -42,7 +42,6 @@ public class Text3D extends TextWidget {
 
 			updateStringDimensions();
 			updateAlignments();
-
 			int currentColor = this.preRender(conditionStates);
 
 			// center text on current block position
@@ -63,6 +62,7 @@ public class Text3D extends TextWidget {
 			drawString(currentColor);
 
 			GlStateManager.disableAlpha();
+			GL11.glDisable(GL11.GL_ALPHA_TEST);
 			this.postRender();
 		}
 	}

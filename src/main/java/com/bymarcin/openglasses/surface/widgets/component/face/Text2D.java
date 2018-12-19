@@ -47,6 +47,7 @@ public class Text2D extends TextWidget implements IAutoTranslateable {
 			drawString(currentColor);
 
 			GlStateManager.disableAlpha();
+			GL11.glDisable(GL11.GL_ALPHA_TEST);
 			this.postRender();
 		}
 

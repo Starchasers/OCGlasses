@@ -184,7 +184,7 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 			else if(type == WidgetType.TEXT2D || type == WidgetType.TEXT3D){
 				doTexture = true;
 				doBlending = true;
-				GL11.glDisable(GL11.GL_ALPHA_TEST);
+				GL11.glEnable(GL11.GL_ALPHA_TEST);
 			}
 			else if(type == WidgetType.ITEM2D || type == WidgetType.ITEM3D){
 				doBlending = true;
