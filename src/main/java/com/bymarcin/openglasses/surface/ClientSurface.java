@@ -15,10 +15,9 @@ import com.bymarcin.openglasses.surface.widgets.component.face.Text2D;
 import com.bymarcin.openglasses.utils.Location;
 
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextComponentTranslation;
-import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -131,66 +130,76 @@ public class ClientSurface {
 		if(!shouldRenderStart(RenderType.GameOverlayLocated)) return;
 		if(renderables.size() < 1) return;
 
-		EntityPlayer player = Minecraft.getMinecraft().player;
+		String uuid = glassesStack.getTagCompound().getString("userUUID");
+		conditionStates = glasses.getConditionStates(glassesStack, Minecraft.getMinecraft().player);
 
-		NBTTagCompound tag = glassesStack.getTagCompound();
-		conditionStates = glasses.getConditionStates(glassesStack, player);
-
-		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-		GL11.glPushMatrix();
-		GL11.glDepthMask(false);
+		GlStateManager.depthMask(false);
 
 		if(renderResolution != null) {
-			GL11.glScalef(ClientSurface.resolution.getScaledWidth() / renderResolution.get(0), ClientSurface.resolution.getScaledHeight() / renderResolution.get(1), 1);
+			GlStateManager.scale(ClientSurface.resolution.getScaledWidth() / renderResolution.get(0), ClientSurface.resolution.getScaledHeight() / renderResolution.get(1), 1);
 		}
-		for(IRenderableWidget renderable : renderables.values()){
-			if(renderable.shouldWidgetBeRendered(player)
-					&& renderable.isWidgetOwner(glassesStack.getTagCompound().getString("userUUID"))){
-				GL11.glPushMatrix();
-				renderable.render(player, lastBind, conditionStates);
-				GL11.glPopMatrix();
-			}
-		}
-		GL11.glPopMatrix();
-		GL11.glPopAttrib();
+
+		for(IRenderableWidget renderable : renderables.values())
+			if(renderable.shouldWidgetBeRendered(Minecraft.getMinecraft().player) && renderable.isWidgetOwner(uuid))
+				renderWidget(renderable, conditionStates);
+	}
+
+	@SubscribeEvent
+	public void renderWorldLastEvent(RenderWorldLastEvent event)	{
+		if(renderablesWorld.size() < 1) return;
+		if(!shouldRenderStart(RenderType.WorldLocated)) return;
+
+
+		double[] playerLocation = getEntityPlayerLocation(Minecraft.getMinecraft().player, event.getPartialTicks());
+
+		String uuid = glassesStack.getTagCompound().getString("userUUID");
+		conditionStates = glasses.getConditionStates(glassesStack, Minecraft.getMinecraft().player);
+
+		GlStateManager.pushMatrix();
+
+		GlStateManager.translate(-playerLocation[0], -playerLocation[1], -playerLocation[2]);
+		GlStateManager.translate(lastBind.x, lastBind.y, lastBind.z);
+
+		GlStateManager.depthMask(true);
+		//Start Drawing In World
+		for(IRenderableWidget renderable : renderablesWorld.values())
+			if(renderable.shouldWidgetBeRendered(Minecraft.getMinecraft().player) && renderable.isWidgetOwner(uuid))
+				renderWidget(renderable, conditionStates);
+
+		//Stop Drawing In World
+		GlStateManager.popMatrix();
+	}
+
+	void renderWidget(IRenderableWidget widget, long conditionStates){
+		GlStateManager.pushMatrix();
+		widget.render(Minecraft.getMinecraft().player, lastBind, conditionStates);
+		GlStateManager.popMatrix();
 	}
 
 	public boolean shouldRenderStart(RenderType renderEvent){
 		if(this.glassesStack == null || this.glasses == null)
 			return false;
 
-		if(getWidgetCount() > glassesStack.getTagCompound().getInteger("widgetLimit") && widgetLimitRender != null){
-			if(renderEvent.equals(RenderType.GameOverlayLocated)) {
-				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-				GL11.glPushMatrix();
-				GL11.glDepthMask(false);
-				widgetLimitRender.render(Minecraft.getMinecraft().player, lastBind, ~0);
-				GL11.glPopMatrix();
-				GL11.glPopAttrib();
+		if(getWidgetCount() > glassesStack.getTagCompound().getInteger("widgetLimit")){
+			if(renderEvent.equals(RenderType.GameOverlayLocated) && widgetLimitRender != null) {
+				GlStateManager.depthMask(false);
+				renderWidget(widgetLimitRender, ~0);
 			}
 			return false;
 		}
 
-		if(glasses.getEnergyStored(glassesStack) == 0 && noPowerRender != null){
-			if(renderEvent.equals(RenderType.GameOverlayLocated)) {
-				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-				GL11.glPushMatrix();
-				GL11.glDepthMask(false);
-				noPowerRender.render(Minecraft.getMinecraft().player, lastBind, ~0);
-				GL11.glPopMatrix();
-				GL11.glPopAttrib();
+		if(glasses.getEnergyStored(glassesStack) == 0){
+			if(renderEvent.equals(RenderType.GameOverlayLocated) && noPowerRender != null) {
+				GlStateManager.depthMask(false);
+				renderWidget(noPowerRender, ~0);
 			}
 			return false;
 		}
 
-		if(lastBind == null && noLinkRender != null) {
-			if(renderEvent.equals(RenderType.GameOverlayLocated)) {
-				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-				GL11.glPushMatrix();
-				GL11.glDepthMask(false);
-				noLinkRender.render(Minecraft.getMinecraft().player, lastBind, ~0);
-				GL11.glPopMatrix();
-				GL11.glPopAttrib();
+		if(lastBind == null) {
+			if(renderEvent.equals(RenderType.GameOverlayLocated) && noLinkRender != null) {
+				GlStateManager.depthMask(false);
+				renderWidget(noLinkRender, ~0);
 			}
 			return false;
 		}
@@ -205,38 +214,6 @@ public class ClientSurface {
 		return new double[]{x, y, z};
 	}
 
-	@SubscribeEvent
-	public void renderWorldLastEvent(RenderWorldLastEvent event)	{
-		if(renderablesWorld.size() < 1) return;
-		if(!shouldRenderStart(RenderType.WorldLocated)) return;
-
-		EntityPlayer player = Minecraft.getMinecraft().player;
-
-		double[] playerLocation = getEntityPlayerLocation(player, event.getPartialTicks());
-
-		NBTTagCompound tag = glassesStack.getTagCompound();
-		conditionStates = glasses.getConditionStates(glassesStack, player);
-
-		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-		GL11.glPushMatrix();
-
-		GL11.glTranslated(-playerLocation[0], -playerLocation[1], -playerLocation[2]);
-		GL11.glTranslated(lastBind.x, lastBind.y, lastBind.z);
-
-		GL11.glDepthMask(true);
-		//Start Drawing In World
-		for(IRenderableWidget renderable : renderablesWorld.values()){
-			if(renderable.shouldWidgetBeRendered(player)
-					&& renderable.isWidgetOwner(glassesStack.getTagCompound().getString("userUUID"))){
-				GL11.glPushMatrix();
-				renderable.render(player, lastBind, conditionStates);
-				GL11.glPopMatrix();
-		} }
-		//Stop Drawing In World
-		GL11.glPopMatrix();
-		GL11.glPopAttrib();
-	}
-	
 	public static RayTraceResult getBlockCoordsLookingAt(EntityPlayer player){
 		RayTraceResult objectMouseOver = player.rayTrace(200, 1);
 		if(objectMouseOver != null && objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK){
@@ -249,6 +226,7 @@ public class ClientSurface {
 		Text2D t = new Text2D();
 		t.setText(new TextComponentTranslation("openglasses.infotext.noenergy").getUnformattedText());
 		t.WidgetModifierList.addColor(1F, 0F, 0F, 0.5F);
+		t.WidgetModifierList.addTranslate(5, 5, 0);
 		return t.getRenderable();
 	}
 
@@ -256,6 +234,7 @@ public class ClientSurface {
 		Text2D t = new Text2D();
 		t.setText(new TextComponentTranslation("openglasses.infotext.nolink").getUnformattedText());
 		t.WidgetModifierList.addColor(1F, 1F, 1F, 0.7F);
+		t.WidgetModifierList.addTranslate(5, 5, 0);
 		return t.getRenderable();
 	}
 
@@ -263,6 +242,7 @@ public class ClientSurface {
 		Text2D t = new Text2D();
 		t.setText(new TextComponentTranslation("openglasses.infotext.widgetlimitexhausted").getUnformattedText());
 		t.WidgetModifierList.addColor(1F, 1F, 1F, 0.7F);
+		t.WidgetModifierList.addTranslate(5, 5, 0);
 		return t.getRenderable();
 	}
 

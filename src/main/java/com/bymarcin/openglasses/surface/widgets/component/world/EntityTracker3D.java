@@ -6,6 +6,7 @@ import com.bymarcin.openglasses.utils.Location;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -24,7 +25,6 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.UUID;
-
 
 public class EntityTracker3D extends OBJModel3D implements ITracker {
     public enum EntityType{ NONE, ALL, ITEM, LIVING, PLAYER, HOSTILE, NEUTRAL, UNIQUE }
@@ -178,7 +178,6 @@ public class EntityTracker3D extends OBJModel3D implements ITracker {
             }   }
 
             this.postRender();
-            GL11.glTranslated(ClientSurface.instances.lastBind.x, ClientSurface.instances.lastBind.y, ClientSurface.instances.lastBind.z);
         }
 
         public long customRenderConditions(long customConditions, Entity e, Entity focusedEntity){
@@ -267,6 +266,7 @@ public class EntityTracker3D extends OBJModel3D implements ITracker {
         }
 
         public void renderTarget(Vec3d pos, EntityPlayer player, long conditionStates) {
+            GlStateManager.pushMatrix();
             GL11.glTranslated(pos.x, pos.y, pos.z);
 
             this.applyModifierList(conditionStates, applyModifiersList);
@@ -286,9 +286,7 @@ public class EntityTracker3D extends OBJModel3D implements ITracker {
                 TESR.draw();
             }
             this.removePlayerRotation(player, pos);
-            this.revokeModifierList(applyModifiersList);
-
-            GL11.glTranslated(-pos.x, -pos.y, -pos.z);
+            GlStateManager.popMatrix();
         }
     }
 

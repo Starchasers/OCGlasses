@@ -5,12 +5,10 @@ import com.bymarcin.openglasses.surface.RenderType;
 import com.bymarcin.openglasses.surface.WidgetType;
 import com.bymarcin.openglasses.surface.widgets.component.common.TextWidget;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IAutoTranslateable;
-import com.bymarcin.openglasses.utils.utilsClient;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
-import net.minecraft.client.renderer.GlStateManager;
 
 import com.bymarcin.openglasses.utils.Location;
 public class Text2D extends TextWidget implements IAutoTranslateable {
@@ -42,12 +40,10 @@ public class Text2D extends TextWidget implements IAutoTranslateable {
 			int currentColor = this.preRender(conditionStates);
 			this.applyModifiers(conditionStates);
 
-			GL11.glTranslatef(offsetX, offsetY, 0F);
+			GlStateManager.translate(offsetX, offsetY, 0F);
 
 			drawString(currentColor);
 
-			GlStateManager.disableAlpha();
-			GL11.glDisable(GL11.GL_ALPHA_TEST);
 			this.postRender();
 		}
 

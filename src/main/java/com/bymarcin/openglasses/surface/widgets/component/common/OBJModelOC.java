@@ -8,6 +8,7 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IOBJModel;
 import com.bymarcin.openglasses.surface.IRenderableWidget;
 import com.bymarcin.openglasses.utils.Location;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.vertex.*;
@@ -87,11 +88,11 @@ public abstract class OBJModelOC extends WidgetGLWorld implements IOBJModel {
             buffer = TESR.getBuffer();
 
             if(rendertype == RenderType.WorldLocated) {
-                GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+                GlStateManager.translate(0.5F, 0.5F, 0.5F);
                 GL11.glRotated(180.0D, 0.0D, 0.0D, 1.0D);
                 this.addPlayerRotation(player);
                 GL11.glRotated(180.0D, 0.0D, 0.0D, 1.0D);
-                GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
+                GlStateManager.translate(-0.5F, -0.5F, -0.5F);
             }
 
             if(objFile.facesTri.size() > 0) {

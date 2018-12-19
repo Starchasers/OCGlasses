@@ -45,7 +45,7 @@ public class Text3D extends TextWidget {
 			int currentColor = this.preRender(conditionStates);
 
 			// center text on current block position
-			GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+			GlStateManager.translate(0.5F, 0.5F, 0.5F);
 			this.applyModifiers(conditionStates);
 
 
@@ -54,15 +54,13 @@ public class Text3D extends TextWidget {
 				GL11.glRotated(player.rotationPitch, 1.0D, 0.0D, 0.0D);
 			}
 
-			GL11.glScalef(scale, scale, scale);
+			GlStateManager.scale(scale, scale, scale);
 
-			GL11.glTranslated(-offsetX, -offsetY, 0.0D);
+			GlStateManager.translate(-offsetX, -offsetY, 0.0D);
 
 			GL11.glRotated(180.0D, 0.0D, 0.0D, 1.0D);
 			drawString(currentColor);
 
-			GlStateManager.disableAlpha();
-			GL11.glDisable(GL11.GL_ALPHA_TEST);
 			this.postRender();
 		}
 	}

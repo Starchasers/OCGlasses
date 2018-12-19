@@ -7,6 +7,7 @@ import com.bymarcin.openglasses.surface.widgets.core.attribute.IItem;
 import com.bymarcin.openglasses.utils.Location;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -91,20 +92,20 @@ public abstract class ItemIcon extends WidgetGLWorld implements IItem {
             this.applyModifiers(conditionStates);
 
             if(rendertype == RenderType.WorldLocated) {
-                GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-                GL11.glRotated(180D, 0, 1D, 0D);
+                GlStateManager.translate(0.5F, 0.5F, 0.5F);
+                GlStateManager.rotate(180, 0, 1, 0);
                 if(faceWidgetToPlayer) {
                     GL11.glRotated(player.rotationYaw, 0.0D, -1.0D, 0.0D);
                     GL11.glRotated(180D, 0, 1D, 0D);
                     GL11.glRotated(player.rotationPitch, 1.0D, 0.0D, 0.0D);
                     GL11.glRotated(180D, 0, 1D, 0D);
                 }
-                GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
+                GlStateManager.translate(-0.5F, -0.5F, -0.5F);
             }
             else {
                 this.applyAlignments();
-                GL11.glTranslatef(0F, 1F, 0F);
-                GL11.glRotated(180, 1, 0, 0);
+                GlStateManager.translate(0F, 1F, 0F);
+                GlStateManager.rotate(180, 1, 0, 0);
             }
 
             Tessellator tessellator = Tessellator.getInstance();
@@ -123,19 +124,19 @@ public abstract class ItemIcon extends WidgetGLWorld implements IItem {
         private void applyAlignments(){
             switch(this.getHorizontalAlign()) {
                 case CENTER:
-                    GL11.glTranslatef(-0.5F, 0F, 0F);
+                    GlStateManager.translate(-0.5F, 0F, 0F);
                     break;
                 case LEFT:
-                    GL11.glTranslatef(-1F, 0F, 0F);
+                    GlStateManager.translate(-1F, 0F, 0F);
                     break;
             }
 
             switch(this.getVerticalAlign()) {
                 case MIDDLE:
-                    GL11.glTranslatef(0F, -0.5F, 0F);
+                    GlStateManager.translate(0F, -0.5F, 0F);
                     break;
                 case TOP:
-                    GL11.glTranslatef(0F, -1F, 0F);
+                    GlStateManager.translate(0F, -1F, 0F);
                     break;
             }
         }

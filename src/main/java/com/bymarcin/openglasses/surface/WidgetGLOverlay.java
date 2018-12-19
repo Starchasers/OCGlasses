@@ -1,6 +1,7 @@
 package com.bymarcin.openglasses.surface;
 
 import com.bymarcin.openglasses.OpenGlasses;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -137,72 +138,79 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 
 	@SideOnly(Side.CLIENT)
 	public class RenderableGLWidget implements IRenderableWidget {		
-		boolean depthtest, texture2d, blending, smoothshading, alpha;
 		boolean doBlending, doTexture, doSmoothShade, doAlpha;
 		@Override
 		public void render(EntityPlayer player, Location glassesTerminalLocation, long conditionStates) {}
 
 		public void setRenderFlags() {
-			depthtest = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
-			texture2d = GL11.glIsEnabled(GL11.GL_TEXTURE_2D);
-			blending = GL11.glIsEnabled(GL11.GL_BLEND);
-
-			smoothshading = false;
 			doBlending = false;
 			doTexture = false;
 			doSmoothShade = false;
 
-			if(GL11.glGetInteger(GL11.GL_SHADE_MODEL) == GL11.GL_SMOOTH)
-				smoothshading = true;
-
 			if(isThroughVisibility)
-				GL11.glDisable(GL11.GL_DEPTH_TEST);
+				GlStateManager.disableDepth();
 			else
-				GL11.glEnable(GL11.GL_DEPTH_TEST);
+				GlStateManager.enableDepth();
 
-			GL11.glDisable(GL11.GL_LIGHTING);
+			GlStateManager.disableLighting();
 
-			for(int i=0, count = WidgetModifierList.modifiers.size(); i < count; i++){
-				switch(WidgetModifierList.modifiers.get(i).getType()){
-					case COLOR: if((float) WidgetModifierList.modifiers.get(i).getValues()[3] < 1) doBlending = true; break;
-					case TEXTURE: doTexture = true; break;
+			for(WidgetModifier modifier : WidgetModifierList.modifiers){
+				switch(modifier.getType()){
+					case COLOR:
+						if((float) modifier.getValues()[3] < 1)
+							doBlending = true;
+						break;
+					case TEXTURE:
+						doTexture = true;
+						break;
 					default: break;
 				}
 			}
 
-			WidgetType type = getType();
-			if(type == WidgetType.BOX2D){
-				doSmoothShade = true;
-				doBlending = true;
-				doAlpha = true;
-				//doTexture = false;
-			}
-			else if(type == WidgetType.TEXT2D || type == WidgetType.TEXT3D){
-				doTexture = true;
-				doBlending = true;
-				GL11.glEnable(GL11.GL_ALPHA_TEST);
-			}
-			else if(type == WidgetType.ITEM2D || type == WidgetType.ITEM3D){
-				doBlending = true;
-				doTexture = true;
+			switch(getType()){
+				case BOX2D:
+					doSmoothShade = true;
+					doBlending = true;
+					doAlpha = true;
+					//doTexture = false;
+					break;
+
+				case TEXT2D:
+				case TEXT3D:
+					doTexture = true;
+					doBlending = true;
+					doAlpha = true;
+					break;
+
+				case ITEM2D:
+				case ITEM3D:
+					doAlpha = true;
+					doBlending = true;
+					doTexture = true;
+					break;
 			}
 
 			if(doTexture)
-				GL11.glEnable(GL11.GL_TEXTURE_2D);
+				GlStateManager.enableTexture2D();
 			else
-				GL11.glDisable(GL11.GL_TEXTURE_2D);
+				GlStateManager.disableTexture2D();
 
 			if(doBlending){
-				GL11.glEnable(GL11.GL_BLEND);		//vertex based alpha
-				GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+				GlStateManager.enableBlend();
+				GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			}
 			else {
-				GL11.glDisable(GL11.GL_BLEND);
+				GlStateManager.disableBlend();
 			}
 			if(doSmoothShade)
-				GL11.glShadeModel(GL11.GL_SMOOTH);
+				GlStateManager.shadeModel(GL11.GL_SMOOTH);
 			else
-				GL11.glShadeModel(GL11.GL_FLAT);
+				GlStateManager.shadeModel(GL11.GL_FLAT);
+
+			if(doAlpha)
+				GlStateManager.enableAlpha();
+			else
+				GlStateManager.disableAlpha();
 		}
 
 
@@ -289,35 +297,11 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 			return WidgetModifierList.getCurrentColorFloat(conditionStates, index);
 		}
 
-		public void postRender(){
-			revokeModifiers();
-			revokeRenderFlags();
-		}
+		public void postRender(){}
 
-		public void revokeRenderFlags(){
-			if(depthtest) 
-				GL11.glEnable(GL11.GL_DEPTH_TEST);
-			else
-				GL11.glDisable(GL11.GL_DEPTH_TEST);
-			if(blending) 
-				GL11.glEnable(GL11.GL_BLEND);
-			else
-				GL11.glDisable(GL11.GL_BLEND);
-				
-			if(texture2d) 
-				GL11.glEnable(GL11.GL_TEXTURE_2D);
-			else
-				GL11.glDisable(GL11.GL_TEXTURE_2D);
-				
-			if(smoothshading)
-				GL11.glShadeModel(GL11.GL_SMOOTH);
-			else 
-				GL11.glShadeModel(GL11.GL_FLAT);
-		}
-				
 		@Override
 		public boolean shouldWidgetBeRendered(EntityPlayer player) {
-			if(getRenderType() == RenderType.WorldLocated) {
+			if(getRenderType().equals(RenderType.WorldLocated)) {
 				if (x != 0 && y != 0 && z != 0 && !utilsCommon.inRange(player, x, y, z, viewDistance)) return false;
 			}
 

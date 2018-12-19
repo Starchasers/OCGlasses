@@ -4,6 +4,7 @@ import com.bymarcin.openglasses.surface.WidgetGLWorld;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.ICustomShape;
 import io.netty.buffer.ByteBuf;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -94,27 +95,25 @@ public abstract class CustomShape extends WidgetGLWorld implements ICustomShape 
             this.preRender(conditionStates);
             this.applyModifiers(conditionStates);
             if(smooth_shading)
-                GL11.glShadeModel(GL11.GL_SMOOTH);
+                GlStateManager.shadeModel(GL11.GL_SMOOTH);
             else
-                GL11.glShadeModel(GL11.GL_FLAT);
-
+                GlStateManager.shadeModel(GL11.GL_FLAT);
 
             if(gl_strips) {
-                GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+                GlStateManager.glBegin(GL11.GL_TRIANGLE_STRIP);
                 for(int i=0; i < vectors.size(); i++)
-                    GL11.glVertex3f((float) vectors.get(i).get(0), (float) vectors.get(i).get(1), (float) vectors.get(i).get(2));
+                    GlStateManager.glVertex3f((float) vectors.get(i).get(0), (float) vectors.get(i).get(1), (float) vectors.get(i).get(2));
             }
             else{
                 GL11.glBegin(GL11.GL_TRIANGLES);
                 for(int i=3; i <= vectors.size(); i+=3) {
-                    GL11.glVertex3f((float) vectors.get(i-3).get(0), (float) vectors.get(i-3).get(1), (float) vectors.get(i-3).get(2));
-                    GL11.glVertex3f((float) vectors.get(i-2).get(0), (float) vectors.get(i-2).get(1), (float) vectors.get(i-2).get(2));
-                    GL11.glVertex3f((float) vectors.get(i-1).get(0), (float) vectors.get(i-1).get(1), (float) vectors.get(i-1).get(2));
+                    GlStateManager.glVertex3f((float) vectors.get(i-3).get(0), (float) vectors.get(i-3).get(1), (float) vectors.get(i-3).get(2));
+                    GlStateManager.glVertex3f((float) vectors.get(i-2).get(0), (float) vectors.get(i-2).get(1), (float) vectors.get(i-2).get(2));
+                    GlStateManager.glVertex3f((float) vectors.get(i-1).get(0), (float) vectors.get(i-1).get(1), (float) vectors.get(i-1).get(2));
                 }
             }
 
-            GL11.glEnd();
-
+            GlStateManager.glEnd();
 
             this.postRender();
         }
