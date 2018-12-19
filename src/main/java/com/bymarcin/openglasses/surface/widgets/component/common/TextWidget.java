@@ -18,6 +18,7 @@ public abstract class TextWidget extends WidgetGLWorld implements ITextable, IAl
     String text, fontName;
     boolean antialias;
     float fontSize;
+    public float stringWidth, stringHeight;
     static ArrayList<TrueTypeFont> fontRenderer = new ArrayList<>();
 
     public TextWidget(){
@@ -25,6 +26,27 @@ public abstract class TextWidget extends WidgetGLWorld implements ITextable, IAl
         fontName = "";
         fontSize = 12;
         antialias = false;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void drawString(int currentColor){
+        if(getFontName().length() == 0)
+            utilsClient.fontRenderer().drawString(getText(), 0, 0, currentColor);
+        else
+            getFont(getFontName()).drawString(getText(), 0, 0, currentColor);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void updateStringDimensions(){
+        if(getFontName().length() == 0){
+            FontRenderer fontRender = utilsClient.fontRenderer();
+            stringWidth = fontRender.getStringWidth(this.getText());
+            stringHeight = fontRender.FONT_HEIGHT;
+        }
+        else {
+            stringWidth = getFont(getFontName()).getWidth(getText());
+            stringHeight = getFont(getFontName()).getHeight();
+        }
     }
 
     @Override
@@ -43,15 +65,6 @@ public abstract class TextWidget extends WidgetGLWorld implements ITextable, IAl
         setFont(ByteBufUtils.readUTF8String(buff));
         setFontSize(buff.readFloat());
         setAntialias(buff.readBoolean());
-
-        setSize(0D, 0D);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void setSize(double w, double h){
-        FontRenderer fontRender = utilsClient.fontRenderer();
-        super.setSize(fontRender.getStringWidth(this.getText()), fontRender.FONT_HEIGHT);
     }
 
     @Override

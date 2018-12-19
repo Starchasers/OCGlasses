@@ -1,8 +1,6 @@
 package com.bymarcin.openglasses.surface.widgets.component.world;
 
 import com.bymarcin.openglasses.surface.widgets.component.common.TextWidget;
-import com.bymarcin.openglasses.utils.utilsClient;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -42,14 +40,10 @@ public class Text3D extends TextWidget {
 		public void render(EntityPlayer player, Location glassesTerminalLocation, long conditionStates) {
 			if(getText().length() < 1) return;
 
-			if(getFontName().length() == 0) {
-				offsetY = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / 2D;
-				offsetX = Minecraft.getMinecraft().fontRenderer.getStringWidth(getText()) / 2D;
-			}
-			else {
-				offsetY = getFont(getFontName()).getHeight() / 2D;
-				offsetX = getFont(getFontName()).getWidth(getText()) / 2D;
-			}
+			updateStringDimensions();
+
+			offsetY = stringHeight / 2D;
+			offsetX = stringWidth / 2D;
 
 			int currentColor = this.preRender(conditionStates);
 			this.applyModifiers(conditionStates);
@@ -68,10 +62,7 @@ public class Text3D extends TextWidget {
 
 			GL11.glTranslated(-offsetX, -offsetY, 0.0D);
 
-			if(getFontName().equals(""))
-				utilsClient.fontRenderer().drawString(getText(), 0, 0, currentColor);
-			else
-				getFont(getFontName()).drawString(getText(), 0, 0, currentColor);
+			drawString(currentColor);
 
 			GlStateManager.disableAlpha();
 			this.postRender();

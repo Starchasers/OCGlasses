@@ -34,14 +34,15 @@ public class Text2D extends TextWidget implements IAutoTranslateable {
 	class RenderText extends RenderableGLWidget{
 		@Override
 		public void render(EntityPlayer player, Location glassesTerminalLocation, long conditionStates) {
+			if(getText().length() < 1) return;
+
+			updateStringDimensions();
+
 			int currentColor = this.preRender(conditionStates);
 			this.applyModifiers(conditionStates);
 			this.applyAlignments();
 
-			if(getFontName().length() == 0)
-				utilsClient.fontRenderer().drawString(getText(), 0, 0, currentColor);
-			else
-				getFont(getFontName()).drawString(getText(), 0, 0, currentColor);
+			drawString(currentColor);
 
 			GlStateManager.disableAlpha();
 			this.postRender();
@@ -50,19 +51,19 @@ public class Text2D extends TextWidget implements IAutoTranslateable {
 		public void applyAlignments(){
 			switch(this.getHorizontalAlign()) {
 				case CENTER:
-					GL11.glTranslatef((-width/2F), 0F, 0F);
+					GL11.glTranslatef((-stringWidth/2F), 0F, 0F);
 					break;
 				case RIGHT:
-					GL11.glTranslatef(-width, 0F, 0F);
+					GL11.glTranslatef(-stringWidth, 0F, 0F);
 					break;
 			}
 
 			switch(this.getVerticalAlign()) {
 				case MIDDLE:
-					GL11.glTranslatef(0F, (-height/2F), 0F);
+					GL11.glTranslatef(0F, (-stringHeight/2F), 0F);
 					break;
 				case BOTTOM:
-					GL11.glTranslatef(0F, -height, 0F);
+					GL11.glTranslatef(0F, -stringHeight, 0F);
 					break;
 			}
 		}
