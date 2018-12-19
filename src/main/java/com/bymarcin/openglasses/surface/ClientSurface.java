@@ -135,6 +135,7 @@ public class ClientSurface {
 
 		GlStateManager.depthMask(false);
 
+		GlStateManager.pushMatrix();
 		if(renderResolution != null) {
 			GlStateManager.scale(ClientSurface.resolution.getScaledWidth() / renderResolution.get(0), ClientSurface.resolution.getScaledHeight() / renderResolution.get(1), 1);
 		}
@@ -142,6 +143,8 @@ public class ClientSurface {
 		for(IRenderableWidget renderable : renderables.values())
 			if(renderable.shouldWidgetBeRendered(Minecraft.getMinecraft().player) && renderable.isWidgetOwner(uuid))
 				renderWidget(renderable, conditionStates);
+
+		GlStateManager.popMatrix();
 	}
 
 	@SubscribeEvent
