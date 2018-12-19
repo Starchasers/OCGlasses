@@ -56,7 +56,7 @@ public class utilsCommon {
 		return new Location(new BlockPos(tag.getInteger("X"),tag.getInteger("Y"),tag.getInteger("Z")),tag.getInteger("DIM"), tag.getLong("uniqueKey"));
 	}
 
-	public static int getLightLevelPlayer(EntityPlayer e){		
+	public static int getLightLevelPlayer(EntityPlayer e){
 		return e.world.getLightFor(EnumSkyBlock.SKY, new BlockPos(e.posX, e.posY + 1, e.posZ));
     }
     

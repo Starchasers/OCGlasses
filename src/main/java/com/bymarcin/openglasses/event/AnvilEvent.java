@@ -2,6 +2,7 @@ package com.bymarcin.openglasses.event;
 
 import com.bymarcin.openglasses.OpenGlasses;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -35,6 +36,15 @@ public class AnvilEvent {
             if(!tag.getBoolean("daylightDetector"))
                 evt.setCost(20);
             tag.setBoolean("daylightDetector", true);
+            tag.setInteger("upkeepCost", tag.getInteger("upkeepCost")+1); //increase power usage by 1
+        }
+        else if(itm == Items.POTIONITEM
+                && (evt.getRight().getTagCompound().getString("Potion").equals("minecraft:night_vision")
+                    || evt.getRight().getTagCompound().getString("Potion").equals("minecraft:long_night_vision"))) {
+
+            if(!tag.getBoolean("nightvision"))
+                evt.setCost(20);
+            tag.setBoolean("nightvision", true);
             tag.setInteger("upkeepCost", tag.getInteger("upkeepCost")+1); //increase power usage by 1
         }
         else if(itm.getRegistryName().equals(new ResourceLocation("opencomputers", "upgrade"))

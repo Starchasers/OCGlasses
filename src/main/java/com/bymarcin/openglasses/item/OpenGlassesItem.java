@@ -5,6 +5,7 @@ import java.util.List;
 import com.bymarcin.openglasses.manual.IItemWithDocumentation;
 import com.bymarcin.openglasses.surface.ClientSurface;
 import com.bymarcin.openglasses.surface.WidgetModifierConditionType;
+import com.bymarcin.openglasses.utils.nightvision;
 import com.bymarcin.openglasses.utils.utilsCommon;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -34,6 +35,8 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 
 public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation {
+	final static int nightvisionCostFE = 5;
+
     public OpenGlassesItem() {
 		super(ArmorMaterial.IRON, 0, EntityEquipmentSlot.HEAD);
 		setMaxDamage(0);
@@ -72,6 +75,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		creativeTag.setBoolean("tankUpgrade", true);
 		creativeTag.setBoolean("motionsensor", true);
 		creativeTag.setBoolean("geolyzer", true);
+		creativeTag.setBoolean("nightvision", true);
 
 		subItems.add(OpenGlasses.glassesStack);
 		subItems.add(creativeGlasses);
@@ -133,10 +137,10 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		}
 
 		if(tag.getBoolean("nightvision"))
-			tooltip.add("nightvision: installed");
+			tooltip.add("nightvision: installed (mode: "+ nightvision.nightVisionModes.values()[tag.getInteger("nightvisionMode")].name()+")");
 		else {
-			//tooltip.add("nightvision not installed");
-			//tooltip.add("(install on anvil with ???)");
+			tooltip.add("nightvision not installed");
+			tooltip.add("(install on anvil with any potion of nightvision)");
 		}
 
 		if(tag.getBoolean("geolyzer")) {
@@ -152,9 +156,14 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		int widgetCount = ClientSurface.instances.getWidgetCount();
 		tooltip.add("using " + widgetCount + "/" + tag.getInteger("widgetLimit") + " widgets");
 
+
+		int energyUsage = tag.getInteger("upkeepCost");
+		if(tag.getBoolean("nightVisionActive"))
+			energyUsage+=nightvisionCostFE;
+
 		IEnergyStorage storage = stack.getCapability(CapabilityEnergy.ENERGY, null);
 		tooltip.add(String.format("%s/%s FE", storage.getEnergyStored(), storage.getMaxEnergyStored()));
-		tooltip.add("usage " + tag.getInteger("upkeepCost") + " FE/tick");
+		tooltip.add("usage " + energyUsage + " FE/tick");
 	}
 
 	public String getDocumentationName(ItemStack stack){
@@ -266,8 +275,13 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 	}
 
 	public int consumeEnergy(ItemStack glassesStack){
+		int consumed = 0;
 		IEnergyStorage storage = glassesStack.getCapability(CapabilityEnergy.ENERGY, null);
-		return storage.extractEnergy(glassesStack.getTagCompound().getInteger("upkeepCost"), false);
+		consumed+= storage.extractEnergy(glassesStack.getTagCompound().getInteger("upkeepCost"), false);
+		if(glassesStack.getTagCompound().getBoolean("nightVisionActive")){
+			consumed+=storage.extractEnergy(nightvisionCostFE, false); //consume 5FE/tick for active nightvision
+		}
+		return consumed;
 	}
 
 	public double getEnergyStored(ItemStack glassesStack){

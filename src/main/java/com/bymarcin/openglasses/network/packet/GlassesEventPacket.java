@@ -21,6 +21,7 @@ import com.bymarcin.openglasses.utils.Location;
 public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	public enum EventType{
 		EQUIPED_GLASSES, UNEQUIPED_GLASSES,
+		TOGGLE_NIGHTVISION,
 		INTERACT_WORLD_RIGHT, INTERACT_WORLD_LEFT, INTERACT_WORLD_BLOCK_RIGHT, INTERACT_WORLD_BLOCK_LEFT,
 		INTERACT_OVERLAY,
 		GLASSES_SCREEN_SIZE
@@ -168,6 +169,15 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 						stats.setScreen(x, y, mb);
 					if(terminal != null)
 						terminal.sendChangeSizeEvent(eventType.name(), playerMP.getName(), x, y, mb);
+				}
+				break;
+			case TOGGLE_NIGHTVISION:
+				playerMP = ServerSurface.instance.checkUUID(player);
+				if(playerMP != null) {
+					PlayerStats stats = ServerSurface.instance.playerStats.get(playerMP.getUniqueID());
+					terminal = UUID.getTerminal();
+					if(stats != null)
+						stats.toggleNightvisionMode(playerMP);
 				}
 				break;
 			default:

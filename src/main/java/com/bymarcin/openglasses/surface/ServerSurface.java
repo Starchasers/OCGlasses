@@ -15,15 +15,52 @@ import com.bymarcin.openglasses.utils.PlayerStats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+
+import static com.bymarcin.openglasses.utils.nightvision.potionNightvision;
 
 public class ServerSurface {
-	public static ServerSurface instance  = new ServerSurface();
-	
-	public HashMap<EntityPlayer,Location> players = new HashMap<>();
+	public static ServerSurface instance = new ServerSurface();
+
+	public HashMap<EntityPlayer, Location> players = new HashMap<>();
 	public HashMap<UUID, PlayerStats> playerStats = new HashMap<>();
 
+	static EventHandler eventHandler;
 
+	int playerIndex = 0;
+
+	public ServerSurface(){
+		eventHandler = new EventHandler();
+		MinecraftForge.EVENT_BUS.register(eventHandler);
+	}
+
+	public class EventHandler {
+		@SubscribeEvent
+		public void tickStart(TickEvent.WorldTickEvent event) {
+			int i=0;
+			for (EntityPlayer player : players.keySet()) {
+				if(i == playerIndex) {
+					updatePlayer(player);
+					break;
+				}
+				i++;
+			}
+
+			playerIndex++;
+
+			if (playerIndex >= players.size()) playerIndex = 0;
+		}
+
+		public void updatePlayer(EntityPlayer player){
+			playerStats.get(player.getUniqueID()).updateNightvision(player);
+		}
+	}
+
+
+	//subscribePlayer to events when he puts glasses on
 	public void subscribePlayer(String playerUUID, Location UUID){
 		EntityPlayerMP player = checkUUID(playerUUID);
 		if(player == null) return;
@@ -39,9 +76,14 @@ public class ServerSurface {
 		terminal.onGlassesPutOn(player.getDisplayNameString());
 		requestResolutionEvent(player);
 	}
-	
+
+	//unsubscribePlayer from events when he puts glasses off
 	public void unsubscribePlayer(String playerUUID){
 		EntityPlayerMP p = checkUUID(playerUUID);
+
+		if (playerStats.get(p.getUniqueID()).nightVisionActive) {
+			p.removePotionEffect(potionNightvision);
+		}
 
 		Location l = players.remove(p);
 		playerStats.remove(p.getUniqueID());

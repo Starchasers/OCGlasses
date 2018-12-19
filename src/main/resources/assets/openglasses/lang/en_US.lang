@@ -1,7 +1,8 @@
 tile.openglassesterminal.name=Glasses Terminal
 item.openglasses.name=AR Glasses
 key.categories.openglasses=OpenGlasses
-key.interact=Enable OG Pointer
+key.interact=Overlay Cursor
+key.nightvision=Nightvision (Mode)
 itemGroup.openglasses=OpenGlasses
 
 

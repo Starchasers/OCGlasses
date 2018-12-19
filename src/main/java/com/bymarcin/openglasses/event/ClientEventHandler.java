@@ -11,8 +11,10 @@ import com.bymarcin.openglasses.surface.ClientSurface;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -26,6 +28,7 @@ import org.lwjgl.input.Keyboard;
 @SideOnly(Side.CLIENT)
 public class ClientEventHandler {
     public static KeyBinding interactGUIKey = new KeyBinding("key.interact", Keyboard.KEY_C, "key.categories." + OpenGlasses.MODID.toLowerCase());
+    public static KeyBinding nightvisionModeKey = new KeyBinding("key.nightvision", Keyboard.KEY_N, "key.categories." + OpenGlasses.MODID.toLowerCase());
     int tick = 0;
 
     public ClientEventHandler() {
@@ -39,27 +42,32 @@ public class ClientEventHandler {
 
         if(tick%20 != 0) return;
 
-        tick = 0;
-        checkGlasses(e);
+
+        checkGlasses(e.player);
+
+        if(tick > 200) tick = 0;
     }
 
+
+
     @SideOnly(Side.CLIENT)
-    public boolean checkGlasses(PlayerTickEvent e) {
-        ItemStack glassesStack = OpenGlasses.getGlassesStack(e.player);
+    public boolean checkGlasses(EntityPlayer player) {
+        ItemStack glassesStack = OpenGlasses.getGlassesStack(player);
 
         if(glassesStack != null){
             if (ClientSurface.instances.glassesStack == null) {
-                equiped(e, glassesStack);
+                equiped(player, glassesStack);
                 return true;
             }
             else if(glassesStack.equals(ClientSurface.instances.glassesStack))
                 return true;
             else if(glassesStack.getItem() instanceof OpenGlassesItem) {
                 ClientSurface.instances.initLocalGlasses(glassesStack);
+                return true;
             }
         }
         else if(ClientSurface.instances.glassesStack != null) {
-            unEquiped(e);
+            unEquiped(player);
         }
 
         return false;
@@ -117,20 +125,23 @@ public class ClientEventHandler {
     @SubscribeEvent
     public void onKeyInput(InputEvent.KeyInputEvent event) {
         if(ClientSurface.instances.glassesStack == null) return;
-        if(!interactGUIKey.isPressed()) return;
-
-        ClientSurface.instances.overlayActive = true;
-        Minecraft.getMinecraft().displayGuiScreen(new InteractGui());
+        if(interactGUIKey.isPressed()) {
+            ClientSurface.instances.overlayActive = true;
+            Minecraft.getMinecraft().displayGuiScreen(new InteractGui());
+        }
+        if(nightvisionModeKey.isPressed() && ClientSurface.instances.glassesStack.getTagCompound().getBoolean("nightvision")) {
+            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.TOGGLE_NIGHTVISION, ClientSurface.instances.lastBind, Minecraft.getMinecraft().player));
+        }
     }
 
-    private void unEquiped(PlayerTickEvent e){
-        NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.UNEQUIPED_GLASSES, ClientSurface.instances.lastBind, e.player));
+    private void unEquiped(EntityPlayer player){
+        NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.UNEQUIPED_GLASSES, ClientSurface.instances.lastBind, player));
         ClientSurface.instances.resetLocalGlasses();
     }
 
-    private void equiped(PlayerTickEvent e, ItemStack glassesStack){
+    private void equiped(EntityPlayer player, ItemStack glassesStack){
         ClientSurface.instances.initLocalGlasses(glassesStack);
         if(ClientSurface.instances.lastBind == null) return;
-        NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.EQUIPED_GLASSES, ClientSurface.instances.lastBind, e.player));
+        NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.EQUIPED_GLASSES, ClientSurface.instances.lastBind, player));
     }
 }
