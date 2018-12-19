@@ -25,7 +25,7 @@ targetCompatibility = "1.8"
 
 def simpleVersion = "2.0." + System.getenv("BUILD_NUMBER")
 
-def openComputersVersion = "MC1.12.1-1.7.1.54"
+def openComputersVersion = "MC1.12.2-1.7.3.146"
 def baublesVersion = "1.12-1.5.2"
 
 group= "com.bymarcin.openglasses" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
