@@ -80,9 +80,9 @@ public class Box2D extends WidgetGLOverlay implements IAutoTranslateable {
 		public void applyAlignments() {
 			switch (this.getHorizontalAlign()) {
 				case CENTER:
-					GL11.glTranslatef((-width / 2F), 0F, 0F);
+					GL11.glTranslatef((width / 2F), 0F, 0F);
 					break;
-				case RIGHT:
+				case LEFT:
 					GL11.glTranslatef(-width, 0F, 0F);
 					break;
 			}
@@ -91,7 +91,7 @@ public class Box2D extends WidgetGLOverlay implements IAutoTranslateable {
 				case MIDDLE:
 					GL11.glTranslatef(0F, (-height / 2F), 0F);
 					break;
-				case BOTTOM:
+				case TOP:
 					GL11.glTranslatef(0F, -height, 0F);
 					break;
 			}

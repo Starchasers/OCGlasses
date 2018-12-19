@@ -125,7 +125,7 @@ public abstract class ItemIcon extends WidgetGLWorld implements IItem {
                 case CENTER:
                     GL11.glTranslatef(-0.5F, 0F, 0F);
                     break;
-                case RIGHT:
+                case LEFT:
                     GL11.glTranslatef(-1F, 0F, 0F);
                     break;
             }
@@ -134,7 +134,7 @@ public abstract class ItemIcon extends WidgetGLWorld implements IItem {
                 case MIDDLE:
                     GL11.glTranslatef(0F, -0.5F, 0F);
                     break;
-                case BOTTOM:
+                case TOP:
                     GL11.glTranslatef(0F, -1F, 0F);
                     break;
             }

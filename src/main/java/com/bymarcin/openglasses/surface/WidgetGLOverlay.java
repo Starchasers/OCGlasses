@@ -22,7 +22,7 @@ import java.util.UUID;
 import org.lwjgl.opengl.GL11;
 
 public abstract class WidgetGLOverlay extends Widget implements IResizable, IPrivate {
-	public RenderType rendertype;
+	public RenderType rendertype = RenderType.GameOverlayLocated;
 
 	private float x = 0, y = 0, z = 0;
 	private Vec3d margin = new Vec3d(0, 0, 0);
@@ -32,8 +32,8 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 	public enum VAlignment{	TOP, MIDDLE, BOTTOM }
 	public enum HAlignment{	LEFT, CENTER, RIGHT }
 
-	public VAlignment valign;
-	public HAlignment halign;
+	public VAlignment valign = VAlignment.BOTTOM;
+	public HAlignment halign = HAlignment.RIGHT;
 
 	public boolean isThroughVisibility = false;
 	public boolean isLookingAtEnable = false;
@@ -45,11 +45,7 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 
 	public long age = 0;
 
-	public WidgetGLOverlay(){
-		this.valign = VAlignment.TOP;
-		this.halign = HAlignment.LEFT;
-		this.rendertype = RenderType.GameOverlayLocated;
-	}
+	public WidgetGLOverlay(){}
 	
 	public void writeData(ByteBuf buff) {
 		WidgetModifierList.writeData(buff);
