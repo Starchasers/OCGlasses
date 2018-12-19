@@ -33,6 +33,7 @@ public class ClientEventHandler {
 
     public ClientEventHandler() {
         ClientRegistry.registerKeyBinding(interactGUIKey);
+        ClientRegistry.registerKeyBinding(nightvisionModeKey);
     }
 
     @SubscribeEvent
