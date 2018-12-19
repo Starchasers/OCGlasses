@@ -182,7 +182,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		long checkConditions = ~0;
 		NBTTagCompound tag = glassesStack.getTagCompound();
 
-		if(tag.getBoolean("overlayActive"))
+		if(ClientSurface.instances.overlayActive)
 			curConditionStates |= ((long) 1 << WidgetModifierConditionType.OVERLAY_ACTIVE);
 		else
 			curConditionStates |= ((long) 1 << WidgetModifierConditionType.OVERLAY_INACTIVE);

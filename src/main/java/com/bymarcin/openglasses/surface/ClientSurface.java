@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.event.ClientEventHandler;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
@@ -42,6 +43,7 @@ public class ClientSurface {
 
 	public long conditionStates = 0L;
 	public long lastExtendedConditionCheck = 0;
+	public boolean overlayActive = false;
 
 	public OpenGlassesItem glasses;
 	public ItemStack glassesStack;

@@ -2,6 +2,7 @@ package com.bymarcin.openglasses.event;
 
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.gui.InteractGui;
+import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket.EventType;
@@ -18,8 +19,11 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
+@SideOnly(Side.CLIENT)
 public class ClientEventHandler {
     public static KeyBinding interactGUIKey = new KeyBinding("key.interact", Keyboard.KEY_C, "key.categories." + OpenGlasses.MODID.toLowerCase());
     int tick = 0;
@@ -39,6 +43,7 @@ public class ClientEventHandler {
         checkGlasses(e);
     }
 
+    @SideOnly(Side.CLIENT)
     public boolean checkGlasses(PlayerTickEvent e) {
         ItemStack glassesStack = OpenGlasses.getGlassesStack(e.player);
 
@@ -49,6 +54,9 @@ public class ClientEventHandler {
             }
             else if(glassesStack.equals(ClientSurface.instances.glassesStack))
                 return true;
+            else if(glassesStack.getItem() instanceof OpenGlassesItem) {
+                ClientSurface.instances.initLocalGlasses(glassesStack);
+            }
         }
         else if(ClientSurface.instances.glassesStack != null) {
             unEquiped(e);
@@ -111,7 +119,7 @@ public class ClientEventHandler {
         if(ClientSurface.instances.glassesStack == null) return;
         if(!interactGUIKey.isPressed()) return;
 
-        ClientSurface.instances.glassesStack.getTagCompound().setBoolean("overlayActive", true);
+        ClientSurface.instances.overlayActive = true;
         Minecraft.getMinecraft().displayGuiScreen(new InteractGui());
     }
 

@@ -33,7 +33,7 @@ public class InteractGui extends GuiScreen {
     public void updateScreen() {
         super.updateScreen();
         if(!Keyboard.isKeyDown(ClientEventHandler.interactGUIKey.getKeyCode())){
-			ClientSurface.instances.glassesStack.getTagCompound().setBoolean("overlayActive", false);
+			ClientSurface.instances.overlayActive = false;
             mc.displayGuiScreen(null);
         }
     }
