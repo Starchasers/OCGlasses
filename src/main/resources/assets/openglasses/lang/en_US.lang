@@ -3,3 +3,8 @@ item.openglasses.name=AR Glasses
 key.categories.openglasses=OpenGlasses
 key.interact=Enable OG Pointer
 itemGroup.openglasses=OpenGlasses
+
+
+openglasses.infotext.nolink=NOT LINKED TO TERMINAL
+openglasses.infotext.noenergy=NO POWER
+openglasses.infotext.widgetlimitexhausted=WIDGET LIMIT REACHED, remove widgets to get rid of this message

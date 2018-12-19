@@ -41,7 +41,7 @@ public class Text2D extends TextWidget implements IAutoTranslateable {
 			if(getFontName().length() == 0)
 				utilsClient.fontRenderer().drawString(getText(), 0, 0, currentColor);
 			else
-				getFont(getFontName()).drawString(0, 0, getText(), 1, 1, currentColor);
+				getFont(getFontName()).drawString(getText(), 0, 0, currentColor);
 
 			GlStateManager.disableAlpha();
 			this.postRender();

@@ -17,6 +17,7 @@ import com.bymarcin.openglasses.utils.Location;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.text.TextComponentTranslation;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -38,6 +39,10 @@ public class ClientSurface {
 	public static ClientEventHandler eventHandler;
 	public Map<Integer, IRenderableWidget> renderables = new ConcurrentHashMap<Integer, IRenderableWidget>();
 	public Map<Integer, IRenderableWidget> renderablesWorld = new ConcurrentHashMap<Integer, IRenderableWidget>();
+
+	public long conditionStates = 0L;
+	public long lastExtendedConditionCheck = 0;
+
 	public OpenGlassesItem glasses;
 	public ItemStack glassesStack;
 	public Location lastBind;
@@ -128,7 +133,7 @@ public class ClientSurface {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 
 		NBTTagCompound tag = glassesStack.getTagCompound();
-		tag.setLong("conditionStates", glasses.getConditionStates(glassesStack, player));
+		conditionStates = glasses.getConditionStates(glassesStack, player);
 
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glPushMatrix();
@@ -141,7 +146,7 @@ public class ClientSurface {
 			if(renderable.shouldWidgetBeRendered(player)
 					&& renderable.isWidgetOwner(glassesStack.getTagCompound().getString("userUUID"))){
 				GL11.glPushMatrix();
-				renderable.render(player, lastBind, tag.getLong("conditionStates"));
+				renderable.render(player, lastBind, conditionStates);
 				GL11.glPopMatrix();
 			}
 		}
@@ -209,7 +214,7 @@ public class ClientSurface {
 		double[] playerLocation = getEntityPlayerLocation(player, event.getPartialTicks());
 
 		NBTTagCompound tag = glassesStack.getTagCompound();
-		tag.setLong("conditionStates", glasses.getConditionStates(glassesStack, player));
+		conditionStates = glasses.getConditionStates(glassesStack, player);
 
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glPushMatrix();
@@ -223,7 +228,7 @@ public class ClientSurface {
 			if(renderable.shouldWidgetBeRendered(player)
 					&& renderable.isWidgetOwner(glassesStack.getTagCompound().getString("userUUID"))){
 				GL11.glPushMatrix();
-				renderable.render(player, lastBind, tag.getLong("conditionStates"));
+				renderable.render(player, lastBind, conditionStates);
 				GL11.glPopMatrix();
 		} }
 		//Stop Drawing In World
@@ -241,21 +246,21 @@ public class ClientSurface {
 
 	private IRenderableWidget getNoPowerRender(){
 		Text2D t = new Text2D();
-		t.setText("NO POWER");
+		t.setText(new TextComponentTranslation("openglasses.infotext.noenergy").getUnformattedText());
 		t.WidgetModifierList.addColor(1F, 0F, 0F, 0.5F);
 		return t.getRenderable();
 	}
 
 	private IRenderableWidget getNoLinkRender(){
 		Text2D t = new Text2D();
-		t.setText("NOT LINKED");
+		t.setText(new TextComponentTranslation("openglasses.infotext.nolink").getUnformattedText());
 		t.WidgetModifierList.addColor(1F, 1F, 1F, 0.7F);
 		return t.getRenderable();
 	}
 
 	private IRenderableWidget getWidgetLimitRender(){
 		Text2D t = new Text2D();
-		t.setText("WIDGET LIMIT REACHED, please remove widgets to get rid of this message xD");
+		t.setText(new TextComponentTranslation("openglasses.infotext.widgetlimitexhausted").getUnformattedText());
 		t.WidgetModifierList.addColor(1F, 1F, 1F, 0.7F);
 		return t.getRenderable();
 	}

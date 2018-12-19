@@ -71,7 +71,7 @@ public class Text3D extends TextWidget {
 			if(getFontName().equals(""))
 				utilsClient.fontRenderer().drawString(getText(), 0, 0, currentColor);
 			else
-				getFont(getFontName()).drawString(0, 0, getText(), 1, 1, currentColor);
+				getFont(getFontName()).drawString(getText(), 0, 0, currentColor);
 
 			GlStateManager.disableAlpha();
 			this.postRender();

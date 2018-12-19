@@ -176,7 +176,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		tag.setString("user", player.getGameProfile().getName());
 	}
 
-
+	@SideOnly(Side.CLIENT)
 	public long getConditionStates(ItemStack glassesStack, EntityPlayer player){
 		long curConditionStates = 0;
 		long checkConditions = ~0;
@@ -195,8 +195,8 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		}
 
 		//bs
-		if((player.world.getWorldTime() - tag.getLong("lastExtendedConditionCheck")) < 20){
-			long States = tag.getLong("conditionStates");
+		if(player.world.getWorldTime() - ClientSurface.instances.lastExtendedConditionCheck < 20){
+			long States = ClientSurface.instances.conditionStates;
 			States &= ~((long) 1 << WidgetModifierConditionType.OVERLAY_ACTIVE);
 			States &= ~((long) 1 << WidgetModifierConditionType.OVERLAY_INACTIVE);
 			States &= ~((long) 1 << WidgetModifierConditionType.IS_SNEAKING);
@@ -204,7 +204,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 			return (curConditionStates | States );
 		}
 
-		tag.setLong("lastExtendedConditionCheck", player.world.getWorldTime());
+		ClientSurface.instances.lastExtendedConditionCheck = player.world.getWorldTime();
 
 		if(tag.getBoolean("tankUpgrade") && (((checkConditions >>> WidgetModifierConditionType.IS_WEATHER_RAIN) & 1) != 0 || ((checkConditions >>> WidgetModifierConditionType.IS_WEATHER_CLEAR) & 1) != 0)){
 			if(player.world.isRaining())
