@@ -207,7 +207,6 @@ function addWidgetOverlay(i)
 	if openglasses.OVERLAY_WIDGETS[i].name == "Item2D" then
 		w.addTranslation(50, 50, 0)
 		w.addScale(32, 32, 32)
-		w.addRotation(180, 0, 0, 1)
 	end
 	addButton(0, 22 + getWidgetCount() * 12, 70, 10, openglasses.OVERLAY_WIDGETS[i].name, function(foo) selectWidget(foo) end, w, 0, 0, 1, "widgets")
 end
