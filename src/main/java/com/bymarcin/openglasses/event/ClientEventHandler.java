@@ -8,6 +8,7 @@ import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket.EventType;
 import com.bymarcin.openglasses.surface.ClientSurface;
 
+import com.bymarcin.openglasses.utils.Conditions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 
@@ -40,6 +41,9 @@ public class ClientEventHandler {
     public void onPlayerTick(PlayerTickEvent e){
         if(e.player != Minecraft.getMinecraft().player) return;
         tick++;
+
+
+        ClientSurface.instances.refreshConditions();
 
         if(tick%20 != 0) return;
 
@@ -127,8 +131,9 @@ public class ClientEventHandler {
     public void onKeyInput(InputEvent.KeyInputEvent event) {
         if(ClientSurface.instances.glassesStack == null) return;
         if(interactGUIKey.isPressed()) {
-            ClientSurface.instances.overlayActive = true;
+            ClientSurface.instances.conditions.setOverlay(true);
             Minecraft.getMinecraft().displayGuiScreen(new InteractGui());
+            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.ACTIVATE_OVERLAY, ClientSurface.instances.lastBind, Minecraft.getMinecraft().player));
         }
         if(nightvisionModeKey.isPressed() && ClientSurface.instances.glassesStack.getTagCompound().getBoolean("nightvision")) {
             NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.TOGGLE_NIGHTVISION, ClientSurface.instances.lastBind, Minecraft.getMinecraft().player));

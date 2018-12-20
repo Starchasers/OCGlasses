@@ -4,6 +4,7 @@ import com.bymarcin.openglasses.event.ClientEventHandler;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.surface.ClientSurface;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
 
@@ -31,9 +32,9 @@ public class InteractGui extends GuiScreen {
 
     @Override
     public void updateScreen() {
-        super.updateScreen();
         if(!Keyboard.isKeyDown(ClientEventHandler.interactGUIKey.getKeyCode())){
-			ClientSurface.instances.overlayActive = false;
+			ClientSurface.instances.conditions.setOverlay(false);
+            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.DEACTIVATE_OVERLAY, ClientSurface.instances.lastBind, Minecraft.getMinecraft().player));
             mc.displayGuiScreen(null);
         }
     }

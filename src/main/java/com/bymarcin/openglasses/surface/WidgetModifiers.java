@@ -1,7 +1,6 @@
 package com.bymarcin.openglasses.surface;
 
 import com.bymarcin.openglasses.OpenGlasses;
-import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.surface.widgets.core.attribute.IEasing;
 import com.bymarcin.openglasses.surface.widgets.core.modifiers.*;
 import com.bymarcin.openglasses.utils.PlayerStats;
@@ -153,9 +152,12 @@ public class WidgetModifiers {
 	}
 
 	public Vec3d getRenderPosition(EntityPlayer player){
-		long conditions = ((OpenGlassesItem) OpenGlasses.getGlasses(player)).getConditionStates(OpenGlasses.getGlassesStack(player), player);
-		PlayerStats s = OpenGlasses.proxy.getPlayerStats(player.getUniqueID());
-		return this.getRenderPosition(conditions, this.lastOffset, s.screenWidth, s.screenHeight, 0);
+		if(player.world.isRemote)
+			return new Vec3d(0, 0, 0);
+
+		PlayerStats stats = OpenGlasses.proxy.getPlayerStats(player.getUniqueID());
+		long conditions = stats.conditions.getConditionStates(OpenGlasses.getGlassesStack(player), player);
+		return this.getRenderPosition(conditions, this.lastOffset, stats.screenWidth, stats.screenHeight, 0);
 	}
 
 	public Vec3d generateGlMatrix(long conditionStates, float w, float h, float d){

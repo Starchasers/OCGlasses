@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
 import com.bymarcin.openglasses.network.packet.WidgetUpdatePacket;
@@ -70,7 +71,9 @@ public class ServerSurface {
 		if(!terminal.getTerminalUUID().equals(UUID)) return;
 
 		players.put(player, UUID);
-		playerStats.put(player.getUniqueID(), new PlayerStats(player));
+		PlayerStats stats = new PlayerStats(player);
+		stats.conditions.bufferSensors(OpenGlasses.getGlassesStack(player));
+		playerStats.put(player.getUniqueID(), stats);
 		sendSync(player, UUID, terminal);
 
 		terminal.onGlassesPutOn(player.getDisplayNameString());

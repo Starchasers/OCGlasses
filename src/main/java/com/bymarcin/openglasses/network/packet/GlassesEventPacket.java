@@ -22,6 +22,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	public enum EventType{
 		EQUIPED_GLASSES, UNEQUIPED_GLASSES,
 		TOGGLE_NIGHTVISION,
+		ACTIVATE_OVERLAY, DEACTIVATE_OVERLAY,
 		INTERACT_WORLD_RIGHT, INTERACT_WORLD_LEFT, INTERACT_WORLD_BLOCK_RIGHT, INTERACT_WORLD_BLOCK_LEFT,
 		INTERACT_OVERLAY,
 		GLASSES_SCREEN_SIZE
@@ -175,11 +176,25 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 				playerMP = ServerSurface.instance.checkUUID(player);
 				if(playerMP != null) {
 					PlayerStats stats = ServerSurface.instance.playerStats.get(playerMP.getUniqueID());
-					terminal = UUID.getTerminal();
 					if(stats != null)
 						stats.toggleNightvisionMode(playerMP);
 				}
 				break;
+
+			case ACTIVATE_OVERLAY:
+			case DEACTIVATE_OVERLAY:
+				playerMP = ServerSurface.instance.checkUUID(player);
+				if(playerMP != null) {
+					PlayerStats stats = ServerSurface.instance.playerStats.get(playerMP.getUniqueID());
+					if(stats != null) {
+						if(eventType.equals(EventType.ACTIVATE_OVERLAY))
+							stats.conditions.setOverlay(true);
+						if(eventType.equals(EventType.DEACTIVATE_OVERLAY))
+							stats.conditions.setOverlay(false);
+					}
+				}
+				break;
+
 			default:
 				break;
 		}

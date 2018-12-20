@@ -1,10 +1,7 @@
 package com.bymarcin.openglasses.surface;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.bymarcin.openglasses.event.ClientEventHandler;
@@ -12,6 +9,7 @@ import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.surface.widgets.component.face.Text2D;
+import com.bymarcin.openglasses.utils.Conditions;
 import com.bymarcin.openglasses.utils.Location;
 
 import net.minecraft.client.gui.ScaledResolution;
@@ -31,21 +29,22 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.bymarcin.openglasses.utils.utilsCommon;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GLSync;
 
 @SideOnly(Side.CLIENT)
 public class ClientSurface {
 	public static ClientSurface instances = new ClientSurface();
 	public static ClientEventHandler eventHandler;
-	public Map<Integer, IRenderableWidget> renderables = new ConcurrentHashMap<Integer, IRenderableWidget>();
-	public Map<Integer, IRenderableWidget> renderablesWorld = new ConcurrentHashMap<Integer, IRenderableWidget>();
+	public Map<Integer, IRenderableWidget> renderables = new ConcurrentHashMap<>();
+	public Map<Integer, IRenderableWidget> renderablesWorld = new ConcurrentHashMap<>();
 
-	public long conditionStates = 0L;
-	public long lastExtendedConditionCheck = 0;
-	public boolean overlayActive = false;
-
+	public Conditions conditions = new Conditions();
+	
 	public OpenGlassesItem glasses;
 	public ItemStack glassesStack;
 	public Location lastBind;
+
 	public static ScaledResolution resolution = new ScaledResolution(Minecraft.getMinecraft());
 	public static ArrayList<Float> renderResolution = null;
 
@@ -69,6 +68,14 @@ public class ClientSurface {
 		this.glassesStack = glassesStack;
 		this.glasses = (OpenGlassesItem) glassesStack.getItem();
 		this.lastBind = utilsCommon.getGlassesTerminalUUID(glassesStack);
+
+		conditions.bufferSensors(this.glassesStack);
+	}
+
+	public void refreshConditions(){
+		if(glassesStack == null) return;
+
+		conditions.getConditionStates(glassesStack, Minecraft.getMinecraft().player);
 	}
 
 	//gets the current widgets and puts them to the correct hashmap
@@ -130,21 +137,14 @@ public class ClientSurface {
 		if(!shouldRenderStart(RenderType.GameOverlayLocated)) return;
 		if(renderables.size() < 1) return;
 
-		String uuid = glassesStack.getTagCompound().getString("userUUID");
-		conditionStates = glasses.getConditionStates(glassesStack, Minecraft.getMinecraft().player);
+		preRender();
+
+		if(renderResolution != null)
+			GlStateManager.scale(ClientSurface.resolution.getScaledWidth() / renderResolution.get(0), ClientSurface.resolution.getScaledHeight() / renderResolution.get(1), 1);
 
 		GlStateManager.depthMask(false);
-
-		GlStateManager.pushMatrix();
-		if(renderResolution != null) {
-			GlStateManager.scale(ClientSurface.resolution.getScaledWidth() / renderResolution.get(0), ClientSurface.resolution.getScaledHeight() / renderResolution.get(1), 1);
-		}
-
-		for(IRenderableWidget renderable : renderables.values())
-			if(renderable.shouldWidgetBeRendered(Minecraft.getMinecraft().player) && renderable.isWidgetOwner(uuid))
-				renderWidget(renderable, conditionStates);
-
-		GlStateManager.popMatrix();
+		renderWidgets(renderables.values());
+		postRender();
 	}
 
 	@SubscribeEvent
@@ -152,25 +152,42 @@ public class ClientSurface {
 		if(renderablesWorld.size() < 1) return;
 		if(!shouldRenderStart(RenderType.WorldLocated)) return;
 
-
 		double[] playerLocation = getEntityPlayerLocation(Minecraft.getMinecraft().player, event.getPartialTicks());
 
-		String uuid = glassesStack.getTagCompound().getString("userUUID");
-		conditionStates = glasses.getConditionStates(glassesStack, Minecraft.getMinecraft().player);
-
-		GlStateManager.pushMatrix();
+		preRender();
 
 		GlStateManager.translate(-playerLocation[0], -playerLocation[1], -playerLocation[2]);
 		GlStateManager.translate(lastBind.x, lastBind.y, lastBind.z);
 
 		GlStateManager.depthMask(true);
-		//Start Drawing In World
-		for(IRenderableWidget renderable : renderablesWorld.values())
-			if(renderable.shouldWidgetBeRendered(Minecraft.getMinecraft().player) && renderable.isWidgetOwner(uuid))
-				renderWidget(renderable, conditionStates);
+		renderWidgets(renderablesWorld.values());
+		postRender();
+	}
 
-		//Stop Drawing In World
+	void renderWidgets(Collection<IRenderableWidget> widgets){
+		String uuid = glassesStack.getTagCompound().getString("userUUID");
+
+		long renderConditions = conditions.get();
+
+		for(IRenderableWidget renderable : widgets) {
+			if(!renderable.shouldWidgetBeRendered(Minecraft.getMinecraft().player))
+				continue;
+			if(!renderable.isWidgetOwner(uuid))
+				continue;
+
+			renderWidget(renderable, renderConditions);
+		}
+	}
+
+	void preRender(){
+		GlStateManager.pushMatrix();
+	}
+
+	void postRender(){
 		GlStateManager.popMatrix();
+		GlStateManager.enableTexture2D();
+		GlStateManager.disableDepth();
+		GlStateManager.depthMask(true);
 	}
 
 	void renderWidget(IRenderableWidget widget, long conditionStates){
@@ -185,24 +202,30 @@ public class ClientSurface {
 
 		if(getWidgetCount() > glassesStack.getTagCompound().getInteger("widgetLimit")){
 			if(renderEvent.equals(RenderType.GameOverlayLocated) && widgetLimitRender != null) {
+				preRender();
 				GlStateManager.depthMask(false);
 				renderWidget(widgetLimitRender, ~0);
+				postRender();
 			}
 			return false;
 		}
 
 		if(glasses.getEnergyStored(glassesStack) == 0){
 			if(renderEvent.equals(RenderType.GameOverlayLocated) && noPowerRender != null) {
+				preRender();
 				GlStateManager.depthMask(false);
 				renderWidget(noPowerRender, ~0);
+				postRender();
 			}
 			return false;
 		}
 
 		if(lastBind == null) {
 			if(renderEvent.equals(RenderType.GameOverlayLocated) && noLinkRender != null) {
+				preRender();
 				GlStateManager.depthMask(false);
 				renderWidget(noLinkRender, ~0);
+				postRender();
 			}
 			return false;
 		}

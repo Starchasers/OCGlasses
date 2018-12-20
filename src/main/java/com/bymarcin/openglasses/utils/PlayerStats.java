@@ -19,11 +19,16 @@ public class PlayerStats {
 
     public boolean nightVisionActive = false; //this is used to keep track of nv state for the unsubscribe event where we cant edit the NBT of the glasses anymore
 
+    public Conditions conditions;
+
     public PlayerStats(EntityPlayer player){
         this.uuid = player.getUniqueID();
         this.name = player.getGameProfile().getName();
+        conditions = new Conditions();
         this.setScreen(0, 0, 0);
     }
+
+
 
     public void setScreen(int w, int h, double s){
         this.screenWidth = w;

@@ -159,8 +159,10 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 					case COLOR:
 						if((float) modifier.getValues()[3] == 1)
 							continue;
-						doBlending = true;
 						doAlpha = true;
+						doBlending = true;
+						GlStateManager.enableDepth();
+						GlStateManager.depthMask(true);
 						continue;
 					case TEXTURE:
 						doTexture = true;
@@ -170,20 +172,21 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 
 			switch(getType()){
 				case BOX2D:
-					doSmoothShade = true;
-					doBlending = true;
 					doAlpha = true;
+					doBlending = true;
+					doSmoothShade = true;
 					//doTexture = false;
 					break;
 
 				case TEXT2D:
 				case TEXT3D:
-					doTexture = true;
-					doBlending = true;
 					doAlpha = true;
+					doBlending = true;
+					doTexture = true;
 					break;
 
 				case ITEM2D:
+					GlStateManager.disableDepth();
 				case ITEM3D:
 					doAlpha = true;
 					doBlending = true;

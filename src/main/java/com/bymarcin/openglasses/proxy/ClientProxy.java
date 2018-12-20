@@ -17,11 +17,14 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Map;
 import java.util.UUID;
 
-public class ClientProxy extends CommonProxy {	
+@SideOnly(Side.CLIENT)
+public class ClientProxy extends CommonProxy {
 	@Override
 	public void registermodel(Item item, int meta){
 		ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(item.getRegistryName(), "inventory"));
@@ -65,6 +68,7 @@ public class ClientProxy extends CommonProxy {
 	public PlayerStats getPlayerStats(UUID uuid) {
 		PlayerStats s = new PlayerStats(getPlayer(""));
 		s.setScreen(ClientSurface.resolution.getScaledWidth(), ClientSurface.resolution.getScaledHeight(), (double) ClientSurface.resolution.getScaleFactor());
+		s.conditions = ClientSurface.instances.conditions;
 		return s;
 	}
 

@@ -4,9 +4,7 @@ import java.util.List;
 
 import com.bymarcin.openglasses.manual.IItemWithDocumentation;
 import com.bymarcin.openglasses.surface.ClientSurface;
-import com.bymarcin.openglasses.surface.WidgetModifierConditionType;
 import com.bymarcin.openglasses.utils.nightvision;
-import com.bymarcin.openglasses.utils.utilsCommon;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -152,10 +150,8 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 			tooltip.add("(install on anvil with opencomputers geolyzer to enable swimming detection)");
 		}
 
-
 		int widgetCount = ClientSurface.instances.getWidgetCount();
 		tooltip.add("using " + widgetCount + "/" + tag.getInteger("widgetLimit") + " widgets");
-
 
 		int energyUsage = tag.getInteger("upkeepCost");
 		if(tag.getBoolean("nightVisionActive"))
@@ -185,68 +181,8 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		tag.setString("user", player.getGameProfile().getName());
 	}
 
-	@SideOnly(Side.CLIENT)
-	public long getConditionStates(ItemStack glassesStack, EntityPlayer player){
-		long curConditionStates = 0;
-		long checkConditions = ~0;
-		NBTTagCompound tag = glassesStack.getTagCompound();
-
-		if(ClientSurface.instances.overlayActive)
-			curConditionStates |= ((long) 1 << WidgetModifierConditionType.OVERLAY_ACTIVE);
-		else
-			curConditionStates |= ((long) 1 << WidgetModifierConditionType.OVERLAY_INACTIVE);
-
-		if(tag.getBoolean("motionsensor") && (((checkConditions >>> WidgetModifierConditionType.IS_SNEAKING) & 1) != 0 || ((checkConditions >>> WidgetModifierConditionType.IS_NOT_SNEAKING) & 1) != 0)){
-			if(player.isSneaking())
-				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_SNEAKING);
-			else
-				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_NOT_SNEAKING);
-		}
-
-		//bs
-		if(player.world.getWorldTime() - ClientSurface.instances.lastExtendedConditionCheck < 20){
-			long States = ClientSurface.instances.conditionStates;
-			States &= ~((long) 1 << WidgetModifierConditionType.OVERLAY_ACTIVE);
-			States &= ~((long) 1 << WidgetModifierConditionType.OVERLAY_INACTIVE);
-			States &= ~((long) 1 << WidgetModifierConditionType.IS_SNEAKING);
-			States &= ~((long) 1 << WidgetModifierConditionType.IS_NOT_SNEAKING);
-			return (curConditionStates | States );
-		}
-
-		ClientSurface.instances.lastExtendedConditionCheck = player.world.getWorldTime();
-
-		if(tag.getBoolean("tankUpgrade") && (((checkConditions >>> WidgetModifierConditionType.IS_WEATHER_RAIN) & 1) != 0 || ((checkConditions >>> WidgetModifierConditionType.IS_WEATHER_CLEAR) & 1) != 0)){
-			if(player.world.isRaining())
-				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_WEATHER_RAIN);
-			else
-				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_WEATHER_CLEAR);
-		}
-
-		if(tag.getBoolean("geolyzer") && (((checkConditions >>> WidgetModifierConditionType.IS_SWIMMING) & 1) != 0 || ((checkConditions >>> WidgetModifierConditionType.IS_NOT_SWIMMING) & 1) != 0)){
-			if(utilsCommon.isPlayerSwimming(player))
-				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_SWIMMING);
-			else
-				curConditionStates |= ((long) 1 << WidgetModifierConditionType.IS_NOT_SWIMMING);
-		}
-
-		if(tag.getBoolean("daylightDetector")) {
-			int lightLevel = utilsCommon.getLightLevelPlayer(player);
-
-			for (int i = WidgetModifierConditionType.IS_LIGHTLEVEL_MIN_0, l = 0; i < WidgetModifierConditionType.IS_LIGHTLEVEL_MIN_15; i++, l++)
-				if (((checkConditions >>> i) & 1) != 0 && lightLevel >= l)
-					curConditionStates |= ((long) 1 << i);
-
-			for (int i = WidgetModifierConditionType.IS_LIGHTLEVEL_MAX_0, l = 0; i < WidgetModifierConditionType.IS_LIGHTLEVEL_MAX_15; i++, l++)
-				if (((checkConditions >>> i) & 1) != 0 && lightLevel <= l)
-					curConditionStates |= ((long) 1 << i);
-		}
-
-
-		return curConditionStates;
-	}
 
 	// Forge Energy
-
 	@Override
 	public void onUpdate(ItemStack glassesStack, World world, Entity entity, int slot, boolean isCurrentItem) {
 		if(world.isRemote) return;
