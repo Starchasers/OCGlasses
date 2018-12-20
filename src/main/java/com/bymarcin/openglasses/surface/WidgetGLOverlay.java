@@ -157,13 +157,14 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 			for(WidgetModifier modifier : WidgetModifierList.modifiers){
 				switch(modifier.getType()){
 					case COLOR:
-						if((float) modifier.getValues()[3] < 1)
-							doBlending = true;
-						break;
+						if((float) modifier.getValues()[3] == 1)
+							continue;
+						doBlending = true;
+						doAlpha = true;
+						continue;
 					case TEXTURE:
 						doTexture = true;
-						break;
-					default: break;
+						continue;
 				}
 			}
 
