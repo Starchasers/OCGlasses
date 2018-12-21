@@ -144,7 +144,7 @@ public class ClientSurface {
 
 		GlStateManager.depthMask(false);
 		renderWidgets(renderables.values());
-		postRender();
+		postRender(RenderType.GameOverlayLocated);
 	}
 
 	@SubscribeEvent
@@ -161,7 +161,7 @@ public class ClientSurface {
 
 		GlStateManager.depthMask(true);
 		renderWidgets(renderablesWorld.values());
-		postRender();
+		postRender(RenderType.WorldLocated);
 	}
 
 	void renderWidgets(Collection<IRenderableWidget> widgets){
@@ -183,11 +183,15 @@ public class ClientSurface {
 		GlStateManager.pushMatrix();
 	}
 
-	void postRender(){
+	void postRender(RenderType renderType){
 		GlStateManager.popMatrix();
 		GlStateManager.enableTexture2D();
-		GlStateManager.disableDepth();
+		if(renderType.equals(RenderType.GameOverlayLocated))
+			GlStateManager.disableDepth();
+		else
+			GlStateManager.enableDepth();
 		GlStateManager.depthMask(true);
+
 	}
 
 	void renderWidget(IRenderableWidget widget, long conditionStates){
@@ -205,7 +209,7 @@ public class ClientSurface {
 				preRender();
 				GlStateManager.depthMask(false);
 				renderWidget(widgetLimitRender, ~0);
-				postRender();
+				postRender(RenderType.GameOverlayLocated);
 			}
 			return false;
 		}
@@ -215,7 +219,7 @@ public class ClientSurface {
 				preRender();
 				GlStateManager.depthMask(false);
 				renderWidget(noPowerRender, ~0);
-				postRender();
+				postRender(RenderType.GameOverlayLocated);
 			}
 			return false;
 		}
@@ -225,7 +229,7 @@ public class ClientSurface {
 				preRender();
 				GlStateManager.depthMask(false);
 				renderWidget(noLinkRender, ~0);
-				postRender();
+				postRender(RenderType.GameOverlayLocated);
 			}
 			return false;
 		}

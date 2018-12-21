@@ -88,9 +88,9 @@ public abstract class OBJModelOC extends WidgetGLWorld implements IOBJModel {
             buffer = TESR.getBuffer();
 
             if(rendertype == RenderType.WorldLocated) {
-                GL11.glRotated(180.0D, 0.0D, 0.0D, 1.0D);
+                GlStateManager.rotate(180, 0, 0, 1);
                 this.addPlayerRotation(player);
-                GL11.glRotated(180.0D, 0.0D, 0.0D, 1.0D);
+                GlStateManager.rotate(180, 0, 0, 1);
             }
 
             if(objFile.facesTri.size() > 0) {
