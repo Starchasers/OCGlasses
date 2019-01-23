@@ -28,7 +28,7 @@ public abstract class WidgetGLOverlay extends Widget implements IResizable, IPri
 	private float x = 0, y = 0, z = 0;
 	private Vec3d margin = new Vec3d(0, 0, 0);
 
-	public float width = 0, height = 0;
+	public float width = 1, height = 1;
 
 	public enum VAlignment{	TOP, MIDDLE, BOTTOM }
 	public enum HAlignment{	LEFT, CENTER, RIGHT }

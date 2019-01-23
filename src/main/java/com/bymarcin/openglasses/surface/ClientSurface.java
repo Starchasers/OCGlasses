@@ -186,12 +186,8 @@ public class ClientSurface {
 	void postRender(RenderType renderType){
 		GlStateManager.popMatrix();
 		GlStateManager.enableTexture2D();
-		if(renderType.equals(RenderType.GameOverlayLocated))
-			GlStateManager.disableDepth();
-		else
-			GlStateManager.enableDepth();
 		GlStateManager.depthMask(true);
-
+		GlStateManager.enableDepth();
 	}
 
 	void renderWidget(IRenderableWidget widget, long conditionStates){
@@ -204,21 +200,21 @@ public class ClientSurface {
 		if(this.glassesStack == null || this.glasses == null)
 			return false;
 
-		if(getWidgetCount() > glassesStack.getTagCompound().getInteger("widgetLimit")){
-			if(renderEvent.equals(RenderType.GameOverlayLocated) && widgetLimitRender != null) {
-				preRender();
-				GlStateManager.depthMask(false);
-				renderWidget(widgetLimitRender, ~0);
-				postRender(RenderType.GameOverlayLocated);
-			}
-			return false;
-		}
-
 		if(glasses.getEnergyStored(glassesStack) == 0){
 			if(renderEvent.equals(RenderType.GameOverlayLocated) && noPowerRender != null) {
 				preRender();
 				GlStateManager.depthMask(false);
 				renderWidget(noPowerRender, ~0);
+				postRender(RenderType.GameOverlayLocated);
+			}
+			return false;
+		}
+
+		if(getWidgetCount() > glassesStack.getTagCompound().getInteger("widgetLimit")){
+			if(renderEvent.equals(RenderType.GameOverlayLocated) && widgetLimitRender != null) {
+				preRender();
+				GlStateManager.depthMask(false);
+				renderWidget(widgetLimitRender, ~0);
 				postRender(RenderType.GameOverlayLocated);
 			}
 			return false;

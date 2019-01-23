@@ -56,7 +56,8 @@ public class ServerSurface {
 		}
 
 		public void updatePlayer(EntityPlayer player){
-			playerStats.get(player.getUniqueID()).updateNightvision(player);
+			PlayerStats stats = playerStats.get(player.getUniqueID());
+			if(stats != null) stats.updateNightvision(player);
 		}
 	}
 
