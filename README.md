@@ -8,6 +8,6 @@ https://github.com/StarChasers/OCGlasses/wiki
 
 ### build informations
 
-[commons0815](https://github.com/ben-mkiv/commons0815)
+[commons0815 (includes renderToolkit)](https://github.com/ben-mkiv/commons0815)
 
 lib has to be placed in libs/commons0815 path to get shaded into the mod file
