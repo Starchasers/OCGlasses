@@ -1,7 +1,6 @@
 package com.bymarcin.openglasses.lua;
 
-import com.bymarcin.openglasses.utils.Location;
-
+import com.bymarcin.openglasses.utils.TerminalLocation;
 import net.minecraft.nbt.NBTTagCompound;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Context;
@@ -12,7 +11,7 @@ public abstract class LuaFunction implements Value{
 
 	public LuaFunction() {}
 	
-	LuaFunction(int id, Location loc) {
+	LuaFunction(int id, TerminalLocation loc) {
 		ref = new LuaReference(id, loc);
 	}
 	

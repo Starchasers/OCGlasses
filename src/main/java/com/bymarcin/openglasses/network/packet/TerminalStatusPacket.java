@@ -5,7 +5,8 @@ import java.util.ArrayList;
 
 import com.bymarcin.openglasses.network.Packet;
 
-import com.bymarcin.openglasses.surface.ClientSurface;
+import com.bymarcin.openglasses.surface.OCClientSurface;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -36,12 +37,10 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 			this.y = readFloat();
 
 			if(this.x > 0 && this.y > 0) {
-				ClientSurface.instances.renderResolution = new ArrayList<Float>();
-				ClientSurface.instances.renderResolution.add(this.x);
-				ClientSurface.instances.renderResolution.add(this.y);
+				OCClientSurface.instances.renderResolution = new Vec3d(this.x, this.y, 0);
 			}
 			else
-				ClientSurface.instances.renderResolution = null;
+				OCClientSurface.instances.renderResolution = null;
 		}
 	}
 
@@ -59,7 +58,7 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 	protected IMessage executeOnClient() {
  		switch(this.terminalEvent){
 			case ASYNC_SCREEN_SIZES:
-				ClientSurface.instances.sendResolution();
+				((OCClientSurface) OCClientSurface.instances).sendResolution();
 				break;
 		}
 

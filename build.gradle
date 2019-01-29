@@ -28,6 +28,9 @@ def simpleVersion = "2.0.7" // + System.getenv("BUILD_NUMBER")
 def openComputersVersion = "MC1.12.2-1.7.3.146"
 def baublesVersion = "1.12-1.5.2"
 
+
+def commons_version = "MC1.12.2-1.0.0-dev"
+
 group= "com.bymarcin.openglasses" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "OpenGlasses-MC1.12.2"
 version = simpleVersion
@@ -56,6 +59,9 @@ repositories {
 dependencies {
     provided "li.cil.oc:OpenComputers:${openComputersVersion}"
     compileOnly "com.azanor:Baubles:${baublesVersion}"
+
+
+    shade files("libs/commons0815/Commons0815-${commons_version}.jar")
 }
 
 processResources

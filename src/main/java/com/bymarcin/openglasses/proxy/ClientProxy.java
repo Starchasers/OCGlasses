@@ -4,9 +4,9 @@ import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.event.ClientEventHandler;
 import com.bymarcin.openglasses.manual.ManualPathProvider;
 import com.bymarcin.openglasses.render.BaublesRenderLayer;
-import com.bymarcin.openglasses.surface.ClientSurface;
 
-import com.bymarcin.openglasses.utils.PlayerStats;
+import com.bymarcin.openglasses.surface.OCClientSurface;
+import com.bymarcin.openglasses.utils.PlayerStatsOC;
 import com.google.common.util.concurrent.ListenableFuture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,9 +32,9 @@ public class ClientProxy extends CommonProxy {
 	
 	@Override
 	public void init() {
-		ClientSurface.eventHandler = new ClientEventHandler();
-		MinecraftForge.EVENT_BUS.register(ClientSurface.eventHandler);
-		MinecraftForge.EVENT_BUS.register(ClientSurface.instances);  //register client events
+		OCClientSurface.eventHandler = new ClientEventHandler();
+		MinecraftForge.EVENT_BUS.register(OCClientSurface.eventHandler);
+		MinecraftForge.EVENT_BUS.register(OCClientSurface.instances);  //register client events
 	}
 	
 	@Override
@@ -65,10 +65,10 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public PlayerStats getPlayerStats(UUID uuid) {
-		PlayerStats s = new PlayerStats(getPlayer(""));
-		s.setScreen(ClientSurface.resolution.getScaledWidth(), ClientSurface.resolution.getScaledHeight(), (double) ClientSurface.resolution.getScaleFactor());
-		s.conditions = ClientSurface.instances.conditions;
+	public PlayerStatsOC getPlayerStats(UUID uuid) {
+		PlayerStatsOC s = new PlayerStatsOC(getPlayer(""));
+		s.setScreen(OCClientSurface.resolution.getScaledWidth(), OCClientSurface.resolution.getScaledHeight(), (double) OCClientSurface.resolution.getScaleFactor());
+		s.conditions = ((OCClientSurface) OCClientSurface.instances).conditions;
 		return s;
 	}
 

@@ -1,7 +1,7 @@
 package com.bymarcin.openglasses.proxy;
 
-import com.bymarcin.openglasses.surface.ServerSurface;
-import com.bymarcin.openglasses.utils.PlayerStats;
+import com.bymarcin.openglasses.surface.OCServerSurface;
+import com.bymarcin.openglasses.utils.PlayerStatsOC;
 import com.google.common.util.concurrent.ListenableFuture;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -28,8 +28,8 @@ public class CommonProxy implements IThreadListener {
 		return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(username);
 	}
 
-	public PlayerStats getPlayerStats(UUID uuid) {
-		return ServerSurface.instance.playerStats.get(uuid);
+	public PlayerStatsOC getPlayerStats(UUID uuid) {
+		return (PlayerStatsOC) OCServerSurface.instance.playerStats.get(uuid);
 	}
 
 	public int getCurrentClientDimension() {

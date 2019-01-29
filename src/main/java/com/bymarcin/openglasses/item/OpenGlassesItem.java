@@ -3,7 +3,8 @@ package com.bymarcin.openglasses.item;
 import java.util.List;
 
 import com.bymarcin.openglasses.manual.IItemWithDocumentation;
-import com.bymarcin.openglasses.surface.ClientSurface;
+import com.bymarcin.openglasses.surface.OCClientSurface;
+import com.bymarcin.openglasses.utils.TerminalLocation;
 import com.bymarcin.openglasses.utils.nightvision;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -20,7 +21,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.bymarcin.openglasses.OpenGlasses;
-import com.bymarcin.openglasses.utils.Location;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -104,9 +104,10 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 
 		NBTTagCompound tag = stack.getTagCompound();
 
-		if(tag.getLong("uniqueKey") != 0L){
-			tooltip.add("linked to: X: " + tag.getInteger("X") + ", Y: " + tag.getInteger("Y") + ", Z: " + tag.getInteger("Z") + " (DIM: " + tag.getInteger("DIM") +")");
-			tooltip.add("terminal: " + tag.getLong("uniqueKey"));
+		if(tag.hasKey("location")){
+			TerminalLocation location = (TerminalLocation) new TerminalLocation().readFromNBT(tag.getCompoundTag("location"));
+			tooltip.add("linked to: X: " + location.pos.getX() + ", Y: " + location.pos.getY() + ", Z: " + location.pos.getZ() + " (DIM: " + location.dimID +")");
+			tooltip.add("terminal: " + location.uniqueKey.toString());
 			tooltip.add("user: " + tag.getString("user"));
 		}
 		else
@@ -150,7 +151,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 			tooltip.add("(install on anvil with opencomputers geolyzer to enable swimming detection)");
 		}
 
-		int widgetCount = ClientSurface.instances.getWidgetCount();
+		int widgetCount = OCClientSurface.instances.getWidgetCount();
 		tooltip.add("using " + widgetCount + "/" + tag.getInteger("widgetLimit") + " widgets");
 
 		int energyUsage = tag.getInteger("upkeepCost");
@@ -166,16 +167,14 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		return "Glasses";
 	}
 
-	public void bindToTerminal(ItemStack glassesStack, Location uuid, EntityPlayer player) {
+	public void bindToTerminal(ItemStack glassesStack, TerminalLocation uuid, EntityPlayer player) {
 		if(player.world.isRemote)
 		    return;
 
 	    NBTTagCompound tag = glassesStack.getTagCompound();
-		tag.setInteger("X", uuid.x);
-		tag.setInteger("Y", uuid.y);
-		tag.setInteger("Z", uuid.z);
-		tag.setInteger("DIM", uuid.dimID);
-		tag.setLong("uniqueKey", uuid.uniqueKey);
+
+
+		tag.setTag("location", uuid.writeToNBT(new NBTTagCompound()));
 
 		tag.setString("userUUID", player.getGameProfile().getId().toString());
 		tag.setString("user", player.getGameProfile().getName());

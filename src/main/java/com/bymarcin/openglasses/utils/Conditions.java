@@ -1,6 +1,7 @@
 package com.bymarcin.openglasses.utils;
 
-import com.bymarcin.openglasses.surface.WidgetModifierConditionType;
+import ben_mkiv.commons0815.utils.utilsCommon;
+import ben_mkiv.rendertoolkit.common.widgets.WidgetModifierConditionType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

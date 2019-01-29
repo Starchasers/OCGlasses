@@ -6,20 +6,23 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import com.bymarcin.openglasses.lib.McJty.font.FontLoader;
+import ben_mkiv.commons0815.utils.Location;
+import ben_mkiv.commons0815.utils.PlayerStats;
+import ben_mkiv.rendertoolkit.common.widgets.Widget;
+import ben_mkiv.rendertoolkit.common.widgets.WidgetType;
+import ben_mkiv.rendertoolkit.common.widgets.component.world.*;
+import ben_mkiv.rendertoolkit.common.widgets.component.face.*;
+import ben_mkiv.rendertoolkit.common.widgets.core.attribute.IAttribute;
+import ben_mkiv.rendertoolkit.network.messages.WidgetUpdatePacket;
 import com.bymarcin.openglasses.lib.McJty.font.TrueTypeFont;
+import com.bymarcin.openglasses.lua.AttributeRegistry;
 import com.bymarcin.openglasses.lua.LuaReference;
 import com.bymarcin.openglasses.network.NetworkRegistry;
-import com.bymarcin.openglasses.network.packet.WidgetUpdatePacket;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
-import com.bymarcin.openglasses.surface.ServerSurface;
-import com.bymarcin.openglasses.surface.Widget;
-import com.bymarcin.openglasses.surface.WidgetType;
-import com.bymarcin.openglasses.surface.widgets.component.face.*;
-import com.bymarcin.openglasses.surface.widgets.component.world.*;
-import com.bymarcin.openglasses.utils.Location;
+import com.bymarcin.openglasses.surface.OCServerSurface;
 
-import com.bymarcin.openglasses.utils.PlayerStats;
+import com.bymarcin.openglasses.utils.PlayerStatsOC;
+import com.bymarcin.openglasses.utils.TerminalLocation;
 import li.cil.oc.api.API;
 import li.cil.oc.api.Network;
 import li.cil.oc.api.machine.Arguments;
@@ -39,9 +42,9 @@ import net.minecraftforge.fml.common.Optional;
 @Optional.Interface(iface = "li.cil.oc.api.network.SimpleComponent", modid = "opencomputers")
 public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment implements ITickable {
 	
-	public HashMap<Integer,Widget> widgetList = new HashMap<Integer,Widget>();
+	public HashMap<Integer, Widget> widgetList = new HashMap<Integer,Widget>();
 	int currID=0;
-	Location loc;
+	TerminalLocation loc;
 	boolean addedToNetwork;
 
 	public OpenGlassesTerminalTileEntity() {
@@ -73,9 +76,9 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 		return "glasses";
 	}
 
-	public Location getTerminalUUID(){
+	public TerminalLocation getTerminalUUID(){
 		if(this.loc == null)
-			this.loc = new Location(getPos(), world.provider.getDimension(), UUID.randomUUID().getMostSignificantBits());
+			this.loc = new TerminalLocation(getPos(), world.provider.getDimension(), UUID.randomUUID());
 
 		return this.loc;
 	}
@@ -93,10 +96,10 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 	@Callback(direct = true)
 	@Optional.Method(modid = "opencomputers")
 	public Object[] getConnectedPlayers(Context context, Arguments args) {
-		Object[] ret = new Object[ServerSurface.instance.playerStats.size()];
+		Object[] ret = new Object[OCServerSurface.instance.playerStats.size()];
 		int i = 0;
-		for(Entry<UUID, PlayerStats> e : ServerSurface.instance.playerStats.entrySet()){
-			PlayerStats s = e.getValue();
+		for(Entry<UUID, PlayerStats> e : OCServerSurface.instance.playerStats.entrySet()){
+			PlayerStatsOC s = (PlayerStatsOC) e.getValue();
 			ret[i] = new Object[]{ s.name, s.uuid, s.screenWidth, s.screenHeight, s.guiScale };
 			i++;
 		}
@@ -109,11 +112,11 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 	public Object[] requestResolutionEvents(Context context, Arguments args) {
 		String user = args.checkString(0).toLowerCase();
 		int i=0;
-		for(Entry<EntityPlayer, Location> e: ServerSurface.instance.players.entrySet()){
+		for(Entry<EntityPlayer, Location> e: OCServerSurface.instance.players.entrySet()){
 			if(user.length() == 0
 					|| user.equals(e.getKey().getDisplayNameString().toLowerCase()))
 				if(e.getValue().equals(getTerminalUUID())) {
-					ServerSurface.instance.requestResolutionEvent((EntityPlayerMP) e.getKey());
+					OCServerSurface.instance.requestResolutionEvent((EntityPlayerMP) e.getKey());
 					i++;
 
 			}
@@ -129,7 +132,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 		packet.x = (float) args.checkDouble(1);
 		packet.y = (float) args.checkDouble(2);
 		int i=0;
-		for(Entry<EntityPlayer, Location> e: ServerSurface.instance.players.entrySet()){
+		for(Entry<EntityPlayer, Location> e: OCServerSurface.instance.players.entrySet()){
 			if(user.length() == 0
 					|| user.equals(e.getKey().getDisplayNameString().toLowerCase()))
 				if(e.getValue().equals(getTerminalUUID())){
@@ -158,19 +161,19 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 	public Object[] removeAll(Context context, Arguments args){
 		currID = 0;
 		widgetList.clear();
-		ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(), getTerminalUUID());
+		OCServerSurface.instance.sendToUUID(new WidgetUpdatePacket(), getTerminalUUID());
 		return new Object[]{};
 	}
 	
 	@Callback(direct = true)
 	@Optional.Method(modid = "opencomputers")
 	public Object[] newUniqueKey(Context context, Arguments args){
-		String [] players = ServerSurface.instance.getActivePlayers(loc);
+		String [] players = OCServerSurface.instance.getActivePlayers(loc);
 		for(String p: players){
-			ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(), loc);
-			ServerSurface.instance.unsubscribePlayer(p);
+			OCServerSurface.instance.sendToUUID(new WidgetUpdatePacket(), loc);
+			OCServerSurface.instance.unsubscribePlayer(p);
 		}
-		loc.uniqueKey = UUID.randomUUID().getMostSignificantBits();
+		loc.uniqueKey = UUID.randomUUID();
 		return new Object[]{loc.uniqueKey};
 	}
 	
@@ -287,7 +290,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 
 	public boolean removeWidget(int id){
 		if(widgetList.containsKey(id) && widgetList.remove(id)!=null){
-			ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(id), getTerminalUUID());
+			OCServerSurface.instance.sendToUUID(new WidgetUpdatePacket(id), getTerminalUUID());
 			return true;
 		}
 		return false;
@@ -295,16 +298,31 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 	
 	public Object[] addWidget(Widget w){
 		widgetList.put(currID,w);
-		ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(currID, w), getTerminalUUID());
+		OCServerSurface.instance.sendToUUID(new WidgetUpdatePacket(currID, w), getTerminalUUID());
 		int t = currID;
 		currID++;
-		return w.getLuaObject(new LuaReference(t, getTerminalUUID()));
+		return getLuaObject(w, new LuaReference(t, getTerminalUUID()));
+	}
+
+	public Object[] getLuaObject(Widget widget, LuaReference ref) {
+		HashMap<String, Object> luaObject = new HashMap<String, Object>();
+		Class<?> current = widget.getClass();
+		do {
+			for (Class<?> a : current.getInterfaces()) {
+				if (IAttribute.class.isAssignableFrom(a)) {
+					luaObject.putAll(AttributeRegistry.getFunctions(a.asSubclass(IAttribute.class), ref));
+				}
+			}
+			current = current.getSuperclass();
+		} while (!current.equals(Object.class));
+
+		return new Object[] { luaObject };
 	}
 	
 	public void updateWidget(int id){
 		Widget w = widgetList.get(id);
 		if(w == null) return;
-		ServerSurface.instance.sendToUUID(new WidgetUpdatePacket(id, w), getTerminalUUID());
+		OCServerSurface.instance.sendToUUID(new WidgetUpdatePacket(id, w), getTerminalUUID());
 	}
 	
 	public Widget getWidget(int id){
@@ -331,10 +349,8 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 		}
 		nbt.setTag("widgetList", tag);
 		
-		NBTTagCompound tagLoc = new NBTTagCompound();
-		if (loc != null) {
-			loc.writeToNBT(tagLoc);
-			nbt.setTag("uniqueKey", tagLoc);
+		if (getTerminalUUID() != null) {
+			nbt.setTag("location", getTerminalUUID().writeToNBT(new NBTTagCompound()));
 		}
 		
 		return nbt;
@@ -363,8 +379,8 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 				}
 			}
 		}
-		if(nbt.hasKey("uniqueKey")){
-			loc = new Location().readFromNBT((NBTTagCompound) nbt.getTag("uniqueKey"));
+		if(nbt.hasKey("location")){
+			loc = (TerminalLocation) new TerminalLocation().readFromNBT(nbt.getCompoundTag("location"));
 		}
 	}
 

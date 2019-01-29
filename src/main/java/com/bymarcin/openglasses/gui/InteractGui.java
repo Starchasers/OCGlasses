@@ -3,7 +3,7 @@ package com.bymarcin.openglasses.gui;
 import com.bymarcin.openglasses.event.ClientEventHandler;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
-import com.bymarcin.openglasses.surface.ClientSurface;
+import com.bymarcin.openglasses.surface.OCClientSurface;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
@@ -21,20 +21,20 @@ public class InteractGui extends GuiScreen {
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        if(ClientSurface.instances.glasses == null) return;
-        if(ClientSurface.instances.renderResolution != null){
-            mouseX*=(ClientSurface.instances.renderResolution.get(0) / ClientSurface.instances.resolution.getScaledWidth());
-            mouseY*=(ClientSurface.instances.renderResolution.get(1) / ClientSurface.instances.resolution.getScaledHeight());
+        if(((OCClientSurface) OCClientSurface.instances).glasses == null) return;
+        if(OCClientSurface.instances.renderResolution != null){
+            mouseX*=(OCClientSurface.instances.renderResolution.x / OCClientSurface.instances.resolution.getScaledWidth());
+            mouseY*=(OCClientSurface.instances.renderResolution.y / OCClientSurface.instances.resolution.getScaledHeight());
         }
 
-        NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.INTERACT_OVERLAY, ClientSurface.instances.lastBind, mc.player, mouseX, mouseY, mouseButton));
+        NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.INTERACT_OVERLAY, ((OCClientSurface) OCClientSurface.instances).lastBind, mc.player, mouseX, mouseY, mouseButton));
     }
 
     @Override
     public void updateScreen() {
         if(!Keyboard.isKeyDown(ClientEventHandler.interactGUIKey.getKeyCode())){
-			ClientSurface.instances.conditions.setOverlay(false);
-            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.DEACTIVATE_OVERLAY, ClientSurface.instances.lastBind, Minecraft.getMinecraft().player));
+            ((OCClientSurface) OCClientSurface.instances).conditions.setOverlay(false);
+            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.DEACTIVATE_OVERLAY, ((OCClientSurface) OCClientSurface.instances).lastBind, Minecraft.getMinecraft().player));
             mc.displayGuiScreen(null);
         }
     }

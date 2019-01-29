@@ -1,21 +1,21 @@
 package com.bymarcin.openglasses.lua;
 
+import ben_mkiv.rendertoolkit.common.widgets.Widget;
+import com.bymarcin.openglasses.utils.TerminalLocation;
 import net.minecraft.nbt.NBTTagCompound;
 
-import com.bymarcin.openglasses.surface.Widget;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
-import com.bymarcin.openglasses.utils.Location;
 
 public class LuaReference {
 	int widgetRef;
-	Location blockRef;
+	TerminalLocation blockRef;
 	
-	public LuaReference(int id, Location loc) {
+	public LuaReference(int id, TerminalLocation loc) {
 		blockRef = loc;
 		widgetRef = id;
 	}
-	
-	Location getBlockRef() {
+
+	TerminalLocation getBlockRef() {
 		return blockRef;
 	}
 	
@@ -38,7 +38,7 @@ public class LuaReference {
 	public LuaReference() {}
 	
 	public LuaReference readFromNBT(NBTTagCompound nbt) {
-		blockRef = new Location().readFromNBT(nbt.getCompoundTag("loc"));
+		blockRef = (TerminalLocation) new TerminalLocation().readFromNBT(nbt.getCompoundTag("loc"));
 		widgetRef = nbt.getInteger("id");
 		return this;
 	}

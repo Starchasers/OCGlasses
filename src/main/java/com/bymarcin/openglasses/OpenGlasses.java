@@ -1,5 +1,6 @@
 package com.bymarcin.openglasses;
 
+import ben_mkiv.rendertoolkit.network.messages.WidgetUpdatePacket;
 import com.bymarcin.openglasses.block.OpenGlassesTerminalBlock;
 import com.bymarcin.openglasses.event.AnvilEvent;
 import com.bymarcin.openglasses.integration.opencomputers.ocProgramDisks;
@@ -8,7 +9,6 @@ import com.bymarcin.openglasses.item.OpenGlassesBaubleItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
-import com.bymarcin.openglasses.network.packet.WidgetUpdatePacket;
 import com.bymarcin.openglasses.proxy.CommonProxy;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 import li.cil.oc.api.Items;
@@ -40,7 +40,7 @@ import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-@Mod(modid = OpenGlasses.MODID, version = OpenGlasses.VERSION, dependencies = "required-after:opencomputers@[1.7.1,);after:baubles;")
+@Mod(modid = OpenGlasses.MODID, version = OpenGlasses.VERSION, dependencies = "required-after:opencomputers@[1.7.1,);required-after:guitoolkit@1.0.0;required-after:rendertoolkit@1.0.0;after:baubles;")
 public class OpenGlasses
 {
 	public static final String MODID = "openglasses";
@@ -124,8 +124,8 @@ public class OpenGlasses
 	@EventHandler
 	public void init(FMLInitializationEvent event){
 		NetworkRegistry.registerPacket(0, GlassesEventPacket.class, Side.SERVER);
-		NetworkRegistry.registerPacket(1, WidgetUpdatePacket.class, Side.CLIENT);
-		NetworkRegistry.registerPacket(2, TerminalStatusPacket.class, Side.CLIENT);
+		//NetworkRegistry.registerPacket(1, WidgetUpdatePacket.class, Side.CLIENT);
+		NetworkRegistry.registerPacket(1, TerminalStatusPacket.class, Side.CLIENT);
 	}
 
 
