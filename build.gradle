@@ -44,6 +44,12 @@ minecraft {
 
 }
 
+
+configurations {
+    shade
+    compile.extendsFrom shade
+}
+
 runClient {
     jvmArgs '-Dfml.coreMods.load=li.cil.oc.common.launch.TransformerLoader'
 }
