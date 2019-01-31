@@ -17,7 +17,7 @@ public class AddColor extends LuaFunction{
 		if(widget != null){
 			int index = widget.WidgetModifierList.addColor((float) arguments.checkDouble(0), (float) arguments.checkDouble(1), (float) arguments.checkDouble(2), (float) arguments.checkDouble(3));
 			getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());
-			return new Object[]{ index };
+			return new Object[]{ index+1 };
 		}
 		throw new RuntimeException("Component does not exists!");
 	}

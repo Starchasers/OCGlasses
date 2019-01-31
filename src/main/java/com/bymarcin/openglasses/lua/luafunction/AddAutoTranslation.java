@@ -17,7 +17,7 @@ public class AddAutoTranslation extends LuaFunction{
         if(widget != null){
             int index = widget.WidgetModifierList.addAutoTranslate((float) arguments.checkDouble(0), (float) arguments.checkDouble(1));
             getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());
-            return new Object[]{ index };
+            return new Object[]{ index+1 };
         }
         throw new RuntimeException("Component does not exists!");
     }

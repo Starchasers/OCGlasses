@@ -17,7 +17,7 @@ public class AddTexture extends LuaFunction{
 		if(widget != null){
 			int index = widget.WidgetModifierList.addTexture(arguments.checkString(0));
 			getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());
-			return new Object[]{ index };
+			return new Object[]{ index+1 };
 		}
 		throw new RuntimeException("Component does not exists!");
 	}
