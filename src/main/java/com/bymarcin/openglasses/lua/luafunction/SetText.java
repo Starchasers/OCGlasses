@@ -16,7 +16,18 @@ public class SetText extends LuaFunction{
 		super.call(context, arguments);
 		Widget widget = getSelf().getWidget(); 
 		if(widget instanceof ITextable){
-			((ITextable) widget).setText(arguments.checkString(0));
+			String text = "";
+
+			if(arguments.isString(0))
+				text = arguments.checkString(0);
+			else if(arguments.isInteger(0))
+				text+= arguments.checkInteger(0);
+			else if(arguments.isDouble(0))
+				text+= arguments.checkDouble(0);
+			else if(arguments.isBoolean(0))
+				text+= arguments.checkBoolean(0);
+
+			((ITextable) widget).setText(text);
 			getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());	
 			return null;
 		}
