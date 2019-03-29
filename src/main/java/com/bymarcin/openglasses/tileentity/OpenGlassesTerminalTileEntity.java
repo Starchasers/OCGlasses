@@ -110,7 +110,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 	@Callback(direct = true)
 	@Optional.Method(modid = "opencomputers")
 	public Object[] requestResolutionEvents(Context context, Arguments args) {
-		String user = args.checkString(0).toLowerCase();
+		String user = args.optString(0, "").toLowerCase();
 		int i=0;
 		for(Entry<EntityPlayer, Location> e: OCServerSurface.instance.players.entrySet()){
 			if(user.length() == 0
@@ -128,9 +128,24 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 	@Optional.Method(modid = "opencomputers")
 	public Object[] setRenderResolution(Context context, Arguments args) {
 		TerminalStatusPacket packet = new TerminalStatusPacket(TerminalStatusPacket.TerminalEvent.SET_RENDER_RESOLUTION);
-		String user = args.checkString(0).toLowerCase();
-		packet.x = (float) args.checkDouble(1);
-		packet.y = (float) args.checkDouble(2);
+		String user = "";
+
+		if(args.count() == 3) {
+			user = args.checkString(0).toLowerCase();
+			packet.x = (float) args.checkDouble(1);
+			packet.y = (float) args.checkDouble(2);
+		}
+		else if(args.count() == 2) {
+			packet.x = (float) args.checkDouble(0);
+			packet.y = (float) args.checkDouble(1);
+		}
+		else{
+			if(args.count() < 2)
+				return new Object[]{ false, "not enough arguments specified" };
+			else
+				return new Object[]{ false, "to many arguments specified" };
+		}
+
 		int i=0;
 		for(Entry<EntityPlayer, Location> e: OCServerSurface.instance.players.entrySet()){
 			if(user.length() == 0
@@ -152,6 +167,9 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 	@Callback(direct = true)
 	@Optional.Method(modid = "opencomputers")
 	public Object[] removeWidget(Context context, Arguments args){
+		if(args.count() < 1 || !args.isInteger(0))
+			return new Object[]{ false, "argument widget id missing" };
+
 		int id = args.checkInteger(0);
 		return new Object[]{removeWidget(id)};
 	}

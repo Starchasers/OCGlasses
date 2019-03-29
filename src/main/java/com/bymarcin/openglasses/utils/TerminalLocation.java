@@ -1,6 +1,7 @@
 package com.bymarcin.openglasses.utils;
 
 import ben_mkiv.commons0815.utils.Location;
+import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,25 +23,36 @@ public class TerminalLocation extends Location {
     }
 
     public TileEntity getTileEntity(){
-        World world  = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimID);
-        if(world==null)
-            return null;
-
-        return world.getTileEntity(pos);
+        return getTileEntity(this);
     }
 
     public OpenGlassesTerminalTileEntity getTerminal(){
-        TileEntity te = getTileEntity();
-
-        if(!(te instanceof OpenGlassesTerminalTileEntity))
-            return null;
-
-        return (OpenGlassesTerminalTileEntity) te;
+        return getTerminal(this);
     }
 
     public static TerminalLocation getGlassesTerminalUUID(ItemStack itemStack){
+        if(itemStack == null || !itemStack.hasTagCompound())
+            return null;
+
         NBTTagCompound tag = itemStack.getTagCompound();
         if (!tag.hasKey("location")) return null;
         return (TerminalLocation) new TerminalLocation().readFromNBT(tag.getCompoundTag("location"));
+    }
+
+    public static TileEntity getTileEntity(Location uuid){
+        World world  = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(uuid.dimID);
+        return world != null ? world.getTileEntity(uuid.pos) : null;
+    }
+
+    public static OpenGlassesTerminalTileEntity getTerminal(Location uuid){
+        TileEntity te = getTileEntity(uuid);
+        return te instanceof OpenGlassesTerminalTileEntity ? (OpenGlassesTerminalTileEntity) te : null;
+    }
+
+    public static OpenGlassesTerminalTileEntity getTerminal(ItemStack stack){
+        TerminalLocation uuid = getGlassesTerminalUUID(stack);
+        TileEntity te = getTileEntity(uuid);
+
+        return te instanceof OpenGlassesTerminalTileEntity ? (OpenGlassesTerminalTileEntity) te : null;
     }
 }

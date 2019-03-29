@@ -27,14 +27,14 @@ public class InteractGui extends GuiScreen {
             mouseY*=(OCClientSurface.instances.renderResolution.y / OCClientSurface.instances.resolution.getScaledHeight());
         }
 
-        NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.INTERACT_OVERLAY, ((OCClientSurface) OCClientSurface.instances).lastBind, mc.player, mouseX, mouseY, mouseButton));
+        NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.INTERACT_OVERLAY, mouseX, mouseY, mouseButton));
     }
 
     @Override
     public void updateScreen() {
         if(!Keyboard.isKeyDown(ClientEventHandler.interactGUIKey.getKeyCode())){
             ((OCClientSurface) OCClientSurface.instances).conditions.setOverlay(false);
-            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.DEACTIVATE_OVERLAY, ((OCClientSurface) OCClientSurface.instances).lastBind, Minecraft.getMinecraft().player));
+            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.DEACTIVATE_OVERLAY));
             mc.displayGuiScreen(null);
         }
     }

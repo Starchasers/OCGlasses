@@ -35,10 +35,7 @@ public class SetOwner extends LuaFunction{
 	public Object[] call(Context context, Arguments arguments) {
 		super.call(context, arguments);
 		if(getSelf().getWidget() instanceof IPrivate){
-			String name = "";
-			if(arguments.count() >= 1)
-				name = arguments.checkString(0);
-
+			String name = arguments.optString(0, "");
 			return this.setOwner(name);
 		}
 		throw new RuntimeException("Component does not exists!");

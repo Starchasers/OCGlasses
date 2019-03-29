@@ -2,7 +2,6 @@ package com.bymarcin.openglasses.surface;
 
 import java.util.*;
 
-import ben_mkiv.commons0815.utils.utilsCommon;
 import ben_mkiv.rendertoolkit.common.widgets.IRenderableWidget;
 import ben_mkiv.rendertoolkit.common.widgets.RenderType;
 import ben_mkiv.rendertoolkit.common.widgets.component.face.Text2D;
@@ -18,7 +17,6 @@ import com.bymarcin.openglasses.utils.TerminalLocation;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 
 import net.minecraft.client.Minecraft;
@@ -30,7 +28,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
 @SideOnly(Side.CLIENT)
@@ -95,7 +92,7 @@ public class OCClientSurface extends ClientSurface {
 		if(glasses == null) return;
 		if(lastBind == null) return;
 
-		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.GLASSES_SCREEN_SIZE, lastBind, Minecraft.getMinecraft().player, resolution.getScaledWidth(), resolution.getScaledHeight(), resolution.getScaleFactor()));
+		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.GLASSES_SCREEN_SIZE, resolution.getScaledWidth(), resolution.getScaledHeight(), resolution.getScaleFactor()));
 	}
 
 	@SubscribeEvent

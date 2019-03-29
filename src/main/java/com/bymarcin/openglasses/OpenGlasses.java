@@ -1,6 +1,5 @@
 package com.bymarcin.openglasses;
 
-import ben_mkiv.rendertoolkit.network.messages.WidgetUpdatePacket;
 import com.bymarcin.openglasses.block.OpenGlassesTerminalBlock;
 import com.bymarcin.openglasses.event.AnvilEvent;
 import com.bymarcin.openglasses.integration.opencomputers.ocProgramDisks;
@@ -96,9 +95,8 @@ public class OpenGlasses
 	}
 
 	public static boolean isGlassesStack(ItemStack stack){
-		Item stackItem = stack!=null ? stack.getItem() : null;
-
-		return stackItem instanceof OpenGlassesItem ? true : false;
+		Item stackItem = stack != null ? stack.getItem() : null;
+		return stackItem instanceof OpenGlassesItem;
 	}
 
 	public static ItemStack getGlassesStack(EntityPlayer e){

@@ -17,7 +17,6 @@ import static com.bymarcin.openglasses.utils.nightvision.potionNightvision;
 public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurface {
 	public static OCServerSurface instance = new OCServerSurface();
 
-
 	static EventHandler eventHandler;
 
 	int playerIndex = 0;
@@ -44,7 +43,7 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 			if (playerIndex >= players.size()) playerIndex = 0;
 		}
 
-		public void updatePlayer(EntityPlayer player){
+		void updatePlayer(EntityPlayer player){
 			PlayerStatsOC stats = (PlayerStatsOC) playerStats.get(player.getUniqueID());
 			if(stats != null) stats.updateNightvision(player);
 		}
@@ -52,21 +51,29 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 
 
 	//subscribePlayer to events when he puts glasses on
-	public void subscribePlayer(String playerUUID, TerminalLocation uuid){
+	public void subscribePlayer(String playerUUID){
 		EntityPlayerMP player = checkUUID(playerUUID);
 		if(player == null) return;
 
-		OpenGlassesTerminalTileEntity terminal = uuid.getTerminal();
-		if(terminal == null) return;
-		if(!terminal.getTerminalUUID().equals(uuid)) return;
+		TerminalLocation uuid = TerminalLocation.getGlassesTerminalUUID(OpenGlasses.getGlassesStack(player));
+		OpenGlassesTerminalTileEntity terminal = null;
+
+		if(uuid != null) {
+			terminal = uuid.getTerminal();
+			if (terminal == null) return;
+		}
 
 		players.put(player, uuid);
 		PlayerStatsOC stats = new PlayerStatsOC(player);
 		stats.conditions.bufferSensors(OpenGlasses.getGlassesStack(player));
 		playerStats.put(player.getUniqueID(), stats);
-		sendSync(player, uuid.getTerminal().widgetList);
 
-		terminal.onGlassesPutOn(player.getDisplayNameString());
+		if (terminal != null){
+			sendSync(player, terminal.widgetList);
+			terminal.onGlassesPutOn(player.getDisplayNameString());
+		}
+
+
 		requestResolutionEvent(player);
 	}
 
@@ -78,14 +85,14 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 			p.removePotionEffect(potionNightvision);
 		}
 
-		TerminalLocation l = (TerminalLocation) players.remove(p);
+		TerminalLocation lastBind = (TerminalLocation) players.remove(p);
 		playerStats.remove(p.getUniqueID());
-		if(l == null) return;
 
-		OpenGlassesTerminalTileEntity terminal = l.getTerminal();
-		if(terminal == null) return;
-
-		terminal.onGlassesPutOff(p.getDisplayNameString());
+		if(lastBind != null) {
+			OpenGlassesTerminalTileEntity terminal = lastBind.getTerminal();
+			if (terminal == null) return;
+			terminal.onGlassesPutOff(p.getDisplayNameString());
+		}
 	}
 	
 

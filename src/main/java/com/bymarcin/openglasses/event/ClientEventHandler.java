@@ -37,14 +37,13 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void onPlayerTick(PlayerTickEvent e){
+
         if(e.player != Minecraft.getMinecraft().player) return;
         tick++;
-
 
         ((OCClientSurface) OCClientSurface.instances).refreshConditions();
 
         if(tick%20 != 0) return;
-
 
         checkGlasses(e.player);
 
@@ -122,7 +121,7 @@ public class ClientEventHandler {
         if(!event.getSide().isClient()) return;
         if(!event.getHand().equals(EnumHand.MAIN_HAND)) return;
 
-        NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(type, ((OCClientSurface) OCClientSurface.instances).lastBind, event.getEntityPlayer(), event.getPos(), event.getFace()));
+        NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(type, event.getPos(), event.getFace()));
     }
 
     @SubscribeEvent
@@ -131,21 +130,20 @@ public class ClientEventHandler {
         if(interactGUIKey.isPressed()) {
             ((OCClientSurface) OCClientSurface.instances).conditions.setOverlay(true);
             Minecraft.getMinecraft().displayGuiScreen(new InteractGui());
-            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.ACTIVATE_OVERLAY, ((OCClientSurface) OCClientSurface.instances).lastBind, Minecraft.getMinecraft().player));
+            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.ACTIVATE_OVERLAY));
         }
         if(nightvisionModeKey.isPressed() && ((OCClientSurface) OCClientSurface.instances).glassesStack.getTagCompound().getBoolean("nightvision")) {
-            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.TOGGLE_NIGHTVISION, ((OCClientSurface) OCClientSurface.instances).lastBind, Minecraft.getMinecraft().player));
+            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.TOGGLE_NIGHTVISION));
         }
     }
 
     private void unEquiped(EntityPlayer player){
-        NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.UNEQUIPED_GLASSES, ((OCClientSurface) OCClientSurface.instances).lastBind, player));
+        NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.UNEQUIPED_GLASSES));
         ((OCClientSurface) OCClientSurface.instances).resetLocalGlasses();
     }
 
     private void equiped(EntityPlayer player, ItemStack glassesStack){
         ((OCClientSurface) OCClientSurface.instances).initLocalGlasses(glassesStack);
-        if(((OCClientSurface) OCClientSurface.instances).lastBind == null) return;
-        NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.EQUIPED_GLASSES, ((OCClientSurface) OCClientSurface.instances).lastBind, player));
+        NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.EQUIPED_GLASSES));
     }
 }
