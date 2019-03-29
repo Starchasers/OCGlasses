@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "R  ",
+    "G  ",
+    "M  "
+  ],
+  "key": {
+    "R": {
+      "item": "#opencomputers_memory3"
+    },
+    "G": {
+      "item": "#opencomputers_geolyzer"
+    },
+    "M": {
+      "item": "#opencomputers_cpu3"
+    }
+  },
+  "result": {
+    "item": "openglasses:openglassesterminal"
+  }
+}

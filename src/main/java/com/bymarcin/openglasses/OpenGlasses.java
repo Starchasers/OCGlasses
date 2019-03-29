@@ -148,30 +148,6 @@ public class OpenGlasses
 		proxy.postInit();
 	}
 
-
-
-	@SubscribeEvent
-	public void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-		ItemStack ram = Items.get("ram5").createItemStack(1);
-		ItemStack graphics = Items.get("graphicscard3").createItemStack(1);
-		ItemStack wlanCard;
-		if(Items.get("wlancard")==null){
-			wlanCard = Items.get("wlancard1").createItemStack(1);
-		}else{
-			wlanCard = Items.get("wlancard").createItemStack(1);
-		}
-		ItemStack server = Items.get("geolyzer").createItemStack(1);
-		ItemStack screen = Items.get("screen3").createItemStack(1);
-		ItemStack cpu = Items.get("cpu3").createItemStack(1);
-
-		ShapedOreRecipe r1 = new ShapedOreRecipe(new ResourceLocation(OpenGlasses.MODID, "openglasses"), glassesStack, "SCS", " W ", "   ", 'S', screen, 'W', wlanCard, 'C', graphics);
-		ShapedOreRecipe r2 = new ShapedOreRecipe(new ResourceLocation(OpenGlasses.MODID, "openterminal"), new ItemStack(openTerminal), "R  ", "S  ", "M  ", 'S', server, 'R', ram, 'M', cpu);
-		r1.setRegistryName(OpenGlasses.MODID, "openglasses");
-		r2.setRegistryName(OpenGlasses.MODID, "openterminal");
-		event.getRegistry().register(r1);
-		event.getRegistry().register(r2);
-	}
-
     public static CreativeTabs creativeTab = new CreativeTabs("openglasses"){
         @Override
         public ItemStack getTabIconItem(){

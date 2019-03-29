@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SCS",
+    " W ",
+    "   "
+  ],
+  "key": {
+    "S": {
+      "item": "#opencomputers_screen3"
+    },
+    "C": {
+      "item": "#opencomputers_gpu3"
+    },
+    "W": {
+      "item": "#opencomputers_wlancard2"
+    }
+  },
+  "result": {
+    "item": "openglasses:openglasses", "data": 0
+  }
+}

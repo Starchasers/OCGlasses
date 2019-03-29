@@ -1,0 +1,38 @@
+[
+  {
+    "name": "opencomputers_gpu3",
+    "ingredient": {
+      "item": "opencomputers:card", "data": 3
+    }
+  },
+  {
+    "name": "opencomputers_screen3",
+    "ingredient": {
+      "item": "opencomputers:screen3", "data": 0
+    }
+  },
+  {
+    "name": "opencomputers_wlancard2",
+    "ingredient": {
+      "item": "opencomputers:card", "data": 7
+    }
+  },
+  {
+    "name": "opencomputers_geolyzer",
+    "ingredient": {
+      "item": "opencomputers:geolyzer", "data": 0
+    }
+  },
+  {
+    "name": "opencomputers_memory3",
+    "ingredient": {
+      "item": "opencomputers:component", "data": 10
+    }
+  },
+  {
+    "name": "opencomputers_cpu3",
+    "ingredient": {
+      "item": "opencomputers:component", "data": 2
+    }
+  }
+]
