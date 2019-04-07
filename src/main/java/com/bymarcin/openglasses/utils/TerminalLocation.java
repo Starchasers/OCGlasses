@@ -1,7 +1,6 @@
 package com.bymarcin.openglasses.utils;
 
 import ben_mkiv.commons0815.utils.Location;
-import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,7 +38,8 @@ public class TerminalLocation extends Location {
         return (TerminalLocation) new TerminalLocation().readFromNBT(tag.getCompoundTag("location"));
     }
 
-    public static TileEntity getTileEntity(Location uuid){
+    private static TileEntity getTileEntity(Location uuid){
+        if(uuid == null) return null;
         World world  = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(uuid.dimID);
         return world != null ? world.getTileEntity(uuid.pos) : null;
     }

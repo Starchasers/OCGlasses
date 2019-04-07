@@ -1,6 +1,7 @@
 package com.bymarcin.openglasses;
 
 import com.bymarcin.openglasses.block.OpenGlassesTerminalBlock;
+import com.bymarcin.openglasses.config.Config;
 import com.bymarcin.openglasses.event.AnvilEvent;
 import com.bymarcin.openglasses.integration.opencomputers.ocProgramDisks;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
@@ -10,18 +11,17 @@ import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
 import com.bymarcin.openglasses.proxy.CommonProxy;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
-import li.cil.oc.api.Items;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -37,9 +37,8 @@ import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.oredict.ShapedOreRecipe;
 
-@Mod(modid = OpenGlasses.MODID, version = OpenGlasses.VERSION, dependencies = "required-after:opencomputers@[1.7.1,);required-after:guitoolkit@1.0.0;required-after:rendertoolkit@1.0.0;after:baubles;")
+@Mod(modid = OpenGlasses.MODID, version = OpenGlasses.VERSION, dependencies = "required-after:opencomputers@[1.7.1,);required-after:guitoolkit@1.0.0;required-after:rendertoolkit@1.0.1;after:baubles;")
 public class OpenGlasses
 {
 	public static final String MODID = "openglasses";
@@ -49,8 +48,6 @@ public class OpenGlasses
 	public static CommonProxy proxy;
 
 	public static Item openGlasses;
-	public static ItemStack glassesStack;
-	public static OpenGlassesTerminalBlock openTerminal;
 	public static Item openTerminalItem;
 
 	public static boolean baubles = false;
@@ -59,17 +56,19 @@ public class OpenGlasses
 	public void preInit(FMLPreInitializationEvent event){
 		if(Loader.isModLoaded("baubles")) OpenGlasses.baubles = true;
 
+		//Config.preInit();
+
 		NetworkRegistry.initialize();
 		MinecraftForge.EVENT_BUS.register(this);
 
-		openTerminal = new OpenGlassesTerminalBlock();
-		openTerminalItem = new ItemBlock(openTerminal).setRegistryName(openTerminal.getRegistryName());
+		OpenGlassesTerminalBlock.DEFAULT_BLOCK = new OpenGlassesTerminalBlock();
+		openTerminalItem = new ItemBlock(OpenGlassesTerminalBlock.DEFAULT_BLOCK).setRegistryName(OpenGlassesTerminalBlock.DEFAULT_BLOCK.getRegistryName());
 
 		GameRegistry.registerTileEntity(OpenGlassesTerminalTileEntity.class, "openglassesterminalte");
 
 		openGlasses = getOGCObject();
-		glassesStack = new ItemStack(openGlasses);
-		OpenGlassesItem.initGlassesStack(glassesStack);
+		OpenGlassesItem.DEFAULT_STACK = new ItemStack(openGlasses);
+		OpenGlassesItem.initGlassesStack(OpenGlassesItem.DEFAULT_STACK);
 
 		proxy.init();
 	}
@@ -95,8 +94,7 @@ public class OpenGlasses
 	}
 
 	public static boolean isGlassesStack(ItemStack stack){
-		Item stackItem = stack != null ? stack.getItem() : null;
-		return stackItem instanceof OpenGlassesItem;
+		return stack != null && stack.getItem() instanceof OpenGlassesItem;
 	}
 
 	public static ItemStack getGlassesStack(EntityPlayer e){
@@ -122,10 +120,8 @@ public class OpenGlasses
 	@EventHandler
 	public void init(FMLInitializationEvent event){
 		NetworkRegistry.registerPacket(0, GlassesEventPacket.class, Side.SERVER);
-		//NetworkRegistry.registerPacket(1, WidgetUpdatePacket.class, Side.CLIENT);
 		NetworkRegistry.registerPacket(1, TerminalStatusPacket.class, Side.CLIENT);
 	}
-
 
 	@SubscribeEvent
 	public void registerItems(RegistryEvent.Register<Item> event) {
@@ -135,7 +131,7 @@ public class OpenGlasses
 
 	@SubscribeEvent
 	public void registerBlocks(RegistryEvent.Register<Block> event) {
-		event.getRegistry().register(openTerminal);
+		event.getRegistry().register(OpenGlassesTerminalBlock.DEFAULT_BLOCK);
 	}
 
 	@EventHandler

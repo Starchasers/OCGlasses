@@ -23,6 +23,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 public class OpenGlassesTerminalBlock extends BlockContainer implements IBlockWithDocumentation {
+	public static OpenGlassesTerminalBlock DEFAULT_BLOCK;
 
 	public OpenGlassesTerminalBlock() {
 		super(Material.IRON);
@@ -86,7 +87,6 @@ public class OpenGlassesTerminalBlock extends BlockContainer implements IBlockWi
 	public void onBlockHarvested(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player) {
 		onBlockPreDestroy(worldIn, pos);
 	}
-
 
 	public void onBlockPreDestroy(World world, BlockPos pos) {
 		OpenGlassesTerminalTileEntity te = getTileEntity(world, pos, OpenGlassesTerminalTileEntity.class);

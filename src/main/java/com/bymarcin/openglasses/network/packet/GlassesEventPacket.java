@@ -62,8 +62,6 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		this.eventType = EventType.values()[readInt()];
 
 		switch(eventType){
-			case UNEQUIPED_GLASSES:
-				return;
 			case INTERACT_OVERLAY:
 			case GLASSES_SCREEN_SIZE:
 				this.x = readInt();
@@ -82,7 +80,6 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	protected void write() throws IOException {
 		writeString(player);
 	    writeInt(eventType.ordinal());
-	    if(EventType.UNEQUIPED_GLASSES == eventType) return;
 
 		switch(eventType){
 			case GLASSES_SCREEN_SIZE:

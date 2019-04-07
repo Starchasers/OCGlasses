@@ -5,6 +5,7 @@ import java.util.*;
 import ben_mkiv.rendertoolkit.common.widgets.IRenderableWidget;
 import ben_mkiv.rendertoolkit.common.widgets.RenderType;
 import ben_mkiv.rendertoolkit.common.widgets.component.face.Text2D;
+import ben_mkiv.rendertoolkit.common.widgets.component.world.EntityTracker3D;
 import ben_mkiv.rendertoolkit.surface.ClientSurface;
 
 import com.bymarcin.openglasses.event.ClientEventHandler;
@@ -17,6 +18,7 @@ import com.bymarcin.openglasses.utils.TerminalLocation;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 
 import net.minecraft.client.Minecraft;
@@ -139,7 +141,10 @@ public class OCClientSurface extends ClientSurface {
 			if(!renderable.isWidgetOwner(uuid))
 				continue;
 
-			renderWidget(renderable, renderConditions);
+			if(renderable instanceof EntityTracker3D.RenderEntityTracker)
+				renderWidget(renderable, renderConditions, new Vec3d(lastBind.pos).scale(-1));
+			else
+				renderWidget(renderable, renderConditions);
 		}
 	}
 

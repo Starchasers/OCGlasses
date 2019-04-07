@@ -17,6 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.energy.EnergyStorage;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -34,6 +35,7 @@ import javax.annotation.Nullable;
 
 public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation {
 	final static int nightvisionCostFE = 5;
+	public static ItemStack DEFAULT_STACK;
 
     public OpenGlassesItem() {
 		super(ArmorMaterial.IRON, 0, EntityEquipmentSlot.HEAD);
@@ -62,7 +64,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		if(!this.isInCreativeTab(tab)) return;
 
 		//configure creative glasses
-		ItemStack creativeGlasses = OpenGlasses.glassesStack.copy();
+		ItemStack creativeGlasses = DEFAULT_STACK.copy();
 		NBTTagCompound creativeTag = creativeGlasses.getTagCompound();
 		creativeTag.setInteger("Energy", 5000000);
 		creativeTag.setInteger("EnergyCapacity", 5000000);
@@ -75,7 +77,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		creativeTag.setBoolean("geolyzer", true);
 		creativeTag.setBoolean("nightvision", true);
 
-		subItems.add(OpenGlasses.glassesStack);
+		subItems.add(DEFAULT_STACK);
 		subItems.add(creativeGlasses);
 	}
 
@@ -106,7 +108,8 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 
 		if(tag.hasKey("location")){
 			TerminalLocation location = (TerminalLocation) new TerminalLocation().readFromNBT(tag.getCompoundTag("location"));
-			tooltip.add("linked to: X: " + location.pos.getX() + ", Y: " + location.pos.getY() + ", Z: " + location.pos.getZ() + " (DIM: " + location.dimID +")");
+			if(!FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0).getGameRules().getBoolean("reducedDebugInfo"))
+				tooltip.add("linked to: X: " + location.pos.getX() + ", Y: " + location.pos.getY() + ", Z: " + location.pos.getZ() + " (DIM: " + location.dimID +")");
 			tooltip.add("terminal: " + location.uniqueKey.toString());
 			tooltip.add("user: " + tag.getString("user"));
 		}

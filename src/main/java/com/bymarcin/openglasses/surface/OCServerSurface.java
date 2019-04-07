@@ -56,23 +56,19 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 		if(player == null) return;
 
 		TerminalLocation uuid = TerminalLocation.getGlassesTerminalUUID(OpenGlasses.getGlassesStack(player));
-		OpenGlassesTerminalTileEntity terminal = null;
-
-		if(uuid != null) {
-			terminal = uuid.getTerminal();
-			if (terminal == null) return;
-		}
 
 		players.put(player, uuid);
 		PlayerStatsOC stats = new PlayerStatsOC(player);
 		stats.conditions.bufferSensors(OpenGlasses.getGlassesStack(player));
 		playerStats.put(player.getUniqueID(), stats);
 
-		if (terminal != null){
-			sendSync(player, terminal.widgetList);
-			terminal.onGlassesPutOn(player.getDisplayNameString());
+		if(uuid != null) {
+			OpenGlassesTerminalTileEntity terminal = uuid.getTerminal();
+			if (terminal != null){
+				sendSync(player, terminal.widgetList);
+				terminal.onGlassesPutOn(player.getDisplayNameString());
+			}
 		}
-
 
 		requestResolutionEvent(player);
 	}
@@ -94,7 +90,6 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 			terminal.onGlassesPutOff(p.getDisplayNameString());
 		}
 	}
-	
-
 
 }
+

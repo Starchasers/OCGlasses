@@ -357,7 +357,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 		int i=0;
 		for (Entry<Integer, Widget> e: widgetList.entrySet()) {
 			NBTTagCompound widget = new NBTTagCompound();
-			widget.setString("widgetType", e.getValue().getType().name());
+			widget.setInteger("widgetType", e.getValue().getType().ordinal());
 			widget.setInteger("ID", e.getKey());
 			NBTTagCompound wNBT = new NBTTagCompound();
 			e.getValue().writeToNBT(wNBT);
@@ -384,15 +384,13 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 		
 		if(nbt.hasKey("widgetList") && nbt.hasKey("listSize")){
 			NBTTagCompound list = (NBTTagCompound) nbt.getTag("widgetList");
-			int size = nbt.getInteger("listSize");
-			for(int i=0;i<size;i++){
+			for(int i=0; i < nbt.getInteger("listSize"); i++){
 				if(list.hasKey(String.valueOf(i))){
 					NBTTagCompound wiget = (NBTTagCompound) list.getTag(String.valueOf(i));
 					if(wiget.hasKey("widgetType") && wiget.hasKey("widget")&& wiget.hasKey("ID")){
-						WidgetType type = WidgetType.valueOf(wiget.getString(("widgetType")));
-						Widget w = type.getNewInstance();
-						w.readFromNBT((NBTTagCompound) wiget.getTag("widget"));
-					    widgetList.put(wiget.getInteger("ID"),w);
+						Widget newWidget = Widget.create(wiget.getInteger("widgetType"));
+						newWidget.readFromNBT((NBTTagCompound) wiget.getTag("widget"));
+						widgetList.put(wiget.getInteger("ID"), newWidget);
 					}
 				}
 			}
