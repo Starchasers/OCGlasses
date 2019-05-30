@@ -19,13 +19,12 @@ public class NetworkRegistry {
 		packetHandler = new SimpleNetworkWrapper(OpenGlasses.MODID);
 	}
 
-	public static <T extends Packet<T, U>, U extends IMessage> void registerPacket(int id, Class<T> clazz, Side handleOn) {
-		if (!packetsID.contains(new RPacket(id, handleOn))) {
-			packetsID.add(new RPacket(id, handleOn));
-			packetHandler.registerMessage(clazz, clazz, id, handleOn);
-		} else {
-			LogManager.getLogger(OpenGlasses.MODID).error("Packet ID:" + id + "try overwritting other packet!");
-		}
+	static int id = 0;
+
+	public static <T extends Packet<T, U>, U extends IMessage> void registerPacket(Class<T> clazz, Side handleOn) {
+		packetsID.add(new RPacket(id, handleOn));
+		packetHandler.registerMessage(clazz, clazz, id, handleOn);
+		id++;
 	}
 
 	private static class RPacket {

@@ -6,6 +6,10 @@ import java.util.UUID;
 import baubles.api.BaubleType;
 import baubles.api.IBauble;
 import com.bymarcin.openglasses.manual.IItemWithDocumentation;
+import com.bymarcin.openglasses.network.NetworkRegistry;
+import com.bymarcin.openglasses.network.packet.GlassesStackNBT;
+import com.bymarcin.openglasses.network.packet.HostInfoPacket;
+import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
 import com.bymarcin.openglasses.surface.OCClientSurface;
 import com.bymarcin.openglasses.utils.nightvision;
 import net.minecraft.client.util.ITooltipFlag;
@@ -13,11 +17,13 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import net.minecraft.network.play.server.SPacketSetSlot;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.fml.common.Optional;
@@ -184,6 +190,8 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		tag.setUniqueId("host", hostUUID);
 		tag.setString("userUUID", player.getGameProfile().getId().toString());
 		tag.setString("user", player.getGameProfile().getName());
+
+		NetworkRegistry.packetHandler.sendTo(new GlassesStackNBT(glassesStack), (EntityPlayerMP) player);
 	}
 
 	public static void unlink(ItemStack glassesStack, EntityPlayer player) {
@@ -196,6 +204,8 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		tag.removeTag("hostLeast");
 		tag.removeTag("userUUID");
 		tag.removeTag("user");
+
+		NetworkRegistry.packetHandler.sendTo(new GlassesStackNBT(glassesStack), (EntityPlayerMP) player);
 	}
 
 
@@ -215,10 +225,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 	@Override
 	public boolean showDurabilityBar(ItemStack stack){
 		IEnergyStorage storage = stack.getCapability(CapabilityEnergy.ENERGY, null);
-		if(storage.getEnergyStored() >= storage.getMaxEnergyStored())
-			return false;
-		else
-			return true;
+		return storage.getEnergyStored() < storage.getMaxEnergyStored();
 	}
 
 	@Override
@@ -227,7 +234,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		return 1 - (((double) 1 / storage.getMaxEnergyStored()) * storage.getEnergyStored());
 	}
 
-	public int consumeEnergy(ItemStack glassesStack){
+	int consumeEnergy(ItemStack glassesStack){
 		int consumed = 0;
 		IEnergyStorage storage = glassesStack.getCapability(CapabilityEnergy.ENERGY, null);
 		consumed+= storage.extractEnergy(glassesStack.getTagCompound().getInteger("upkeepCost"), false);

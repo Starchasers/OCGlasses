@@ -8,6 +8,7 @@ import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.surface.OCClientSurface;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -20,22 +21,22 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.UUID;
 
-public class GlassesGui extends GuiContainer {
+public class GlassesGui extends GuiScreen {
     public static final int WIDTH = 256;
     public static final int HEIGHT = 146;
+
+    int xSize, ySize, guiLeft, guiTop;
 
     prettyButton acceptLink, denyLink, clearLink;
     OCClientSurface.LinkRequest activeLinkRequest;
 
+    public static boolean isNotification = false;
+
     private static final ResourceLocation background = new ResourceLocation(OpenGlasses.MODID, "textures/gui/glasses.png");
 
-    public GlassesGui(){
-        super(new Container() {
-            @Override
-            public boolean canInteractWith(EntityPlayer playerIn) {
-                return false;
-            }
-        });
+    public GlassesGui(boolean notification){
+        super();
+        isNotification = notification;
         xSize = WIDTH;
         ySize = HEIGHT;
     }
@@ -43,6 +44,9 @@ public class GlassesGui extends GuiContainer {
     @Override
     public void initGui(){
         super.initGui();
+        this.guiLeft = (this.width - this.xSize) / 2;
+        this.guiTop = (this.height - this.ySize) / 2;
+
         addButton(acceptLink = new prettyButton(buttonList.size(), guiLeft + 5, guiTop + 175, 70, 20, "accept"));
         addButton(denyLink = new prettyButton(buttonList.size(), guiLeft + 80, guiTop + 175, 70, 20, "deny"));
         addButton(clearLink = new prettyButton(buttonList.size(), guiLeft + 5, guiTop + 40, 100, 20, "clear link"));
@@ -50,16 +54,26 @@ public class GlassesGui extends GuiContainer {
         acceptLink.visible = false;
         denyLink.visible = false;
         clearLink.visible = false;
+
+
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks){
+        drawBackground(0);
+
         super.drawScreen(mouseX, mouseY, partialTicks);
 
         String title = "OpenGlasses", linkedTo="";
 
 
         ItemStack stack = OpenGlasses.getGlassesStack(Minecraft.getMinecraft().player);
+
+        if(stack.isEmpty()){
+            Minecraft.getMinecraft().currentScreen = null;
+            return;
+        }
+
         UUID currentHost = OpenGlassesItem.getHostUUID(stack);
         if(currentHost != null){
             linkedTo = "host: " + currentHost.toString();
@@ -123,7 +137,7 @@ public class GlassesGui extends GuiContainer {
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    public void drawBackground(int tint) {
         mc.getTextureManager().bindTexture(background);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
     }

@@ -130,8 +130,8 @@ public class OCClientSurface extends ClientSurface {
 
 			ItemStack glassesStack = OpenGlasses.getGlassesStack(Minecraft.getMinecraft().player);
 			if(!glassesStack.isEmpty()) {
-				if(!glassesStack.getTagCompound().hasKey("nopopups"))
-					Minecraft.getMinecraft().displayGuiScreen(new GlassesGui());
+				if(!glassesStack.getTagCompound().hasKey("nopopups") && !(Minecraft.getMinecraft().currentScreen instanceof GlassesGui))
+					Minecraft.getMinecraft().displayGuiScreen(new GlassesGui(true));
 			}
 		}
 
@@ -159,10 +159,10 @@ public class OCClientSurface extends ClientSurface {
 			GlassesNotifications.notifications.remove(this);
 
 			ItemStack glassesStack = OpenGlasses.getGlassesStack(Minecraft.getMinecraft().player);
-			if(!glassesStack.isEmpty()) {
-				if(!glassesStack.getTagCompound().hasKey("nopopups"))
-					if(Minecraft.getMinecraft().currentScreen instanceof GlassesGui)
-						Minecraft.getMinecraft().currentScreen = null;
+			if(!glassesStack.isEmpty()
+					&& Minecraft.getMinecraft().currentScreen instanceof GlassesGui
+					&& GlassesGui.isNotification) {
+				Minecraft.getMinecraft().displayGuiScreen(null);
 			}
 		}
 	}

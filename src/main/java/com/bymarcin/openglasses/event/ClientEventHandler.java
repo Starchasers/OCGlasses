@@ -130,7 +130,7 @@ public class ClientEventHandler {
         if(interactGUIKey.isPressed()) {
 
             if(Minecraft.getMinecraft().player.isSneaking()){
-                Minecraft.getMinecraft().displayGuiScreen(new GlassesGui());
+                Minecraft.getMinecraft().displayGuiScreen(new GlassesGui(false));
             }
             else {
                 ((OCClientSurface) OCClientSurface.instances).conditions.setOverlay(true);

@@ -8,6 +8,7 @@ import com.bymarcin.openglasses.item.OpenGlassesHostCard;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
+import com.bymarcin.openglasses.network.packet.GlassesStackNBT;
 import com.bymarcin.openglasses.network.packet.HostInfoPacket;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
 import com.bymarcin.openglasses.proxy.CommonProxy;
@@ -15,6 +16,7 @@ import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -36,6 +38,7 @@ import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.items.wrapper.PlayerArmorInvWrapper;
 
 @Mod(modid = OpenGlasses.MODID, version = OpenGlasses.VERSION, dependencies = "required-after:opencomputers@[1.7.1,);required-after:guitoolkit@1.0.0;required-after:rendertoolkit@1.0.3;after:baubles;")
 public class OpenGlasses
@@ -86,13 +89,13 @@ public class OpenGlasses
 		return !stack.isEmpty() && stack.getItem() instanceof OpenGlassesItem;
 	}
 
-	public static ItemStack getGlassesStack(EntityPlayer e){
-		ItemStack glassesStack = e.inventory.armorInventory.get(3); //armor helmet slot
+	public static ItemStack getGlassesStack(EntityPlayer player){
+		ItemStack glassesStack = player.inventory.armorItemInSlot(3); //armor helmet slot
 
 		if(isGlassesStack(glassesStack))
 			return glassesStack;
 		else if(OpenGlasses.baubles)
-			return getGlassesStackBaubles(e);
+			return getGlassesStackBaubles(player);
 
 		return ItemStack.EMPTY;
 	}
@@ -108,9 +111,10 @@ public class OpenGlasses
 
 	@EventHandler
 	public void init(FMLInitializationEvent event){
-		NetworkRegistry.registerPacket(0, GlassesEventPacket.class, Side.SERVER);
-		NetworkRegistry.registerPacket(1, TerminalStatusPacket.class, Side.CLIENT);
-		NetworkRegistry.registerPacket(2, HostInfoPacket.class, Side.CLIENT);
+		NetworkRegistry.registerPacket(GlassesEventPacket.class, Side.SERVER);
+		NetworkRegistry.registerPacket(TerminalStatusPacket.class, Side.CLIENT);
+		NetworkRegistry.registerPacket(HostInfoPacket.class, Side.CLIENT);
+		NetworkRegistry.registerPacket(GlassesStackNBT.class, Side.CLIENT);
 
 		li.cil.oc.api.Driver.add(DriverHostCard.driver);
 	}
