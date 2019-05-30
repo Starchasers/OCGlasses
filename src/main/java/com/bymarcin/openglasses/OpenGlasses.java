@@ -1,9 +1,10 @@
 package com.bymarcin.openglasses;
 
 import com.bymarcin.openglasses.block.OpenGlassesTerminalBlock;
-import com.bymarcin.openglasses.config.Config;
+import com.bymarcin.openglasses.drivers.DriverHostCard;
 import com.bymarcin.openglasses.event.AnvilEvent;
 import com.bymarcin.openglasses.integration.opencomputers.ocProgramDisks;
+import com.bymarcin.openglasses.item.OpenGlassesHostCard;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.item.OpenGlassesBaubleItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
@@ -14,7 +15,6 @@ import com.bymarcin.openglasses.proxy.CommonProxy;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -22,7 +22,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -50,6 +49,7 @@ public class OpenGlasses
 
 	public static Item openGlasses;
 	public static Item openTerminalItem;
+	public static Item OpenGlassesHostCardItem;
 
 	public static boolean baubles = false;
 
@@ -71,11 +71,14 @@ public class OpenGlasses
 		OpenGlassesItem.DEFAULT_STACK = new ItemStack(openGlasses);
 		OpenGlassesItem.initGlassesStack(OpenGlassesItem.DEFAULT_STACK);
 
+		OpenGlassesHostCard.DEFAULTSTACK = new ItemStack(OpenGlassesHostCardItem = new OpenGlassesHostCard());
+
 		proxy.init();
 	}
 
 	@SubscribeEvent
 	public void registerModels(ModelRegistryEvent event) {
+		proxy.registermodel(OpenGlassesHostCardItem, 0);
 		proxy.registermodel(openTerminalItem, 0);
 		proxy.registermodel(openGlasses, 0);
 	}
@@ -87,15 +90,8 @@ public class OpenGlasses
 			return new OpenGlassesItem();
 	}
 
-	public static Item getGlasses(EntityPlayer e){
-		ItemStack glassesStack = getGlassesStack(e);
-		if(!isGlassesStack(glassesStack)) return null;
-
-		return glassesStack.getItem();
-	}
-
 	public static boolean isGlassesStack(ItemStack stack){
-		return stack != null && stack.getItem() instanceof OpenGlassesItem;
+		return !stack.isEmpty() && stack.getItem() instanceof OpenGlassesItem;
 	}
 
 	public static ItemStack getGlassesStack(EntityPlayer e){
@@ -106,7 +102,7 @@ public class OpenGlasses
 		else if(OpenGlasses.baubles)
 			return getGlassesStackBaubles(e);
 
-		return null;
+		return ItemStack.EMPTY;
 	}
 
 	public static ItemStack getGlassesStackBaubles(EntityPlayer e){
@@ -115,7 +111,7 @@ public class OpenGlasses
 
 		ItemStack baublesStack = handler.getStackInSlot(4);
 
-		return isGlassesStack(baublesStack) ? baublesStack : null;
+		return isGlassesStack(baublesStack) ? baublesStack : ItemStack.EMPTY;
 	}
 
 	@EventHandler
@@ -123,10 +119,13 @@ public class OpenGlasses
 		NetworkRegistry.registerPacket(0, GlassesEventPacket.class, Side.SERVER);
 		NetworkRegistry.registerPacket(1, TerminalStatusPacket.class, Side.CLIENT);
 		NetworkRegistry.registerPacket(2, HostInfoPacket.class, Side.CLIENT);
+
+		li.cil.oc.api.Driver.add(DriverHostCard.driver);
 	}
 
 	@SubscribeEvent
 	public void registerItems(RegistryEvent.Register<Item> event) {
+		event.getRegistry().register(OpenGlassesHostCardItem);
 		event.getRegistry().register(openTerminalItem);
 		event.getRegistry().register(openGlasses);
 	}

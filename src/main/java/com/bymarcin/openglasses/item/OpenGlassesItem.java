@@ -17,7 +17,6 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.energy.EnergyStorage;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -171,15 +170,27 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		return "Glasses";
 	}
 
-	public void bindToTerminal(ItemStack glassesStack, UUID uuid, EntityPlayer player) {
+	public static void link(ItemStack glassesStack, UUID hostUUID, EntityPlayer player) {
 		if(player.world.isRemote)
 		    return;
 
 	    NBTTagCompound tag = glassesStack.getTagCompound();
 
-		tag.setUniqueId("host", uuid);
+		tag.setUniqueId("host", hostUUID);
 		tag.setString("userUUID", player.getGameProfile().getId().toString());
 		tag.setString("user", player.getGameProfile().getName());
+	}
+
+	public static void unlink(ItemStack glassesStack, EntityPlayer player) {
+		if(player.world.isRemote)
+			return;
+
+		NBTTagCompound tag = glassesStack.getTagCompound();
+
+		tag.removeTag("hostMost");
+		tag.removeTag("hostLeast");
+		tag.removeTag("userUUID");
+		tag.removeTag("user");
 	}
 
 
@@ -190,7 +201,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		if (!(entity instanceof EntityPlayer)) return;
 
 		ItemStack glasses = OpenGlasses.getGlassesStack((EntityPlayer) entity);
-		if(glasses == null) return;
+		if(glasses.isEmpty()) return;
 
 		if(glasses.equals(glassesStack))
 			this.consumeEnergy(glassesStack);
@@ -221,7 +232,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		return consumed;
 	}
 
-	public double getEnergyStored(ItemStack glassesStack){
+	public static double getEnergyStored(ItemStack glassesStack){
 		IEnergyStorage storage = glassesStack.getCapability(CapabilityEnergy.ENERGY, null);
 		if(storage == null) return 0;
 		return storage.getEnergyStored();
@@ -291,7 +302,8 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 	}
 
 	public static UUID getHostUUID(ItemStack stack){
-		return stack.getTagCompound().getUniqueId("host");
+		NBTTagCompound nbt = stack.getTagCompound();
+    	return nbt.hasUniqueId("host") ? nbt.getUniqueId("host") : null;
 	}
 
 

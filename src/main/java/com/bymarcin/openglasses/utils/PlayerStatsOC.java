@@ -21,7 +21,7 @@ public class PlayerStatsOC extends ben_mkiv.commons0815.utils.PlayerStats {
 
     public void toggleNightvisionMode(EntityPlayer player){
         ItemStack glassesStack = OpenGlasses.getGlassesStack(player);
-        if(glassesStack == null)
+        if(glassesStack.isEmpty())
             return;
 
         int mode = glassesStack.getTagCompound().getInteger("nightvisionMode") + 1;
@@ -37,7 +37,7 @@ public class PlayerStatsOC extends ben_mkiv.commons0815.utils.PlayerStats {
     public void updateNightvision(EntityPlayer player){
         ItemStack glassesStack = OpenGlasses.getGlassesStack(player);
 
-        if(glassesStack == null)
+        if(glassesStack.isEmpty())
             return;
 
         if (shouldEnableNightvision(player, glassesStack)){
@@ -53,7 +53,7 @@ public class PlayerStatsOC extends ben_mkiv.commons0815.utils.PlayerStats {
     }
 
     boolean shouldEnableNightvision(EntityPlayer player, ItemStack glassesStack){
-        if(glassesStack == null)
+        if(glassesStack.isEmpty())
             return false;
 
         if(!glassesStack.getTagCompound().getBoolean("nightvision"))

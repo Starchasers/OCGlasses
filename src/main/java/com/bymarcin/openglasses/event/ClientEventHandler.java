@@ -1,8 +1,8 @@
 package com.bymarcin.openglasses.event;
 
 import com.bymarcin.openglasses.OpenGlasses;
+import com.bymarcin.openglasses.gui.GlassesGui;
 import com.bymarcin.openglasses.gui.InteractGui;
-import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket.EventType;
@@ -56,19 +56,19 @@ public class ClientEventHandler {
     public boolean checkGlasses(EntityPlayer player) {
         ItemStack glassesStack = OpenGlasses.getGlassesStack(player);
 
-        if(glassesStack != null){
-            if (((OCClientSurface) OCClientSurface.instances).glassesStack == null) {
+        if(!glassesStack.isEmpty()){
+            if (((OCClientSurface) OCClientSurface.instances).glassesStack.isEmpty()) {
                 equiped(player, glassesStack);
                 return true;
             }
-            else if(glassesStack.equals(((OCClientSurface) OCClientSurface.instances).glassesStack))
+            else if(ItemStack.areItemsEqual(glassesStack, ((OCClientSurface) OCClientSurface.instances).glassesStack))
                 return true;
-            else if(glassesStack.getItem() instanceof OpenGlassesItem) {
+            else {
                 ((OCClientSurface) OCClientSurface.instances).initLocalGlasses(glassesStack);
                 return true;
             }
         }
-        else if(((OCClientSurface) OCClientSurface.instances).glassesStack != null) {
+        else if(!((OCClientSurface) OCClientSurface.instances).glassesStack.isEmpty()) {
             unEquiped(player);
         }
 
@@ -89,7 +89,7 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock e){
-        if(((OCClientSurface) OCClientSurface.instances).glassesStack == null) return;
+        if(((OCClientSurface) OCClientSurface.instances).glassesStack.isEmpty()) return;
         if(((OCClientSurface) OCClientSurface.instances).glassesStack.getTagCompound().getBoolean("geolyzer"))
             onInteractEvent(EventType.INTERACT_WORLD_BLOCK_LEFT, e);
         else
@@ -108,7 +108,7 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void onRightClickBlock(PlayerInteractEvent.RightClickBlock e){
-        if(((OCClientSurface) OCClientSurface.instances).glassesStack == null) return;
+        if(((OCClientSurface) OCClientSurface.instances).glassesStack.isEmpty()) return;
         if(((OCClientSurface) OCClientSurface.instances).glassesStack.getTagCompound().getBoolean("geolyzer"))
             onInteractEvent(EventType.INTERACT_WORLD_BLOCK_RIGHT, e);
         else
@@ -116,7 +116,7 @@ public class ClientEventHandler {
     }
 
     private void onInteractEvent(EventType type, PlayerInteractEvent event){
-        if(((OCClientSurface) OCClientSurface.instances).glassesStack == null) return;
+        if(((OCClientSurface) OCClientSurface.instances).glassesStack.isEmpty()) return;
         if(((OCClientSurface) OCClientSurface.instances).lastBind == null) return;
         if(!event.getSide().isClient()) return;
         if(!event.getHand().equals(EnumHand.MAIN_HAND)) return;
@@ -126,11 +126,17 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void onKeyInput(InputEvent.KeyInputEvent event) {
-        if(((OCClientSurface) OCClientSurface.instances).glassesStack == null) return;
+        if(((OCClientSurface) OCClientSurface.instances).glassesStack.isEmpty()) return;
         if(interactGUIKey.isPressed()) {
-            ((OCClientSurface) OCClientSurface.instances).conditions.setOverlay(true);
-            Minecraft.getMinecraft().displayGuiScreen(new InteractGui());
-            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.ACTIVATE_OVERLAY));
+
+            if(Minecraft.getMinecraft().player.isSneaking()){
+                Minecraft.getMinecraft().displayGuiScreen(new GlassesGui());
+            }
+            else {
+                ((OCClientSurface) OCClientSurface.instances).conditions.setOverlay(true);
+                Minecraft.getMinecraft().displayGuiScreen(new InteractGui());
+                NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.ACTIVATE_OVERLAY));
+            }
         }
         if(nightvisionModeKey.isPressed() && ((OCClientSurface) OCClientSurface.instances).glassesStack.getTagCompound().getBoolean("nightvision")) {
             NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.TOGGLE_NIGHTVISION));

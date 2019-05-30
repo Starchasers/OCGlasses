@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "   ",
+    " G ",
+    "MPR"
+  ],
+  "key": {
+    "R": {
+      "item": "#opencomputers_memory3"
+    },
+    "G": {
+      "item": "#opencomputers_geolyzer"
+    },
+    "M": {
+      "item": "#opencomputers_cpu3"
+    },
+    "P": {
+      "item": "#opencomputers_cardbase"
+    }
+  },
+  "result": {
+    "item": "openglasses:openglasses_card"
+  }
+}

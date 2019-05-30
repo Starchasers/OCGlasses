@@ -1,19 +1,22 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "R  ",
-    "G  ",
-    "M  "
+    "ggg",
+    "ICI",
+    "IcI"
   ],
   "key": {
-    "R": {
-      "item": "#opencomputers_memory3"
+    "g": {
+      "item": "minecraft:gold_nugget"
     },
-    "G": {
-      "item": "#opencomputers_geolyzer"
+    "C": {
+      "item": "openglasses:openglasses_card"
     },
-    "M": {
-      "item": "#opencomputers_cpu3"
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "c": {
+      "item": "#opencomputers_cable"
     }
   },
   "result": {

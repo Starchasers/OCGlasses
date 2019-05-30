@@ -8,7 +8,9 @@ import ben_mkiv.rendertoolkit.common.widgets.component.face.Text2D;
 import ben_mkiv.rendertoolkit.common.widgets.component.world.EntityTracker3D;
 import ben_mkiv.rendertoolkit.surface.ClientSurface;
 
+import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.event.ClientEventHandler;
+import com.bymarcin.openglasses.gui.GlassesGui;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
@@ -17,6 +19,7 @@ import com.bymarcin.openglasses.utils.Conditions;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 
@@ -43,9 +46,8 @@ public class OCClientSurface extends ClientSurface {
     public static ClientEventHandler eventHandler;
 
 	public Conditions conditions = new Conditions();
-	
-	public OpenGlassesItem glasses;
-	public ItemStack glassesStack;
+
+	public ItemStack glassesStack = ItemStack.EMPTY;
 	public UUID lastBind;
 
 	private IRenderableWidget noPowerRender, noLinkRender, widgetLimitRender;
@@ -60,21 +62,19 @@ public class OCClientSurface extends ClientSurface {
 
 	public void resetLocalGlasses(){
 		this.removeAllWidgets();
-		this.glasses = null;
-		this.glassesStack = null;
+		this.glassesStack = ItemStack.EMPTY;
 		this.lastBind = null;
 	}
 
 	public void initLocalGlasses(ItemStack glassesStack){
 		this.glassesStack = glassesStack;
-		this.glasses = (OpenGlassesItem) glassesStack.getItem();
 		this.lastBind = OpenGlassesItem.getHostUUID(glassesStack);
 
 		conditions.bufferSensors(this.glassesStack);
 	}
 
 	public void refreshConditions(){
-		if(glassesStack == null) return;
+		if(glassesStack.isEmpty()) return;
 
 		conditions.getConditionStates(glassesStack, Minecraft.getMinecraft().player);
 	}
@@ -93,11 +93,80 @@ public class OCClientSurface extends ClientSurface {
 	}
 
 	public void sendResolution(){
-		if(glasses == null) return;
+		if(glassesStack.isEmpty()) return;
 		if(lastBind == null) return;
 
 		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.GLASSES_SCREEN_SIZE, resolution.getScaledWidth(), resolution.getScaledHeight(), resolution.getScaleFactor()));
 	}
+
+
+	public static class GlassesNotifications {
+		public static HashSet<GlassesNotification> notifications = new HashSet<>();
+
+		public static void update(){
+			for(GlassesNotification notification : notifications)
+				notification.update();
+		}
+
+		public interface GlassesNotification{
+			void update();
+			void cancel();
+			void submit();
+		}
+	}
+
+	public static class LinkRequest implements GlassesNotifications.GlassesNotification {
+		private long linkRequestActive = 0;
+		public UUID host;
+		public BlockPos pos;
+		int timeout = 120;
+
+		public LinkRequest(UUID hostUUID, BlockPos hostPosition){
+			linkRequestActive = System.currentTimeMillis();
+			host = hostUUID;
+			pos = hostPosition;
+
+			GlassesNotifications.notifications.add(this);
+
+			ItemStack glassesStack = OpenGlasses.getGlassesStack(Minecraft.getMinecraft().player);
+			if(!glassesStack.isEmpty()) {
+				if(!glassesStack.getTagCompound().hasKey("nopopups"))
+					Minecraft.getMinecraft().displayGuiScreen(new GlassesGui());
+			}
+		}
+
+		@Override
+		public void update(){
+			if(System.currentTimeMillis() - linkRequestActive > timeout * 1000) {
+				cancel();
+			}
+		}
+
+		@Override
+		public void submit(){
+			NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.ACCEPT_LINK));
+			remove();
+		}
+
+		@Override
+		public void cancel(){
+			remove();
+			NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.DENY_LINK));
+		}
+
+		void remove(){
+			linkRequestActive = 0;
+			GlassesNotifications.notifications.remove(this);
+
+			ItemStack glassesStack = OpenGlasses.getGlassesStack(Minecraft.getMinecraft().player);
+			if(!glassesStack.isEmpty()) {
+				if(!glassesStack.getTagCompound().hasKey("nopopups"))
+					if(Minecraft.getMinecraft().currentScreen instanceof GlassesGui)
+						Minecraft.getMinecraft().currentScreen = null;
+			}
+		}
+	}
+
 
 	@SubscribeEvent
 	public void onRenderGameOverlay(RenderGameOverlayEvent evt) {
@@ -112,7 +181,9 @@ public class OCClientSurface extends ClientSurface {
 			GlStateManager.scale(OCClientSurface.resolution.getScaledWidth() / renderResolution.x, OCClientSurface.resolution.getScaledHeight() / renderResolution.y, 1);
 
 		GlStateManager.depthMask(false);
+
 		renderWidgets(renderables.values());
+
 		postRender(RenderType.GameOverlayLocated);
 	}
 
@@ -162,10 +233,10 @@ public class OCClientSurface extends ClientSurface {
 		if(!super.shouldRenderStart(renderEvent))
 			return false;
 
-		if(this.glassesStack == null || this.glasses == null)
+		if(this.glassesStack.isEmpty())
 			return false;
 
-		if(glasses.getEnergyStored(glassesStack) == 0){
+		if(OpenGlassesItem.getEnergyStored(glassesStack) == 0){
 			if(renderEvent.equals(RenderType.GameOverlayLocated) && noPowerRender != null) {
 				preRender(renderEvent, ~0);
 				GlStateManager.depthMask(false);

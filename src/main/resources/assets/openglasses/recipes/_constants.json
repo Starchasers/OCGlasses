@@ -34,5 +34,23 @@
     "ingredient": {
       "item": "opencomputers:component", "data": 2
     }
+  },
+  {
+    "name": "opencomputers_pcb",
+    "ingredient": {
+      "item": "opencomputers:material", "data": 4
+    }
+  },
+  {
+    "name": "opencomputers_cardbase",
+    "ingredient": {
+      "item": "opencomputers:material", "data": 5
+    }
+  },
+  {
+    "name": "opencomputers_cable",
+    "ingredient": {
+      "item": "opencomputers:cable", "data": 0
+    }
   }
 ]

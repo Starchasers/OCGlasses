@@ -4,7 +4,6 @@ import com.bymarcin.openglasses.event.ClientEventHandler;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.surface.OCClientSurface;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
 
@@ -21,7 +20,7 @@ public class InteractGui extends GuiScreen {
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        if(((OCClientSurface) OCClientSurface.instances).glasses == null) return;
+        if(((OCClientSurface) OCClientSurface.instances).glassesStack.isEmpty()) return;
         if(OCClientSurface.instances.renderResolution != null){
             mouseX*=(OCClientSurface.instances.renderResolution.x / OCClientSurface.instances.resolution.getScaledWidth());
             mouseY*=(OCClientSurface.instances.renderResolution.y / OCClientSurface.instances.resolution.getScaledHeight());

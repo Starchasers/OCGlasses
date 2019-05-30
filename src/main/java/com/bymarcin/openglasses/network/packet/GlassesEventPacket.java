@@ -2,12 +2,14 @@ package com.bymarcin.openglasses.network.packet;
 
 import java.io.IOException;
 
+import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.component.OpenGlassesHostComponent;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.utils.IOpenGlassesHost;
 import com.bymarcin.openglasses.utils.PlayerStatsOC;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
 
@@ -26,13 +28,15 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		ACTIVATE_OVERLAY, DEACTIVATE_OVERLAY,
 		INTERACT_WORLD_RIGHT, INTERACT_WORLD_LEFT, INTERACT_WORLD_BLOCK_RIGHT, INTERACT_WORLD_BLOCK_LEFT,
 		INTERACT_OVERLAY,
-		GLASSES_SCREEN_SIZE
+		GLASSES_SCREEN_SIZE,
+		ACCEPT_LINK, DENY_LINK, CLEAR_LINK
 	}
 
 	EventType eventType;
 	String player;
 	BlockPos eventPos;
 	EnumFacing facing;
+
 	int x, y;
 	double mb;
 	
@@ -40,6 +44,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		this.player = Minecraft.getMinecraft().player.getGameProfile().getId().toString();
 		this.eventType = eventType;
 	}
+
 
 	public GlassesEventPacket(EventType eventType, BlockPos eventPosition, EnumFacing face) {
 		this(eventType);
@@ -187,6 +192,28 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 				}
 				break;
 
+			case ACCEPT_LINK:
+			case DENY_LINK:
+				playerMP = OCServerSurface.instances.checkUUID(player);
+				if(playerMP != null) {
+					if(eventType.equals(EventType.ACCEPT_LINK)){
+						ItemStack stack = OpenGlasses.getGlassesStack(playerMP);
+						if(OpenGlassesHostComponent.linkRequests.containsKey(playerMP))
+							OpenGlassesItem.link(stack, OpenGlassesHostComponent.linkRequests.get(playerMP), playerMP);
+					}
+
+					OpenGlassesHostComponent.linkRequests.remove(playerMP);
+				}
+				break;
+			case CLEAR_LINK:
+				playerMP = OCServerSurface.instances.checkUUID(player);
+				if(playerMP != null) {
+					ItemStack stack = OpenGlasses.getGlassesStack(playerMP);
+					if(!stack.isEmpty()) {
+						OpenGlassesItem.unlink(stack, playerMP);
+					}
+				}
+				break;
 			default:
 				break;
 		}

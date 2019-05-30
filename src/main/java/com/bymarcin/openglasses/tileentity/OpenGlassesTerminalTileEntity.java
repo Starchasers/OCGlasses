@@ -13,7 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.Vec3d;
 
 public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment implements IOpenGlassesHost {
-	private OpenGlassesHostComponent component = new OpenGlassesHostComponent(this);
+	private OpenGlassesHostComponent component;
 
 	public OpenGlassesTerminalTileEntity() {
 		component = new OpenGlassesHostComponent(this);

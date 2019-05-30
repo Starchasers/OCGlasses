@@ -61,10 +61,10 @@ public class OpenGlassesTerminalBlock extends BlockContainer implements IBlockWi
 		if (te == null)
 			return false;
 		ItemStack glassesStack = player.getHeldItemMainhand();
-		if (glassesStack != null) {
+		if (!glassesStack.isEmpty()) {
 			Item item = glassesStack.getItem();
 			if (item instanceof OpenGlassesItem) {
-				((OpenGlassesItem) item).bindToTerminal(glassesStack, te.getUUID(), player);
+				OpenGlassesItem.link(glassesStack, te.getUUID(), player);
 				return true;
 			}
 		}
