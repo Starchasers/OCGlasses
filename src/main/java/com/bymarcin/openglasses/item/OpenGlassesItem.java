@@ -3,12 +3,15 @@ package com.bymarcin.openglasses.item;
 import java.util.List;
 import java.util.UUID;
 
+import baubles.api.BaubleType;
+import baubles.api.IBauble;
 import com.bymarcin.openglasses.manual.IItemWithDocumentation;
 import com.bymarcin.openglasses.surface.OCClientSurface;
 import com.bymarcin.openglasses.utils.nightvision;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
@@ -17,6 +20,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.energy.EnergyStorage;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -32,7 +36,8 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation {
+@Optional.Interface(iface="baubles.api.IBauble",modid="baubles")
+public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation, IBauble {
 	final static int nightvisionCostFE = 5;
 	public static ItemStack DEFAULT_STACK;
 
@@ -306,5 +311,33 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
     	return nbt.hasUniqueId("host") ? nbt.getUniqueId("host") : null;
 	}
 
+
+	/* Baubles integration */
+	@Override
+	@Optional.Method(modid="baubles")
+	public BaubleType getBaubleType(ItemStack itemstack) {
+		return BaubleType.HEAD;
+	}
+
+	@Override
+	@Optional.Method(modid="baubles")
+	public boolean canEquip(ItemStack itemstack, EntityLivingBase player) {
+		return true;
+	}
+
+	@Override
+	@Optional.Method(modid="baubles")
+	public boolean canUnequip(ItemStack itemstack, EntityLivingBase player) {
+		return true;
+	}
+
+	@Override
+	@Optional.Method(modid="baubles")
+	public boolean willAutoSync(ItemStack itemstack, EntityLivingBase player) { return true; }
+
+	@Override
+	@SideOnly(Side.SERVER)
+	@Optional.Method(modid="baubles")
+	public void onWornTick(ItemStack itemstack, EntityLivingBase player){ this.consumeEnergy(itemstack); }
 
 }

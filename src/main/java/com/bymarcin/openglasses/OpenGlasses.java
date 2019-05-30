@@ -6,7 +6,6 @@ import com.bymarcin.openglasses.event.AnvilEvent;
 import com.bymarcin.openglasses.integration.opencomputers.ocProgramDisks;
 import com.bymarcin.openglasses.item.OpenGlassesHostCard;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
-import com.bymarcin.openglasses.item.OpenGlassesBaubleItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.network.packet.HostInfoPacket;
@@ -67,7 +66,7 @@ public class OpenGlasses
 
 		GameRegistry.registerTileEntity(OpenGlassesTerminalTileEntity.class, "openglassesterminalte");
 
-		openGlasses = getOGCObject();
+		openGlasses = new OpenGlassesItem();
 		OpenGlassesItem.DEFAULT_STACK = new ItemStack(openGlasses);
 		OpenGlassesItem.initGlassesStack(OpenGlassesItem.DEFAULT_STACK);
 
@@ -81,13 +80,6 @@ public class OpenGlasses
 		proxy.registermodel(OpenGlassesHostCardItem, 0);
 		proxy.registermodel(openTerminalItem, 0);
 		proxy.registermodel(openGlasses, 0);
-	}
-
-	public Item getOGCObject(){
-		if(OpenGlasses.baubles)
-			return new OpenGlassesBaubleItem();
-		else
-			return new OpenGlassesItem();
 	}
 
 	public static boolean isGlassesStack(ItemStack stack){
