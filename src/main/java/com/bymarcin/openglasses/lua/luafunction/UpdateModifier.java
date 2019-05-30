@@ -13,7 +13,7 @@ public class UpdateModifier extends LuaFunction{
     @Callback(direct = true)
     public Object[] call(Context context, Arguments arguments) {
         super.call(context, arguments);
-        Widget widget = getSelf().getWidget();
+        Widget widget = getWidget();
         if(widget != null){
             int modifierIndex = (arguments.checkInteger(0)-1);
 
@@ -30,7 +30,7 @@ public class UpdateModifier extends LuaFunction{
 
             widget.WidgetModifierList.update(modifierIndex, f);
 
-            getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());
+            updateWidget();
             return new Object[]{ true };
         }
         throw new RuntimeException("Component does not exists!");

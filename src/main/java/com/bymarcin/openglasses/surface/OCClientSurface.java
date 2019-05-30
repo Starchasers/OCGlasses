@@ -13,7 +13,6 @@ import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.utils.Conditions;
-import com.bymarcin.openglasses.utils.TerminalLocation;
 
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
@@ -34,9 +33,12 @@ import javax.vecmath.Vector3f;
 
 @SideOnly(Side.CLIENT)
 public class OCClientSurface extends ClientSurface {
-	static {
+	static{
 		instances = new OCClientSurface();
 	}
+
+	public boolean isInternalComponent;
+	public Vec3d renderPosition = new Vec3d(0, 0, 0);
 
     public static ClientEventHandler eventHandler;
 
@@ -44,7 +46,7 @@ public class OCClientSurface extends ClientSurface {
 	
 	public OpenGlassesItem glasses;
 	public ItemStack glassesStack;
-	public TerminalLocation lastBind;
+	public UUID lastBind;
 
 	private IRenderableWidget noPowerRender, noLinkRender, widgetLimitRender;
 
@@ -66,7 +68,7 @@ public class OCClientSurface extends ClientSurface {
 	public void initLocalGlasses(ItemStack glassesStack){
 		this.glassesStack = glassesStack;
 		this.glasses = (OpenGlassesItem) glassesStack.getItem();
-		this.lastBind = TerminalLocation.getGlassesTerminalUUID(glassesStack);
+		this.lastBind = OpenGlassesItem.getHostUUID(glassesStack);
 
 		conditions.bufferSensors(this.glassesStack);
 	}
@@ -120,11 +122,18 @@ public class OCClientSurface extends ClientSurface {
 
 		preRender(RenderType.WorldLocated, event.getPartialTicks());
 
-		GlStateManager.translate(lastBind.pos.getX(), lastBind.pos.getY(), lastBind.pos.getZ());
+		GlStateManager.translate(getRenderPosition().x, getRenderPosition().y, getRenderPosition().z);
 
 		GlStateManager.depthMask(true);
 		renderWidgets(renderablesWorld.values());
 		postRender(RenderType.WorldLocated);
+	}
+
+	public Vec3d getRenderPosition(){
+		if(!isInternalComponent)
+			return renderPosition;
+
+		return new Vec3d(0, 0, 0);
 	}
 
 	void renderWidgets(Collection<IRenderableWidget> widgets){
@@ -132,17 +141,17 @@ public class OCClientSurface extends ClientSurface {
 
 		long renderConditions = conditions.get();
 
-		Vector3f renderOffset = new Vector3f((float) lastBind.pos.getX(), (float) lastBind.pos.getY(), (float) lastBind.pos.getZ());
+		Vector3f offset = new Vector3f((float) getRenderPosition().x, (float) getRenderPosition().y, (float) getRenderPosition().z);
 
 		for(IRenderableWidget renderable : widgets) {
-			if(!renderable.shouldWidgetBeRendered(Minecraft.getMinecraft().player, renderOffset))
+			if(!renderable.shouldWidgetBeRendered(Minecraft.getMinecraft().player, offset))
 				continue;
 
 			if(!renderable.isWidgetOwner(uuid))
 				continue;
 
 			if(renderable instanceof EntityTracker3D.RenderEntityTracker)
-				renderWidget(renderable, renderConditions, new Vec3d(lastBind.pos).scale(-1));
+				renderWidget(renderable, renderConditions, getRenderPosition().scale(-1));
 			else
 				renderWidget(renderable, renderConditions);
 		}

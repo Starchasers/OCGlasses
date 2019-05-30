@@ -1,10 +1,10 @@
 package com.bymarcin.openglasses.item;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.bymarcin.openglasses.manual.IItemWithDocumentation;
 import com.bymarcin.openglasses.surface.OCClientSurface;
-import com.bymarcin.openglasses.utils.TerminalLocation;
 import com.bymarcin.openglasses.utils.nightvision;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -106,11 +106,12 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 
 		NBTTagCompound tag = stack.getTagCompound();
 
-		if(tag.hasKey("location")){
-			TerminalLocation location = (TerminalLocation) new TerminalLocation().readFromNBT(tag.getCompoundTag("location"));
-			if(!FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0).getGameRules().getBoolean("reducedDebugInfo"))
-				tooltip.add("linked to: X: " + location.pos.getX() + ", Y: " + location.pos.getY() + ", Z: " + location.pos.getZ() + " (DIM: " + location.dimID +")");
-			tooltip.add("terminal: " + location.uniqueKey.toString());
+		if(tag.hasUniqueId("host")){
+			UUID host = tag.getUniqueId("host");
+
+			//if(!FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0).getGameRules().getBoolean("reducedDebugInfo"))
+			//	tooltip.add("linked to: X: " + location.pos.getX() + ", Y: " + location.pos.getY() + ", Z: " + location.pos.getZ() + " (DIM: " + location.dimID +")");
+			tooltip.add("host: " + host.toString());
 			tooltip.add("user: " + tag.getString("user"));
 		}
 		else
@@ -170,15 +171,13 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		return "Glasses";
 	}
 
-	public void bindToTerminal(ItemStack glassesStack, TerminalLocation uuid, EntityPlayer player) {
+	public void bindToTerminal(ItemStack glassesStack, UUID uuid, EntityPlayer player) {
 		if(player.world.isRemote)
 		    return;
 
 	    NBTTagCompound tag = glassesStack.getTagCompound();
 
-
-		tag.setTag("location", uuid.writeToNBT(new NBTTagCompound()));
-
+		tag.setUniqueId("host", uuid);
 		tag.setString("userUUID", player.getGameProfile().getId().toString());
 		tag.setString("user", player.getGameProfile().getName());
 	}
@@ -286,4 +285,14 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 			return null;
 		}
 	}
+
+	public static UUID getHostUUID(EntityPlayer player){
+		return getHostUUID(OpenGlasses.getGlassesStack(player));
+	}
+
+	public static UUID getHostUUID(ItemStack stack){
+		return stack.getTagCompound().getUniqueId("host");
+	}
+
+
 }

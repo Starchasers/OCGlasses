@@ -13,14 +13,14 @@ public class SetItem extends LuaFunction{
 	@Callback(direct = true)
 	public Object[] call(Context context, Arguments arguments) {
 		super.call(context, arguments);
-		Widget widget = getSelf().getWidget();
+		Widget widget = getWidget();
 		if(widget instanceof IItem){
 			int metaIndex = 0;
 			if(arguments.count() >= 2)
 				metaIndex = arguments.checkInteger(1);
 
 			boolean ret = ((IItem) widget).setItem(arguments.checkString(0), metaIndex);
-			getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());	
+			updateWidget();
 			return new Object[]{ ret };
 		}
 		throw new RuntimeException("Component does not exists!");

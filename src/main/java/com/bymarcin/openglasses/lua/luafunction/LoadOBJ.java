@@ -12,10 +12,10 @@ public class LoadOBJ extends LuaFunction{
     @Override
     public Object[] call(Context context, Arguments arguments) {
         super.call(context, arguments);
-        Widget widget = getSelf().getWidget();
+        Widget widget = getWidget();
         if(widget instanceof IOBJModel){
             ((IOBJModel) widget).loadOBJ(arguments.checkString(0));
-            getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());
+            updateWidget();
             return null;
         }
         throw new RuntimeException("Component does not exists!");

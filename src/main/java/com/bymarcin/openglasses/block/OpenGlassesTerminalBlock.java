@@ -1,10 +1,8 @@
 package com.bymarcin.openglasses.block;
 
-import ben_mkiv.rendertoolkit.network.messages.WidgetUpdatePacket;
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.manual.IBlockWithDocumentation;
-import com.bymarcin.openglasses.surface.OCServerSurface;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 
 import net.minecraft.block.BlockContainer;
@@ -66,7 +64,7 @@ public class OpenGlassesTerminalBlock extends BlockContainer implements IBlockWi
 		if (glassesStack != null) {
 			Item item = glassesStack.getItem();
 			if (item instanceof OpenGlassesItem) {
-				((OpenGlassesItem) item).bindToTerminal(glassesStack, te.getTerminalUUID(), player);
+				((OpenGlassesItem) item).bindToTerminal(glassesStack, te.getUUID(), player);
 				return true;
 			}
 		}
@@ -91,7 +89,7 @@ public class OpenGlassesTerminalBlock extends BlockContainer implements IBlockWi
 	public void onBlockPreDestroy(World world, BlockPos pos) {
 		OpenGlassesTerminalTileEntity te = getTileEntity(world, pos, OpenGlassesTerminalTileEntity.class);
 		if (te != null)
-			OCServerSurface.instance.sendToUUID(new WidgetUpdatePacket(), te.getTerminalUUID());
+			te.remove();
 	}
 
 	@Override

@@ -14,13 +14,13 @@ public class SetTrackingType extends LuaFunction {
         @Callback(direct = true)
         public Object[] call(Context context, Arguments arguments) {
             super.call(context, arguments);
-            Widget widget = getSelf().getWidget();
+            Widget widget = getWidget();
             if(widget instanceof ITracker){
                 EntityTracker3D.EntityType trackerType = EntityTracker3D.EntityType.valueOf(arguments.checkString(0).toUpperCase());
                 int range = arguments.checkInteger(1);
 
                 ((ITracker) widget).setupTracking(trackerType, range);
-                getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());
+                updateWidget();
                 return null;
             }
             throw new RuntimeException("Component does not exists!");

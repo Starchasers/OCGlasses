@@ -14,10 +14,10 @@ public class AddVertex extends LuaFunction{
     @Callback(direct = true)
     public Object[] call(Context context, Arguments arguments) {
         super.call(context, arguments);
-        Widget widget = getSelf().getWidget();
+        Widget widget = getWidget();
         if(widget instanceof ICustomShape){
            ((ICustomShape) widget).addVertex((float) arguments.checkDouble(0), (float) arguments.checkDouble(1), (float) arguments.checkDouble(2));
-           getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());
+            updateWidget();
            return null;
         }
         throw new RuntimeException("Component does not exists!");

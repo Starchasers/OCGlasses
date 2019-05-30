@@ -2,10 +2,10 @@ package com.bymarcin.openglasses.network.packet;
 
 import java.io.IOException;
 
-import com.bymarcin.openglasses.OpenGlasses;
-import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
+import com.bymarcin.openglasses.component.OpenGlassesHostComponent;
+import com.bymarcin.openglasses.item.OpenGlassesItem;
+import com.bymarcin.openglasses.utils.IOpenGlassesHost;
 import com.bymarcin.openglasses.utils.PlayerStatsOC;
-import com.bymarcin.openglasses.utils.TerminalLocation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumFacing;
@@ -106,26 +106,25 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	@Override
 	protected IMessage executeOnServer() {
 		EntityPlayerMP playerMP;
-		OpenGlassesTerminalTileEntity terminal;
+		IOpenGlassesHost host;
 		Vec3d look;
 
 		switch(eventType) {
 			case EQUIPED_GLASSES:
-				OCServerSurface.instance.subscribePlayer(player);
+				((OCServerSurface) OCServerSurface.instances).subscribePlayer(player);
 				//request client resolution once the player puts glasses on
-				//UUID.getTerminal().requestResolutionEvent(OCServerSurface.instance.checkUUID(player));
+				//UUID.getTerminal().requestResolutionEvent(OCServerSurface.instances.checkUUID(player));
 				break;
 			case UNEQUIPED_GLASSES:
-				OCServerSurface.instance.unsubscribePlayer(player);
+				((OCServerSurface) OCServerSurface.instances).unsubscribePlayer(player);
 				break;
 			case INTERACT_WORLD_BLOCK_LEFT:
 			case INTERACT_WORLD_BLOCK_RIGHT:
-				playerMP = OCServerSurface.instance.checkUUID(player);
+				playerMP = OCServerSurface.instances.checkUUID(player);
 				look = playerMP.getLookVec();
-				terminal = TerminalLocation.getTerminal(OpenGlasses.getGlassesStack(playerMP));
-
-				if (terminal != null)
-					terminal.sendInteractEventWorldBlock(eventType.name(),
+				host = OCServerSurface.getHost(OpenGlassesItem.getHostUUID(playerMP));
+				if (host != null)
+					host.getComponent().sendInteractEventWorldBlock(eventType.name(),
 							playerMP.getName(),
 							playerMP.posX, playerMP.posY, playerMP.posZ,
 							look.x, look.y, look.z,
@@ -134,11 +133,11 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 				break;
 			case INTERACT_WORLD_LEFT:
 			case INTERACT_WORLD_RIGHT:
-				playerMP = OCServerSurface.instance.checkUUID(player);
+				playerMP = OCServerSurface.instances.checkUUID(player);
 				look = playerMP.getLookVec();
-				terminal = TerminalLocation.getTerminal(OpenGlasses.getGlassesStack(playerMP));
-				if (terminal != null)
-					terminal.sendInteractEventWorld(eventType.name(),
+				host = OCServerSurface.getHost(OpenGlassesItem.getHostUUID(playerMP));
+				if (host != null)
+					host.getComponent().sendInteractEventWorld(eventType.name(),
 							playerMP.getName(),
 							playerMP.posX, playerMP.posY, playerMP.posZ,
 							look.x, look.y, look.z,
@@ -146,26 +145,26 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 					);
 				break;
 			case INTERACT_OVERLAY:
-				playerMP = OCServerSurface.instance.checkUUID(player);
-				terminal = TerminalLocation.getTerminal(OpenGlasses.getGlassesStack(playerMP));
-				if(playerMP != null && terminal != null)
-					terminal.sendInteractEventOverlay(eventType.name(), playerMP.getName(), mb, x, y);
+				playerMP = OCServerSurface.instances.checkUUID(player);
+				host = OCServerSurface.getHost(OpenGlassesItem.getHostUUID(playerMP));
+				if(playerMP != null && host != null)
+					host.getComponent().sendInteractEventOverlay(eventType.name(), playerMP.getName(), mb, x, y);
 				break;
 			case GLASSES_SCREEN_SIZE:
-				playerMP = OCServerSurface.instance.checkUUID(player);
+				playerMP = OCServerSurface.instances.checkUUID(player);
 				if(playerMP != null) {
-					PlayerStatsOC stats = (PlayerStatsOC) OCServerSurface.instance.playerStats.get(playerMP.getUniqueID());
-					terminal = TerminalLocation.getTerminal(OpenGlasses.getGlassesStack(playerMP));
+					PlayerStatsOC stats = (PlayerStatsOC) OCServerSurface.instances.playerStats.get(playerMP.getUniqueID());
+					host = OCServerSurface.getHost(OpenGlassesItem.getHostUUID(playerMP));
 					if(stats != null)
 						stats.setScreen(x, y, mb);
-					if(terminal != null)
-						terminal.sendChangeSizeEvent(eventType.name(), playerMP.getName(), x, y, mb);
+					if(host != null)
+						host.getComponent().sendChangeSizeEvent(eventType.name(), playerMP.getName(), x, y, mb);
 				}
 				break;
 			case TOGGLE_NIGHTVISION:
-				playerMP = OCServerSurface.instance.checkUUID(player);
+				playerMP = OCServerSurface.instances.checkUUID(player);
 				if(playerMP != null) {
-					PlayerStatsOC stats = (PlayerStatsOC) OCServerSurface.instance.playerStats.get(playerMP.getUniqueID());
+					PlayerStatsOC stats = (PlayerStatsOC) OCServerSurface.instances.playerStats.get(playerMP.getUniqueID());
 
 					if(stats == null)
 						stats = new PlayerStatsOC(playerMP);
@@ -176,9 +175,9 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 
 			case ACTIVATE_OVERLAY:
 			case DEACTIVATE_OVERLAY:
-				playerMP = OCServerSurface.instance.checkUUID(player);
+				playerMP = OCServerSurface.instances.checkUUID(player);
 				if(playerMP != null) {
-					PlayerStatsOC stats = (PlayerStatsOC) OCServerSurface.instance.playerStats.get(playerMP.getUniqueID());
+					PlayerStatsOC stats = (PlayerStatsOC) OCServerSurface.instances.playerStats.get(playerMP.getUniqueID());
 					if(stats != null) {
 						if(eventType.equals(EventType.ACTIVATE_OVERLAY))
 							stats.conditions.setOverlay(true);

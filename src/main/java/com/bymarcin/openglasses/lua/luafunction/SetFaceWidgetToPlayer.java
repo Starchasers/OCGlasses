@@ -14,11 +14,12 @@ public class SetFaceWidgetToPlayer extends LuaFunction{
 	@Callback(direct = true)
 	public Object[] call(Context context, Arguments arguments) {
 		super.call(context, arguments);
-		Widget widget = getSelf().getWidget(); 
+		Widget widget = getWidget();
 		if(widget != null){
 			((WidgetGLOverlay) widget).setFaceWidgetToPlayer(arguments.checkBoolean(0));
-			
-			getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());	
+
+			updateWidget();
+
 			return null;
 		}
 		throw new RuntimeException("Component does not exists!");

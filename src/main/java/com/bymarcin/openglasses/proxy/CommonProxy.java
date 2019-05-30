@@ -29,7 +29,7 @@ public class CommonProxy implements IThreadListener {
 	}
 
 	public PlayerStatsOC getPlayerStats(UUID uuid) {
-		return (PlayerStatsOC) OCServerSurface.instance.playerStats.get(uuid);
+		return (PlayerStatsOC) OCServerSurface.instances.playerStats.get(uuid);
 	}
 
 	public int getCurrentClientDimension() {

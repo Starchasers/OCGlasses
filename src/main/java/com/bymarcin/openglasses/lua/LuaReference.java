@@ -1,36 +1,33 @@
 package com.bymarcin.openglasses.lua;
 
 import ben_mkiv.rendertoolkit.common.widgets.Widget;
-import com.bymarcin.openglasses.utils.TerminalLocation;
+import com.bymarcin.openglasses.surface.OCServerSurface;
+import com.bymarcin.openglasses.utils.IOpenGlassesHost;
 import net.minecraft.nbt.NBTTagCompound;
 
-import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
+import java.util.UUID;
 
 public class LuaReference {
-	int widgetRef;
-	TerminalLocation blockRef;
+	private int widgetRef;
+	private UUID hostUUID;
 	
-	public LuaReference(int id, TerminalLocation loc) {
-		blockRef = loc;
+	public LuaReference(int id, UUID uuid) {
+		hostUUID = uuid;
 		widgetRef = id;
 	}
 
-	TerminalLocation getBlockRef() {
-		return blockRef;
-	}
-	
 	public int getWidgetRef() {
 		return widgetRef;
 	}
 	
-	public OpenGlassesTerminalTileEntity getTerminal(){
-		return blockRef.getTerminal();
+	public IOpenGlassesHost getHost(){
+		return OCServerSurface.getHost(hostUUID);
 	}
 	
 	public Widget getWidget(){
-		OpenGlassesTerminalTileEntity terminal = getTerminal();
-		if(terminal!=null){
-			return terminal.getWidget(widgetRef);
+		IOpenGlassesHost host = getHost();
+		if(host != null){
+			return host.getComponent().getWidget(widgetRef);
 		}
 		return null;
 	}
@@ -38,16 +35,14 @@ public class LuaReference {
 	public LuaReference() {}
 	
 	public LuaReference readFromNBT(NBTTagCompound nbt) {
-		blockRef = (TerminalLocation) new TerminalLocation().readFromNBT(nbt.getCompoundTag("loc"));
+		hostUUID = nbt.getUniqueId("host");
 		widgetRef = nbt.getInteger("id");
 		return this;
 	}
 
-	public LuaReference writeToNBT(NBTTagCompound nbt) {
-		NBTTagCompound loc = new NBTTagCompound();
-		blockRef.writeToNBT(loc);
-		nbt.setTag("loc", loc);
+	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+		nbt.setUniqueId("host", hostUUID);
 		nbt.setInteger("id", widgetRef);
-		return this;
+		return nbt;
 	}
 }

@@ -14,10 +14,10 @@ public class SetViewDistance extends LuaFunction{
 	@Callback(direct = true)
 	public Object[] call(Context context, Arguments arguments) {
 		super.call(context, arguments);
-		Widget widget = getSelf().getWidget(); 
+		Widget widget = getWidget();
 		if(widget instanceof IViewDistance){
 			((IViewDistance) widget).setDistanceView(arguments.checkInteger(0));
-			getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());	
+			updateWidget();
 			return null;
 		}
 		throw new RuntimeException("Component does not exists!");

@@ -14,13 +14,13 @@ public class SetShading extends LuaFunction{
     @Callback(direct = true)
     public Object[] call(Context context, Arguments arguments) {
         super.call(context, arguments);
-        Widget widget = getSelf().getWidget();
+        Widget widget = getWidget();
         if(widget instanceof CustomShape){
             if(arguments.checkString(0).toUpperCase().equals("SMOOTH"))
                 ((CustomShape) widget).smooth_shading = true;
             if(arguments.checkString(0).toUpperCase().equals("FLAT"))
                 ((CustomShape) widget).smooth_shading = false;
-            getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());
+            updateWidget();
             return null;
         }
         throw new RuntimeException("Component does not exists!");

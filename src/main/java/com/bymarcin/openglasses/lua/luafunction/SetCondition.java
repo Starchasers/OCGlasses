@@ -14,16 +14,16 @@ public class SetCondition extends LuaFunction{
 	@Callback(direct = true)
 	public Object[] call(Context context, Arguments arguments) {
 		super.call(context, arguments);
-		Widget widget = getSelf().getWidget();
+		Widget widget = getWidget();
 		if(widget != null){
 			
 			int modifierIndex = (int) arguments.checkInteger(0) - 1;
 			boolean state = arguments.checkBoolean(2);
 			short conditionIndex = WidgetModifierConditionType.getIndex(arguments.checkString(1));
 			
-			widget.WidgetModifierList.setCondition(modifierIndex, conditionIndex, state);			
-			
-			getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());
+			widget.WidgetModifierList.setCondition(modifierIndex, conditionIndex, state);
+
+			updateWidget();
 			return null;
 		}
 		throw new RuntimeException("Component does not exists!");

@@ -14,11 +14,11 @@ public class SetVertex extends LuaFunction{
 	@Callback(direct = true)
 	public Object[] call(Context context, Arguments arguments) {
 		super.call(context, arguments);
-		Widget widget = getSelf().getWidget(); 
+		Widget widget = getWidget();
 		if(widget instanceof ICustomShape){
 			if(arguments.checkInteger(0)>0 && arguments.checkInteger(0)<=((ICustomShape) widget).getVertexCount()){
 				((ICustomShape) widget).setVertex(arguments.checkInteger(0)-1, (float) arguments.checkDouble(1), (float) arguments.checkDouble(2), (float) arguments.checkDouble(3));
-				getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());	
+				updateWidget();
 				return null;
 			}
 			throw new RuntimeException("Vertex not exist!");

@@ -1,7 +1,6 @@
 package com.bymarcin.openglasses.network.packet;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import com.bymarcin.openglasses.network.Packet;
 

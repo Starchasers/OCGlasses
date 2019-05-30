@@ -14,7 +14,7 @@ public class SetText extends LuaFunction{
 	@Callback(direct = true)
 	public Object[] call(Context context, Arguments arguments) {
 		super.call(context, arguments);
-		Widget widget = getSelf().getWidget(); 
+		Widget widget = getWidget();
 		if(widget instanceof ITextable){
 			String text = "";
 
@@ -28,7 +28,7 @@ public class SetText extends LuaFunction{
 				text+= arguments.checkBoolean(0);
 
 			((ITextable) widget).setText(text);
-			getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());	
+			updateWidget();
 			return null;
 		}
 		throw new RuntimeException("Component does not exists!");

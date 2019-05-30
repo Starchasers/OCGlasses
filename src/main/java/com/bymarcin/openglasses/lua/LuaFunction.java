@@ -1,18 +1,21 @@
 package com.bymarcin.openglasses.lua;
 
-import com.bymarcin.openglasses.utils.TerminalLocation;
+import ben_mkiv.rendertoolkit.common.widgets.Widget;
+import com.bymarcin.openglasses.component.OpenGlassesHostComponent;
 import net.minecraft.nbt.NBTTagCompound;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.machine.Value;
+
+import java.util.UUID;
 
 public abstract class LuaFunction implements Value{
 	LuaReference ref;
 
 	public LuaFunction() {}
 	
-	LuaFunction(int id, TerminalLocation loc) {
-		ref = new LuaReference(id, loc);
+	LuaFunction(int id, UUID uuid) {
+		ref = new LuaReference(id, uuid);
 	}
 	
 	public abstract String getName();
@@ -55,11 +58,18 @@ public abstract class LuaFunction implements Value{
 	@Override
 	public void dispose(Context context) {}
 
+	protected void updateWidget(){
+		getSelf().getHost().getComponent().updateWidget(getSelf().getWidgetRef());
+	}
+
+	protected Widget getWidget(){
+		return getSelf().getWidget();
+	}
 
 	@Override
 	public Object[] call(Context context, Arguments arguments) {
-		if(context.node() ==null || getSelf().getTerminal() == null || getSelf().getTerminal().node() == null) throw new RuntimeException("Terminal is not connected!");
-		if(!context.node().canBeReachedFrom(getSelf().getTerminal().node())) throw new RuntimeException("Terminal is not connected!");
+		if(context.node() ==null || getSelf().getHost() == null || getSelf().getHost().node() == null) throw new RuntimeException("host is not connected!");
+		if(!context.node().canBeReachedFrom(getSelf().getHost().node())) throw new RuntimeException("host is not connected!");
 		return new Object[]{null};
 	}
 }

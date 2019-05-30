@@ -14,14 +14,14 @@ public class SetLookingAt extends LuaFunction{
 	@Callback(direct = true)
 	public Object[] call(Context context, Arguments arguments) {
 		super.call(context, arguments);
-		Widget widget = getSelf().getWidget(); 
+		Widget widget = getWidget();
 		if(widget instanceof ILookable){
 			if(arguments.isBoolean(0)){
 				((ILookable) widget).setLookingAtEnable(arguments.checkBoolean(0));
 			}else{
 				((ILookable) widget).setLookingAt(arguments.checkInteger(0),arguments.checkInteger(1), arguments.checkInteger(2));
 			}
-			getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());	
+			updateWidget();
 			return null;
 		}
 		throw new RuntimeException("Component does not exists!");

@@ -13,9 +13,9 @@ public class RemoveWidget extends LuaFunction{
 	@Callback(direct = true)
 	public Object[] call(Context context, Arguments arguments) {
 		super.call(context, arguments);
-		Widget widget = getSelf().getWidget();
+		Widget widget = getWidget();
 		if(widget != null){
-			getSelf().getTerminal().removeWidget(getSelf().getWidgetRef());
+			updateWidget();
 			return new Object[]{ true };
 		}
 		throw new RuntimeException("widget does not exists!");

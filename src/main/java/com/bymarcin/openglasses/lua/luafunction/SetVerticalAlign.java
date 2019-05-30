@@ -12,10 +12,10 @@ public class SetVerticalAlign extends LuaFunction{
     @Callback(direct = true)
     public Object[] call(Context context, Arguments arguments) {
         super.call(context, arguments);
-        WidgetGLOverlay widget = (WidgetGLOverlay) getSelf().getWidget();
+        WidgetGLOverlay widget = (WidgetGLOverlay) getWidget();
         if(widget != null){
             widget.setVerticalAlignment(arguments.checkString(0));
-            getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());
+            updateWidget();
             return null;
         }
         throw new RuntimeException("Component does not exists!");

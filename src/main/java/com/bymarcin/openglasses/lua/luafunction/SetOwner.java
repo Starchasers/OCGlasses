@@ -18,14 +18,14 @@ public class SetOwner extends LuaFunction{
 
 		if(name.length() > 0) {
 			if (FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(name) != null) {
-				getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());
+				updateWidget();
 				return new Object[]{ true, owner };
 			}
 			else
 				return new Object[]{ false };
 		}
 		else {
-			getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());
+			updateWidget();
 			return new Object[]{true, owner};
 		}
 	}

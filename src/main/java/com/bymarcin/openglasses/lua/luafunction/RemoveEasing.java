@@ -13,11 +13,11 @@ public class RemoveEasing extends LuaFunction{
     @Callback(direct = true)
     public Object[] call(Context context, Arguments arguments) {
         super.call(context, arguments);
-        Widget widget = getSelf().getWidget();
+        Widget widget = getWidget();
         if(widget != null){
             int modifierIndex = (arguments.checkInteger(0) - 1);
             widget.WidgetModifierList.removeEasing(modifierIndex, arguments.checkString(1));
-            getSelf().getTerminal().updateWidget(getSelf().getWidgetRef());
+            updateWidget();
             return null;
         }
         throw new RuntimeException("Component does not exists!");
