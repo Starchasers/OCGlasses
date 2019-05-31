@@ -57,9 +57,9 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
         node().sendToReachable("computer.signal", eventType.toLowerCase(), name, x - environmentHost.getRenderPosition().x, y  - environmentHost.getRenderPosition().y, z - environmentHost.getRenderPosition().z, lx, ly, lz, eyeh);
     }
 
-    public void sendInteractEventOverlay(String eventType, String name, double button, double x, double y){
+    public void sendInteractEventOverlay(String eventType, String name, double button, double x, double y, double lx, double ly, double lz, double eyeh){
         if(node() == null) return;
-        node().sendToReachable("computer.signal", eventType.toLowerCase(), name, x, y, button);
+        node().sendToReachable("computer.signal", eventType.toLowerCase(), name, x, y, button, lx, ly, lz, eyeh);
     }
 
     public void sendChangeSizeEvent(String eventType, String player, int width, int height, double scaleFactor){
@@ -105,28 +105,42 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
 
     @Callback
     public Object[] startLinking(Context context, Arguments args) {
-        int range = Math.max(64, args.optInteger(0, 64));
+        String playerName = args.optString(0, "");
 
         HashSet<String> players = new HashSet<>();
 
-        for(EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers()){
-            if(environmentHost.getRenderPosition().distanceTo(player.getPositionVector()) > range)
-                continue;
+        if(playerName.length() > 0){
+            EntityPlayerMP player = (EntityPlayerMP) OpenGlasses.proxy.getPlayer(playerName);
+            if(requestLink(player))
+                players.add(player.getDisplayName().getUnformattedText());
 
-            ItemStack glasses = OpenGlasses.getGlassesStack(player);
-            if(glasses.isEmpty())
-                continue;
-
-            if(environmentHost.getUUID().equals(OpenGlassesItem.getHostUUID(glasses)))
-                continue;
-
-            linkRequests.put(player, environmentHost.getUUID());
-            players.add(player.getDisplayName().getUnformattedText());
-
-            NetworkRegistry.packetHandler.sendTo(new TerminalStatusPacket(TerminalStatusPacket.TerminalEvent.LINK_REQUEST, environmentHost), player);
+            return new Object[]{ players.size() > 0, players.toArray() };
+        }
+        else {
+            for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers()) {
+                if (requestLink(player))
+                    players.add(player.getDisplayName().getUnformattedText());
+            }
         }
         
         return new Object[]{ true, players.toArray() };
+    }
+
+    private boolean requestLink(EntityPlayerMP player){
+        if(environmentHost.getRenderPosition().distanceTo(player.getPositionVector()) > 64)
+            return false;
+
+        ItemStack glasses = OpenGlasses.getGlassesStack(player);
+        if(glasses.isEmpty())
+            return false;
+
+        if(environmentHost.getUUID().equals(OpenGlassesItem.getHostUUID(glasses)))
+            return false;
+
+        linkRequests.put(player, environmentHost.getUUID());
+
+        NetworkRegistry.packetHandler.sendTo(new TerminalStatusPacket(TerminalStatusPacket.TerminalEvent.LINK_REQUEST, environmentHost), player);
+        return true;
     }
 
     @Callback(direct = true)

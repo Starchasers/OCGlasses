@@ -1,18 +1,17 @@
 package com.bymarcin.openglasses.item;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
 import baubles.api.BaubleType;
 import baubles.api.IBauble;
+import com.bymarcin.openglasses.item.upgrades.*;
 import com.bymarcin.openglasses.manual.IItemWithDocumentation;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesStackNBT;
-import com.bymarcin.openglasses.network.packet.HostInfoPacket;
-import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
 import com.bymarcin.openglasses.surface.OCClientSurface;
 import com.bymarcin.openglasses.surface.OCServerSurface;
-import com.bymarcin.openglasses.utils.nightvision;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -24,7 +23,6 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import net.minecraft.network.play.server.SPacketSetSlot;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.fml.common.Optional;
@@ -41,14 +39,30 @@ import net.minecraft.util.EnumFacing;
 
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @Optional.Interface(iface="baubles.api.IBauble",modid="baubles")
 public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation, IBauble {
-	final static int nightvisionCostFE = 5;
 	public static ItemStack DEFAULT_STACK;
 
-    public OpenGlassesItem() {
+	public static HashSet<UpgradeItem> upgrades = new HashSet<>();
+
+	static {
+		upgrades.add(new UpgradeBatteryTier1());
+		upgrades.add(new UpgradeBatteryTier2());
+		upgrades.add(new UpgradeBatteryTier3());
+		upgrades.add(new UpgradeDatabase1());
+		upgrades.add(new UpgradeDatabase2());
+		upgrades.add(new UpgradeDatabase3());
+		upgrades.add(new UpgradeDaylightDetector());
+		upgrades.add(new UpgradeGeolyzer());
+		upgrades.add(new UpgradeMotionSensor());
+		upgrades.add(new UpgradeNightvision());
+		upgrades.add(new UpgradeTank());
+	}
+
+	public OpenGlassesItem() {
 		super(ArmorMaterial.IRON, 0, EntityEquipmentSlot.HEAD);
 		setMaxDamage(0);
 		setMaxStackSize(1);
@@ -128,54 +142,25 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		else
 			tooltip.add("use at glassesterminal to link glasses");
 
-
-		if(tag.getBoolean("daylightDetector"))
-			tooltip.add("lightsensor: installed");
-		else {
-			tooltip.add("lightsensor: not installed");
-			tooltip.add("(install on anvil with minecraft daylight sensor)");
-		}
-
-		if(tag.getBoolean("tankUpgrade"))
-			tooltip.add("rainsensor: installed");
-		else {
-			tooltip.add("rainsensor: not installed");
-			tooltip.add("(install on anvil with opencomputers tank upgrade)");
-		}
-
-		if(tag.getBoolean("motionsensor"))
-			tooltip.add("sneak detection: installed");
-		else {
-			tooltip.add("sneak detection: not installed");
-			tooltip.add("(install on anvil with opencomputers motionsensor)");
-		}
-
-		if(tag.getBoolean("nightvision"))
-			tooltip.add("nightvision: installed (mode: "+ nightvision.nightVisionModes.values()[tag.getInteger("nightvisionMode")].name()+")");
-		else {
-			tooltip.add("nightvision not installed");
-			tooltip.add("(install on anvil with any potion of nightvision)");
-		}
-
-		if(tag.getBoolean("geolyzer")) {
-			tooltip.add("geolyzer: installed");
-			tooltip.add("radar Range: " + tag.getInteger("radarRange"));
-		}
-		else {
-			tooltip.add("geolyzer: not installed");
-			tooltip.add("(install on anvil with opencomputers geolyzer to enable swimming detection)");
-		}
+		for(UpgradeItem upgrade : upgrades)
+			tooltip.addAll(upgrade.getTooltip(stack));
 
 		int widgetCount = OCClientSurface.instances.getWidgetCount();
 		tooltip.add("using " + widgetCount + "/" + tag.getInteger("widgetLimit") + " widgets");
 
 		int energyUsage = tag.getInteger("upkeepCost");
-		if(tag.getBoolean("nightVisionActive"))
-			energyUsage+=nightvisionCostFE;
 
 		IEnergyStorage storage = stack.getCapability(CapabilityEnergy.ENERGY, null);
 		tooltip.add(String.format("%s/%s FE", storage.getEnergyStored(), storage.getMaxEnergyStored()));
 		tooltip.add("usage " + energyUsage + " FE/tick");
+	}
+
+	public static void upgradeUpkeepCost(ItemStack stack){
+		int upkeepCost = 1;
+		for(UpgradeItem upgrade : upgrades)
+			upkeepCost+=upgrade.getEnergyUsageCurrent(stack);
+
+		stack.getTagCompound().setInteger("upkeepCost", upkeepCost);
 	}
 
 	public String getDocumentationName(ItemStack stack){
@@ -225,7 +210,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 
 	private static void syncStackNBT(ItemStack glassesStack, EntityPlayerMP player){
 		NetworkRegistry.packetHandler.sendTo(new GlassesStackNBT(glassesStack), player);
-        ((OCServerSurface) OCServerSurface.instances).subscribePlayer(player, getHostUUID(glassesStack));
+        OCServerSurface.instance().subscribePlayer(player, getHostUUID(glassesStack));
 	}
 
 	// Forge Energy
@@ -238,7 +223,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		if(glasses.isEmpty()) return;
 
 		if(glasses.equals(glassesStack))
-			this.consumeEnergy(glassesStack);
+			consumeEnergy(glassesStack);
 	}
 
 	@Override
@@ -253,14 +238,10 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		return 1 - (((double) 1 / storage.getMaxEnergyStored()) * storage.getEnergyStored());
 	}
 
-	int consumeEnergy(ItemStack glassesStack){
+	private static void consumeEnergy(ItemStack glassesStack){
 		int consumed = 0;
 		IEnergyStorage storage = glassesStack.getCapability(CapabilityEnergy.ENERGY, null);
 		consumed+= storage.extractEnergy(glassesStack.getTagCompound().getInteger("upkeepCost"), false);
-		if(glassesStack.getTagCompound().getBoolean("nightVisionActive")){
-			consumed+=storage.extractEnergy(nightvisionCostFE, false); //consume 5FE/tick for active nightvision
-		}
-		return consumed;
 	}
 
 	public static double getEnergyStored(ItemStack glassesStack){
@@ -270,9 +251,9 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 	}
 
 	private static class EnergyCapabilityProvider implements ICapabilityProvider{
-		public final EnergyStorage storage;
+		final EnergyStorage storage;
 
-		public EnergyCapabilityProvider(final ItemStack stack){
+		EnergyCapabilityProvider(final ItemStack stack){
 			this.storage = new EnergyStorage(0, 1000, 1000){
 				@Override
 				public int getEnergyStored(){
@@ -284,7 +265,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 					return stack.getTagCompound().getInteger("EnergyCapacity");
 				}
 
-				public void setEnergyStored(int energy){
+				void setEnergyStored(int energy){
 					stack.getTagCompound().setInteger("Energy", energy);
 				}
 
@@ -314,13 +295,13 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		}
 
 		@Override
-		public boolean hasCapability(Capability<?> capability, EnumFacing facing){
+		public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing){
 			return this.getCapability(capability, facing) != null;
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public <T> T getCapability(Capability<T> capability, EnumFacing facing){
+		public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing){
 			if(capability == CapabilityEnergy.ENERGY){
 				return (T) this.storage;
 			}
@@ -364,6 +345,6 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 	@Override
 	@SideOnly(Side.SERVER)
 	@Optional.Method(modid="baubles")
-	public void onWornTick(ItemStack itemstack, EntityLivingBase player){ this.consumeEnergy(itemstack); }
+	public void onWornTick(ItemStack itemstack, EntityLivingBase player){ consumeEnergy(itemstack); }
 
 }

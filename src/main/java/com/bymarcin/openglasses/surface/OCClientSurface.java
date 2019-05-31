@@ -62,6 +62,10 @@ public class OCClientSurface extends ClientSurface {
 		this.resetLocalGlasses();
 	}
 
+	public static OCClientSurface instance(){
+		return (OCClientSurface) instances;
+	}
+
 	public void resetLocalGlasses(){
 		this.removeAllWidgets();
 		this.glassesStack = ItemStack.EMPTY;

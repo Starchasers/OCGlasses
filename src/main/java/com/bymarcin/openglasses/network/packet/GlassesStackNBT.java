@@ -41,7 +41,7 @@ public class GlassesStackNBT extends Packet<GlassesStackNBT, IMessage> {
 
         if(!glasses.isEmpty()) {
             glasses.setTagCompound(tagCompound);
-            ((OCClientSurface) OCClientSurface.instances).initLocalGlasses(glasses);
+            OCClientSurface.instance().initLocalGlasses(glasses);
         }
         return null;
     }

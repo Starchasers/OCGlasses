@@ -20,7 +20,7 @@ public class InteractGui extends GuiScreen {
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        if(((OCClientSurface) OCClientSurface.instances).glassesStack.isEmpty()) return;
+        if(OCClientSurface.instance().glassesStack.isEmpty()) return;
         if(OCClientSurface.instances.renderResolution != null){
             mouseX*=(OCClientSurface.instances.renderResolution.x / OCClientSurface.instances.resolution.getScaledWidth());
             mouseY*=(OCClientSurface.instances.renderResolution.y / OCClientSurface.instances.resolution.getScaledHeight());
@@ -32,7 +32,7 @@ public class InteractGui extends GuiScreen {
     @Override
     public void updateScreen() {
         if(!Keyboard.isKeyDown(ClientEventHandler.interactGUIKey.getKeyCode())){
-            ((OCClientSurface) OCClientSurface.instances).conditions.setOverlay(false);
+            OCClientSurface.instance().conditions.setOverlay(false);
             NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.DEACTIVATE_OVERLAY));
             mc.displayGuiScreen(null);
         }

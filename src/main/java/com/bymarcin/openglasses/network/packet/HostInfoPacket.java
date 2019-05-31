@@ -32,10 +32,10 @@ public class HostInfoPacket extends Packet<HostInfoPacket, IMessage> {
         isInternal = readBoolean();
 
         if(!isInternal) {
-            ((OCClientSurface) OCClientSurface.instances).renderPosition = new Vec3d(readInt(), readInt(), readInt());
+            OCClientSurface.instance().renderPosition = new Vec3d(readInt(), readInt(), readInt());
         }
 
-        ((OCClientSurface) OCClientSurface.instances).isInternalComponent = isInternal;
+        OCClientSurface.instance().isInternalComponent = isInternal;
 
     }
 

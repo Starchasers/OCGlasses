@@ -1,5 +1,6 @@
 package com.bymarcin.openglasses.gui;
 
+import ben_mkiv.guitoolkit.client.widget.EnergyBar;
 import ben_mkiv.guitoolkit.client.widget.prettyButton;
 import ben_mkiv.guitoolkit.client.widget.prettyCheckbox;
 import com.bymarcin.openglasses.OpenGlasses;
@@ -33,6 +34,9 @@ public class GlassesGui extends GuiScreen {
 
     prettyButton acceptLink, denyLink, clearLink;
     prettyCheckbox enablePopupNotifications, enableWorldRender, enableOverlayRender;
+
+    EnergyBar energyBar;
+
     OCClientSurface.LinkRequest activeLinkRequest;
 
     public static boolean isNotification = false;
@@ -59,6 +63,8 @@ public class GlassesGui extends GuiScreen {
         addButton(enableWorldRender= new prettyCheckbox(buttonList.size(), guiLeft + 5, guiTop + 85, "world render", true));
         addButton(enableOverlayRender = new prettyCheckbox(buttonList.size(), guiLeft + 5, guiTop + 105, "overlay render", true));
 
+        addButton(energyBar = new EnergyBar(buttonList.size(), guiLeft + xSize - 105, guiTop + 5, 100, 7));
+
         acceptLink.visible = false;
         denyLink.visible = false;
         clearLink.visible = false;
@@ -81,12 +87,16 @@ public class GlassesGui extends GuiScreen {
         }
 
         UUID currentHost = OpenGlassesItem.getHostUUID(stack);
+        String linkedToDistance;
+
         if(currentHost != null){
             linkedTo = "host: " + currentHost.toString();
+            linkedToDistance = "host distance: " + (int) Math.round(OCClientSurface.instance().getRenderPosition().distanceTo(Minecraft.getMinecraft().player.getPositionVector())) + " blocks";
             clearLink.visible = true;
         }
         else {
             linkedTo = "not linked";
+            linkedToDistance = "";
             clearLink.visible = false;
         }
 
@@ -96,13 +106,16 @@ public class GlassesGui extends GuiScreen {
         enableWorldRender.setEnabled(!glassesNBT.hasKey("noWorld"));
         enableOverlayRender.setEnabled(!glassesNBT.hasKey("noOverlay"));
 
-
+        energyBar.drawBar(0, 0, 1-stack.getItem().getDurabilityForDisplay(stack), null);
 
         Minecraft.getMinecraft().fontRenderer.drawString(title, guiLeft+5, guiTop+5, 0x0);
         String energyStored = formatNumber((int) OpenGlassesItem.getEnergyStored(stack)) + " FE";
-        Minecraft.getMinecraft().fontRenderer.drawString(energyStored, guiLeft - 5 + xSize - fontRenderer.getStringWidth(energyStored), guiTop+5, 0x0);
+        Minecraft.getMinecraft().fontRenderer.drawString(energyStored, guiLeft - 5 + xSize - fontRenderer.getStringWidth(energyStored), guiTop+13, 0x0);
 
-        Minecraft.getMinecraft().fontRenderer.drawString(linkedTo, guiLeft+5, guiTop+15, 0x0);
+
+
+        Minecraft.getMinecraft().fontRenderer.drawString(linkedToDistance, guiLeft+5, guiTop+15, 0x0);
+        Minecraft.getMinecraft().fontRenderer.drawString(linkedTo, guiLeft+5, guiTop+25, 0x0);
 
 
         if(activeLinkRequest != null){

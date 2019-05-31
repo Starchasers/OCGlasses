@@ -3,6 +3,8 @@ package com.bymarcin.openglasses.event;
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.gui.GlassesGui;
 import com.bymarcin.openglasses.gui.InteractGui;
+import com.bymarcin.openglasses.item.OpenGlassesItem;
+import com.bymarcin.openglasses.item.upgrades.UpgradeItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket.EventType;
@@ -24,10 +26,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
+import static com.bymarcin.openglasses.item.upgrades.UpgradeNightvision.nightvisionModeKey;
+
 @SideOnly(Side.CLIENT)
 public class ClientEventHandler {
     public static KeyBinding interactGUIKey = new KeyBinding("key.interact", Keyboard.KEY_C, "key.categories." + OpenGlasses.MODID.toLowerCase());
-    public static KeyBinding nightvisionModeKey = new KeyBinding("key.nightvision", Keyboard.KEY_N, "key.categories." + OpenGlasses.MODID.toLowerCase());
     int tick = 0;
 
     public ClientEventHandler() {
@@ -41,7 +44,7 @@ public class ClientEventHandler {
         if(e.player != Minecraft.getMinecraft().player) return;
         tick++;
 
-        ((OCClientSurface) OCClientSurface.instances).refreshConditions();
+        OCClientSurface.instance().refreshConditions();
 
         if(tick%20 != 0) return;
 
@@ -57,18 +60,18 @@ public class ClientEventHandler {
         ItemStack glassesStack = OpenGlasses.getGlassesStack(player);
 
         if(!glassesStack.isEmpty()){
-            if (((OCClientSurface) OCClientSurface.instances).glassesStack.isEmpty()) {
+            if (OCClientSurface.instance().glassesStack.isEmpty()) {
                 equiped(player, glassesStack);
                 return true;
             }
-            else if(ItemStack.areItemsEqual(glassesStack, ((OCClientSurface) OCClientSurface.instances).glassesStack))
+            else if(ItemStack.areItemsEqual(glassesStack, OCClientSurface.instance().glassesStack))
                 return true;
             else {
-                ((OCClientSurface) OCClientSurface.instances).initLocalGlasses(glassesStack);
+                OCClientSurface.instance().initLocalGlasses(glassesStack);
                 return true;
             }
         }
-        else if(!((OCClientSurface) OCClientSurface.instances).glassesStack.isEmpty()) {
+        else if(!OCClientSurface.instance().glassesStack.isEmpty()) {
             unEquiped(player);
         }
 
@@ -79,7 +82,7 @@ public class ClientEventHandler {
     public void onJoin(EntityJoinWorldEvent e){
         if(!e.getEntity().equals(Minecraft.getMinecraft().player)) return;
         if(!e.getWorld().isRemote) return;
-        ((OCClientSurface) OCClientSurface.instances).resetLocalGlasses();
+        OCClientSurface.instance().resetLocalGlasses();
     }
 
     @SubscribeEvent
@@ -89,8 +92,8 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock e){
-        if(((OCClientSurface) OCClientSurface.instances).glassesStack.isEmpty()) return;
-        if(((OCClientSurface) OCClientSurface.instances).glassesStack.getTagCompound().getBoolean("geolyzer"))
+        if(OCClientSurface.instance().glassesStack.isEmpty()) return;
+        if(OCClientSurface.instance().glassesStack.getTagCompound().getBoolean("geolyzer"))
             onInteractEvent(EventType.INTERACT_WORLD_BLOCK_LEFT, e);
         else
             onInteractEvent(EventType.INTERACT_WORLD_LEFT, e);
@@ -108,16 +111,16 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void onRightClickBlock(PlayerInteractEvent.RightClickBlock e){
-        if(((OCClientSurface) OCClientSurface.instances).glassesStack.isEmpty()) return;
-        if(((OCClientSurface) OCClientSurface.instances).glassesStack.getTagCompound().getBoolean("geolyzer"))
+        if(OCClientSurface.instance().glassesStack.isEmpty()) return;
+        if(OCClientSurface.instance().glassesStack.getTagCompound().getBoolean("geolyzer"))
             onInteractEvent(EventType.INTERACT_WORLD_BLOCK_RIGHT, e);
         else
             onInteractEvent(EventType.INTERACT_WORLD_RIGHT, e);
     }
 
     private void onInteractEvent(EventType type, PlayerInteractEvent event){
-        if(((OCClientSurface) OCClientSurface.instances).glassesStack.isEmpty()) return;
-        if(((OCClientSurface) OCClientSurface.instances).lastBind == null) return;
+        if(OCClientSurface.instance().glassesStack.isEmpty()) return;
+        if(OCClientSurface.instance().lastBind == null) return;
         if(!event.getSide().isClient()) return;
         if(!event.getHand().equals(EnumHand.MAIN_HAND)) return;
 
@@ -126,30 +129,34 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void onKeyInput(InputEvent.KeyInputEvent event) {
-        if(((OCClientSurface) OCClientSurface.instances).glassesStack.isEmpty()) return;
-        if(interactGUIKey.isPressed()) {
+        if(OCClientSurface.instance().glassesStack.isEmpty())
+            return;
 
+        if(interactGUIKey.isPressed()) {
             if(Minecraft.getMinecraft().player.isSneaking()){
                 Minecraft.getMinecraft().displayGuiScreen(new GlassesGui(false));
             }
             else {
-                ((OCClientSurface) OCClientSurface.instances).conditions.setOverlay(true);
+                OCClientSurface.instance().conditions.setOverlay(true);
                 Minecraft.getMinecraft().displayGuiScreen(new InteractGui());
                 NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.ACTIVATE_OVERLAY));
             }
+
+            return;
         }
-        if(nightvisionModeKey.isPressed() && ((OCClientSurface) OCClientSurface.instances).glassesStack.getTagCompound().getBoolean("nightvision")) {
-            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.TOGGLE_NIGHTVISION));
-        }
+
+        for(UpgradeItem upgrade : OpenGlassesItem.upgrades)
+            upgrade.onKeyInput();
+
     }
 
     private void unEquiped(EntityPlayer player){
         NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.UNEQUIPED_GLASSES));
-        ((OCClientSurface) OCClientSurface.instances).resetLocalGlasses();
+        OCClientSurface.instance().resetLocalGlasses();
     }
 
     private void equiped(EntityPlayer player, ItemStack glassesStack){
-        ((OCClientSurface) OCClientSurface.instances).initLocalGlasses(glassesStack);
+        OCClientSurface.instance().initLocalGlasses(glassesStack);
         NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.EQUIPED_GLASSES));
     }
 }

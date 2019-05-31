@@ -34,7 +34,7 @@ public class ClientProxy extends CommonProxy {
 	public void init() {
 		OCClientSurface.eventHandler = new ClientEventHandler();
 		MinecraftForge.EVENT_BUS.register(OCClientSurface.eventHandler);
-		MinecraftForge.EVENT_BUS.register(OCClientSurface.instances);  //register client events
+		MinecraftForge.EVENT_BUS.register(OCClientSurface.instance());  //register client events
 	}
 	
 	@Override
@@ -68,7 +68,7 @@ public class ClientProxy extends CommonProxy {
 	public PlayerStatsOC getPlayerStats(UUID uuid) {
 		PlayerStatsOC s = new PlayerStatsOC(getPlayer(""));
 		s.setScreen(OCClientSurface.resolution.getScaledWidth(), OCClientSurface.resolution.getScaledHeight(), (double) OCClientSurface.resolution.getScaleFactor());
-		s.conditions = ((OCClientSurface) OCClientSurface.instances).conditions;
+		s.conditions = (OCClientSurface.instance()).conditions;
 		return s;
 	}
 

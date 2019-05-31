@@ -16,6 +16,7 @@ import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -88,7 +89,7 @@ public class OpenGlasses
 	}
 
 	public static ItemStack getGlassesStack(EntityPlayer player){
-		ItemStack glassesStack = player.inventory.armorItemInSlot(3); //armor helmet slot
+		ItemStack glassesStack = player.inventory.armorItemInSlot(EntityEquipmentSlot.HEAD.getIndex());
 
 		if(isGlassesStack(glassesStack))
 			return glassesStack;

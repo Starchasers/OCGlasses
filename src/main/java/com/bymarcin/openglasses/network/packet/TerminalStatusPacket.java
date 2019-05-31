@@ -87,7 +87,7 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 	protected IMessage executeOnClient() {
  		switch(this.terminalEvent){
 			case ASYNC_SCREEN_SIZES:
-				((OCClientSurface) OCClientSurface.instances).sendResolution();
+				(OCClientSurface.instance()).sendResolution();
 				break;
 			case LINK_REQUEST:
 				new OCClientSurface.LinkRequest(uuid, pos);

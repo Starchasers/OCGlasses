@@ -3,11 +3,13 @@ package com.bymarcin.openglasses.surface;
 import com.bymarcin.openglasses.OpenGlasses;
 
 import com.bymarcin.openglasses.item.OpenGlassesItem;
+import com.bymarcin.openglasses.item.upgrades.UpgradeItem;
 import com.bymarcin.openglasses.utils.IOpenGlassesHost;
 import com.bymarcin.openglasses.utils.PlayerStatsOC;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -15,7 +17,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import java.util.HashMap;
 import java.util.UUID;
 
-import static com.bymarcin.openglasses.utils.nightvision.potionNightvision;
+import static com.bymarcin.openglasses.item.upgrades.UpgradeNightvision.potionNightvision;
 
 public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurface {
 	static {
@@ -31,6 +33,10 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 	public OCServerSurface(){
 		eventHandler = new EventHandler();
 		MinecraftForge.EVENT_BUS.register(eventHandler);
+	}
+
+	public static OCServerSurface instance(){
+		return (OCServerSurface) instances;
 	}
 
 	public class EventHandler {
@@ -51,8 +57,11 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 		}
 
 		void updatePlayer(EntityPlayer player){
-			PlayerStatsOC stats = (PlayerStatsOC) playerStats.get(player.getUniqueID());
-			if(stats != null) stats.updateNightvision(player);
+			ItemStack glassesStack = OpenGlasses.getGlassesStack(player);
+
+			if(OpenGlasses.isGlassesStack(glassesStack))
+				for(UpgradeItem upgrade : OpenGlassesItem.upgrades)
+					upgrade.update(player, glassesStack);
 		}
 	}
 
@@ -71,7 +80,7 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 
 		UUID hostUUID = OpenGlassesItem.getHostUUID(player);
 
-		if (players.containsKey(player) && players.get(player).equals(hostUUID))
+		if (players.containsKey(player) && hostUUID.equals(players.get(player)))
 			return;
 
 		subscribePlayer(player, hostUUID);
