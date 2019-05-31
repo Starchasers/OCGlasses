@@ -28,6 +28,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.awt.*;
@@ -47,19 +48,27 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
         node = API.network.newNode(this, Visibility.Network).withComponent(getComponentName()).withConnector().create();
     }
 
-    public void sendInteractEventWorldBlock(String eventType, String name, double x, double y, double z, double lx, double ly, double lz, double eyeh, BlockPos pos, EnumFacing face){
+    public void sendInteractEventWorldBlock(String eventType, String name, Vec3d playerPos, Vec3d look, double eyeh, BlockPos pos, EnumFacing face, double playerRotation, double playerPitch){
         if(node() == null) return;
-        node().sendToReachable("computer.signal", eventType.toLowerCase(), name, x - environmentHost.getRenderPosition().x, y  - environmentHost.getRenderPosition().y, z - environmentHost.getRenderPosition().z, lx, ly, lz, eyeh, pos.getX() - environmentHost.getRenderPosition().x, pos.getY() - environmentHost.getRenderPosition().y, pos.getZ() - environmentHost.getRenderPosition().z, face.getName());
+        node().sendToReachable("computer.signal", eventType.toLowerCase(), name,
+                Math.round((playerPos.x - environmentHost.getRenderPosition().x)*1000)/1000d,
+                Math.round((playerPos.y - environmentHost.getRenderPosition().y)*1000)/1000d,
+                Math.round((playerPos.z - environmentHost.getRenderPosition().z)*1000)/1000d,
+                look.x, look.y, look.z, eyeh, pos.getX() - environmentHost.getRenderPosition().x, pos.getY() - environmentHost.getRenderPosition().y, pos.getZ() - environmentHost.getRenderPosition().z, face.getName(), playerRotation, playerPitch, EnumFacing.fromAngle(playerRotation).getName());
     }
 
-    public void sendInteractEventWorld(String eventType, String name, double x, double y, double z, double lx, double ly, double lz, double eyeh){
+    public void sendInteractEventWorld(String eventType, String name, Vec3d playerPos, Vec3d look, double eyeh, double playerRotation, double playerPitch){
         if(node() == null) return;
-        node().sendToReachable("computer.signal", eventType.toLowerCase(), name, x - environmentHost.getRenderPosition().x, y  - environmentHost.getRenderPosition().y, z - environmentHost.getRenderPosition().z, lx, ly, lz, eyeh);
+        node().sendToReachable("computer.signal", eventType.toLowerCase(), name,
+                Math.round((playerPos.x - environmentHost.getRenderPosition().x)*1000)/1000d,
+                Math.round((playerPos.y - environmentHost.getRenderPosition().y)*1000)/1000d,
+                Math.round((playerPos.z - environmentHost.getRenderPosition().z)*1000)/1000d,
+                look.x, look.y, look.z, eyeh, playerRotation, playerPitch, EnumFacing.fromAngle(playerRotation).getName());
     }
 
-    public void sendInteractEventOverlay(String eventType, String name, double button, double x, double y, double lx, double ly, double lz, double eyeh){
+    public void sendInteractEventOverlay(String eventType, String name, double button, double x, double y, Vec3d look, double eyeh, double playerRotation, double playerPitch){
         if(node() == null) return;
-        node().sendToReachable("computer.signal", eventType.toLowerCase(), name, x, y, button, lx, ly, lz, eyeh);
+        node().sendToReachable("computer.signal", eventType.toLowerCase(), name, x, y, button, look.x, look.y, look.z, eyeh, playerRotation, playerPitch, EnumFacing.fromAngle(playerRotation).getName());
     }
 
     public void sendChangeSizeEvent(String eventType, String player, int width, int height, double scaleFactor){

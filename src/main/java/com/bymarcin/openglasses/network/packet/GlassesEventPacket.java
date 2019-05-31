@@ -124,8 +124,12 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		EntityPlayerMP playerMP = OCServerSurface.instances.checkUUID(player);
 		IOpenGlassesHost host;
 		Vec3d look = new Vec3d(0, 0, 0);
-		float eyeHeight = 0;
+		double eyeHeight = 0;
+		double playerRotation = 0;
+		double playerPitch = 0;
 		PlayerStatsOC stats;
+
+		Vec3d playerPos = new Vec3d(playerMP.posX, playerMP.posY, playerMP.posZ);
 
 		switch(eventType) {
 			case EQUIPED_GLASSES:
@@ -142,8 +146,11 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 			return null;
 
 		if(UpgradeGeolyzer.hasUpgrade(getGlasses(playerMP))) {
-			look = playerMP.getLookVec();
-			eyeHeight = playerMP.getEyeHeight();
+			Vec3d lookVector = playerMP.getLookVec();
+			look = new Vec3d(Math.round(lookVector.x*1000)/1000d, Math.round(lookVector.y*1000)/1000d, Math.round(lookVector.z*1000)/1000d);
+			eyeHeight = Math.round(playerMP.getEyeHeight()*1000)/1000d;
+			playerRotation = Math.round(playerMP.rotationYaw*1000)/1000d;
+			playerPitch = Math.round(playerMP.rotationPitch*1000)/1000d;
 		}
 
 		switch(eventType){
@@ -152,30 +159,20 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 				host = OCServerSurface.getHost(OpenGlassesItem.getHostUUID(playerMP));
 
 				if (host != null)
-					host.getComponent().sendInteractEventWorldBlock(eventType.name(),
-							playerMP.getName(),
-							playerMP.posX, playerMP.posY, playerMP.posZ,
-							look.x, look.y, look.z,
-							eyeHeight, this.eventPos, this.facing
-					);
+					host.getComponent().sendInteractEventWorldBlock(eventType.name(), playerMP.getName(), playerPos, look, eyeHeight, this.eventPos, this.facing, playerRotation, playerPitch);
 				return null;
 
 			case INTERACT_WORLD_LEFT:
 			case INTERACT_WORLD_RIGHT:
 				host = OCServerSurface.getHost(OpenGlassesItem.getHostUUID(playerMP));
 				if (host != null)
-					host.getComponent().sendInteractEventWorld(eventType.name(),
-							playerMP.getName(),
-							playerMP.posX, playerMP.posY, playerMP.posZ,
-							look.x, look.y, look.z,
-							eyeHeight
-					);
+					host.getComponent().sendInteractEventWorld(eventType.name(), playerMP.getName(), playerPos, look, eyeHeight, playerRotation, playerPitch);
 				return null;
 
 			case INTERACT_OVERLAY:
 				host = OCServerSurface.getHost(OpenGlassesItem.getHostUUID(playerMP));
 				if(host != null)
-					host.getComponent().sendInteractEventOverlay(eventType.name(), playerMP.getName(), mb, x, y, look.x, look.y, look.z, eyeHeight);
+					host.getComponent().sendInteractEventOverlay(eventType.name(), playerMP.getName(), mb, x, y, look, eyeHeight, playerRotation, playerPitch);
 				return null;
 
 			case GLASSES_SCREEN_SIZE:

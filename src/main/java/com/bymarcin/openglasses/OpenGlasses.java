@@ -2,6 +2,7 @@ package com.bymarcin.openglasses;
 
 import com.bymarcin.openglasses.block.OpenGlassesTerminalBlock;
 import com.bymarcin.openglasses.drivers.DriverHostCard;
+import com.bymarcin.openglasses.drivers.DriverTerminal;
 import com.bymarcin.openglasses.event.AnvilEvent;
 import com.bymarcin.openglasses.integration.opencomputers.ocProgramDisks;
 import com.bymarcin.openglasses.item.OpenGlassesHostCard;
@@ -14,6 +15,8 @@ import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
 import com.bymarcin.openglasses.proxy.CommonProxy;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 
+import li.cil.oc.api.driver.DriverItem;
+import li.cil.oc.api.driver.EnvironmentProvider;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -116,6 +119,9 @@ public class OpenGlasses
 		NetworkRegistry.registerPacket(GlassesStackNBT.class, Side.CLIENT);
 
 		li.cil.oc.api.Driver.add(DriverHostCard.driver);
+
+		li.cil.oc.api.Driver.add((EnvironmentProvider) DriverTerminal.driver);
+		li.cil.oc.api.Driver.add((DriverItem) DriverTerminal.driver);
 	}
 
 	@SubscribeEvent

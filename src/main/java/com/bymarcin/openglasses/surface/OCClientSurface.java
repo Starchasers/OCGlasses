@@ -18,6 +18,7 @@ import com.bymarcin.openglasses.utils.Conditions;
 
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -191,7 +192,7 @@ public class OCClientSurface extends ClientSurface {
 
 		GlStateManager.depthMask(false);
 
-		renderWidgets(renderables.values());
+		renderWidgets(renderables.values(), evt.getPartialTicks());
 
 		postRender(RenderType.GameOverlayLocated);
 	}
@@ -202,26 +203,27 @@ public class OCClientSurface extends ClientSurface {
 
 		preRender(RenderType.WorldLocated, event.getPartialTicks());
 
-		GlStateManager.translate(getRenderPosition().x, getRenderPosition().y, getRenderPosition().z);
+		GlStateManager.translate(getRenderPosition(event.getPartialTicks()).x, getRenderPosition(event.getPartialTicks()).y, getRenderPosition(event.getPartialTicks()).z);
 
 		GlStateManager.depthMask(true);
-		renderWidgets(renderablesWorld.values());
+		renderWidgets(renderablesWorld.values(), event.getPartialTicks());
 		postRender(RenderType.WorldLocated);
 	}
 
-	public Vec3d getRenderPosition(){
+	public Vec3d getRenderPosition(float partialTicks){
 		if(!isInternalComponent)
 			return renderPosition;
 
-		return new Vec3d(0, 0, 0);
+		double[] playerLocation = getEntityPlayerLocation(Minecraft.getMinecraft().player, partialTicks);
+		return new Vec3d(playerLocation[0], playerLocation[1], playerLocation[2]);
 	}
 
-	void renderWidgets(Collection<IRenderableWidget> widgets){
+	void renderWidgets(Collection<IRenderableWidget> widgets, float partialTicks){
 		String uuid = glassesStack.getTagCompound().getString("userUUID");
 
 		long renderConditions = conditions.get();
-
-		Vector3f offset = new Vector3f((float) getRenderPosition().x, (float) getRenderPosition().y, (float) getRenderPosition().z);
+		Vec3d renderPos = getRenderPosition(partialTicks);
+		Vector3f offset = new Vector3f((float) renderPos.x, (float) renderPos.y, (float) renderPos.z);
 
 		for(IRenderableWidget renderable : widgets) {
 			if(!renderable.shouldWidgetBeRendered(Minecraft.getMinecraft().player, offset))
@@ -231,7 +233,7 @@ public class OCClientSurface extends ClientSurface {
 				continue;
 
 			if(renderable instanceof EntityTracker3D.RenderEntityTracker)
-				renderWidget(renderable, renderConditions, getRenderPosition().scale(-1));
+				renderWidget(renderable, renderConditions, renderPos.scale(-1));
 			else
 				renderWidget(renderable, renderConditions);
 		}

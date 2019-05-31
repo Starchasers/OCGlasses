@@ -91,7 +91,7 @@ public class GlassesGui extends GuiScreen {
 
         if(currentHost != null){
             linkedTo = "host: " + currentHost.toString();
-            linkedToDistance = "host distance: " + (int) Math.round(OCClientSurface.instance().getRenderPosition().distanceTo(Minecraft.getMinecraft().player.getPositionVector())) + " blocks";
+            linkedToDistance = "host distance: " + (int) Math.round(OCClientSurface.instance().getRenderPosition(partialTicks).distanceTo(Minecraft.getMinecraft().player.getPositionVector())) + " blocks";
             clearLink.visible = true;
         }
         else {

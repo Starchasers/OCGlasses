@@ -61,7 +61,7 @@ public class OpenGlassesHostItem implements IOpenGlassesHost, ManagedEnvironment
 
     @Override
     public boolean isInternalComponent(){
-        return false;
+        return true;
     }
 
     @Override
