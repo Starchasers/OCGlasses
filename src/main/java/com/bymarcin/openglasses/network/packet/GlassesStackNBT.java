@@ -3,6 +3,7 @@ package com.bymarcin.openglasses.network.packet;
 
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.network.Packet;
+import com.bymarcin.openglasses.surface.OCClientSurface;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -36,7 +37,12 @@ public class GlassesStackNBT extends Packet<GlassesStackNBT, IMessage> {
     @SideOnly(Side.CLIENT)
     @Override
     protected IMessage executeOnClient() {
-        OpenGlasses.getGlassesStack(Minecraft.getMinecraft().player).setTagCompound(tagCompound);
+        ItemStack glasses = OpenGlasses.getGlassesStack(Minecraft.getMinecraft().player);
+
+        if(!glasses.isEmpty()) {
+            glasses.setTagCompound(tagCompound);
+            ((OCClientSurface) OCClientSurface.instances).initLocalGlasses(glasses);
+        }
         return null;
     }
 

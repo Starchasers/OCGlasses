@@ -62,11 +62,25 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 
 
 	//subscribePlayer to events when he puts glasses on
-	public void subscribePlayer(String playerUUID){
-		EntityPlayerMP player = checkUUID(playerUUID);
-		if(player == null) return;
+	public void subscribePlayer(String playerUUID) {
+		subscribePlayer(checkUUID(playerUUID));
+	}
 
-		players.put(player, OpenGlassesItem.getHostUUID(player));
+	public void subscribePlayer(EntityPlayerMP player) {
+		if (player == null) return;
+
+		UUID hostUUID = OpenGlassesItem.getHostUUID(player);
+
+		if (players.containsKey(player) && players.get(player).equals(hostUUID))
+			return;
+
+		subscribePlayer(player, hostUUID);
+	}
+
+	public void subscribePlayer(EntityPlayerMP player, UUID hostUUID){
+		removePlayerSubscription(player);
+
+		players.put(player, hostUUID);
 		PlayerStatsOC stats = new PlayerStatsOC(player);
 		stats.conditions.bufferSensors(OpenGlasses.getGlassesStack(player));
 		playerStats.put(player.getUniqueID(), stats);
@@ -88,13 +102,18 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 			player.removePotionEffect(potionNightvision);
 		}
 
-		playerStats.remove(player.getUniqueID());
-
 		IOpenGlassesHost host = getHost(players.get(player));
 		if (host != null){
 			host.sync(player);
 			host.getComponent().onGlassesPutOff(player.getDisplayNameString());
 		}
+
+		removePlayerSubscription(player);
+	}
+
+	public void removePlayerSubscription(EntityPlayer player){
+		playerStats.remove(player.getUniqueID());
+		players.remove(player);
 	}
 
 }

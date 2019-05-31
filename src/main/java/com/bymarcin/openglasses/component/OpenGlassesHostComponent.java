@@ -183,7 +183,7 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
         for(Map.Entry<EntityPlayer, UUID> e: OCServerSurface.instances.players.entrySet()){
             if(user.length() == 0
                     || user.equals(e.getKey().getDisplayNameString().toLowerCase()))
-                if(e.getValue().equals(getUUID())){
+                if(getUUID().equals(e.getValue())){
                     NetworkRegistry.packetHandler.sendTo(packet, (EntityPlayerMP) e.getKey());
                     i++;
                 }

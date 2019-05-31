@@ -11,6 +11,7 @@ import com.bymarcin.openglasses.network.packet.GlassesStackNBT;
 import com.bymarcin.openglasses.network.packet.HostInfoPacket;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
 import com.bymarcin.openglasses.surface.OCClientSurface;
+import com.bymarcin.openglasses.surface.OCServerSurface;
 import com.bymarcin.openglasses.utils.nightvision;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -191,7 +192,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		tag.setString("userUUID", player.getGameProfile().getId().toString());
 		tag.setString("user", player.getGameProfile().getName());
 
-		NetworkRegistry.packetHandler.sendTo(new GlassesStackNBT(glassesStack), (EntityPlayerMP) player);
+		syncStackNBT(glassesStack, (EntityPlayerMP) player);
 	}
 
 	public static void unlink(ItemStack glassesStack, EntityPlayer player) {
@@ -205,9 +206,27 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		tag.removeTag("userUUID");
 		tag.removeTag("user");
 
-		NetworkRegistry.packetHandler.sendTo(new GlassesStackNBT(glassesStack), (EntityPlayerMP) player);
+		syncStackNBT(glassesStack, (EntityPlayerMP) player);
 	}
 
+	public static void setConfigFlag(String flagName, boolean enabled, ItemStack glassesStack, EntityPlayer player){
+		if(player.world.isRemote)
+			return;
+
+		// config flags default to true if the tag doesnt exist, so tags are only set to DISABLE features
+
+		if(enabled)
+    		glassesStack.getTagCompound().removeTag(flagName);
+    	else
+			glassesStack.getTagCompound().setBoolean(flagName, true);
+
+		syncStackNBT(glassesStack, (EntityPlayerMP) player);
+	}
+
+	private static void syncStackNBT(ItemStack glassesStack, EntityPlayerMP player){
+		NetworkRegistry.packetHandler.sendTo(new GlassesStackNBT(glassesStack), player);
+        ((OCServerSurface) OCServerSurface.instances).subscribePlayer(player, getHostUUID(glassesStack));
+	}
 
 	// Forge Energy
 	@Override

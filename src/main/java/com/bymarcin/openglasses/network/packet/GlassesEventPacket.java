@@ -29,7 +29,10 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		INTERACT_WORLD_RIGHT, INTERACT_WORLD_LEFT, INTERACT_WORLD_BLOCK_RIGHT, INTERACT_WORLD_BLOCK_LEFT,
 		INTERACT_OVERLAY,
 		GLASSES_SCREEN_SIZE,
-		ACCEPT_LINK, DENY_LINK, CLEAR_LINK
+		ACCEPT_LINK, DENY_LINK, CLEAR_LINK,
+		ENABLE_NOTIFICATIONS, DISABLE_NOTIFICATIONS,
+		ENABLE_WORLD_RENDER, DISABLE_WORLD_RENDER,
+		ENABLE_OVERLAY_RENDER, DISABLE_OVERLAY_RENDER
 	}
 
 	EventType eventType;
@@ -110,7 +113,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 
 	@Override
 	protected IMessage executeOnServer() {
-		EntityPlayerMP playerMP;
+		EntityPlayerMP playerMP = OCServerSurface.instances.checkUUID(player);
 		IOpenGlassesHost host;
 		Vec3d look;
 
@@ -125,7 +128,6 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 				break;
 			case INTERACT_WORLD_BLOCK_LEFT:
 			case INTERACT_WORLD_BLOCK_RIGHT:
-				playerMP = OCServerSurface.instances.checkUUID(player);
 				look = playerMP.getLookVec();
 				host = OCServerSurface.getHost(OpenGlassesItem.getHostUUID(playerMP));
 				if (host != null)
@@ -138,7 +140,6 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 				break;
 			case INTERACT_WORLD_LEFT:
 			case INTERACT_WORLD_RIGHT:
-				playerMP = OCServerSurface.instances.checkUUID(player);
 				look = playerMP.getLookVec();
 				host = OCServerSurface.getHost(OpenGlassesItem.getHostUUID(playerMP));
 				if (host != null)
@@ -150,13 +151,11 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 					);
 				break;
 			case INTERACT_OVERLAY:
-				playerMP = OCServerSurface.instances.checkUUID(player);
 				host = OCServerSurface.getHost(OpenGlassesItem.getHostUUID(playerMP));
 				if(playerMP != null && host != null)
 					host.getComponent().sendInteractEventOverlay(eventType.name(), playerMP.getName(), mb, x, y);
 				break;
 			case GLASSES_SCREEN_SIZE:
-				playerMP = OCServerSurface.instances.checkUUID(player);
 				if(playerMP != null) {
 					PlayerStatsOC stats = (PlayerStatsOC) OCServerSurface.instances.playerStats.get(playerMP.getUniqueID());
 					host = OCServerSurface.getHost(OpenGlassesItem.getHostUUID(playerMP));
@@ -167,7 +166,6 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 				}
 				break;
 			case TOGGLE_NIGHTVISION:
-				playerMP = OCServerSurface.instances.checkUUID(player);
 				if(playerMP != null) {
 					PlayerStatsOC stats = (PlayerStatsOC) OCServerSurface.instances.playerStats.get(playerMP.getUniqueID());
 
@@ -180,7 +178,6 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 
 			case ACTIVATE_OVERLAY:
 			case DEACTIVATE_OVERLAY:
-				playerMP = OCServerSurface.instances.checkUUID(player);
 				if(playerMP != null) {
 					PlayerStatsOC stats = (PlayerStatsOC) OCServerSurface.instances.playerStats.get(playerMP.getUniqueID());
 					if(stats != null) {
@@ -194,7 +191,6 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 
 			case ACCEPT_LINK:
 			case DENY_LINK:
-				playerMP = OCServerSurface.instances.checkUUID(player);
 				if(playerMP != null) {
 					if(eventType.equals(EventType.ACCEPT_LINK)){
 						ItemStack stack = OpenGlasses.getGlassesStack(playerMP);
@@ -206,11 +202,37 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 				}
 				break;
 			case CLEAR_LINK:
-				playerMP = OCServerSurface.instances.checkUUID(player);
 				if(playerMP != null) {
 					ItemStack stack = OpenGlasses.getGlassesStack(playerMP);
 					if(!stack.isEmpty()) {
 						OpenGlassesItem.unlink(stack, playerMP);
+					}
+				}
+				break;
+			case ENABLE_NOTIFICATIONS:
+			case DISABLE_NOTIFICATIONS:
+				if(playerMP != null) {
+					ItemStack stack = OpenGlasses.getGlassesStack(playerMP);
+					if(!stack.isEmpty()) {
+						OpenGlassesItem.setConfigFlag("nopopups", eventType.equals(EventType.ENABLE_NOTIFICATIONS), stack, playerMP);
+					}
+				}
+				break;
+			case ENABLE_WORLD_RENDER:
+			case DISABLE_WORLD_RENDER:
+				if(playerMP != null) {
+					ItemStack stack = OpenGlasses.getGlassesStack(playerMP);
+					if(!stack.isEmpty()) {
+						OpenGlassesItem.setConfigFlag("noWorld", eventType.equals(EventType.ENABLE_WORLD_RENDER), stack, playerMP);
+					}
+				}
+				break;
+			case ENABLE_OVERLAY_RENDER:
+			case DISABLE_OVERLAY_RENDER:
+				if(playerMP != null) {
+					ItemStack stack = OpenGlasses.getGlassesStack(playerMP);
+					if(!stack.isEmpty()) {
+						OpenGlassesItem.setConfigFlag("noOverlay", eventType.equals(EventType.ENABLE_OVERLAY_RENDER), stack, playerMP);
 					}
 				}
 				break;
@@ -220,3 +242,4 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		return null;
 	}
 }
+

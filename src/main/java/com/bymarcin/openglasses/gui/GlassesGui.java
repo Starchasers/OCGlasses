@@ -1,6 +1,7 @@
 package com.bymarcin.openglasses.gui;
 
 import ben_mkiv.guitoolkit.client.widget.prettyButton;
+import ben_mkiv.guitoolkit.client.widget.prettyCheckbox;
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
@@ -13,11 +14,14 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -28,6 +32,7 @@ public class GlassesGui extends GuiScreen {
     int xSize, ySize, guiLeft, guiTop;
 
     prettyButton acceptLink, denyLink, clearLink;
+    prettyCheckbox enablePopupNotifications, enableWorldRender, enableOverlayRender;
     OCClientSurface.LinkRequest activeLinkRequest;
 
     public static boolean isNotification = false;
@@ -49,13 +54,14 @@ public class GlassesGui extends GuiScreen {
 
         addButton(acceptLink = new prettyButton(buttonList.size(), guiLeft + 5, guiTop + 175, 70, 20, "accept"));
         addButton(denyLink = new prettyButton(buttonList.size(), guiLeft + 80, guiTop + 175, 70, 20, "deny"));
-        addButton(clearLink = new prettyButton(buttonList.size(), guiLeft + 5, guiTop + 40, 100, 20, "clear link"));
+        addButton(clearLink = new prettyButton(buttonList.size(), guiLeft + 5, guiTop + 35, 100, 20, "clear link"));
+        addButton(enablePopupNotifications = new prettyCheckbox(buttonList.size(), guiLeft + 5, guiTop + 65, "popup notifications", false));
+        addButton(enableWorldRender= new prettyCheckbox(buttonList.size(), guiLeft + 5, guiTop + 85, "world render", true));
+        addButton(enableOverlayRender = new prettyCheckbox(buttonList.size(), guiLeft + 5, guiTop + 105, "overlay render", true));
 
         acceptLink.visible = false;
         denyLink.visible = false;
         clearLink.visible = false;
-
-
     }
 
     @Override
@@ -84,7 +90,18 @@ public class GlassesGui extends GuiScreen {
             clearLink.visible = false;
         }
 
+        NBTTagCompound glassesNBT = stack.getTagCompound();
+
+        enablePopupNotifications.setEnabled(!glassesNBT.hasKey("nopopups"));
+        enableWorldRender.setEnabled(!glassesNBT.hasKey("noWorld"));
+        enableOverlayRender.setEnabled(!glassesNBT.hasKey("noOverlay"));
+
+
+
         Minecraft.getMinecraft().fontRenderer.drawString(title, guiLeft+5, guiTop+5, 0x0);
+        String energyStored = formatNumber((int) OpenGlassesItem.getEnergyStored(stack)) + " FE";
+        Minecraft.getMinecraft().fontRenderer.drawString(energyStored, guiLeft - 5 + xSize - fontRenderer.getStringWidth(energyStored), guiTop+5, 0x0);
+
         Minecraft.getMinecraft().fontRenderer.drawString(linkedTo, guiLeft+5, guiTop+15, 0x0);
 
 
@@ -93,6 +110,10 @@ public class GlassesGui extends GuiScreen {
             Minecraft.getMinecraft().fontRenderer.drawString("link request (distance: "+ distance +" blocks)", guiLeft+5, guiTop+153, 0x0);
             Minecraft.getMinecraft().fontRenderer.drawString(activeLinkRequest.host.toString(), guiLeft+5, guiTop+165, 0x0);
         }
+    }
+
+    private String formatNumber(double number){
+        return NumberFormat.getInstance().format(number);
     }
 
     @Override
@@ -106,10 +127,22 @@ public class GlassesGui extends GuiScreen {
         if(button instanceof prettyButton){
             if(button.equals(acceptLink))
                 activeLinkRequest.submit();
-            if(button.equals(denyLink))
+            else if(button.equals(denyLink))
                 activeLinkRequest.cancel();
-            if(button.equals(clearLink))
+            else if(button.equals(clearLink))
                 NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.CLEAR_LINK));
+            else if(button.equals(enablePopupNotifications)) {
+                GlassesEventPacket.EventType eventType = enablePopupNotifications.isEnabled() ? GlassesEventPacket.EventType.DISABLE_NOTIFICATIONS : GlassesEventPacket.EventType.ENABLE_NOTIFICATIONS;
+                NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(eventType));
+            }
+            else if(button.equals(enableWorldRender)) {
+                GlassesEventPacket.EventType eventType = enableWorldRender.isEnabled() ? GlassesEventPacket.EventType.DISABLE_WORLD_RENDER : GlassesEventPacket.EventType.ENABLE_WORLD_RENDER;
+                NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(eventType));
+            }
+            else if(button.equals(enableOverlayRender)) {
+                GlassesEventPacket.EventType eventType = enableOverlayRender.isEnabled() ? GlassesEventPacket.EventType.DISABLE_OVERLAY_RENDER : GlassesEventPacket.EventType.ENABLE_OVERLAY_RENDER;
+                NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(eventType));
+            }
         }
         else
             super.actionPerformed(button);

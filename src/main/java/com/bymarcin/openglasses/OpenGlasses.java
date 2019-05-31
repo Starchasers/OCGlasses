@@ -16,7 +16,6 @@ import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -38,7 +37,6 @@ import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.items.wrapper.PlayerArmorInvWrapper;
 
 @Mod(modid = OpenGlasses.MODID, version = OpenGlasses.VERSION, dependencies = "required-after:opencomputers@[1.7.1,);required-after:guitoolkit@1.0.0;required-after:rendertoolkit@1.0.3;after:baubles;")
 public class OpenGlasses

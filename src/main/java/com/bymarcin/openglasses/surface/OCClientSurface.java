@@ -50,6 +50,8 @@ public class OCClientSurface extends ClientSurface {
 	public ItemStack glassesStack = ItemStack.EMPTY;
 	public UUID lastBind;
 
+	private boolean renderWorld = true, renderOverlay = true;
+
 	private IRenderableWidget noPowerRender, noLinkRender, widgetLimitRender;
 
 	private OCClientSurface() {
@@ -71,6 +73,9 @@ public class OCClientSurface extends ClientSurface {
 		this.lastBind = OpenGlassesItem.getHostUUID(glassesStack);
 
 		conditions.bufferSensors(this.glassesStack);
+
+		renderWorld = !glassesStack.getTagCompound().hasKey("noWorld");
+		renderOverlay = !glassesStack.getTagCompound().hasKey("noOverlay");
 	}
 
 	public void refreshConditions(){
@@ -265,6 +270,12 @@ public class OCClientSurface extends ClientSurface {
 			}
 			return false;
 		}
+
+		if(!renderWorld && renderEvent.equals(RenderType.WorldLocated))
+			return false;
+
+		if(!renderOverlay && renderEvent.equals(RenderType.GameOverlayLocated))
+			return false;
 
 		return true;
 	}
