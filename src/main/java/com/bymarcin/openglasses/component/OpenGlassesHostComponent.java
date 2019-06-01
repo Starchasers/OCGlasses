@@ -37,6 +37,7 @@ import java.util.*;
 public class OpenGlassesHostComponent implements ManagedEnvironment {
     private UUID uuid;
     private Node node;
+    private String terminalName = "";
 
     WidgetServer widgets;
     IOpenGlassesHost environmentHost;
@@ -321,6 +322,17 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
         Widget w = new EntityTracker3D();
         return addWidget(w);
     }
+
+    @Callback(direct = true)
+    public Object[] setTerminalName(Context context, Arguments args) {
+        terminalName = args.optString(0, "");
+        return new Object[]{ true };
+    }
+
+    @Callback(direct = true)
+    public Object[] getTerminalName(Context context, Arguments args) {
+        return new Object[]{ getName() };
+    }
     /* User interaction */
 
     /**
@@ -338,6 +350,10 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
 //	public Object[] getUserLookingAt(Context context, Arguments args){
 //		return new Object[]{};
 //	}
+
+    public String getName(){
+        return terminalName;
+    }
 
     public UUID getUUID(){
         return uuid;
@@ -374,12 +390,14 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
     @Override
     public void save(NBTTagCompound nbt) {
         nbt = widgets.writeToNBT(nbt);
+        nbt.setString("name", terminalName);
         nbt.setUniqueId("uuid", uuid);
     }
 
     @Override
     public void load(NBTTagCompound nbt) {
         widgets.readFromNBT(nbt);
+        terminalName = nbt.getString("name");
         if(nbt.hasUniqueId("uuid")) //check required as we would end up with 0000000... uuid for new items
             uuid = nbt.getUniqueId("uuid");
     }

@@ -227,27 +227,28 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 	}
 
 	@Override
-	public boolean showDurabilityBar(ItemStack stack){
-		IEnergyStorage storage = stack.getCapability(CapabilityEnergy.ENERGY, null);
+	public boolean showDurabilityBar(ItemStack glassesStack){
+		IEnergyStorage storage = getEnergyStorage(glassesStack);
 		return storage.getEnergyStored() < storage.getMaxEnergyStored();
 	}
 
 	@Override
-	public double getDurabilityForDisplay(ItemStack stack){
-		IEnergyStorage storage = stack.getCapability(CapabilityEnergy.ENERGY, null);
+	public double getDurabilityForDisplay(ItemStack glassesStack){
+		IEnergyStorage storage = getEnergyStorage(glassesStack);
 		return 1 - (((double) 1 / storage.getMaxEnergyStored()) * storage.getEnergyStored());
 	}
 
 	private static void consumeEnergy(ItemStack glassesStack){
-		int consumed = 0;
-		IEnergyStorage storage = glassesStack.getCapability(CapabilityEnergy.ENERGY, null);
-		consumed+= storage.extractEnergy(glassesStack.getTagCompound().getInteger("upkeepCost"), false);
+		getEnergyStorage(glassesStack).extractEnergy(glassesStack.getTagCompound().getInteger("upkeepCost"), false);
 	}
 
 	public static double getEnergyStored(ItemStack glassesStack){
-		IEnergyStorage storage = glassesStack.getCapability(CapabilityEnergy.ENERGY, null);
-		if(storage == null) return 0;
-		return storage.getEnergyStored();
+		if(!glassesStack.hasCapability(CapabilityEnergy.ENERGY, null)) return 0;
+		return getEnergyStorage(glassesStack).getEnergyStored();
+	}
+
+	private static IEnergyStorage getEnergyStorage(ItemStack glassesStack){
+		return glassesStack.getCapability(CapabilityEnergy.ENERGY, null);
 	}
 
 	private static class EnergyCapabilityProvider implements ICapabilityProvider{

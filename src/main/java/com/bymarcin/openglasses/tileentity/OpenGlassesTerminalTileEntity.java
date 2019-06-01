@@ -72,6 +72,9 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 	}
 
 	@Override
+	public String getName(){ return getComponent().getName(); }
+
+	@Override
 	public boolean isInternalComponent(){
 		return false;
 	}

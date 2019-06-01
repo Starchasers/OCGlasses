@@ -90,7 +90,11 @@ public class GlassesGui extends GuiScreen {
         String linkedToDistance;
 
         if(currentHost != null){
-            linkedTo = "host: " + currentHost.toString();
+            if(OCClientSurface.instance().terminalName.length() > 0)
+                linkedTo = "host: " + OCClientSurface.instance().terminalName + " ("+currentHost.toString().substring(0, 18)+"...)";
+            else
+                linkedTo = "host: " + currentHost.toString();
+
             linkedToDistance = "host distance: " + (int) Math.round(OCClientSurface.instance().getRenderPosition(partialTicks).distanceTo(Minecraft.getMinecraft().player.getPositionVector())) + " blocks";
             clearLink.visible = true;
         }
@@ -119,10 +123,21 @@ public class GlassesGui extends GuiScreen {
 
 
         if(activeLinkRequest != null){
-            int distance = (int) Math.round(Minecraft.getMinecraft().player.getPosition().getDistance(activeLinkRequest.pos.getX(), activeLinkRequest.pos.getY(), activeLinkRequest.pos.getZ()));
-            Minecraft.getMinecraft().fontRenderer.drawString("link request (distance: "+ distance +" blocks)", guiLeft+5, guiTop+153, 0x0);
-            Minecraft.getMinecraft().fontRenderer.drawString(activeLinkRequest.host.toString(), guiLeft+5, guiTop+165, 0x0);
+            drawLinkRequest(guiLeft, guiTop, activeLinkRequest);
         }
+    }
+
+    public void drawLinkRequest(int x, int y, OCClientSurface.LinkRequest linkRequest){
+        int distance = linkRequest.getDistance(Minecraft.getMinecraft().player.getPositionVector());
+        String text = "link request";
+
+        if(activeLinkRequest.hostName.length() > 0)
+            text+=" from '"+activeLinkRequest.hostName+"'";
+
+        text+=" (distance: "+ distance +" blocks)";
+
+        Minecraft.getMinecraft().fontRenderer.drawString(text, x+5, y+153, 0x0);
+        Minecraft.getMinecraft().fontRenderer.drawString(activeLinkRequest.host.toString(), x+5, y+165, 0x0);
     }
 
     private String formatNumber(double number){

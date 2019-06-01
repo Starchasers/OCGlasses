@@ -51,6 +51,9 @@ public class OpenGlassesHostItem implements IOpenGlassesHost, ManagedEnvironment
     }
 
     @Override
+    public String getName(){ return getComponent().getName(); }
+
+    @Override
     public OpenGlassesHostComponent getComponent(){
         return component;
     }

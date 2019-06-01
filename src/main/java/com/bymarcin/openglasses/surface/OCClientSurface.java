@@ -19,6 +19,7 @@ import com.bymarcin.openglasses.utils.Conditions;
 
 import li.cil.oc.api.internal.Robot;
 import li.cil.oc.common.tileentity.RobotProxy;
+import mrtjp.core.vec.Vec3;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
@@ -45,13 +46,13 @@ public class OCClientSurface extends ClientSurface {
 		instances = new OCClientSurface();
 	}
 
-	public boolean isInternalComponent;
 	public Vec3d renderPosition = new Vec3d(0, 0, 0);
 	public Entity renderEntity;
 	public UUID renderEntityUUID;
 	public int renderEntityID = -1;
 	public int renderEntityDimension;
 	public Robot renderEntityRobot;
+	public String terminalName = "";
 
 	public HostInfoPacket.HostType hostType = HostInfoPacket.HostType.TERMINAL;
 
@@ -167,12 +168,14 @@ public class OCClientSurface extends ClientSurface {
 		private long linkRequestActive = 0;
 		public UUID host;
 		public BlockPos pos;
+		public String hostName = "";
 		int timeout = 120;
 
-		public LinkRequest(UUID hostUUID, BlockPos hostPosition){
+		public LinkRequest(UUID hostUUID, BlockPos hostPosition, String terminalName){
 			linkRequestActive = System.currentTimeMillis();
 			host = hostUUID;
 			pos = hostPosition;
+			hostName = terminalName;
 
 			GlassesNotifications.notifications.add(this);
 
@@ -212,6 +215,10 @@ public class OCClientSurface extends ClientSurface {
 					&& GlassesGui.isNotification) {
 				Minecraft.getMinecraft().displayGuiScreen(null);
 			}
+		}
+
+		public int getDistance(Vec3d target){
+			return (int) Math.round(target.distanceTo(new Vec3d(pos)));
 		}
 	}
 
@@ -277,18 +284,18 @@ public class OCClientSurface extends ClientSurface {
 		return renderPosition = new Vec3d(robot.xPosition(), robot.yPosition(), robot.zPosition()).add(offset);
 	}
 
+	private final static Vec3d renderOffsetTabletDrone = new Vec3d(0.5, 0, 0.5);
+	public final static Vec3d renderOffsetRobotCaseMicroController = new Vec3d(0.5, 0.5, 0.5);
+
 	public Vec3d getRenderPosition(float partialTicks){
 		switch (hostType){
 			case DRONE:
 			case TABLET:
-				return getEntityLocation(getRenderEntity(), partialTicks).subtract(new Vec3d(0.5, 0, 0.5));
+				return getEntityLocation(getRenderEntity(), partialTicks).subtract(renderOffsetTabletDrone);
 
-			case ROBOT:
-				return getRobotLocation(getRobotEntity(), partialTicks).subtract(new Vec3d(0.5, 0.5, 0.5));
+			case ROBOT: // render offset for case/microcontroller is resolved when HostInfoPacket is received
+				return getRobotLocation(getRobotEntity(), partialTicks).subtract(renderOffsetRobotCaseMicroController);
 
-			case MICROCONTROLLER:
-			case CASE:
-			case TERMINAL:
 			default:
 				return renderPosition;
 		}

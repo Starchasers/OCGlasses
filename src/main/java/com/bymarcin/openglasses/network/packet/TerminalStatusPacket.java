@@ -25,6 +25,8 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 
 	public float x, y;
 
+	String terminalName = "";
+
 	IOpenGlassesHost host;
 	UUID uuid;
 	BlockPos pos;
@@ -36,6 +38,7 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 	public TerminalStatusPacket(TerminalEvent status, IOpenGlassesHost host) {
 		this(status);
 		this.host = host;
+		this.terminalName = host.getName();
 	}
 
 	public TerminalStatusPacket() {}  //dont remove, in use by NetworkRegistry.registerPacket in OpenGlasses.java
@@ -43,6 +46,7 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 	@Override
 	protected void read() throws IOException {
 		this.terminalEvent = TerminalEvent.values()[readInt()];
+		this.terminalName = readString();
 
 		switch(this.terminalEvent){
 			case SET_RENDER_RESOLUTION:
@@ -65,6 +69,7 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 	@Override
 	protected void write() throws IOException {
 		writeInt(this.terminalEvent.ordinal());
+		writeString(terminalName);
 
 		switch(this.terminalEvent){
 			case SET_RENDER_RESOLUTION:
@@ -90,7 +95,7 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 				(OCClientSurface.instance()).sendResolution();
 				break;
 			case LINK_REQUEST:
-				new OCClientSurface.LinkRequest(uuid, pos);
+				new OCClientSurface.LinkRequest(uuid, pos, terminalName);
 				break;
 		}
 

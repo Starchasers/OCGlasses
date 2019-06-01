@@ -17,6 +17,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.io.IOException;
 import java.util.UUID;
 
+import static com.bymarcin.openglasses.surface.OCClientSurface.renderOffsetRobotCaseMicroController;
+
 public class HostInfoPacket extends Packet<HostInfoPacket, IMessage> {
 
     boolean isInternal;
@@ -24,6 +26,7 @@ public class HostInfoPacket extends Packet<HostInfoPacket, IMessage> {
     int entityID = -1;
     UUID entityUUID;
     int entityDimension;
+    String name;
 
     public enum HostType { TERMINAL, ROBOT, DRONE, TABLET, CASE, MICROCONTROLLER }
 
@@ -31,6 +34,7 @@ public class HostInfoPacket extends Packet<HostInfoPacket, IMessage> {
 
     public HostInfoPacket(IOpenGlassesHost host) {
         isInternal = host.isInternalComponent();
+        name = host.getName();
 
         if(!isInternal){
             x = host.getRenderPosition().x;
@@ -72,11 +76,12 @@ public class HostInfoPacket extends Packet<HostInfoPacket, IMessage> {
 
     @Override
     protected void read() throws IOException {
+        OCClientSurface.instance().terminalName = readString();
+
         OCClientSurface.instance().renderEntity = null;
         OCClientSurface.instance().isInternal = readBoolean();
         OCClientSurface.instance().hostType = HostType.values()[readInt()];
         OCClientSurface.instance().renderPosition = new Vec3d(readDouble(), readDouble(), readDouble());;
-        OCClientSurface.instance().isInternalComponent = isInternal;
 
         switch(OCClientSurface.instance().hostType){
             case ROBOT:
@@ -89,11 +94,16 @@ public class HostInfoPacket extends Packet<HostInfoPacket, IMessage> {
                 OCClientSurface.instance().renderEntityDimension = readInt();
                 OCClientSurface.instance().renderEntityUUID = new UUID(readLong(), readLong());
                 break;
+            case MICROCONTROLLER:
+            case CASE:
+                OCClientSurface.instance().renderPosition = OCClientSurface.instance().renderPosition.subtract(renderOffsetRobotCaseMicroController);
+                break;
         }
     }
 
     @Override
     protected void write() throws IOException {
+        writeString(name);
         writeBoolean(isInternal);
         writeInt(hostType.ordinal());
         writeDouble(x);

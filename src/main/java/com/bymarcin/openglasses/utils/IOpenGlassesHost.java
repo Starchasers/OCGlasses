@@ -19,6 +19,8 @@ public interface IOpenGlassesHost extends Environment, ITickable {
 
     EnvironmentHost getHost();
 
+    String getName();
+
     default TileEntity getTileEntity(){
         return null;
     }
