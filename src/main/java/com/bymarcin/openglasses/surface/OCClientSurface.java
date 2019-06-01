@@ -14,12 +14,16 @@ import com.bymarcin.openglasses.gui.GlassesGui;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
+import com.bymarcin.openglasses.network.packet.HostInfoPacket;
 import com.bymarcin.openglasses.utils.Conditions;
 
+import li.cil.oc.api.internal.Robot;
+import li.cil.oc.common.tileentity.RobotProxy;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -43,6 +47,15 @@ public class OCClientSurface extends ClientSurface {
 
 	public boolean isInternalComponent;
 	public Vec3d renderPosition = new Vec3d(0, 0, 0);
+	public Entity renderEntity;
+	public UUID renderEntityUUID;
+	public int renderEntityID = -1;
+	public int renderEntityDimension;
+	public Robot renderEntityRobot;
+
+	public HostInfoPacket.HostType hostType = HostInfoPacket.HostType.TERMINAL;
+
+	public boolean isInternal = false;
 
     public static ClientEventHandler eventHandler;
 
@@ -65,6 +78,31 @@ public class OCClientSurface extends ClientSurface {
 
 	public static OCClientSurface instance(){
 		return (OCClientSurface) instances;
+	}
+
+	public Robot getRobotEntity(){
+		if(renderEntityRobot == null && renderEntityDimension == Minecraft.getMinecraft().world.provider.getDimension()){
+			TileEntity tile = Minecraft.getMinecraft().world.getTileEntity(new BlockPos(renderPosition));
+			if(tile instanceof li.cil.oc.common.tileentity.RobotProxy)
+				OCClientSurface.instance().renderEntityRobot = ((RobotProxy) tile).robot();
+		}
+
+		return renderEntityRobot;
+	}
+
+	private Entity getRenderEntity(){
+		switch(hostType){
+			case TABLET:
+			case DRONE:
+				if(renderEntity == null && renderEntityID != -1
+						&& renderEntityDimension == Minecraft.getMinecraft().player.world.provider.getDimension()){
+					renderEntity = Minecraft.getMinecraft().world.getEntityByID(renderEntityID);
+				}
+				return renderEntity;
+
+			default:
+				return null;
+		}
 	}
 
 	public void resetLocalGlasses(){
@@ -203,19 +241,57 @@ public class OCClientSurface extends ClientSurface {
 
 		preRender(RenderType.WorldLocated, event.getPartialTicks());
 
-		GlStateManager.translate(getRenderPosition(event.getPartialTicks()).x, getRenderPosition(event.getPartialTicks()).y, getRenderPosition(event.getPartialTicks()).z);
+		Vec3d renderPos = getRenderPosition(event.getPartialTicks());
+
+		GlStateManager.translate(renderPos.x, renderPos.y, renderPos.z);
 
 		GlStateManager.depthMask(true);
 		renderWidgets(renderablesWorld.values(), event.getPartialTicks());
 		postRender(RenderType.WorldLocated);
 	}
 
-	public Vec3d getRenderPosition(float partialTicks){
-		if(!isInternalComponent)
+
+	static Vec3d getEntityLocation(Entity entityIn, float partialTicks){
+		if(entityIn == null)
+			return new Vec3d(0, 0, 0);
+
+		double[] location = getEntityPlayerLocation(entityIn, partialTicks);
+		return new Vec3d(location[0], location[1], location[2]);
+	}
+
+	Vec3d getRobotLocation(Robot robot, float partialTicks){
+		if(robot == null)
 			return renderPosition;
 
-		double[] playerLocation = getEntityPlayerLocation(Minecraft.getMinecraft().player, partialTicks);
-		return new Vec3d(playerLocation[0], playerLocation[1], playerLocation[2]);
+		li.cil.oc.common.tileentity.Robot casted = (li.cil.oc.common.tileentity.Robot) robot;
+		Vec3d offset = new Vec3d(0, 0, 0);
+
+		if(casted != null && casted.isAnimatingMove()){
+			double remaining = (casted.animationTicksLeft() - partialTicks) / (double) casted.animationTicksTotal();
+			Vec3d location = new Vec3d(casted.position().x(), casted.position().y(), casted.position().z());
+			Vec3d moveFrom = new Vec3d(casted.moveFrom().get()).subtract(location);
+
+			offset = moveFrom.scale(remaining);
+		}
+
+		return renderPosition = new Vec3d(robot.xPosition(), robot.yPosition(), robot.zPosition()).add(offset);
+	}
+
+	public Vec3d getRenderPosition(float partialTicks){
+		switch (hostType){
+			case DRONE:
+			case TABLET:
+				return getEntityLocation(getRenderEntity(), partialTicks).subtract(new Vec3d(0.5, 0, 0.5));
+
+			case ROBOT:
+				return getRobotLocation(getRobotEntity(), partialTicks).subtract(new Vec3d(0.5, 0.5, 0.5));
+
+			case MICROCONTROLLER:
+			case CASE:
+			case TERMINAL:
+			default:
+				return renderPosition;
+		}
 	}
 
 	void renderWidgets(Collection<IRenderableWidget> widgets, float partialTicks){

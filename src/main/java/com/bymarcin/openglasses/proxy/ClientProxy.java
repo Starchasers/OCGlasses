@@ -9,6 +9,7 @@ import com.bymarcin.openglasses.surface.OCClientSurface;
 import com.bymarcin.openglasses.utils.PlayerStatsOC;
 import com.google.common.util.concurrent.ListenableFuture;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -17,6 +18,7 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -86,6 +88,19 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public ListenableFuture<Object> addScheduledTask(Runnable runnable) {
 		return Minecraft.getMinecraft().addScheduledTask(runnable);
+	}
+
+	@Override
+	public Entity getEntity(UUID uuid){
+		for(Entity entity : Minecraft.getMinecraft().world.getLoadedEntityList())
+			if(entity.getUniqueID().equals(uuid))
+				return entity;
+
+		return null;
+	}
+
+	public static Entity getEntity(int id){
+		return Minecraft.getMinecraft().world.getEntityByID(id);
 	}
 
 }

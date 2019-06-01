@@ -34,6 +34,7 @@ def commons_version = "MC1.12.2-1.0.0-dev"
 group= "com.bymarcin.openglasses" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "OpenGlasses-MC1.12.2"
 version = simpleVersion
+def projredVersion="1.12.2-4.9.0.86"
 
 minecraft {
     replaceIn "com/bymarcin/openglasses/OpenGlasses.java"
@@ -66,8 +67,14 @@ dependencies {
     provided "li.cil.oc:OpenComputers:${openComputersVersion}"
     compileOnly "com.azanor:Baubles:${baublesVersion}"
 
-
     shade files("libs/commons0815/Commons0815-${commons_version}.jar")
+
+    provided ("mrtjp:ProjectRed:${projredVersion}:Base") {
+        exclude module: "NotEnoughItems"
+        exclude module: "CodeChickenLib"
+        exclude module: "jei_1.12"
+        exclude module: "ForgeMultipart"
+    }
 }
 
 processResources

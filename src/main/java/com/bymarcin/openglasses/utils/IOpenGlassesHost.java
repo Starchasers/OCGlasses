@@ -2,6 +2,7 @@ package com.bymarcin.openglasses.utils;
 
 import com.bymarcin.openglasses.component.OpenGlassesHostComponent;
 import li.cil.oc.api.network.Environment;
+import li.cil.oc.api.network.EnvironmentHost;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
@@ -15,6 +16,8 @@ public interface IOpenGlassesHost extends Environment, ITickable {
     void sync(EntityPlayerMP player);
 
     Vec3d getRenderPosition();
+
+    EnvironmentHost getHost();
 
     default TileEntity getTileEntity(){
         return null;

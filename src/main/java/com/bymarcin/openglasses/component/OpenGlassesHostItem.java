@@ -1,10 +1,7 @@
 package com.bymarcin.openglasses.component;
 
 import com.bymarcin.openglasses.utils.IOpenGlassesHost;
-import li.cil.oc.api.network.EnvironmentHost;
-import li.cil.oc.api.network.ManagedEnvironment;
-import li.cil.oc.api.network.Message;
-import li.cil.oc.api.network.Node;
+import li.cil.oc.api.network.*;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.Vec3d;
@@ -17,6 +14,10 @@ public class OpenGlassesHostItem implements IOpenGlassesHost, ManagedEnvironment
     public OpenGlassesHostItem(EnvironmentHost container) {
         host = container;
         component = new OpenGlassesHostComponent(this);
+    }
+
+    public EnvironmentHost getHost(){
+        return host;
     }
 
     @Override

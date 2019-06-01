@@ -3,6 +3,8 @@ package com.bymarcin.openglasses.tileentity;
 import com.bymarcin.openglasses.component.OpenGlassesHostComponent;
 import com.bymarcin.openglasses.utils.IOpenGlassesHost;
 import li.cil.oc.api.Network;
+import li.cil.oc.api.network.Environment;
+import li.cil.oc.api.network.EnvironmentHost;
 import li.cil.oc.api.network.Message;
 import li.cil.oc.api.network.Node;
 
@@ -17,6 +19,11 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 
 	public OpenGlassesTerminalTileEntity() {
 		component = new OpenGlassesHostComponent(this);
+	}
+
+	@Override
+	public EnvironmentHost getHost(){
+		return null;
 	}
 
 	@Override

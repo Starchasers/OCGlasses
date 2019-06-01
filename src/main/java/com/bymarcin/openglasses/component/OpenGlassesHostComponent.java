@@ -41,6 +41,10 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
     WidgetServer widgets;
     IOpenGlassesHost environmentHost;
 
+    public EnvironmentHost getHost(){
+        return environmentHost.getHost();
+    }
+
     public OpenGlassesHostComponent(IOpenGlassesHost openGlassesHost){
         uuid = UUID.randomUUID();
         widgets = new WidgetServer(this);
