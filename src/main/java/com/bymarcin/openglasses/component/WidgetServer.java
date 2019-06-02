@@ -13,13 +13,13 @@ public class WidgetServer extends WidgetList {
 
     public int add(Widget widget){
         int id = super.add(widget);
-        OCServerSurface.instances.sendToUUID(new WidgetUpdatePacket(id, widget), host.getUUID());
+        OCServerSurface.instances.sendToUUID(new WidgetUpdatePacket(host.getUUID(), id, widget), host.getUUID());
         return id;
     }
 
     public boolean remove(int id){
         if(super.removeWidget(id)){
-            OCServerSurface.instances.sendToUUID(new WidgetUpdatePacket(id), host.getUUID());
+            OCServerSurface.instances.sendToUUID(new WidgetUpdatePacket(host.getUUID(), id), host.getUUID());
             return true;
         }
         return false;
@@ -28,12 +28,12 @@ public class WidgetServer extends WidgetList {
     public void update(int widgetID){
         Widget w = list.get(widgetID);
         if(w == null) return;
-        OCServerSurface.instances.sendToUUID(new WidgetUpdatePacket(widgetID, w), host.getUUID());
+        OCServerSurface.instances.sendToUUID(new WidgetUpdatePacket(host.getUUID(), widgetID, w), host.getUUID());
     }
 
     public void clear(){
         list.clear();
-        OCServerSurface.instances.sendToUUID(new WidgetUpdatePacket(), host.getUUID());
+        OCServerSurface.instances.sendToUUID(new WidgetUpdatePacket(host.getUUID()), host.getUUID());
     }
 
     public int size(){

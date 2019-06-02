@@ -1,4 +1,4 @@
-package com.bymarcin.openglasses.event;
+package com.bymarcin.openglasses.event.minecraft;
 
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.item.OpenGlassesItem;

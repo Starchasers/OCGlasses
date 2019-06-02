@@ -4,28 +4,23 @@ import java.util.*;
 
 import ben_mkiv.rendertoolkit.common.widgets.IRenderableWidget;
 import ben_mkiv.rendertoolkit.common.widgets.RenderType;
+import ben_mkiv.rendertoolkit.common.widgets.Widget;
 import ben_mkiv.rendertoolkit.common.widgets.component.face.Text2D;
 import ben_mkiv.rendertoolkit.common.widgets.component.world.EntityTracker3D;
 import ben_mkiv.rendertoolkit.surface.ClientSurface;
 
-import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.event.ClientEventHandler;
-import com.bymarcin.openglasses.gui.GlassesGui;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
-import com.bymarcin.openglasses.network.packet.HostInfoPacket;
 import com.bymarcin.openglasses.utils.Conditions;
 
-import li.cil.oc.api.internal.Robot;
-import li.cil.oc.common.tileentity.RobotProxy;
-import mrtjp.core.vec.Vec3;
+import com.bymarcin.openglasses.utils.OpenGlassesHostClient;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 
@@ -46,26 +41,13 @@ public class OCClientSurface extends ClientSurface {
 		instances = new OCClientSurface();
 	}
 
-	public Vec3d renderPosition = new Vec3d(0, 0, 0);
-	public Entity renderEntity;
-	public UUID renderEntityUUID;
-	public int renderEntityID = -1;
-	public int renderEntityDimension;
-	public Robot renderEntityRobot;
-	public String terminalName = "";
-
-	public HostInfoPacket.HostType hostType = HostInfoPacket.HostType.TERMINAL;
-
-	public boolean isInternal = false;
+	HashMap<UUID, OpenGlassesHostClient> hosts = new HashMap<>();
 
     public static ClientEventHandler eventHandler;
 
 	public Conditions conditions = new Conditions();
 
 	public ItemStack glassesStack = ItemStack.EMPTY;
-	public UUID lastBind;
-
-	private boolean renderWorld = true, renderOverlay = true;
 
 	private IRenderableWidget noPowerRender, noLinkRender, widgetLimitRender;
 
@@ -81,46 +63,47 @@ public class OCClientSurface extends ClientSurface {
 		return (OCClientSurface) instances;
 	}
 
-	public Robot getRobotEntity(){
-		if(renderEntityRobot == null && renderEntityDimension == Minecraft.getMinecraft().world.provider.getDimension()){
-			TileEntity tile = Minecraft.getMinecraft().world.getTileEntity(new BlockPos(renderPosition));
-			if(tile instanceof li.cil.oc.common.tileentity.RobotProxy)
-				OCClientSurface.instance().renderEntityRobot = ((RobotProxy) tile).robot();
-		}
+	public OpenGlassesHostClient getHost(UUID hostUUID){
+		if(!hosts.containsKey(hostUUID)){
+			NBTTagCompound hostNBT = OpenGlassesItem.getHostFromNBT(hostUUID, glassesStack);
+			if(hostNBT == null)
+				hostNBT = new OpenGlassesHostClient.HostClient(hostUUID).writeToNBT(new NBTTagCompound());
 
-		return renderEntityRobot;
+			hosts.put(hostUUID, new OpenGlassesHostClient(hostNBT));
+		}
+		return hosts.get(hostUUID);
 	}
 
-	private Entity getRenderEntity(){
-		switch(hostType){
-			case TABLET:
-			case DRONE:
-				if(renderEntity == null && renderEntityID != -1
-						&& renderEntityDimension == Minecraft.getMinecraft().player.world.provider.getDimension()){
-					renderEntity = Minecraft.getMinecraft().world.getEntityByID(renderEntityID);
-				}
-				return renderEntity;
-
-			default:
-				return null;
-		}
+	public Collection<OpenGlassesHostClient> getHosts(){
+		return hosts.values();
 	}
 
 	public void resetLocalGlasses(){
-		this.removeAllWidgets();
+		hosts.clear();
 		this.glassesStack = ItemStack.EMPTY;
-		this.lastBind = null;
 	}
 
 	public void initLocalGlasses(ItemStack glassesStack){
 		this.glassesStack = glassesStack;
-		this.lastBind = OpenGlassesItem.getHostUUID(glassesStack);
-
 		conditions.bufferSensors(this.glassesStack);
 
-		renderWorld = !glassesStack.getTagCompound().hasKey("noWorld");
-		renderOverlay = !glassesStack.getTagCompound().hasKey("noOverlay");
+		HashMap<UUID, OpenGlassesHostClient> newHosts = new HashMap<>();
+
+		for(NBTTagCompound tag : OpenGlassesItem.getHostsFromNBT(glassesStack)) {
+			OpenGlassesHostClient host = new OpenGlassesHostClient(tag);
+
+			if(hosts.containsKey(host.getUniqueId())){
+				hosts.get(host.getUniqueId()).data().updateFromNBT(tag);
+				newHosts.put(host.getUniqueId(), hosts.get(host.getUniqueId()));
+			}
+			else
+				newHosts.put(host.getUniqueId(), host);
+		}
+
+		hosts.clear();
+		hosts.putAll(newHosts);
 	}
+
 
 	public void refreshConditions(){
 		if(glassesStack.isEmpty()) return;
@@ -143,83 +126,10 @@ public class OCClientSurface extends ClientSurface {
 
 	public void sendResolution(){
 		if(glassesStack.isEmpty()) return;
-		if(lastBind == null) return;
+		if(hosts.size() == 0) return;
 
-		NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.GLASSES_SCREEN_SIZE, resolution.getScaledWidth(), resolution.getScaledHeight(), resolution.getScaleFactor()));
-	}
-
-
-	public static class GlassesNotifications {
-		public static HashSet<GlassesNotification> notifications = new HashSet<>();
-
-		public static void update(){
-			for(GlassesNotification notification : notifications)
-				notification.update();
-		}
-
-		public interface GlassesNotification{
-			void update();
-			void cancel();
-			void submit();
-		}
-	}
-
-	public static class LinkRequest implements GlassesNotifications.GlassesNotification {
-		private long linkRequestActive = 0;
-		public UUID host;
-		public BlockPos pos;
-		public String hostName = "";
-		int timeout = 120;
-
-		public LinkRequest(UUID hostUUID, BlockPos hostPosition, String terminalName){
-			linkRequestActive = System.currentTimeMillis();
-			host = hostUUID;
-			pos = hostPosition;
-			hostName = terminalName;
-
-			GlassesNotifications.notifications.add(this);
-
-			ItemStack glassesStack = OpenGlasses.getGlassesStack(Minecraft.getMinecraft().player);
-			if(!glassesStack.isEmpty()) {
-				if(!glassesStack.getTagCompound().hasKey("nopopups") && !(Minecraft.getMinecraft().currentScreen instanceof GlassesGui))
-					Minecraft.getMinecraft().displayGuiScreen(new GlassesGui(true));
-			}
-		}
-
-		@Override
-		public void update(){
-			if(System.currentTimeMillis() - linkRequestActive > timeout * 1000) {
-				cancel();
-			}
-		}
-
-		@Override
-		public void submit(){
-			NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.ACCEPT_LINK));
-			remove();
-		}
-
-		@Override
-		public void cancel(){
-			remove();
-			NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.DENY_LINK));
-		}
-
-		void remove(){
-			linkRequestActive = 0;
-			GlassesNotifications.notifications.remove(this);
-
-			ItemStack glassesStack = OpenGlasses.getGlassesStack(Minecraft.getMinecraft().player);
-			if(!glassesStack.isEmpty()
-					&& Minecraft.getMinecraft().currentScreen instanceof GlassesGui
-					&& GlassesGui.isNotification) {
-				Minecraft.getMinecraft().displayGuiScreen(null);
-			}
-		}
-
-		public int getDistance(Vec3d target){
-			return (int) Math.round(target.distanceTo(new Vec3d(pos)));
-		}
+		for(OpenGlassesHostClient host : getHosts())
+			NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(host.getUniqueId(), GlassesEventPacket.EventType.GLASSES_SCREEN_SIZE, resolution.getScaledWidth(), resolution.getScaledHeight(), resolution.getScaleFactor()));
 	}
 
 
@@ -237,7 +147,14 @@ public class OCClientSurface extends ClientSurface {
 
 		GlStateManager.depthMask(false);
 
-		renderWidgets(renderables.values(), evt.getPartialTicks());
+		for(OpenGlassesHostClient host : getHosts()) {
+			if(!host.data().renderOverlay)
+				continue;
+
+			GlStateManager.pushMatrix();
+			renderWidgets(host.getWidgetsOverlay().values(), evt.getPartialTicks(), vec3d000);
+			GlStateManager.popMatrix();
+		}
 
 		postRender(RenderType.GameOverlayLocated);
 	}
@@ -247,18 +164,24 @@ public class OCClientSurface extends ClientSurface {
 		if(!shouldRenderStart(RenderType.WorldLocated)) return;
 
 		preRender(RenderType.WorldLocated, event.getPartialTicks());
-
-		Vec3d renderPos = getRenderPosition(event.getPartialTicks());
-
-		GlStateManager.translate(renderPos.x, renderPos.y, renderPos.z);
-
 		GlStateManager.depthMask(true);
-		renderWidgets(renderablesWorld.values(), event.getPartialTicks());
+
+		for(OpenGlassesHostClient host : getHosts()) {
+			if(!host.data().renderWorld)
+				continue;
+
+			GlStateManager.pushMatrix();
+			Vec3d renderPos = host.getRenderPosition(event.getPartialTicks());
+			GlStateManager.translate(renderPos.x, renderPos.y, renderPos.z);
+			renderWidgets(host.getWidgetsWorld().values(), event.getPartialTicks(), renderPos);
+			GlStateManager.popMatrix();
+		}
+
 		postRender(RenderType.WorldLocated);
 	}
 
 
-	static Vec3d getEntityLocation(Entity entityIn, float partialTicks){
+	public static Vec3d getEntityLocation(Entity entityIn, float partialTicks){
 		if(entityIn == null)
 			return new Vec3d(0, 0, 0);
 
@@ -266,46 +189,12 @@ public class OCClientSurface extends ClientSurface {
 		return new Vec3d(location[0], location[1], location[2]);
 	}
 
-	Vec3d getRobotLocation(Robot robot, float partialTicks){
-		if(robot == null)
-			return renderPosition;
 
-		li.cil.oc.common.tileentity.Robot casted = (li.cil.oc.common.tileentity.Robot) robot;
-		Vec3d offset = new Vec3d(0, 0, 0);
 
-		if(casted != null && casted.isAnimatingMove()){
-			double remaining = (casted.animationTicksLeft() - partialTicks) / (double) casted.animationTicksTotal();
-			Vec3d location = new Vec3d(casted.position().x(), casted.position().y(), casted.position().z());
-			Vec3d moveFrom = new Vec3d(casted.moveFrom().get()).subtract(location);
-
-			offset = moveFrom.scale(remaining);
-		}
-
-		return renderPosition = new Vec3d(robot.xPosition(), robot.yPosition(), robot.zPosition()).add(offset);
-	}
-
-	private final static Vec3d renderOffsetTabletDrone = new Vec3d(0.5, 0, 0.5);
-	public final static Vec3d renderOffsetRobotCaseMicroController = new Vec3d(0.5, 0.5, 0.5);
-
-	public Vec3d getRenderPosition(float partialTicks){
-		switch (hostType){
-			case DRONE:
-			case TABLET:
-				return getEntityLocation(getRenderEntity(), partialTicks).subtract(renderOffsetTabletDrone);
-
-			case ROBOT: // render offset for case/microcontroller is resolved when HostInfoPacket is received
-				return getRobotLocation(getRobotEntity(), partialTicks).subtract(renderOffsetRobotCaseMicroController);
-
-			default:
-				return renderPosition;
-		}
-	}
-
-	void renderWidgets(Collection<IRenderableWidget> widgets, float partialTicks){
+	void renderWidgets(Collection<IRenderableWidget> widgets, float partialTicks, Vec3d renderPos){
 		String uuid = glassesStack.getTagCompound().getString("userUUID");
 
 		long renderConditions = conditions.get();
-		Vec3d renderPos = getRenderPosition(partialTicks);
 		Vector3f offset = new Vector3f((float) renderPos.x, (float) renderPos.y, (float) renderPos.z);
 
 		for(IRenderableWidget renderable : widgets) {
@@ -324,7 +213,7 @@ public class OCClientSurface extends ClientSurface {
 
 
 	public boolean shouldRenderStart(RenderType renderEvent){
-		if(!super.shouldRenderStart(renderEvent))
+		if(getWidgetCount(null, renderEvent) < 1)
 			return false;
 
 		if(this.glassesStack.isEmpty())
@@ -340,7 +229,7 @@ public class OCClientSurface extends ClientSurface {
 			return false;
 		}
 
-		if(getWidgetCount() > glassesStack.getTagCompound().getInteger("widgetLimit")){
+		if(getWidgetCount(null, renderEvent) > glassesStack.getTagCompound().getInteger("widgetLimit")){
 			if(renderEvent.equals(RenderType.GameOverlayLocated) && widgetLimitRender != null) {
 				preRender(renderEvent, ~0);
 				GlStateManager.depthMask(false);
@@ -350,7 +239,7 @@ public class OCClientSurface extends ClientSurface {
 			return false;
 		}
 
-		if(lastBind == null) {
+		if(hosts.size() == 0) {
 			if(renderEvent.equals(RenderType.GameOverlayLocated) && noLinkRender != null) {
 				preRender(renderEvent, ~0);
 				GlStateManager.depthMask(false);
@@ -359,12 +248,6 @@ public class OCClientSurface extends ClientSurface {
 			}
 			return false;
 		}
-
-		if(!renderWorld && renderEvent.equals(RenderType.WorldLocated))
-			return false;
-
-		if(!renderOverlay && renderEvent.equals(RenderType.GameOverlayLocated))
-			return false;
 
 		return true;
 	}
@@ -392,6 +275,37 @@ public class OCClientSurface extends ClientSurface {
 		t.WidgetModifierList.addColor(1F, 1F, 1F, 0.7F);
 		t.WidgetModifierList.addTranslate(5, 5, 0);
 		return t.getRenderable();
+	}
+
+	@Override
+	public void updateWidgets(UUID hostUUID, Set<Map.Entry<Integer, Widget>> widgets){
+		if(hostUUID != null)
+			getHost(hostUUID).updateWidgets(widgets);
+	}
+
+	@Override
+	public void removeWidgets(UUID hostUUID, List<Integer> ids){
+		if(hostUUID != null)
+			getHost(hostUUID).removeWidgets(ids);
+	}
+
+	@Override
+	public void removeAllWidgets(UUID hostUUID){
+		if(hostUUID != null)
+			getHost(hostUUID).removeAllWidgets();
+	}
+
+	@Override
+	public int getWidgetCount(UUID hostUUID, RenderType renderEvent) {
+		if(hostUUID != null)
+			return getHost(hostUUID).getWidgetCount(renderEvent);
+		else {
+			int count = 0;
+			for(OpenGlassesHostClient host : hosts.values())
+				count+=host.getWidgetCount(renderEvent);
+
+			return count;
+		}
 	}
 
 }

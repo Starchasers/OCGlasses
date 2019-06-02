@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -78,12 +79,11 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 	public void subscribePlayer(EntityPlayerMP player) {
 		if (player == null) return;
 
-		UUID hostUUID = OpenGlassesItem.getHostUUID(player);
-
-		if (players.containsKey(player) && hostUUID.equals(players.get(player)))
-			return;
-
-		subscribePlayer(player, hostUUID);
+		for(NBTTagCompound nbt : OpenGlassesItem.getHostsFromNBT(OpenGlasses.getGlassesStack(player))){
+			UUID uuid = nbt.getUniqueId("host");
+			if (!uuid.equals(players.get(player)))
+				subscribePlayer(player, uuid);
+		}
 	}
 
 	public void subscribePlayer(EntityPlayerMP player, UUID hostUUID){
@@ -107,7 +107,7 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 	public void unsubscribePlayer(String playerUUID){
 		EntityPlayerMP player = checkUUID(playerUUID);
 
-		if (((PlayerStatsOC) playerStats.get(player.getUniqueID())).nightVisionActive) {
+		if (playerStats.get(player.getUniqueID()) != null && ((PlayerStatsOC) playerStats.get(player.getUniqueID())).nightVisionActive) {
 			player.removePotionEffect(potionNightvision);
 		}
 

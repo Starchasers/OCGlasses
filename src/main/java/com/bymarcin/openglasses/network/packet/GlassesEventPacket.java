@@ -1,18 +1,21 @@
 package com.bymarcin.openglasses.network.packet;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.component.OpenGlassesHostComponent;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.item.upgrades.UpgradeGeolyzer;
 import com.bymarcin.openglasses.item.upgrades.UpgradeNightvision;
+import com.bymarcin.openglasses.surface.OCClientSurface;
 import com.bymarcin.openglasses.utils.IOpenGlassesHost;
 import com.bymarcin.openglasses.utils.PlayerStatsOC;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3d;
 
@@ -39,6 +42,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	}
 
 	EventType eventType;
+	UUID hostUUID;
 	String player;
 	BlockPos eventPos;
 	EnumFacing facing;
@@ -47,20 +51,21 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	int x, y;
 	double mb;
 	
-	public GlassesEventPacket(EventType eventType) {
+	public GlassesEventPacket(UUID host, EventType eventType) {
 		this.player = Minecraft.getMinecraft().player.getGameProfile().getId().toString();
 		this.eventType = eventType;
+		this.hostUUID = host;
 	}
 
 
-	public GlassesEventPacket(EventType eventType, BlockPos eventPosition, EnumFacing face) {
-		this(eventType);
+	public GlassesEventPacket(UUID host, EventType eventType, BlockPos eventPosition, EnumFacing face) {
+		this(host, eventType);
 		this.eventPos = eventPosition;
 		this.facing = face;
 	}
 
-	public GlassesEventPacket(EventType eventType, int x, int y, int mb) {
-		this(eventType);
+	public GlassesEventPacket(UUID host, EventType eventType, int x, int y, int mb) {
+		this(host, eventType);
 		this.x = x;
 		this.y = y;
 		this.mb = mb;
@@ -70,6 +75,9 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 
 	@Override
 	protected void read() throws IOException {
+		if(readBoolean())
+			this.hostUUID = new UUID(readLong(), readLong());
+
 		this.player = readString();
 		this.eventType = EventType.values()[readInt()];
 
@@ -90,9 +98,14 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 
 	@Override
 	protected void write() throws IOException {
+		writeBoolean(hostUUID != null);
+		if(hostUUID != null) {
+			writeLong(hostUUID.getMostSignificantBits());
+			writeLong(hostUUID.getLeastSignificantBits());
+		}
 		writeString(player);
 	    writeInt(eventType.ordinal());
-
+	    
 		switch(eventType){
 			case GLASSES_SCREEN_SIZE:
 			case INTERACT_OVERLAY:
@@ -128,6 +141,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		double playerRotation = 0;
 		double playerPitch = 0;
 		PlayerStatsOC stats;
+		ItemStack glasses;
 
 		Vec3d playerPos = new Vec3d(playerMP.posX, playerMP.posY, playerMP.posZ);
 
@@ -156,7 +170,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		switch(eventType){
 			case INTERACT_WORLD_BLOCK_LEFT:
 			case INTERACT_WORLD_BLOCK_RIGHT:
-				host = OCServerSurface.getHost(OpenGlassesItem.getHostUUID(playerMP));
+				host = OCServerSurface.getHost(hostUUID);
 
 				if (host != null)
 					host.getComponent().sendInteractEventWorldBlock(eventType.name(), playerMP.getName(), playerPos, look, eyeHeight, this.eventPos, this.facing, playerRotation, playerPitch);
@@ -164,20 +178,20 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 
 			case INTERACT_WORLD_LEFT:
 			case INTERACT_WORLD_RIGHT:
-				host = OCServerSurface.getHost(OpenGlassesItem.getHostUUID(playerMP));
+				host = OCServerSurface.getHost(hostUUID);
 				if (host != null)
 					host.getComponent().sendInteractEventWorld(eventType.name(), playerMP.getName(), playerPos, look, eyeHeight, playerRotation, playerPitch);
 				return null;
 
 			case INTERACT_OVERLAY:
-				host = OCServerSurface.getHost(OpenGlassesItem.getHostUUID(playerMP));
+				host = OCServerSurface.getHost(hostUUID);
 				if(host != null)
 					host.getComponent().sendInteractEventOverlay(eventType.name(), playerMP.getName(), mb, x, y, look, eyeHeight, playerRotation, playerPitch);
 				return null;
 
 			case GLASSES_SCREEN_SIZE:
 				stats = (PlayerStatsOC) OCServerSurface.instances.playerStats.get(playerMP.getUniqueID());
-				host = OCServerSurface.getHost(OpenGlassesItem.getHostUUID(playerMP));
+				host = OCServerSurface.getHost(hostUUID);
 				if(stats != null)
 					stats.setScreen(x, y, mb);
 				if(host != null)
@@ -211,7 +225,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 				return null;
 
 			case CLEAR_LINK:
-				OpenGlassesItem.unlink(getGlasses(playerMP), playerMP);
+				OpenGlassesItem.unlink(hostUUID, getGlasses(playerMP), playerMP);
 				return null;
 
 			case ENABLE_NOTIFICATIONS:
@@ -221,12 +235,27 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 
 			case ENABLE_WORLD_RENDER:
 			case DISABLE_WORLD_RENDER:
-				OpenGlassesItem.setConfigFlag("noWorld", eventType.equals(EventType.ENABLE_WORLD_RENDER), getGlasses(playerMP), playerMP);
-				return null;
-
 			case ENABLE_OVERLAY_RENDER:
 			case DISABLE_OVERLAY_RENDER:
-				OpenGlassesItem.setConfigFlag("noOverlay", eventType.equals(EventType.ENABLE_OVERLAY_RENDER), getGlasses(playerMP), playerMP);
+				glasses = getGlasses(playerMP);
+				NBTTagCompound hostNBT = OpenGlassesItem.getHostFromNBT(hostUUID, glasses);
+				switch(eventType) {
+					case ENABLE_WORLD_RENDER:
+						hostNBT.removeTag("noWorld");
+						break;
+					case DISABLE_WORLD_RENDER:
+						hostNBT.setBoolean("noWorld", true);
+						break;
+					case ENABLE_OVERLAY_RENDER:
+						hostNBT.removeTag("noOverlay");
+						break;
+					case DISABLE_OVERLAY_RENDER:
+						hostNBT.setBoolean("noOverlay", true);
+						break;
+				}
+
+				OpenGlassesItem.writeHostToNBT(glasses, hostNBT);
+				OpenGlassesItem.syncStackNBT(glasses, playerMP);
 				return null;
 		}
 

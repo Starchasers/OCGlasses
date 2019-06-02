@@ -4,6 +4,7 @@ import com.bymarcin.openglasses.event.ClientEventHandler;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.surface.OCClientSurface;
+import com.bymarcin.openglasses.utils.OpenGlassesHostClient;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
 
@@ -26,14 +27,20 @@ public class InteractGui extends GuiScreen {
             mouseY*=(OCClientSurface.instances.renderResolution.y / OCClientSurface.instances.resolution.getScaledHeight());
         }
 
-        NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.INTERACT_OVERLAY, mouseX, mouseY, mouseButton));
+        for(OpenGlassesHostClient host : OCClientSurface.instance().getHosts())
+            if(host.data().sendOverlayEvents)
+                NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(host.getUniqueId(), GlassesEventPacket.EventType.INTERACT_OVERLAY, mouseX, mouseY, mouseButton));
     }
 
     @Override
     public void updateScreen() {
         if(!Keyboard.isKeyDown(ClientEventHandler.interactGUIKey.getKeyCode())){
             OCClientSurface.instance().conditions.setOverlay(false);
-            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.DEACTIVATE_OVERLAY));
+
+            for(OpenGlassesHostClient host : OCClientSurface.instance().getHosts())
+                if(host.data().sendOverlayEvents)
+                    NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(host.getUniqueId(), GlassesEventPacket.EventType.DEACTIVATE_OVERLAY));
+
             mc.displayGuiScreen(null);
         }
     }

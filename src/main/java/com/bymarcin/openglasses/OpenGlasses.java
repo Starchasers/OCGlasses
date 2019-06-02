@@ -3,7 +3,7 @@ package com.bymarcin.openglasses;
 import com.bymarcin.openglasses.block.OpenGlassesTerminalBlock;
 import com.bymarcin.openglasses.drivers.DriverHostCard;
 import com.bymarcin.openglasses.drivers.DriverTerminal;
-import com.bymarcin.openglasses.event.AnvilEvent;
+import com.bymarcin.openglasses.event.minecraft.AnvilEvent;
 import com.bymarcin.openglasses.integration.opencomputers.ocProgramDisks;
 import com.bymarcin.openglasses.item.OpenGlassesHostCard;
 import com.bymarcin.openglasses.item.OpenGlassesItem;

@@ -160,6 +160,6 @@ public class UpgradeNightvision extends UpgradeItem {
         if(!hasUpgrade(OCClientSurface.instance().glassesStack))
             return;
 
-        NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.TOGGLE_NIGHTVISION));
+        NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(null, GlassesEventPacket.EventType.TOGGLE_NIGHTVISION));
     }
 }

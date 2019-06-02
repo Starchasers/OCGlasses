@@ -1,13 +1,14 @@
 package com.bymarcin.openglasses.gui;
 
-import ben_mkiv.guitoolkit.client.widget.EnergyBar;
-import ben_mkiv.guitoolkit.client.widget.prettyButton;
-import ben_mkiv.guitoolkit.client.widget.prettyCheckbox;
+import ben_mkiv.guitoolkit.client.widget.*;
 import com.bymarcin.openglasses.OpenGlasses;
+import com.bymarcin.openglasses.event.glasses.GlassesNotifications;
+import com.bymarcin.openglasses.event.glasses.LinkRequest;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.surface.OCClientSurface;
+import com.bymarcin.openglasses.utils.OpenGlassesHostClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -23,6 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -32,12 +34,15 @@ public class GlassesGui extends GuiScreen {
 
     int xSize, ySize, guiLeft, guiTop;
 
-    prettyButton acceptLink, denyLink, clearLink;
-    prettyCheckbox enablePopupNotifications, enableWorldRender, enableOverlayRender;
+    prettyButton acceptLink, denyLink;
+    prettyCheckbox enablePopupNotifications;
+
+
+    prettyList hostList;
 
     EnergyBar energyBar;
 
-    OCClientSurface.LinkRequest activeLinkRequest;
+    LinkRequest activeLinkRequest;
 
     public static boolean isNotification = false;
 
@@ -58,16 +63,52 @@ public class GlassesGui extends GuiScreen {
 
         addButton(acceptLink = new prettyButton(buttonList.size(), guiLeft + 5, guiTop + 175, 70, 20, "accept"));
         addButton(denyLink = new prettyButton(buttonList.size(), guiLeft + 80, guiTop + 175, 70, 20, "deny"));
-        addButton(clearLink = new prettyButton(buttonList.size(), guiLeft + 5, guiTop + 35, 100, 20, "clear link"));
-        addButton(enablePopupNotifications = new prettyCheckbox(buttonList.size(), guiLeft + 5, guiTop + 65, "popup notifications", false));
-        addButton(enableWorldRender= new prettyCheckbox(buttonList.size(), guiLeft + 5, guiTop + 85, "world render", true));
-        addButton(enableOverlayRender = new prettyCheckbox(buttonList.size(), guiLeft + 5, guiTop + 105, "overlay render", true));
+        addButton(enablePopupNotifications = new prettyCheckbox(buttonList.size(), guiLeft + 5, guiTop + 15, "popup notifications", false));
 
         addButton(energyBar = new EnergyBar(buttonList.size(), guiLeft + xSize - 105, guiTop + 5, 100, 7));
 
+        hostList =  new prettyList("hostList", guiLeft + 5, guiTop + 50);
+        hostList.setDisplayElements(3);
+
         acceptLink.visible = false;
         denyLink.visible = false;
-        clearLink.visible = false;
+
+
+        updateTaskList();
+    }
+
+    private void updateTaskList(){
+
+        if(true || hostList.elements.size() != OCClientSurface.instance().getHosts().size()) {
+            for(ArrayList<prettyElement> entry : hostList.elements)
+                buttonList.removeAll(entry);
+
+            hostList.elements.clear();
+
+            for (OpenGlassesHostClient host : OCClientSurface.instance().getHosts()) {
+                ArrayList<prettyElement> listElements = new ArrayList<>();
+
+                prettyButton button = new prettyButton(buttonList.size(), 0, 3, 245, 15, host.getUniqueId().toString());
+                button.enabled = false;
+
+                listElements.add(button);
+                listElements.add(new hostCheckbox(host.getUniqueId(), buttonList.size() + 1, 0, 16, "world", host.data().renderWorld));
+                listElements.add(new hostCheckbox(host.getUniqueId(), buttonList.size() + 2, 60, 16, "overlay", host.data().renderOverlay));
+                listElements.add(new hostButton(host.getUniqueId(), buttonList.size() + 3, 184, 17, 60, 20, "clear link"));
+
+                hostList.add(listElements);
+
+                for (prettyElement el : listElements)
+                    if (el instanceof GuiButton)
+                        buttonList.add((GuiButton) el);
+            }
+        }
+
+
+
+        hostList.setY(guiTop + 50);
+        hostList.setX(guiLeft + 5);
+        hostList.update();
     }
 
     @Override
@@ -86,29 +127,15 @@ public class GlassesGui extends GuiScreen {
             return;
         }
 
-        UUID currentHost = OpenGlassesItem.getHostUUID(stack);
-        String linkedToDistance;
-
-        if(currentHost != null){
-            if(OCClientSurface.instance().terminalName.length() > 0)
-                linkedTo = "host: " + OCClientSurface.instance().terminalName + " ("+currentHost.toString().substring(0, 18)+"...)";
-            else
-                linkedTo = "host: " + currentHost.toString();
-
-            linkedToDistance = "host distance: " + (int) Math.round(OCClientSurface.instance().getRenderPosition(partialTicks).distanceTo(Minecraft.getMinecraft().player.getPositionVector())) + " blocks";
-            clearLink.visible = true;
-        }
-        else {
-            linkedTo = "not linked";
-            linkedToDistance = "";
-            clearLink.visible = false;
-        }
+        int i=0;
+        //for(OpenGlassesHostClient host : OCClientSurface.instance().getHosts())
+        //    drawHost(host, guiTop + 15 + 30 * i++);
 
         NBTTagCompound glassesNBT = stack.getTagCompound();
 
         enablePopupNotifications.setEnabled(!glassesNBT.hasKey("nopopups"));
-        enableWorldRender.setEnabled(!glassesNBT.hasKey("noWorld"));
-        enableOverlayRender.setEnabled(!glassesNBT.hasKey("noOverlay"));
+        //enableWorldRender.setEnabled(!glassesNBT.hasKey("noWorld"));
+        //enableOverlayRender.setEnabled(!glassesNBT.hasKey("noOverlay"));
 
         energyBar.drawBar(0, 0, 1-stack.getItem().getDurabilityForDisplay(stack), null);
 
@@ -116,18 +143,27 @@ public class GlassesGui extends GuiScreen {
         String energyStored = formatNumber((int) OpenGlassesItem.getEnergyStored(stack)) + " FE";
         Minecraft.getMinecraft().fontRenderer.drawString(energyStored, guiLeft - 5 + xSize - fontRenderer.getStringWidth(energyStored), guiTop+13, 0x0);
 
-
-
-        Minecraft.getMinecraft().fontRenderer.drawString(linkedToDistance, guiLeft+5, guiTop+15, 0x0);
-        Minecraft.getMinecraft().fontRenderer.drawString(linkedTo, guiLeft+5, guiTop+25, 0x0);
-
-
         if(activeLinkRequest != null){
             drawLinkRequest(guiLeft, guiTop, activeLinkRequest);
         }
     }
 
-    public void drawLinkRequest(int x, int y, OCClientSurface.LinkRequest linkRequest){
+    private void drawHost(OpenGlassesHostClient hostClient, int y){
+        String linkedToDistance = "", linkedTo = "";
+
+        if(hostClient.terminalName.length() > 0)
+           linkedTo = "host: " + hostClient.terminalName + " ("+hostClient.getUniqueId().toString().substring(0, 18)+"...)";
+        else
+            linkedTo = "host: " + hostClient.getUniqueId().toString();
+
+        linkedToDistance = "host distance: " + (int) Math.round(hostClient.getRenderPosition(0.5f).distanceTo(Minecraft.getMinecraft().player.getPositionVector())) + " blocks";
+        //clearLink.visible = true;
+
+        Minecraft.getMinecraft().fontRenderer.drawString(linkedToDistance, guiLeft+5, y, 0x0);
+        Minecraft.getMinecraft().fontRenderer.drawString(linkedTo, guiLeft+5, y+10, 0x0);
+    }
+
+    private void drawLinkRequest(int x, int y, LinkRequest linkRequest){
         int distance = linkRequest.getDistance(Minecraft.getMinecraft().player.getPositionVector());
         String text = "link request";
 
@@ -149,6 +185,24 @@ public class GlassesGui extends GuiScreen {
         return false;
     }
 
+    class hostButton extends prettyButton{
+        public UUID host;
+
+        public hostButton(UUID hostUUID, int id, int x, int y, int width, int height, String label){
+            super(id, x, y, width, height, label);
+            host = hostUUID;
+        }
+    }
+
+    class hostCheckbox extends prettyCheckbox {
+        public UUID host;
+
+        public hostCheckbox(UUID hostUUID, int id, int x, int y, String label, boolean state){
+            super(id, x, y, label, state);
+            host = hostUUID;
+        }
+    }
+
     @Override
     @SideOnly(Side.CLIENT)
     protected void actionPerformed(GuiButton button) throws IOException {
@@ -157,19 +211,32 @@ public class GlassesGui extends GuiScreen {
                 activeLinkRequest.submit();
             else if(button.equals(denyLink))
                 activeLinkRequest.cancel();
-            else if(button.equals(clearLink))
-                NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(GlassesEventPacket.EventType.CLEAR_LINK));
             else if(button.equals(enablePopupNotifications)) {
                 GlassesEventPacket.EventType eventType = enablePopupNotifications.isEnabled() ? GlassesEventPacket.EventType.DISABLE_NOTIFICATIONS : GlassesEventPacket.EventType.ENABLE_NOTIFICATIONS;
-                NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(eventType));
+                NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(null, eventType));
             }
-            else if(button.equals(enableWorldRender)) {
-                GlassesEventPacket.EventType eventType = enableWorldRender.isEnabled() ? GlassesEventPacket.EventType.DISABLE_WORLD_RENDER : GlassesEventPacket.EventType.ENABLE_WORLD_RENDER;
-                NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(eventType));
-            }
-            else if(button.equals(enableOverlayRender)) {
-                GlassesEventPacket.EventType eventType = enableOverlayRender.isEnabled() ? GlassesEventPacket.EventType.DISABLE_OVERLAY_RENDER : GlassesEventPacket.EventType.ENABLE_OVERLAY_RENDER;
-                NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(eventType));
+            else {
+                if(button instanceof hostButton){
+                    switch(((hostButton) button).action){
+                        case "clear link":
+                            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(((hostButton) button).host, GlassesEventPacket.EventType.CLEAR_LINK));
+                            break;
+                    }
+                }
+                else if(button instanceof hostCheckbox){
+                    GlassesEventPacket.EventType eventType;
+
+                    switch (((hostCheckbox) button).action){
+                        case "overlay":
+                            eventType = ((hostCheckbox) button).isEnabled() ? GlassesEventPacket.EventType.DISABLE_OVERLAY_RENDER : GlassesEventPacket.EventType.ENABLE_OVERLAY_RENDER;
+                            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(((hostCheckbox) button).host, eventType));
+                            break;
+                        case "world":
+                            eventType = ((hostCheckbox) button).isEnabled() ? GlassesEventPacket.EventType.DISABLE_WORLD_RENDER : GlassesEventPacket.EventType.ENABLE_WORLD_RENDER;
+                            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(((hostCheckbox) button).host, eventType));
+                            break;
+                    }
+                }
             }
         }
         else
@@ -180,14 +247,14 @@ public class GlassesGui extends GuiScreen {
     public void updateScreen() {
         super.updateScreen();
         activeLinkRequest = null;
-        HashSet<OCClientSurface.GlassesNotifications.GlassesNotification> notifications = new HashSet<>();
-        notifications.addAll(OCClientSurface.GlassesNotifications.notifications);
+        HashSet<GlassesNotifications.GlassesNotification> notifications = new HashSet<>();
+        notifications.addAll(GlassesNotifications.notifications);
 
-        for(OCClientSurface.GlassesNotifications.GlassesNotification notification : notifications){
+        for(GlassesNotifications.GlassesNotification notification : notifications){
             notification.update();
 
-            if(notification instanceof OCClientSurface.LinkRequest){
-                activeLinkRequest = (OCClientSurface.LinkRequest) notification;
+            if(notification instanceof LinkRequest){
+                activeLinkRequest = (LinkRequest) notification;
             }
         }
 
@@ -195,6 +262,8 @@ public class GlassesGui extends GuiScreen {
 
         acceptLink.visible = activeLinkRequest != null;
         denyLink.visible = activeLinkRequest != null;
+
+        updateTaskList();
     }
 
     @Override

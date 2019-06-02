@@ -3,10 +3,12 @@ package com.bymarcin.openglasses.network.packet;
 import java.io.IOException;
 import java.util.UUID;
 
+import com.bymarcin.openglasses.event.glasses.LinkRequest;
 import com.bymarcin.openglasses.network.Packet;
 
 import com.bymarcin.openglasses.surface.OCClientSurface;
 import com.bymarcin.openglasses.utils.IOpenGlassesHost;
+import com.bymarcin.openglasses.utils.OpenGlassesHostClient;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -93,10 +95,14 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
  		switch(this.terminalEvent){
 			case ASYNC_SCREEN_SIZES:
 				(OCClientSurface.instance()).sendResolution();
-				break;
+				return null;
 			case LINK_REQUEST:
-				new OCClientSurface.LinkRequest(uuid, pos, terminalName);
-				break;
+				for(OpenGlassesHostClient host : OCClientSurface.instance().getHosts())
+					if(host.getUniqueId().equals(uuid))
+						return null;
+
+				new LinkRequest(uuid, pos, terminalName);
+				return null;
 		}
 
 		return null;

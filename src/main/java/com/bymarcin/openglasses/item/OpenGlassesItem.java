@@ -23,6 +23,7 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.fml.common.Optional;
@@ -131,7 +132,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 
 		NBTTagCompound tag = stack.getTagCompound();
 
-		if(tag.hasUniqueId("host")){
+		/*if(tag.hasUniqueId("host")){
 			UUID host = tag.getUniqueId("host");
 
 			//if(!FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0).getGameRules().getBoolean("reducedDebugInfo"))
@@ -140,12 +141,14 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 			tooltip.add("user: " + tag.getString("user"));
 		}
 		else
-			tooltip.add("use at glassesterminal to link glasses");
+			tooltip.add("use at glassesterminal to link glasses");*/
+
+		tooltip.add("linked to "+getHostsFromNBT(stack).size()+" hosts");
 
 		for(UpgradeItem upgrade : upgrades)
 			tooltip.addAll(upgrade.getTooltip(stack));
 
-		int widgetCount = OCClientSurface.instances.getWidgetCount();
+		int widgetCount = OCClientSurface.instances.getWidgetCount(null, null);
 		tooltip.add("using " + widgetCount + "/" + tag.getInteger("widgetLimit") + " widgets");
 
 		int energyUsage = tag.getInteger("upkeepCost");
@@ -173,25 +176,72 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 
 	    NBTTagCompound tag = glassesStack.getTagCompound();
 
-		tag.setUniqueId("host", hostUUID);
-		tag.setString("userUUID", player.getGameProfile().getId().toString());
-		tag.setString("user", player.getGameProfile().getName());
+	    NBTTagCompound newTag = new NBTTagCompound();
+
+		newTag.setUniqueId("host", hostUUID);
+		newTag.setString("userUUID", player.getGameProfile().getId().toString());
+		newTag.setString("user", player.getGameProfile().getName());
+
+		HashSet<NBTTagCompound> hosts = getHostsFromNBT(glassesStack);
+		hosts.add(newTag);
+		writeHostsToNBT(hosts, glassesStack);
 
 		syncStackNBT(glassesStack, (EntityPlayerMP) player);
 	}
 
-	public static void unlink(ItemStack glassesStack, EntityPlayer player) {
+	public static void unlink(UUID uuid, ItemStack glassesStack, EntityPlayer player) {
 		if(player.world.isRemote)
 			return;
 
-		NBTTagCompound tag = glassesStack.getTagCompound();
-
-		tag.removeTag("hostMost");
-		tag.removeTag("hostLeast");
-		tag.removeTag("userUUID");
-		tag.removeTag("user");
+		HashSet<NBTTagCompound> hosts = getHostsFromNBT(glassesStack);
+		hosts.remove(getHostFromNBT(uuid, glassesStack));
+		writeHostsToNBT(hosts, glassesStack);
 
 		syncStackNBT(glassesStack, (EntityPlayerMP) player);
+	}
+
+	public static NBTTagCompound getHostFromNBT(UUID hostUUID, ItemStack glassesStack){
+		if(glassesStack.isEmpty())
+			return null;
+
+		HashSet<NBTTagCompound> hosts = getHostsFromNBT(glassesStack);
+		for(NBTTagCompound hostNBT : hosts)
+			if(hostNBT.getUniqueId("host").equals(hostUUID))
+				return hostNBT;
+
+		return null;
+	}
+
+	private static void writeHostsToNBT(HashSet<NBTTagCompound> hosts, ItemStack glassesStack){
+		int i=0;
+		NBTTagCompound hostsNBT = new NBTTagCompound();
+		for(NBTTagCompound tag : hosts)
+			hostsNBT.setTag("host"+i++, tag);
+		glassesStack.getTagCompound().setTag("hosts", hostsNBT);
+	}
+
+	public static void writeHostToNBT(ItemStack glassesStack, NBTTagCompound hostNBT){
+		HashSet<NBTTagCompound> hosts = getHostsFromNBT(glassesStack);
+		for(NBTTagCompound host : hosts)
+			if(host.getUniqueId("host").equals(hostNBT.getUniqueId("host"))) {
+				hosts.remove(host);
+				break;
+			}
+
+		hosts.add(hostNBT);
+		writeHostsToNBT(hosts, glassesStack);
+	}
+
+	public static HashSet<NBTTagCompound> getHostsFromNBT(ItemStack glassesStack){
+		HashSet<NBTTagCompound> hosts = new HashSet<>();
+
+		NBTTagCompound tag = glassesStack.getTagCompound();
+		if(tag.hasKey("hosts")) {
+			NBTTagCompound nbt = tag.getCompoundTag("hosts");
+			for (int i = 0; nbt.hasKey("host" + i); i++)
+				hosts.add(nbt.getCompoundTag("host" + i));
+		}
+		return hosts;
 	}
 
 	public static void setConfigFlag(String flagName, boolean enabled, ItemStack glassesStack, EntityPlayer player){
@@ -208,9 +258,11 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		syncStackNBT(glassesStack, (EntityPlayerMP) player);
 	}
 
-	private static void syncStackNBT(ItemStack glassesStack, EntityPlayerMP player){
+	public static void syncStackNBT(ItemStack glassesStack, EntityPlayerMP player){
 		NetworkRegistry.packetHandler.sendTo(new GlassesStackNBT(glassesStack), player);
-        OCServerSurface.instance().subscribePlayer(player, getHostUUID(glassesStack));
+
+		for(NBTTagCompound nbt : getHostsFromNBT(glassesStack))
+			OCServerSurface.instance().subscribePlayer(player, nbt.getUniqueId("host"));
 	}
 
 	// Forge Energy
@@ -309,16 +361,6 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 			return null;
 		}
 	}
-
-	public static UUID getHostUUID(EntityPlayer player){
-		return getHostUUID(OpenGlasses.getGlassesStack(player));
-	}
-
-	public static UUID getHostUUID(ItemStack stack){
-		NBTTagCompound nbt = stack.getTagCompound();
-    	return nbt.hasUniqueId("host") ? nbt.getUniqueId("host") : null;
-	}
-
 
 	/* Baubles integration */
 	@Override

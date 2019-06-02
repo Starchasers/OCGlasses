@@ -148,7 +148,7 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
         if(glasses.isEmpty())
             return false;
 
-        if(environmentHost.getUUID().equals(OpenGlassesItem.getHostUUID(glasses)))
+        if(OpenGlassesItem.getHostFromNBT(getUUID(), glasses) != null)
             return false;
 
         linkRequests.put(player, environmentHost.getUUID());
@@ -415,6 +415,6 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
 
     public void sync(EntityPlayerMP player){
         NetworkRegistry.packetHandler.sendTo(new HostInfoPacket(environmentHost), player);
-        OCServerSurface.instances.sendSync(player, widgets.list);
+        OCServerSurface.instances.sendSync(getUUID(), player, widgets.list);
     }
 }

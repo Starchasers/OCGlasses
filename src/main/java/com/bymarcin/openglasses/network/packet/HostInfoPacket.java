@@ -3,6 +3,7 @@ package com.bymarcin.openglasses.network.packet;
 import com.bymarcin.openglasses.network.Packet;
 import com.bymarcin.openglasses.surface.OCClientSurface;
 import com.bymarcin.openglasses.utils.IOpenGlassesHost;
+import com.bymarcin.openglasses.utils.OpenGlassesHostClient;
 import li.cil.oc.api.internal.Case;
 import li.cil.oc.api.internal.Microcontroller;
 import li.cil.oc.api.internal.Robot;
@@ -17,14 +18,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.io.IOException;
 import java.util.UUID;
 
-import static com.bymarcin.openglasses.surface.OCClientSurface.renderOffsetRobotCaseMicroController;
+import static com.bymarcin.openglasses.utils.OpenGlassesHostClient.renderOffsetRobotCaseMicroController;
 
 public class HostInfoPacket extends Packet<HostInfoPacket, IMessage> {
 
     boolean isInternal;
     double x = 0, y = 0, z = 0;
     int entityID = -1;
-    UUID entityUUID;
+    UUID hostUUID, entityUUID;
     int entityDimension;
     String name;
 
@@ -35,6 +36,7 @@ public class HostInfoPacket extends Packet<HostInfoPacket, IMessage> {
     public HostInfoPacket(IOpenGlassesHost host) {
         isInternal = host.isInternalComponent();
         name = host.getName();
+        hostUUID = host.getUUID();
 
         if(!isInternal){
             x = host.getRenderPosition().x;
@@ -76,34 +78,40 @@ public class HostInfoPacket extends Packet<HostInfoPacket, IMessage> {
 
     @Override
     protected void read() throws IOException {
-        OCClientSurface.instance().terminalName = readString();
+        hostUUID = new UUID(readLong(), readLong()); 
+        
+        OpenGlassesHostClient clientHost = OCClientSurface.instance().getHost(hostUUID);
 
-        OCClientSurface.instance().renderEntity = null;
-        OCClientSurface.instance().isInternal = readBoolean();
-        OCClientSurface.instance().hostType = HostType.values()[readInt()];
-        OCClientSurface.instance().renderPosition = new Vec3d(readDouble(), readDouble(), readDouble());;
+        clientHost.terminalName = readString();
 
-        switch(OCClientSurface.instance().hostType){
+        clientHost.renderEntity = null;
+        clientHost.isInternal = readBoolean();
+        clientHost.hostType = HostType.values()[readInt()];
+        clientHost.renderPosition = new Vec3d(readDouble(), readDouble(), readDouble());;
+
+        switch(clientHost.hostType){
             case ROBOT:
-                OCClientSurface.instance().renderEntityDimension = readInt();
-                OCClientSurface.instance().renderEntityRobot = OCClientSurface.instance().getRobotEntity();
+                clientHost.renderEntityDimension = readInt();
+                clientHost.renderEntityRobot = clientHost.getRobotEntity();
                 break;
             case DRONE:
             case TABLET:
-                OCClientSurface.instance().renderEntityID = readInt();
-                OCClientSurface.instance().renderEntityDimension = readInt();
-                OCClientSurface.instance().renderEntityUUID = new UUID(readLong(), readLong());
+                clientHost.renderEntityID = readInt();
+                clientHost.renderEntityDimension = readInt();
+                clientHost.renderEntityUUID = new UUID(readLong(), readLong());
                 break;
             case MICROCONTROLLER:
             case CASE:
-                OCClientSurface.instance().renderPosition = OCClientSurface.instance().renderPosition.subtract(renderOffsetRobotCaseMicroController);
+                clientHost.renderPosition = clientHost.renderPosition.subtract(renderOffsetRobotCaseMicroController);
                 break;
         }
     }
 
     @Override
     protected void write() throws IOException {
-        writeString(name);
+        writeLong(hostUUID.getMostSignificantBits());
+        writeLong(hostUUID.getLeastSignificantBits());
+        writeString(name);        
         writeBoolean(isInternal);
         writeInt(hostType.ordinal());
         writeDouble(x);

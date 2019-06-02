@@ -10,6 +10,7 @@ import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket.EventType;
 
 import com.bymarcin.openglasses.surface.OCClientSurface;
+import com.bymarcin.openglasses.utils.OpenGlassesHostClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 
@@ -59,21 +60,24 @@ public class ClientEventHandler {
     public boolean checkGlasses(EntityPlayer player) {
         ItemStack glassesStack = OpenGlasses.getGlassesStack(player);
 
+
+        if(!ItemStack.areItemStacksEqualUsingNBTShareTag(OCClientSurface.instance().glassesStack, glassesStack)) {
+            unEquiped();
+        }
+
         if(!glassesStack.isEmpty()){
             if (OCClientSurface.instance().glassesStack.isEmpty()) {
-                equiped(player, glassesStack);
+                equiped(glassesStack);
                 return true;
             }
-            else if(ItemStack.areItemsEqual(glassesStack, OCClientSurface.instance().glassesStack))
+            else if(ItemStack.areItemStacksEqualUsingNBTShareTag(glassesStack, OCClientSurface.instance().glassesStack))
                 return true;
             else {
                 OCClientSurface.instance().initLocalGlasses(glassesStack);
                 return true;
             }
         }
-        else if(!OCClientSurface.instance().glassesStack.isEmpty()) {
-            unEquiped(player);
-        }
+
 
         return false;
     }
@@ -120,11 +124,13 @@ public class ClientEventHandler {
 
     private void onInteractEvent(EventType type, PlayerInteractEvent event){
         if(OCClientSurface.instance().glassesStack.isEmpty()) return;
-        if(OCClientSurface.instance().lastBind == null) return;
+        if(OCClientSurface.instance().getHosts().size() == 0) return;
         if(!event.getSide().isClient()) return;
         if(!event.getHand().equals(EnumHand.MAIN_HAND)) return;
 
-        NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(type, event.getPos(), event.getFace()));
+        for(OpenGlassesHostClient host : OCClientSurface.instance().getHosts())
+            if(host.data().sendWorldEvents)
+                NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(host.getUniqueId(), type, event.getPos(), event.getFace()));
     }
 
     @SubscribeEvent
@@ -139,7 +145,9 @@ public class ClientEventHandler {
             else {
                 OCClientSurface.instance().conditions.setOverlay(true);
                 Minecraft.getMinecraft().displayGuiScreen(new InteractGui());
-                NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.ACTIVATE_OVERLAY));
+                for(OpenGlassesHostClient host : OCClientSurface.instance().getHosts())
+                    if(host.data().sendOverlayEvents)
+                        NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(host.getUniqueId(), EventType.ACTIVATE_OVERLAY));
             }
 
             return;
@@ -150,13 +158,17 @@ public class ClientEventHandler {
 
     }
 
-    private void unEquiped(EntityPlayer player){
-        NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.UNEQUIPED_GLASSES));
+    private void unEquiped(){
+        for(OpenGlassesHostClient host : OCClientSurface.instance().getHosts())
+            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(host.getUniqueId(), EventType.UNEQUIPED_GLASSES));
+
         OCClientSurface.instance().resetLocalGlasses();
     }
 
-    private void equiped(EntityPlayer player, ItemStack glassesStack){
+    private void equiped(ItemStack glassesStack){
         OCClientSurface.instance().initLocalGlasses(glassesStack);
-        NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(EventType.EQUIPED_GLASSES));
+
+        for(OpenGlassesHostClient host : OCClientSurface.instance().getHosts())
+            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(host.getUniqueId(), EventType.EQUIPED_GLASSES));
     }
 }
