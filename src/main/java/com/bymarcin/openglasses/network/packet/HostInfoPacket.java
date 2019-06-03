@@ -82,7 +82,7 @@ public class HostInfoPacket extends Packet<HostInfoPacket, IMessage> {
         
         OpenGlassesHostClient clientHost = OCClientSurface.instance().getHost(hostUUID);
 
-        clientHost.terminalName = readString();
+        clientHost.data().terminalName = readString();
 
         clientHost.renderEntity = null;
         clientHost.isInternal = readBoolean();

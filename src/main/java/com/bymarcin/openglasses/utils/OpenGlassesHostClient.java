@@ -22,12 +22,12 @@ public class OpenGlassesHostClient extends WidgetCollection {
     public int renderEntityID = -1;
     public int renderEntityDimension;
     public Robot renderEntityRobot;
-    public String terminalName = "";
 
     HostClient host;
 
     public static class HostClient {
         public UUID uuid = null;
+        public String terminalName = "";
         public boolean renderWorld = true, renderOverlay = true;
         public boolean sendOverlayEvents = true, sendWorldEvents = true;
 
@@ -45,10 +45,12 @@ public class OpenGlassesHostClient extends WidgetCollection {
             renderOverlay = !nbt.hasKey("noOverlay");
             sendOverlayEvents = !nbt.hasKey("noOverlayEvents");
             sendWorldEvents = !nbt.hasKey("noWorldEvents");
+            //terminalName = nbt.getString("name");
         }
 
         public NBTTagCompound writeToNBT(NBTTagCompound tag){
             tag.setUniqueId("host", uuid);
+            //tag.setString("name", terminalName);
             if(!renderWorld)
                 tag.setBoolean("noWorld", true);
             if(!renderOverlay)

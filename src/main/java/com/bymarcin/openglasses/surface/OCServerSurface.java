@@ -16,6 +16,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.bymarcin.openglasses.item.upgrades.UpgradeNightvision.potionNightvision;
@@ -80,21 +82,32 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 		if (player == null) return;
 
 		for(NBTTagCompound nbt : OpenGlassesItem.getHostsFromNBT(OpenGlasses.getGlassesStack(player))){
-			UUID uuid = nbt.getUniqueId("host");
-			if (!uuid.equals(players.get(player)))
-				subscribePlayer(player, uuid);
+			subscribePlayer(player, nbt.getUniqueId("host"));
 		}
 	}
 
-	public void subscribePlayer(EntityPlayerMP player, UUID hostUUID){
-		removePlayerSubscription(player);
+	boolean isSubscribedTo(UUID playerUUID, UUID hostUUID){
+		for(Map.Entry<EntityPlayer, HashSet<UUID>> entry : players.entrySet())
+			if(entry.getKey().getUniqueID().equals(playerUUID) && entry.getValue().contains(hostUUID))
+				return true;
 
-		players.put(player, hostUUID);
+		return false;
+	}
+
+	public void subscribePlayer(EntityPlayerMP player, UUID hostUUID){
+		if(isSubscribedTo(player.getUniqueID(), hostUUID))
+			return;
+
+		if(!players.containsKey(player))
+			players.put(player, new HashSet<>());
+
+		players.get(player).add(hostUUID);
+
 		PlayerStatsOC stats = new PlayerStatsOC(player);
 		stats.conditions.bufferSensors(OpenGlasses.getGlassesStack(player));
 		playerStats.put(player.getUniqueID(), stats);
 
-		IOpenGlassesHost host = getHost(players.get(player));
+		IOpenGlassesHost host = getHost(hostUUID);
 		if (host != null){
 			host.sync(player);
 			host.getComponent().onGlassesPutOn(player.getDisplayNameString());
@@ -107,14 +120,19 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 	public void unsubscribePlayer(String playerUUID){
 		EntityPlayerMP player = checkUUID(playerUUID);
 
+		if(!players.containsKey(player))
+			return;
+
 		if (playerStats.get(player.getUniqueID()) != null && ((PlayerStatsOC) playerStats.get(player.getUniqueID())).nightVisionActive) {
 			player.removePotionEffect(potionNightvision);
 		}
 
-		IOpenGlassesHost host = getHost(players.get(player));
-		if (host != null){
-			host.sync(player);
-			host.getComponent().onGlassesPutOff(player.getDisplayNameString());
+		for(UUID hostUUID : players.get(player)) {
+			IOpenGlassesHost host = getHost(hostUUID);
+			if (host != null) {
+				host.sync(player);
+				host.getComponent().onGlassesPutOff(player.getDisplayNameString());
+			}
 		}
 
 		removePlayerSubscription(player);

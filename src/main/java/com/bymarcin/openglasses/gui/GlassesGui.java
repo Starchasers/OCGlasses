@@ -12,21 +12,14 @@ import com.bymarcin.openglasses.utils.OpenGlassesHostClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.UUID;
 
 public class GlassesGui extends GuiScreen {
     public static final int WIDTH = 256;
@@ -37,8 +30,9 @@ public class GlassesGui extends GuiScreen {
     prettyButton acceptLink, denyLink;
     prettyCheckbox enablePopupNotifications;
 
+    ItemStack glassesStack = ItemStack.EMPTY;
 
-    prettyList hostList;
+    TerminalHostsList list;
 
     EnergyBar energyBar;
 
@@ -58,6 +52,7 @@ public class GlassesGui extends GuiScreen {
     @Override
     public void initGui(){
         super.initGui();
+        glassesStack = ItemStack.EMPTY;
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
 
@@ -67,101 +62,35 @@ public class GlassesGui extends GuiScreen {
 
         addButton(energyBar = new EnergyBar(buttonList.size(), guiLeft + xSize - 105, guiTop + 5, 100, 7));
 
-        hostList =  new prettyList("hostList", guiLeft + 5, guiTop + 50);
-        hostList.setDisplayElements(3);
-
         acceptLink.visible = false;
         denyLink.visible = false;
 
-
-        updateTaskList();
-    }
-
-    private void updateTaskList(){
-
-        if(true || hostList.elements.size() != OCClientSurface.instance().getHosts().size()) {
-            for(ArrayList<prettyElement> entry : hostList.elements)
-                buttonList.removeAll(entry);
-
-            hostList.elements.clear();
-
-            for (OpenGlassesHostClient host : OCClientSurface.instance().getHosts()) {
-                ArrayList<prettyElement> listElements = new ArrayList<>();
-
-                prettyButton button = new prettyButton(buttonList.size(), 0, 3, 245, 15, host.getUniqueId().toString());
-                button.enabled = false;
-
-                listElements.add(button);
-                listElements.add(new hostCheckbox(host.getUniqueId(), buttonList.size() + 1, 0, 16, "world", host.data().renderWorld));
-                listElements.add(new hostCheckbox(host.getUniqueId(), buttonList.size() + 2, 60, 16, "overlay", host.data().renderOverlay));
-                listElements.add(new hostButton(host.getUniqueId(), buttonList.size() + 3, 184, 17, 60, 20, "clear link"));
-
-                hostList.add(listElements);
-
-                for (prettyElement el : listElements)
-                    if (el instanceof GuiButton)
-                        buttonList.add((GuiButton) el);
-            }
-        }
-
-
-
-        hostList.setY(guiTop + 50);
-        hostList.setX(guiLeft + 5);
-        hostList.update();
+        list = new TerminalHostsList(245, 100, guiTop + 35, guiLeft + 5, 60, xSize, ySize);
+        updateScreen();
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks){
         drawBackground(0);
 
+        list.drawScreen(mouseX, mouseY, partialTicks);
+
         super.drawScreen(mouseX, mouseY, partialTicks);
 
-        String title = "OpenGlasses", linkedTo="";
+        energyBar.drawBar(0, 0, 1-glassesStack.getItem().getDurabilityForDisplay(glassesStack), null);
 
-
-        ItemStack stack = OpenGlasses.getGlassesStack(Minecraft.getMinecraft().player);
-
-        if(stack.isEmpty()){
-            Minecraft.getMinecraft().currentScreen = null;
-            return;
-        }
-
-        int i=0;
-        //for(OpenGlassesHostClient host : OCClientSurface.instance().getHosts())
-        //    drawHost(host, guiTop + 15 + 30 * i++);
-
-        NBTTagCompound glassesNBT = stack.getTagCompound();
-
-        enablePopupNotifications.setEnabled(!glassesNBT.hasKey("nopopups"));
-        //enableWorldRender.setEnabled(!glassesNBT.hasKey("noWorld"));
-        //enableOverlayRender.setEnabled(!glassesNBT.hasKey("noOverlay"));
-
-        energyBar.drawBar(0, 0, 1-stack.getItem().getDurabilityForDisplay(stack), null);
-
-        Minecraft.getMinecraft().fontRenderer.drawString(title, guiLeft+5, guiTop+5, 0x0);
-        String energyStored = formatNumber((int) OpenGlassesItem.getEnergyStored(stack)) + " FE";
+        Minecraft.getMinecraft().fontRenderer.drawString("OpenGlasses", guiLeft+5, guiTop+5, 0x0);
+        String energyStored = formatNumber((int) OpenGlassesItem.getEnergyStored(glassesStack)) + " FE";
         Minecraft.getMinecraft().fontRenderer.drawString(energyStored, guiLeft - 5 + xSize - fontRenderer.getStringWidth(energyStored), guiTop+13, 0x0);
+
+        String hosts = list.getSize() + " hosts";
+        Minecraft.getMinecraft().fontRenderer.drawString(hosts, guiLeft - 5 + xSize - fontRenderer.getStringWidth(hosts), guiTop+25, 0x0);
 
         if(activeLinkRequest != null){
             drawLinkRequest(guiLeft, guiTop, activeLinkRequest);
         }
     }
 
-    private void drawHost(OpenGlassesHostClient hostClient, int y){
-        String linkedToDistance = "", linkedTo = "";
-
-        if(hostClient.terminalName.length() > 0)
-           linkedTo = "host: " + hostClient.terminalName + " ("+hostClient.getUniqueId().toString().substring(0, 18)+"...)";
-        else
-            linkedTo = "host: " + hostClient.getUniqueId().toString();
-
-        linkedToDistance = "host distance: " + (int) Math.round(hostClient.getRenderPosition(0.5f).distanceTo(Minecraft.getMinecraft().player.getPositionVector())) + " blocks";
-        //clearLink.visible = true;
-
-        Minecraft.getMinecraft().fontRenderer.drawString(linkedToDistance, guiLeft+5, y, 0x0);
-        Minecraft.getMinecraft().fontRenderer.drawString(linkedTo, guiLeft+5, y+10, 0x0);
-    }
 
     private void drawLinkRequest(int x, int y, LinkRequest linkRequest){
         int distance = linkRequest.getDistance(Minecraft.getMinecraft().player.getPositionVector());
@@ -185,23 +114,7 @@ public class GlassesGui extends GuiScreen {
         return false;
     }
 
-    class hostButton extends prettyButton{
-        public UUID host;
 
-        public hostButton(UUID hostUUID, int id, int x, int y, int width, int height, String label){
-            super(id, x, y, width, height, label);
-            host = hostUUID;
-        }
-    }
-
-    class hostCheckbox extends prettyCheckbox {
-        public UUID host;
-
-        public hostCheckbox(UUID hostUUID, int id, int x, int y, String label, boolean state){
-            super(id, x, y, label, state);
-            host = hostUUID;
-        }
-    }
 
     @Override
     @SideOnly(Side.CLIENT)
@@ -215,29 +128,6 @@ public class GlassesGui extends GuiScreen {
                 GlassesEventPacket.EventType eventType = enablePopupNotifications.isEnabled() ? GlassesEventPacket.EventType.DISABLE_NOTIFICATIONS : GlassesEventPacket.EventType.ENABLE_NOTIFICATIONS;
                 NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(null, eventType));
             }
-            else {
-                if(button instanceof hostButton){
-                    switch(((hostButton) button).action){
-                        case "clear link":
-                            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(((hostButton) button).host, GlassesEventPacket.EventType.CLEAR_LINK));
-                            break;
-                    }
-                }
-                else if(button instanceof hostCheckbox){
-                    GlassesEventPacket.EventType eventType;
-
-                    switch (((hostCheckbox) button).action){
-                        case "overlay":
-                            eventType = ((hostCheckbox) button).isEnabled() ? GlassesEventPacket.EventType.DISABLE_OVERLAY_RENDER : GlassesEventPacket.EventType.ENABLE_OVERLAY_RENDER;
-                            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(((hostCheckbox) button).host, eventType));
-                            break;
-                        case "world":
-                            eventType = ((hostCheckbox) button).isEnabled() ? GlassesEventPacket.EventType.DISABLE_WORLD_RENDER : GlassesEventPacket.EventType.ENABLE_WORLD_RENDER;
-                            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(((hostCheckbox) button).host, eventType));
-                            break;
-                    }
-                }
-            }
         }
         else
             super.actionPerformed(button);
@@ -245,6 +135,18 @@ public class GlassesGui extends GuiScreen {
 
     @Override
     public void updateScreen() {
+        ItemStack newGlassesStack = OCClientSurface.instance().glassesStack;
+
+
+        boolean glassesChanged = !ItemStack.areItemStackTagsEqual(glassesStack, newGlassesStack);
+
+        glassesStack = newGlassesStack.copy();
+
+        if(glassesStack.isEmpty()){
+            Minecraft.getMinecraft().currentScreen = null;
+            return;
+        }
+
         super.updateScreen();
         activeLinkRequest = null;
         HashSet<GlassesNotifications.GlassesNotification> notifications = new HashSet<>();
@@ -263,7 +165,12 @@ public class GlassesGui extends GuiScreen {
         acceptLink.visible = activeLinkRequest != null;
         denyLink.visible = activeLinkRequest != null;
 
-        updateTaskList();
+        if(glassesChanged) {
+            enablePopupNotifications.setEnabled(!glassesStack.getTagCompound().hasKey("nopopups"));
+
+            list.clear();
+            list.add(OCClientSurface.instance().getHosts());
+        }
     }
 
     @Override

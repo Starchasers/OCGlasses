@@ -174,11 +174,11 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
     public Object[] requestResolutionEvents(Context context, Arguments args) {
         String user = args.optString(0, "").toLowerCase();
         int i=0;
-        for(Map.Entry<EntityPlayer, UUID> e: OCServerSurface.instances.players.entrySet()){
+        for(Map.Entry<EntityPlayer, HashSet<UUID>> e: OCServerSurface.instances.players.entrySet()){
             if(user.length() > 0 && !user.equals(e.getKey().getDisplayNameString().toLowerCase()))
                 continue;
 
-            if(e.getValue().equals(getUUID())) {
+            if(e.getValue().contains(getUUID())) {
                 OCServerSurface.instances.requestResolutionEvent((EntityPlayerMP) e.getKey());
                 i++;
             }
@@ -208,13 +208,14 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
         }
 
         int i=0;
-        for(Map.Entry<EntityPlayer, UUID> e: OCServerSurface.instances.players.entrySet()){
-            if(user.length() == 0
-                    || user.equals(e.getKey().getDisplayNameString().toLowerCase()))
-                if(getUUID().equals(e.getValue())){
-                    NetworkRegistry.packetHandler.sendTo(packet, (EntityPlayerMP) e.getKey());
-                    i++;
-                }
+        for(Map.Entry<EntityPlayer, HashSet<UUID>> e: OCServerSurface.instances.players.entrySet()){
+            if(user.length() > 0 && !user.equals(e.getKey().getDisplayNameString().toLowerCase()))
+                continue;
+
+            if(e.getValue().contains(getUUID())){
+                NetworkRegistry.packetHandler.sendTo(packet, (EntityPlayerMP) e.getKey());
+                i++;
+            }
         }
         return new Object[]{ i };
     }

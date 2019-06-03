@@ -38,7 +38,9 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		ACCEPT_LINK, DENY_LINK, CLEAR_LINK,
 		ENABLE_NOTIFICATIONS, DISABLE_NOTIFICATIONS,
 		ENABLE_WORLD_RENDER, DISABLE_WORLD_RENDER,
-		ENABLE_OVERLAY_RENDER, DISABLE_OVERLAY_RENDER
+		ENABLE_OVERLAY_RENDER, DISABLE_OVERLAY_RENDER,
+		DISABLE_WORLD_EVENTS, ENABLE_WORLD_EVENTS,
+		DISABLE_OVERLAY_EVENTS, ENABLE_OVERLAY_EVENTS
 	}
 
 	EventType eventType;
@@ -237,6 +239,10 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 			case DISABLE_WORLD_RENDER:
 			case ENABLE_OVERLAY_RENDER:
 			case DISABLE_OVERLAY_RENDER:
+			case DISABLE_OVERLAY_EVENTS:
+			case DISABLE_WORLD_EVENTS:
+			case ENABLE_OVERLAY_EVENTS:
+			case ENABLE_WORLD_EVENTS:
 				glasses = getGlasses(playerMP);
 				NBTTagCompound hostNBT = OpenGlassesItem.getHostFromNBT(hostUUID, glasses);
 				switch(eventType) {
@@ -251,6 +257,18 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 						break;
 					case DISABLE_OVERLAY_RENDER:
 						hostNBT.setBoolean("noOverlay", true);
+						break;
+					case DISABLE_OVERLAY_EVENTS:
+						hostNBT.setBoolean("noOverlayEvents", true);
+						break;
+					case DISABLE_WORLD_EVENTS:
+						hostNBT.setBoolean("noWorldEvents", true);
+						break;
+					case ENABLE_OVERLAY_EVENTS:
+						hostNBT.removeTag("noOverlayEvents");
+						break;
+					case ENABLE_WORLD_EVENTS:
+						hostNBT.removeTag("noWorldEvents");
 						break;
 				}
 
