@@ -12,6 +12,7 @@ import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesStackNBT;
 import com.bymarcin.openglasses.surface.OCClientSurface;
 import com.bymarcin.openglasses.surface.OCServerSurface;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -39,6 +40,7 @@ import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraft.util.EnumFacing;
 
 import net.minecraft.world.World;
+import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -145,17 +147,20 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 
 		tooltip.add("linked to "+getHostsFromNBT(stack).size()+" hosts");
 
-		for(UpgradeItem upgrade : upgrades)
-			tooltip.addAll(upgrade.getTooltip(stack));
+		if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+			for (UpgradeItem upgrade : upgrades)
+				tooltip.addAll(upgrade.getTooltip(stack));
+		}
+		else tooltip.add("hold [§fLSHIFT§7] to show upgrades");
 
 		int widgetCount = OCClientSurface.instances.getWidgetCount(null, null);
-		tooltip.add("using " + widgetCount + "/" + tag.getInteger("widgetLimit") + " widgets");
+		tooltip.add("§3using " + widgetCount + "/" + tag.getInteger("widgetLimit") + " widgets§7");
 
 		int energyUsage = tag.getInteger("upkeepCost");
 
 		IEnergyStorage storage = stack.getCapability(CapabilityEnergy.ENERGY, null);
-		tooltip.add(String.format("%s/%s FE", storage.getEnergyStored(), storage.getMaxEnergyStored()));
-		tooltip.add("usage " + energyUsage + " FE/tick");
+		tooltip.add(String.format("§a%s/%s FE§7", storage.getEnergyStored(), storage.getMaxEnergyStored()));
+		tooltip.add("§2usage " + energyUsage + " FE/tick§7");
 	}
 
 	public static void upgradeUpkeepCost(ItemStack stack){

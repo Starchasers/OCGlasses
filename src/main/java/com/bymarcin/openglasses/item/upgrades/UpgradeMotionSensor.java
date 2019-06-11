@@ -46,7 +46,7 @@ public class UpgradeMotionSensor extends UpgradeItem {
             tooltip.add("sneak detection: installed");
         else {
             tooltip.add("sneak detection: not installed");
-            tooltip.add("(install on anvil with opencomputers motionsensor)");
+            tooltip.add("§8requires opencomputers motionsensor§7");
         }
 
         return tooltip;

@@ -71,7 +71,7 @@ public class UpgradeNightvision extends UpgradeItem {
         }
 		else {
             tooltip.add("nightvision not installed");
-            tooltip.add("(install on anvil with any potion of nightvision)");
+            tooltip.add("§8requires any potion of nightvision§7");
         }
 
         return tooltip;

@@ -61,7 +61,7 @@ public class ClientEventHandler {
         ItemStack newStack = OpenGlasses.getGlassesStack(player);
         ItemStack oldStack = OCClientSurface.instance().glasses.get().copy();
 
-        if(ItemStack.areItemStacksEqualUsingNBTShareTag(oldStack, newStack))
+        if(ItemStack.areItemsEqualIgnoreDurability(oldStack, newStack))
             return !newStack.isEmpty();
         else {
             if (!oldStack.isEmpty()) {

@@ -50,7 +50,7 @@ public class UpgradeGeolyzer extends UpgradeItem {
         }
         else {
             tooltip.add("geolyzer: not installed");
-            tooltip.add("(install on anvil with opencomputers geolyzer)");
+            tooltip.add("§8requires opencomputers geolyzer§7");
         }
 
         return tooltip;

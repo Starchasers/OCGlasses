@@ -48,7 +48,7 @@ public class UpgradeNavigation extends UpgradeItem {
             tooltip.add("navigation: installed");
         else {
             tooltip.add("navigation: not installed");
-            tooltip.add("(install on anvil with opencomputers navigation upgrade)");
+            tooltip.add("§8requires opencomputers navigation upgrade§7");
         }
 
         return tooltip;

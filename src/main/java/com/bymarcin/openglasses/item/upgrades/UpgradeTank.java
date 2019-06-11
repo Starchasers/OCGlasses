@@ -50,7 +50,7 @@ public class UpgradeTank extends UpgradeItem {
             tooltip.add("rainsensor: installed");
         else {
             tooltip.add("rainsensor: not installed");
-            tooltip.add("(install on anvil with opencomputers tank upgrade)");
+            tooltip.add("§8requires opencomputers tank upgrade§7");
         }
 
         return tooltip;
