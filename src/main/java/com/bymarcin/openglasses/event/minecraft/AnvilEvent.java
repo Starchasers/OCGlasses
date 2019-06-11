@@ -21,7 +21,7 @@ public class AnvilEvent {
         for(UpgradeItem upgrade : OpenGlassesItem.upgrades)
             if(upgrade.isUpgradeItem(evt.getRight())) {
                 upgrade.handleAnvilEvent(evt);
-                if(ItemStack.areItemStacksEqual(evt.getOutput(), evt.getLeft())) // cancel upgrade if nothing would change
+                if(ItemStack.areItemStackTagsEqual(evt.getOutput(), evt.getLeft())) // cancel upgrade if nothing would change
                     evt.setOutput(ItemStack.EMPTY);
                 return;
             }

@@ -14,7 +14,7 @@ public abstract class UpgradeItem {
     public void handleAnvilEvent(AnvilUpdateEvent evt) {
         if (isUpgradeItem(evt.getRight())) {
             evt.setCost(getUpgradeExperienceCost());
-            evt.setOutput(evt.getLeft().copy());
+            evt.setOutput(install(evt.getLeft().copy()));
         }
     }
 
