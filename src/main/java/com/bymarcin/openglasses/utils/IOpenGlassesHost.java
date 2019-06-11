@@ -1,6 +1,7 @@
 package com.bymarcin.openglasses.utils;
 
 import com.bymarcin.openglasses.component.OpenGlassesHostComponent;
+import li.cil.oc.api.Persistable;
 import li.cil.oc.api.network.Environment;
 import li.cil.oc.api.network.EnvironmentHost;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -10,7 +11,7 @@ import net.minecraft.util.math.Vec3d;
 
 import java.util.UUID;
 
-public interface IOpenGlassesHost extends Environment, ITickable {
+public interface IOpenGlassesHost extends Environment, ITickable, Persistable {
     OpenGlassesHostComponent getComponent();
 
     void sync(EntityPlayerMP player);
@@ -20,6 +21,8 @@ public interface IOpenGlassesHost extends Environment, ITickable {
     EnvironmentHost getHost();
 
     String getName();
+
+    boolean renderAbsolute();
 
     default TileEntity getTileEntity(){
         return null;

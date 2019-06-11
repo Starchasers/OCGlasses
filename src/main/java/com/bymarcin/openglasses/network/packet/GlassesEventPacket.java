@@ -8,7 +8,6 @@ import com.bymarcin.openglasses.component.OpenGlassesHostComponent;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.item.upgrades.UpgradeGeolyzer;
 import com.bymarcin.openglasses.item.upgrades.UpgradeNightvision;
-import com.bymarcin.openglasses.surface.OCClientSurface;
 import com.bymarcin.openglasses.utils.IOpenGlassesHost;
 import com.bymarcin.openglasses.utils.PlayerStatsOC;
 import net.minecraft.client.Minecraft;
@@ -40,12 +39,13 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		ENABLE_WORLD_RENDER, DISABLE_WORLD_RENDER,
 		ENABLE_OVERLAY_RENDER, DISABLE_OVERLAY_RENDER,
 		DISABLE_WORLD_EVENTS, ENABLE_WORLD_EVENTS,
-		DISABLE_OVERLAY_EVENTS, ENABLE_OVERLAY_EVENTS
+		DISABLE_OVERLAY_EVENTS, ENABLE_OVERLAY_EVENTS,
+		REQUEST_WIDGETLIST
 	}
 
 	EventType eventType;
 	UUID hostUUID;
-	String player;
+	UUID playerUUID;
 	BlockPos eventPos;
 	EnumFacing facing;
 	ItemStack glasses = ItemStack.EMPTY;
@@ -54,7 +54,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	double mb;
 	
 	public GlassesEventPacket(UUID host, EventType eventType) {
-		this.player = Minecraft.getMinecraft().player.getGameProfile().getId().toString();
+		this.playerUUID = Minecraft.getMinecraft().player.getUniqueID();
 		this.eventType = eventType;
 		this.hostUUID = host;
 	}
@@ -78,9 +78,9 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	@Override
 	protected void read() throws IOException {
 		if(readBoolean())
-			this.hostUUID = new UUID(readLong(), readLong());
+			this.hostUUID = readUUID();
 
-		this.player = readString();
+		this.playerUUID = readUUID();
 		this.eventType = EventType.values()[readInt()];
 
 		switch(eventType){
@@ -92,7 +92,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 				return;
 			case INTERACT_WORLD_BLOCK_LEFT:
 			case INTERACT_WORLD_BLOCK_RIGHT:
-				this.eventPos = new BlockPos(readInt(), readInt(), readInt());
+				this.eventPos = new BlockPos(readVec3i());
 				this.facing = EnumFacing.values()[readInt()];
 				return;
 		}
@@ -102,10 +102,9 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	protected void write() throws IOException {
 		writeBoolean(hostUUID != null);
 		if(hostUUID != null) {
-			writeLong(hostUUID.getMostSignificantBits());
-			writeLong(hostUUID.getLeastSignificantBits());
+			writeUUID(hostUUID);
 		}
-		writeString(player);
+		writeUUID(playerUUID);
 	    writeInt(eventType.ordinal());
 	    
 		switch(eventType){
@@ -117,9 +116,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 				break;
 			case INTERACT_WORLD_BLOCK_LEFT:
 			case INTERACT_WORLD_BLOCK_RIGHT:
-				writeInt(this.eventPos.getX());
-				writeInt(this.eventPos.getY());
-				writeInt(this.eventPos.getZ());
+				writeVec3i(this.eventPos);
 				writeInt(this.facing.ordinal());
 				break;
 		}
@@ -136,7 +133,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 
 	@Override
 	protected IMessage executeOnServer() {
-		EntityPlayerMP playerMP = OCServerSurface.instances.checkUUID(player);
+		EntityPlayerMP playerMP = OCServerSurface.instance().checkUUID(playerUUID);
 		IOpenGlassesHost host;
 		Vec3d look = new Vec3d(0, 0, 0);
 		double eyeHeight = 0;
@@ -145,21 +142,21 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		PlayerStatsOC stats;
 		ItemStack glasses;
 
-		Vec3d playerPos = new Vec3d(playerMP.posX, playerMP.posY, playerMP.posZ);
-
 		switch(eventType) {
 			case EQUIPED_GLASSES:
-				OCServerSurface.instance().subscribePlayer(player);
-				//request client resolution once the player puts glasses on
-				//UUID.getTerminal().requestResolutionEvent(OCServerSurface.instances.checkUUID(player));
+				OCServerSurface.instance().subscribePlayer(playerUUID);
+				//request client resolution once the playerUUID puts glasses on
+				//UUID.getTerminal().requestResolutionEvent(OCServerSurface.instances.checkUUID(playerUUID));
 				return null;
 			case UNEQUIPED_GLASSES:
-				OCServerSurface.instance().unsubscribePlayer(player);
+				OCServerSurface.instance().unsubscribePlayer(playerUUID);
 				return null;
 		}
 
 		if(playerMP == null)
 			return null;
+
+		Vec3d playerPos = new Vec3d(playerMP.posX, playerMP.posY, playerMP.posZ);
 
 		if(UpgradeGeolyzer.hasUpgrade(getGlasses(playerMP))) {
 			Vec3d lookVector = playerMP.getLookVec();
@@ -228,6 +225,13 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 
 			case CLEAR_LINK:
 				OpenGlassesItem.unlink(hostUUID, getGlasses(playerMP), playerMP);
+				return null;
+
+			case REQUEST_WIDGETLIST:
+				host = OCServerSurface.getHost(hostUUID);
+				if (host != null)
+					host.sync(playerMP);
+
 				return null;
 
 			case ENABLE_NOTIFICATIONS:

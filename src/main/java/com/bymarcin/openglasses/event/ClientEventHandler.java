@@ -17,12 +17,12 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -32,7 +32,7 @@ import static com.bymarcin.openglasses.item.upgrades.UpgradeNightvision.nightvis
 @SideOnly(Side.CLIENT)
 public class ClientEventHandler {
     public static KeyBinding interactGUIKey = new KeyBinding("key.interact", Keyboard.KEY_C, "key.categories." + OpenGlasses.MODID.toLowerCase());
-    int tick = 0;
+    private int playerTick = 0;
 
     public ClientEventHandler() {
         ClientRegistry.registerKeyBinding(interactGUIKey);
@@ -43,50 +43,52 @@ public class ClientEventHandler {
     public void onPlayerTick(PlayerTickEvent e){
 
         if(e.player != Minecraft.getMinecraft().player) return;
-        tick++;
+        playerTick++;
 
-        OCClientSurface.instance().refreshConditions();
+        OCClientSurface.instance().glasses.refreshConditions();
 
-        if(tick%20 != 0) return;
+        if(playerTick %20 != 0) return;
 
         checkGlasses(e.player);
 
-        if(tick > 200) tick = 0;
+        if(playerTick > 200) playerTick = 0;
     }
 
 
 
     @SideOnly(Side.CLIENT)
-    public boolean checkGlasses(EntityPlayer player) {
-        ItemStack glassesStack = OpenGlasses.getGlassesStack(player);
+    private boolean checkGlasses(EntityPlayer player) {
+        ItemStack newStack = OpenGlasses.getGlassesStack(player);
+        ItemStack oldStack = OCClientSurface.instance().glasses.get().copy();
 
-
-        if(!ItemStack.areItemStacksEqualUsingNBTShareTag(OCClientSurface.instance().glassesStack, glassesStack)) {
-            unEquiped();
-        }
-
-        if(!glassesStack.isEmpty()){
-            if (OCClientSurface.instance().glassesStack.isEmpty()) {
-                equiped(glassesStack);
-                return true;
+        if(ItemStack.areItemStacksEqualUsingNBTShareTag(oldStack, newStack))
+            return !newStack.isEmpty();
+        else {
+            if (!oldStack.isEmpty()) {
+                unEquiped();
             }
-            else if(ItemStack.areItemStacksEqualUsingNBTShareTag(glassesStack, OCClientSurface.instance().glassesStack))
-                return true;
-            else {
-                OCClientSurface.instance().initLocalGlasses(glassesStack);
+
+            if (!newStack.isEmpty()) {
+                equiped(newStack);
                 return true;
             }
         }
-
 
         return false;
     }
 
+    /*
     @SubscribeEvent
-    public void onJoin(EntityJoinWorldEvent e){
-        if(!e.getEntity().equals(Minecraft.getMinecraft().player)) return;
-        if(!e.getWorld().isRemote) return;
+    public void onLeave(EntityJoinWorldEvent event){
+        if(!event.getEntity().equals(Minecraft.getMinecraft().player)) return;
+        if(!event.getWorld().isRemote) return;
         OCClientSurface.instance().resetLocalGlasses();
+    }*/
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void onLeave(FMLNetworkEvent.ClientDisconnectionFromServerEvent event){
+        OCClientSurface.instance().onLeave();
     }
 
     @SubscribeEvent
@@ -96,8 +98,8 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock e){
-        if(OCClientSurface.instance().glassesStack.isEmpty()) return;
-        if(OCClientSurface.instance().glassesStack.getTagCompound().getBoolean("geolyzer"))
+        if(OCClientSurface.instance().glasses.get().isEmpty()) return;
+        if(OCClientSurface.instance().glasses.get().getTagCompound().getBoolean("geolyzer"))
             onInteractEvent(EventType.INTERACT_WORLD_BLOCK_LEFT, e);
         else
             onInteractEvent(EventType.INTERACT_WORLD_LEFT, e);
@@ -115,15 +117,15 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void onRightClickBlock(PlayerInteractEvent.RightClickBlock e){
-        if(OCClientSurface.instance().glassesStack.isEmpty()) return;
-        if(OCClientSurface.instance().glassesStack.getTagCompound().getBoolean("geolyzer"))
+        if(OCClientSurface.instance().glasses.get().isEmpty()) return;
+        if(OCClientSurface.instance().glasses.get().getTagCompound().getBoolean("geolyzer"))
             onInteractEvent(EventType.INTERACT_WORLD_BLOCK_RIGHT, e);
         else
             onInteractEvent(EventType.INTERACT_WORLD_RIGHT, e);
     }
 
     private void onInteractEvent(EventType type, PlayerInteractEvent event){
-        if(OCClientSurface.instance().glassesStack.isEmpty()) return;
+        if(OCClientSurface.instance().glasses.get().isEmpty()) return;
         if(OCClientSurface.instance().getHosts().size() == 0) return;
         if(!event.getSide().isClient()) return;
         if(!event.getHand().equals(EnumHand.MAIN_HAND)) return;
@@ -135,7 +137,7 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void onKeyInput(InputEvent.KeyInputEvent event) {
-        if(OCClientSurface.instance().glassesStack.isEmpty())
+        if(OCClientSurface.instance().glasses.get().isEmpty())
             return;
 
         if(interactGUIKey.isPressed()) {
@@ -143,7 +145,7 @@ public class ClientEventHandler {
                 Minecraft.getMinecraft().displayGuiScreen(new GlassesGui(false));
             }
             else {
-                OCClientSurface.instance().conditions.setOverlay(true);
+                OCClientSurface.instance().glasses.conditions.setOverlay(true);
                 Minecraft.getMinecraft().displayGuiScreen(new InteractGui());
                 for(OpenGlassesHostClient host : OCClientSurface.instance().getHosts())
                     if(host.data().sendOverlayEvents)
@@ -162,7 +164,7 @@ public class ClientEventHandler {
         for(OpenGlassesHostClient host : OCClientSurface.instance().getHosts())
             NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(host.getUniqueId(), EventType.UNEQUIPED_GLASSES));
 
-        OCClientSurface.instance().resetLocalGlasses();
+        OCClientSurface.instance().initLocalGlasses(ItemStack.EMPTY);
     }
 
     private void equiped(ItemStack glassesStack){

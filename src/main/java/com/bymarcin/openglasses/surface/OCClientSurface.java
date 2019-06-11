@@ -2,6 +2,7 @@ package com.bymarcin.openglasses.surface;
 
 import java.util.*;
 
+import ben_mkiv.commons0815.utils.utilsCommon;
 import ben_mkiv.rendertoolkit.common.widgets.IRenderableWidget;
 import ben_mkiv.rendertoolkit.common.widgets.RenderType;
 import ben_mkiv.rendertoolkit.common.widgets.Widget;
@@ -19,8 +20,11 @@ import com.bymarcin.openglasses.utils.OpenGlassesHostClient;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 
@@ -41,33 +45,50 @@ public class OCClientSurface extends ClientSurface {
 		instances = new OCClientSurface();
 	}
 
-	HashMap<UUID, OpenGlassesHostClient> hosts = new HashMap<>();
+	private HashMap<UUID, OpenGlassesHostClient> hosts = new HashMap<>();
 
     public static ClientEventHandler eventHandler;
 
-	public Conditions conditions = new Conditions();
-
-	public ItemStack glassesStack = ItemStack.EMPTY;
-
-	private IRenderableWidget noPowerRender, noLinkRender, widgetLimitRender;
-
-	private OCClientSurface() {
-		super();
-		this.noPowerRender = getNoPowerRender();
-		this.noLinkRender = getNoLinkRender();
-		this.widgetLimitRender = getWidgetLimitRender();
-		this.resetLocalGlasses();
-	}
+	public GlassesInstance glasses = new GlassesInstance(ItemStack.EMPTY);
 
 	public static OCClientSurface instance(){
 		return (OCClientSurface) instances;
 	}
 
+	private static IRenderableWidget noPowerRender = getNoPowerRender();
+	private static IRenderableWidget noLinkRender = getNoLinkRender();
+	private static IRenderableWidget widgetLimitRender = getWidgetLimitRender();
+
+	public static class GlassesInstance {
+		ItemStack stack;
+		public Conditions conditions = new Conditions();
+
+		public GlassesInstance(ItemStack glassesStack){
+			stack = glassesStack;
+			if(!stack.isEmpty())
+				conditions.bufferSensors(stack);
+		}
+
+		public ItemStack get(){
+			return stack;
+		}
+
+		public void refreshConditions(){
+			if(!stack.isEmpty())
+				conditions.getConditionStates(stack, Minecraft.getMinecraft().player);
+		}
+
+	}
+
+
 	public OpenGlassesHostClient getHost(UUID hostUUID){
 		if(!hosts.containsKey(hostUUID)){
-			NBTTagCompound hostNBT = OpenGlassesItem.getHostFromNBT(hostUUID, glassesStack);
-			if(hostNBT == null)
-				hostNBT = new OpenGlassesHostClient.HostClient(hostUUID).writeToNBT(new NBTTagCompound());
+			NBTTagCompound hostNBT = OpenGlassesItem.getHostFromNBT(hostUUID, glasses.get());
+			if(hostNBT == null) {
+				hostNBT = new OpenGlassesHostClient.HostClient(hostUUID, Minecraft.getMinecraft().player).writeToNBT(new NBTTagCompound());
+				System.out.println("this shouldnt happen!");
+				return new OpenGlassesHostClient(hostNBT);
+			}
 
 			hosts.put(hostUUID, new OpenGlassesHostClient(hostNBT));
 		}
@@ -78,14 +99,17 @@ public class OCClientSurface extends ClientSurface {
 		return hosts.values();
 	}
 
-	public void resetLocalGlasses(){
-		hosts.clear();
-		this.glassesStack = ItemStack.EMPTY;
+	public void onLeave(){
+		initLocalGlasses(ItemStack.EMPTY);
 	}
 
 	public void initLocalGlasses(ItemStack glassesStack){
-		this.glassesStack = glassesStack;
-		conditions.bufferSensors(this.glassesStack);
+		glasses = new GlassesInstance(glassesStack.copy());
+
+		if(glassesStack.isEmpty()) {
+			hosts.clear();
+			return;
+		}
 
 		HashMap<UUID, OpenGlassesHostClient> newHosts = new HashMap<>();
 
@@ -96,19 +120,14 @@ public class OCClientSurface extends ClientSurface {
 				hosts.get(host.getUniqueId()).data().updateFromNBT(tag);
 				newHosts.put(host.getUniqueId(), hosts.get(host.getUniqueId()));
 			}
-			else
+			else {
 				newHosts.put(host.getUniqueId(), host);
+			}
+
+			NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(host.getUniqueId(), GlassesEventPacket.EventType.REQUEST_WIDGETLIST));
 		}
 
-		hosts.clear();
-		hosts.putAll(newHosts);
-	}
-
-
-	public void refreshConditions(){
-		if(glassesStack.isEmpty()) return;
-
-		conditions.getConditionStates(glassesStack, Minecraft.getMinecraft().player);
+		hosts = newHosts;
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -125,7 +144,7 @@ public class OCClientSurface extends ClientSurface {
 	}
 
 	public void sendResolution(){
-		if(glassesStack.isEmpty()) return;
+		if(glasses.get().isEmpty()) return;
 		if(hosts.size() == 0) return;
 
 		for(OpenGlassesHostClient host : getHosts())
@@ -152,7 +171,7 @@ public class OCClientSurface extends ClientSurface {
 				continue;
 
 			GlStateManager.pushMatrix();
-			renderWidgets(host.getWidgetsOverlay().values(), evt.getPartialTicks(), vec3d000);
+			renderWidgets(host.getWidgetsOverlay().values(), evt.getPartialTicks(), vec3d000, host);
 			GlStateManager.popMatrix();
 		}
 
@@ -172,12 +191,20 @@ public class OCClientSurface extends ClientSurface {
 
 			GlStateManager.pushMatrix();
 			Vec3d renderPos = host.getRenderPosition(event.getPartialTicks());
-			GlStateManager.translate(renderPos.x, renderPos.y, renderPos.z);
-			renderWidgets(host.getWidgetsWorld().values(), event.getPartialTicks(), renderPos);
+
+			if(!host.absoluteRenderPosition) {
+				GlStateManager.translate(renderPos.x, renderPos.y, renderPos.z);
+			}
+
+			renderWidgets(host.getWidgetsWorld().values(), event.getPartialTicks(), renderPos, host);
+
 			GlStateManager.popMatrix();
 		}
 
 		postRender(RenderType.WorldLocated);
+
+		//GlStateManager.depthMask(false);
+		GlStateManager.enableDepth();
 	}
 
 
@@ -191,17 +218,20 @@ public class OCClientSurface extends ClientSurface {
 
 
 
-	void renderWidgets(Collection<IRenderableWidget> widgets, float partialTicks, Vec3d renderPos){
-		String uuid = glassesStack.getTagCompound().getString("userUUID");
+	void renderWidgets(Collection<IRenderableWidget> widgets, float partialTicks, Vec3d renderPos, OpenGlassesHostClient host){
+		long renderConditions = glasses.conditions.get();
 
-		long renderConditions = conditions.get();
 		Vector3f offset = new Vector3f((float) renderPos.x, (float) renderPos.y, (float) renderPos.z);
 
 		for(IRenderableWidget renderable : widgets) {
-			if(!renderable.shouldWidgetBeRendered(Minecraft.getMinecraft().player, offset))
+			if(host.absoluteRenderPosition) {
+				if(!shouldAbsoluteWidgetBeRendered(Minecraft.getMinecraft().player, offset, renderable))
+					continue;
+			}
+			else if(!renderable.shouldWidgetBeRendered(Minecraft.getMinecraft().player, offset))
 				continue;
 
-			if(!renderable.isWidgetOwner(uuid))
+			if(!renderable.isWidgetOwner(host.data().ownerUUID.toString()))
 				continue;
 
 			if(renderable instanceof EntityTracker3D.RenderEntityTracker)
@@ -211,15 +241,28 @@ public class OCClientSurface extends ClientSurface {
 		}
 	}
 
+	public boolean shouldAbsoluteWidgetBeRendered(EntityPlayer player, Vector3f offset, IRenderableWidget renderable) {
+		if(!utilsCommon.inRange(Minecraft.getMinecraft().player, new Vec3d(offset.x, offset.y, offset.z), viewDistance))
+			return false;
+
+		if(renderable.isLookingAtEnabled()){
+			RayTraceResult pos = ClientSurface.getBlockCoordsLookingAt(player);
+			if(pos != null && !pos.getBlockPos().equals(new BlockPos(renderable.lookingAtVector())))
+				return false;
+		}
+
+		return renderable.isVisible();
+	}
+
 
 	public boolean shouldRenderStart(RenderType renderEvent){
 		if(getWidgetCount(null, renderEvent) < 1)
 			return false;
 
-		if(this.glassesStack.isEmpty())
+		if(this.glasses.get().isEmpty())
 			return false;
 
-		if(OpenGlassesItem.getEnergyStored(glassesStack) == 0){
+		if(OpenGlassesItem.getEnergyStored(glasses.get()) == 0){
 			if(renderEvent.equals(RenderType.GameOverlayLocated) && noPowerRender != null) {
 				preRender(renderEvent, ~0);
 				GlStateManager.depthMask(false);
@@ -229,7 +272,7 @@ public class OCClientSurface extends ClientSurface {
 			return false;
 		}
 
-		if(getWidgetCount(null, renderEvent) > glassesStack.getTagCompound().getInteger("widgetLimit")){
+		if(getWidgetCount(null, renderEvent) > glasses.get().getTagCompound().getInteger("widgetLimit")){
 			if(renderEvent.equals(RenderType.GameOverlayLocated) && widgetLimitRender != null) {
 				preRender(renderEvent, ~0);
 				GlStateManager.depthMask(false);
@@ -253,7 +296,7 @@ public class OCClientSurface extends ClientSurface {
 	}
 
 
-	private IRenderableWidget getNoPowerRender(){
+	private static IRenderableWidget getNoPowerRender(){
 		Text2D t = new Text2D();
 		t.setText(new TextComponentTranslation("openglasses.infotext.noenergy").getUnformattedText());
 		t.WidgetModifierList.addColor(1F, 0F, 0F, 0.5F);
@@ -261,7 +304,7 @@ public class OCClientSurface extends ClientSurface {
 		return t.getRenderable();
 	}
 
-	private IRenderableWidget getNoLinkRender(){
+	private static IRenderableWidget getNoLinkRender(){
 		Text2D t = new Text2D();
 		t.setText(new TextComponentTranslation("openglasses.infotext.nolink").getUnformattedText());
 		t.WidgetModifierList.addColor(1F, 1F, 1F, 0.7F);
@@ -269,7 +312,7 @@ public class OCClientSurface extends ClientSurface {
 		return t.getRenderable();
 	}
 
-	private IRenderableWidget getWidgetLimitRender(){
+	private static IRenderableWidget getWidgetLimitRender(){
 		Text2D t = new Text2D();
 		t.setText(new TextComponentTranslation("openglasses.infotext.widgetlimitexhausted").getUnformattedText());
 		t.WidgetModifierList.addColor(1F, 1F, 1F, 0.7F);
@@ -280,7 +323,7 @@ public class OCClientSurface extends ClientSurface {
 	@Override
 	public void updateWidgets(UUID hostUUID, Set<Map.Entry<Integer, Widget>> widgets){
 		if(hostUUID != null)
-			getHost(hostUUID).updateWidgets(widgets);
+			instance().getHost(hostUUID).updateWidgets(widgets);
 	}
 
 	@Override

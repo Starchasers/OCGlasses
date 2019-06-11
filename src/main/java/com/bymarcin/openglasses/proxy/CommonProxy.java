@@ -3,6 +3,7 @@ package com.bymarcin.openglasses.proxy;
 import com.bymarcin.openglasses.surface.OCServerSurface;
 import com.bymarcin.openglasses.utils.PlayerStatsOC;
 import com.google.common.util.concurrent.ListenableFuture;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -49,5 +50,9 @@ public class CommonProxy implements IThreadListener {
 
 	public Entity getEntity(UUID uuid){
 		return FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(uuid);
+	}
+
+	public EntityPlayer getPlayer(UUID uuid){
+		return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(uuid);
 	}
 }

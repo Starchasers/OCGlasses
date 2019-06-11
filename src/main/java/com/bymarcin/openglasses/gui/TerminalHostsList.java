@@ -1,10 +1,7 @@
 package com.bymarcin.openglasses.gui;
 
-import ben_mkiv.guitoolkit.client.widget.prettyButton;
-import ben_mkiv.guitoolkit.client.widget.prettyCheckbox;
 import ben_mkiv.guitoolkit.client.widget.prettyElement;
 import ben_mkiv.guitoolkit.client.widget.prettyGuiList;
-import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.utils.OpenGlassesHostClient;
 import net.minecraft.client.Minecraft;
@@ -14,24 +11,34 @@ import net.minecraft.client.renderer.Tessellator;
 import java.util.*;
 
 public class TerminalHostsList extends prettyGuiList {
-    HashMap<Integer, ArrayList<String>> data = new HashMap<>();
-    HashMap<Integer, HashSet<prettyElement>> elements = new HashMap<>();
+    private HashMap<Integer, ArrayList<String>> data = new HashMap<>();
+    private HashMap<Integer, HashSet<prettyElement>> elements = new HashMap<>();
 
-    int elementCount = 0;
+    private int elementCount = 0;
 
     public TerminalHostsList(int width, int height, int top, int left, int entryHeight, int screenWidth, int screenHeight) {
         super(width, height, top, top + height, left, entryHeight, screenWidth, screenHeight);
     }
 
+    class SortOpenGlassesHostClient implements Comparator<OpenGlassesHostClient> {
+        @Override
+        public int compare(OpenGlassesHostClient a, OpenGlassesHostClient b){
+            return a.getUniqueId().compareTo(b.getUniqueId());
+        }
+    }
+
     public void add(Collection<OpenGlassesHostClient> hosts){
-        for (OpenGlassesHostClient host : hosts)
+        ArrayList<OpenGlassesHostClient> list = new ArrayList<>(hosts);
+        Collections.sort(list, new SortOpenGlassesHostClient());
+
+        for (OpenGlassesHostClient host : list)
             add(host);
     }
 
     public void add(OpenGlassesHostClient host){
         HashSet<prettyElement> listElements = new HashSet<>();
 
-        listElements.add(new clearLinkButton(host));
+        listElements.add(new hostGuiElement.GlassesEventButton(host.getUniqueId(), 170, 10, 60, 20, "clear link", GlassesEventPacket.EventType.CLEAR_LINK));
         listElements.add(new renderWorldButton(host));
         listElements.add(new renderOverlayButton(host));
         listElements.add(new worldEventsButton(host));
@@ -43,6 +50,8 @@ public class TerminalHostsList extends prettyGuiList {
             text.add("host '" + host.data().terminalName + "' ("+host.getUniqueId().toString()+")");
         else
             text.add("host " + host.getUniqueId().toString());
+
+        text.add("linked as " + host.data().ownerName);
 
         text.add("distance: " + (int) Math.round(host.getRenderPosition(0.5f).distanceTo(Minecraft.getMinecraft().player.getPositionVector())) + " blocks");
 
@@ -71,13 +80,17 @@ public class TerminalHostsList extends prettyGuiList {
             for(prettyElement element : elements.get(slotIdx)) {
                 element.setRenderY(slotTop);
                 element.setRenderX(left);
-                if(element instanceof GuiButton)
+                if(element instanceof GuiButton) {
+                    ((GuiButton) element).enabled = isSelected(slotIdx);
                     ((GuiButton) element).drawButton(mc, mouseX, mouseY, mc.getRenderPartialTicks());
+                }
             }
+
+        int textColor = isSelected(slotIdx) ? 0xFFFFFF : 0xDADADA;
 
         if(data.containsKey(slotIdx))
             for(String text : data.get(slotIdx)) {
-                Minecraft.getMinecraft().fontRenderer.drawString(" " + text, left, slotTop, 0xFFFF00);
+                Minecraft.getMinecraft().fontRenderer.drawString(" " + text, left, slotTop, textColor);
                 slotTop+=10;
             }
     }
@@ -86,25 +99,21 @@ public class TerminalHostsList extends prettyGuiList {
     protected void elementClicked(int index, boolean doubleClick) {
         if(elements.containsKey(index)){
             for(prettyElement element : elements.get(index)) {
-                if(element instanceof hostAction && ((hostAction) element).isMouseOver())
-                    ((hostAction) element).clicked();
+                if(element instanceof hostGuiElement.hostAction && element.isMouseOver()) {
+
+                    if(element instanceof GuiButton && !((GuiButton) element).enabled)
+                        continue;
+
+                    element.clicked();
+                }
             }
         }
 
         super.elementClicked(index, doubleClick);
     }
 
-    public static class clearLinkButton extends hostButton implements hostAction {
-        clearLinkButton(OpenGlassesHostClient host){
-            super(host.getUniqueId(), 170, 10, 60, 20, "clear link");
-        }
 
-        public void clicked() {
-            sendEvent(GlassesEventPacket.EventType.CLEAR_LINK);
-        }
-    }
-
-    public static class worldEventsButton extends hostCheckbox implements hostAction {
+    public static class worldEventsButton extends hostGuiElement.hostCheckbox implements hostGuiElement.hostAction {
         worldEventsButton(OpenGlassesHostClient host){
             super(host.getUniqueId(), 110, 25, "world events", host.data().sendWorldEvents);
         }
@@ -114,7 +123,7 @@ public class TerminalHostsList extends prettyGuiList {
         }
     }
 
-    public static class overlayEventsButton extends hostCheckbox implements hostAction {
+    public static class overlayEventsButton extends hostGuiElement.hostCheckbox implements hostGuiElement.hostAction {
         overlayEventsButton(OpenGlassesHostClient host){
             super(host.getUniqueId(), 110, 40, "overlay events", host.data().sendOverlayEvents);
         }
@@ -124,7 +133,7 @@ public class TerminalHostsList extends prettyGuiList {
         }
     }
 
-    public static class renderWorldButton extends hostCheckbox implements hostAction {
+    public static class renderWorldButton extends hostGuiElement.hostCheckbox implements hostGuiElement.hostAction {
         renderWorldButton(OpenGlassesHostClient host){
             super(host.getUniqueId(), 3, 25, "render world", host.data().renderWorld);
         }
@@ -134,7 +143,7 @@ public class TerminalHostsList extends prettyGuiList {
         }
     }
 
-    public static class renderOverlayButton extends hostCheckbox implements hostAction {
+    public static class renderOverlayButton extends hostGuiElement.hostCheckbox implements hostGuiElement.hostAction {
         renderOverlayButton(OpenGlassesHostClient host){
             super(host.getUniqueId(), 3, 40, "render overlay", host.data().renderOverlay);
         }
@@ -144,43 +153,4 @@ public class TerminalHostsList extends prettyGuiList {
         }
     }
 
-    public interface hostAction extends hostElement {
-        void clicked();
-        boolean isMouseOver();
-
-        default void sendEvent(GlassesEventPacket.EventType event){
-            NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(getUniqueId(), event));
-        }
-    }
-
-    public interface hostElement{
-        UUID getUniqueId();
-    }
-
-    public static class hostButton extends prettyButton implements hostElement{
-        private UUID host;
-
-        hostButton(UUID hostUUID, int x, int y, int width, int height, String label){
-            super(0, x, y, width, height, label);
-            host = hostUUID;
-        }
-
-        public UUID getUniqueId(){
-            return host;
-        }
-    }
-
-    public static class hostCheckbox extends prettyCheckbox implements hostElement {
-        private UUID host;
-
-        hostCheckbox(UUID hostUUID, int x, int y, String label, boolean state){
-            super(0, x, y, label, state);
-            host = hostUUID;
-            packedFGColour = 0xFFFFFF;
-        }
-
-        public UUID getUniqueId(){
-            return host;
-        }
-    }
 }

@@ -31,6 +31,29 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 
 	public static HashMap<UUID, IOpenGlassesHost> components = new HashMap<>();
 
+	public static void removeHost(UUID hostUUID){
+		if(components.containsKey(hostUUID)) {
+			components.get(hostUUID).remove();
+			components.remove(hostUUID);
+		}
+	}
+
+	public static void addHost(IOpenGlassesHost host){
+		if(!components.containsKey(host.getUUID())) {
+			components.put(host.getUUID(), host);
+			for(Map.Entry<UUID, HashSet<UUID>> entry : instance().players.entrySet()){
+				host.sync(instance().checkUUID(entry.getKey()));
+			}
+		}
+	}
+
+	public static void onServerStopped(){
+		components.clear();
+		instance().players.clear();
+		instance().playerStats.clear();
+	}
+
+
 	int playerIndex = 0;
 
 	public OCServerSurface(){
@@ -46,9 +69,9 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 		@SubscribeEvent
 		public void tickStart(TickEvent.WorldTickEvent event) {
 			int i=0;
-			for (EntityPlayer player : players.keySet()) {
+			for (UUID player : players.keySet()) {
 				if(i == playerIndex) {
-					updatePlayer(player);
+					updatePlayer(checkUUID(player));
 					break;
 				}
 				i++;
@@ -74,65 +97,59 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 
 
 	//subscribePlayer to events when he puts glasses on
-	public void subscribePlayer(String playerUUID) {
+	public void subscribePlayer(UUID playerUUID) {
 		subscribePlayer(checkUUID(playerUUID));
 	}
 
 	public void subscribePlayer(EntityPlayerMP player) {
 		if (player == null) return;
 
-		for(NBTTagCompound nbt : OpenGlassesItem.getHostsFromNBT(OpenGlasses.getGlassesStack(player))){
+		for(NBTTagCompound nbt : OpenGlassesItem.getHostsFromNBT(OpenGlasses.getGlassesStack(player)))
 			subscribePlayer(player, nbt.getUniqueId("host"));
-		}
 	}
 
 	boolean isSubscribedTo(UUID playerUUID, UUID hostUUID){
-		for(Map.Entry<EntityPlayer, HashSet<UUID>> entry : players.entrySet())
-			if(entry.getKey().getUniqueID().equals(playerUUID) && entry.getValue().contains(hostUUID))
-				return true;
-
-		return false;
+		return players.containsKey(playerUUID) && players.get(playerUUID).contains(hostUUID);
 	}
 
-	public void subscribePlayer(EntityPlayerMP player, UUID hostUUID){
-		if(isSubscribedTo(player.getUniqueID(), hostUUID))
+	public void subscribePlayer(EntityPlayerMP player, UUID hostUUID) {
+		if (isSubscribedTo(player.getUniqueID(), hostUUID))
 			return;
 
-		if(!players.containsKey(player))
-			players.put(player, new HashSet<>());
+		if (!players.containsKey(player.getUniqueID()))
+			players.put(player.getUniqueID(), new HashSet<>());
 
-		players.get(player).add(hostUUID);
+		players.get(player.getUniqueID()).add(hostUUID);
 
-		PlayerStatsOC stats = new PlayerStatsOC(player);
-		stats.conditions.bufferSensors(OpenGlasses.getGlassesStack(player));
-		playerStats.put(player.getUniqueID(), stats);
+		if (!playerStats.containsKey(player.getUniqueID())){
+			PlayerStatsOC stats = new PlayerStatsOC(player);
+			stats.conditions.bufferSensors(OpenGlasses.getGlassesStack(player));
+			playerStats.put(player.getUniqueID(), stats);
+		}
 
 		IOpenGlassesHost host = getHost(hostUUID);
-		if (host != null){
-			host.sync(player);
-			host.getComponent().onGlassesPutOn(player.getDisplayNameString());
-		}
+		if(host != null)
+			host.getComponent().onGlassesPutOn(player);
 
 		requestResolutionEvent(player);
 	}
 
 	//unsubscribePlayer from events when he puts glasses off
-	public void unsubscribePlayer(String playerUUID){
+	public void unsubscribePlayer(UUID playerUUID){
 		EntityPlayerMP player = checkUUID(playerUUID);
 
-		if(!players.containsKey(player))
+		if(!players.containsKey(playerUUID))
 			return;
 
 		if (playerStats.get(player.getUniqueID()) != null && ((PlayerStatsOC) playerStats.get(player.getUniqueID())).nightVisionActive) {
 			player.removePotionEffect(potionNightvision);
 		}
 
-		for(UUID hostUUID : players.get(player)) {
+		for(UUID hostUUID : players.get(playerUUID)) {
 			IOpenGlassesHost host = getHost(hostUUID);
-			if (host != null) {
-				host.sync(player);
-				host.getComponent().onGlassesPutOff(player.getDisplayNameString());
-			}
+			if (host != null)
+				host.getComponent().onGlassesPutOff(player);
+
 		}
 
 		removePlayerSubscription(player);
@@ -140,7 +157,7 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 
 	public void removePlayerSubscription(EntityPlayer player){
 		playerStats.remove(player.getUniqueID());
-		players.remove(player);
+		players.remove(player.getUniqueID());
 	}
 
 }

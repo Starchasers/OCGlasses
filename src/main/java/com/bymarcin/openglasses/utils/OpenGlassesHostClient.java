@@ -1,16 +1,19 @@
 package com.bymarcin.openglasses.utils;
 
 import ben_mkiv.rendertoolkit.surface.WidgetCollection;
+import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.network.packet.HostInfoPacket;
 import li.cil.oc.api.internal.Robot;
 import li.cil.oc.common.tileentity.RobotProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import static com.bymarcin.openglasses.surface.OCClientSurface.getEntityLocation;
@@ -22,17 +25,30 @@ public class OpenGlassesHostClient extends WidgetCollection {
     public int renderEntityID = -1;
     public int renderEntityDimension;
     public Robot renderEntityRobot;
+    public boolean absoluteRenderPosition = false;
 
     HostClient host;
+
+    public HostInfoPacket.HostType hostType = HostInfoPacket.HostType.TERMINAL;
+
+    public boolean isInternal = false;
+
+    public OpenGlassesHostClient(NBTTagCompound nbt){
+        host = new HostClient(nbt);
+    }
 
     public static class HostClient {
         public UUID uuid = null;
         public String terminalName = "";
         public boolean renderWorld = true, renderOverlay = true;
         public boolean sendOverlayEvents = true, sendWorldEvents = true;
+        public UUID ownerUUID;
+        public String ownerName = "";
 
-        public HostClient(UUID host){
+        public HostClient(UUID host, EntityPlayer owner){
             uuid = host;
+            ownerUUID = owner.getUniqueID();
+            ownerName = owner.getDisplayNameString();
         }
 
         public HostClient(NBTTagCompound nbt){
@@ -41,6 +57,8 @@ public class OpenGlassesHostClient extends WidgetCollection {
 
         public void updateFromNBT(NBTTagCompound nbt){
             uuid = nbt.getUniqueId("host");
+            ownerName = nbt.getString("user");
+            ownerUUID = nbt.getUniqueId("ownerUUID");
             renderWorld = !nbt.hasKey("noWorld");
             renderOverlay = !nbt.hasKey("noOverlay");
             sendOverlayEvents = !nbt.hasKey("noOverlayEvents");
@@ -60,16 +78,12 @@ public class OpenGlassesHostClient extends WidgetCollection {
             if(!sendWorldEvents)
                 tag.setBoolean("noWorldEvents", true);
 
+            tag.setUniqueId("userUUID", ownerUUID);
+
+            tag.setString("user", ownerName);
+
             return tag;
         }
-    }
-
-    public HostInfoPacket.HostType hostType = HostInfoPacket.HostType.TERMINAL;
-
-    public boolean isInternal = false;
-
-    public OpenGlassesHostClient(NBTTagCompound nbt){
-        host = new HostClient(nbt);
     }
 
 
@@ -84,12 +98,14 @@ public class OpenGlassesHostClient extends WidgetCollection {
     }
 
     private Entity getRenderEntity(){
+        ArrayList<Entity> entityArrayList = new ArrayList<>();
         switch(hostType){
             case TABLET:
             case DRONE:
                 if(renderEntity == null && renderEntityID != -1
                         && renderEntityDimension == Minecraft.getMinecraft().player.world.provider.getDimension()){
                     renderEntity = Minecraft.getMinecraft().world.getEntityByID(renderEntityID);
+                    entityArrayList.addAll(Minecraft.getMinecraft().world.getLoadedEntityList());
                 }
                 return renderEntity;
 
@@ -140,6 +156,4 @@ public class OpenGlassesHostClient extends WidgetCollection {
     public HostClient data(){
         return host;
     }
-
-
 }

@@ -6,11 +6,16 @@ import io.netty.buffer.Unpooled;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.UUID;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.math.BlockPos;
 
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -20,6 +25,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import com.google.gson.Gson;
 
+import javax.vecmath.Vector4d;
 
 
 public abstract class Packet<T extends Packet<T, RES>, RES extends IMessage> implements IMessage, IMessageHandler<T, RES> {
@@ -125,7 +131,48 @@ public abstract class Packet<T extends Packet<T, RES>, RES extends IMessage> imp
 		return read.readBoolean();
 	}
 
+	public UUID readUUID() throws IOException {
+		return new UUID(read.readLong(), read.readLong());
+	}
+
+	public NBTTagCompound readNBT() throws IOException {
+		return ByteBufUtils.readTag(read);
+	}
+
+	public Vec3d readVec3d() throws IOException {
+		return new Vec3d(readDouble(), readDouble(), readDouble());
+	}
+
+	public Vec3i readVec3i() throws IOException {
+		return new Vec3i(readInt(), readInt(), readInt());
+	}
+
 	// Custom write instructions
+	public Packet<T, RES> writeVec3d(Vec3d vector) throws IOException, RuntimeException {
+		write.writeDouble(vector.x);
+		write.writeDouble(vector.y);
+		write.writeDouble(vector.z);
+		return this;
+	}
+
+	// Custom write instructions
+	public Packet<T, RES> writeVec3i(Vec3i vector) throws IOException, RuntimeException {
+		write.writeInt(vector.getX());
+		write.writeInt(vector.getY());
+		write.writeInt(vector.getZ());
+		return this;
+	}
+
+	public Packet<T, RES> writeNBT(NBTTagCompound tag) throws IOException, RuntimeException {
+		ByteBufUtils.writeTag(write, tag);
+		return this;
+	}
+
+	public Packet<T, RES> writeUUID(UUID uuid) throws IOException, RuntimeException {
+		write.writeLong(uuid.getMostSignificantBits());
+		write.writeLong(uuid.getLeastSignificantBits());
+		return this;
+	}
 
 	public Packet<T, RES> writeTileLocation(TileEntity te) throws IOException, RuntimeException {
 		if (te.getWorld() == null)

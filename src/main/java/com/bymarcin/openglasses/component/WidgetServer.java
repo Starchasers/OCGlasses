@@ -33,7 +33,8 @@ public class WidgetServer extends WidgetList {
 
     public void clear(){
         list.clear();
-        OCServerSurface.instances.sendToUUID(new WidgetUpdatePacket(host.getUUID()), host.getUUID());
+        if(host != null)
+            OCServerSurface.instances.sendToUUID(new WidgetUpdatePacket(host.getUUID()), host.getUUID());
     }
 
     public int size(){

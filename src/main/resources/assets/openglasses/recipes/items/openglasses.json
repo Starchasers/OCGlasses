@@ -1,19 +1,28 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "SCS",
-    " W ",
-    "   "
+    "SAS",
+    "MPW",
+    " c "
   ],
   "key": {
     "S": {
       "item": "#opencomputers_screen3"
     },
-    "C": {
-      "item": "#opencomputers_gpu3"
+    "A": {
+      "item": "#opencomputers_apu2"
+    },
+    "c": {
+      "item": "#opencomputers_componentbus2"
+    },
+    "P": {
+      "item": "#opencomputers_pcb"
     },
     "W": {
       "item": "#opencomputers_wlancard2"
+    },
+    "M": {
+      "item": "#opencomputers_memory3"
     }
   },
   "result": {

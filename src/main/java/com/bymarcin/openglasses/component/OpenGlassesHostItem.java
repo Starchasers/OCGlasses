@@ -9,7 +9,7 @@ import net.minecraft.util.math.Vec3d;
 public class OpenGlassesHostItem implements IOpenGlassesHost, ManagedEnvironment {
     private OpenGlassesHostComponent component;
 
-    EnvironmentHost host;
+    private EnvironmentHost host;
 
     public OpenGlassesHostItem(EnvironmentHost container) {
         host = container;
@@ -54,6 +54,9 @@ public class OpenGlassesHostItem implements IOpenGlassesHost, ManagedEnvironment
     public String getName(){ return getComponent().getName(); }
 
     @Override
+    public boolean renderAbsolute(){ return getComponent().renderAbsolute(); }
+
+    @Override
     public OpenGlassesHostComponent getComponent(){
         return component;
     }
@@ -69,8 +72,7 @@ public class OpenGlassesHostItem implements IOpenGlassesHost, ManagedEnvironment
     }
 
     @Override
-    public boolean canUpdate(){ return false; }
-
+    public boolean canUpdate(){ return getComponent().canUpdate(); }
 
     @Override
     public void load(NBTTagCompound nbt){

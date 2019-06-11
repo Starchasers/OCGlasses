@@ -3,10 +3,7 @@ package com.bymarcin.openglasses.tileentity;
 import com.bymarcin.openglasses.component.OpenGlassesHostComponent;
 import com.bymarcin.openglasses.utils.IOpenGlassesHost;
 import li.cil.oc.api.Network;
-import li.cil.oc.api.network.Environment;
-import li.cil.oc.api.network.EnvironmentHost;
-import li.cil.oc.api.network.Message;
-import li.cil.oc.api.network.Node;
+import li.cil.oc.api.network.*;
 
 import li.cil.oc.api.prefab.TileEntityEnvironment;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -19,6 +16,7 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 
 	public OpenGlassesTerminalTileEntity() {
 		component = new OpenGlassesHostComponent(this);
+		node = component.node();
 	}
 
 	@Override
@@ -75,6 +73,9 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 	public String getName(){ return getComponent().getName(); }
 
 	@Override
+	public boolean renderAbsolute(){ return getComponent().renderAbsolute(); }
+
+	@Override
 	public boolean isInternalComponent(){
 		return false;
 	}
@@ -85,14 +86,24 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 	}
 
 	@Override
+	public void save(NBTTagCompound tag){
+		getComponent().save(tag);
+	}
+
+	@Override
+	public void load(NBTTagCompound tag){
+		getComponent().load(tag);
+	}
+
+	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-		getComponent().save(nbt);
+		save(nbt);
 		return super.writeToNBT(nbt);
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
-		getComponent().load(nbt);
+		load(nbt);
 	}
 }

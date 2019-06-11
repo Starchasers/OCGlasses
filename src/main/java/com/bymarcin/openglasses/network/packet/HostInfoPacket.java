@@ -21,36 +21,33 @@ import java.util.UUID;
 import static com.bymarcin.openglasses.utils.OpenGlassesHostClient.renderOffsetRobotCaseMicroController;
 
 public class HostInfoPacket extends Packet<HostInfoPacket, IMessage> {
-
-    boolean isInternal;
-    double x = 0, y = 0, z = 0;
-    int entityID = -1;
-    UUID hostUUID, entityUUID;
-    int entityDimension;
-    String name;
+    private boolean isInternal;
+    private Vec3d position;
+    private int entityID = -1;
+    private UUID hostUUID, entityUUID;
+    private int entityDimension;
+    private String name;
+    private boolean renderAbsolute = false;
 
     public enum HostType { TERMINAL, ROBOT, DRONE, TABLET, CASE, MICROCONTROLLER }
 
-    HostType hostType = HostType.TERMINAL;
+    private HostType hostType = HostType.TERMINAL;
 
     public HostInfoPacket(IOpenGlassesHost host) {
         isInternal = host.isInternalComponent();
         name = host.getName();
         hostUUID = host.getUUID();
+        renderAbsolute = host.renderAbsolute();
 
         if(!isInternal){
-            x = host.getRenderPosition().x;
-            y = host.getRenderPosition().y;
-            z = host.getRenderPosition().z;
+            position = host.getRenderPosition();
             hostType = HostType.TERMINAL;
             return;
         }
 
-        EnvironmentHost realHost = host.getComponent().getHost();
+        EnvironmentHost realHost = host.getHost();
 
-        x = realHost.xPosition();
-        y = realHost.yPosition();
-        z = realHost.zPosition();
+        position = new Vec3d(realHost.xPosition(), realHost.yPosition(), realHost.zPosition());
 
         if(realHost instanceof Robot)
             hostType = HostType.ROBOT;
@@ -60,6 +57,8 @@ public class HostInfoPacket extends Packet<HostInfoPacket, IMessage> {
             hostType = HostType.MICROCONTROLLER;
         else if(realHost instanceof Drone){
             Drone drone = ((Drone) realHost);
+            //Entity realEntity = drone; //FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(drone.getUniqueID());
+            //realEntity = realEntity != null ? realEntity : drone;
             entityID = drone.getEntityId();
             entityUUID = drone.getUniqueID();
             entityDimension = drone.getEntityWorld().provider.getDimension();
@@ -67,6 +66,8 @@ public class HostInfoPacket extends Packet<HostInfoPacket, IMessage> {
         }
         else if(realHost instanceof Tablet){
             Tablet tablet = ((Tablet) realHost);
+            //Entity realEntity = tablet.player(); //FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(tablet.player().getUniqueID());
+            //realEntity = realEntity != null ? realEntity : tablet.player();
             entityID = tablet.player().getEntityId();
             entityUUID = tablet.player().getUniqueID();
             entityDimension = tablet.player().getEntityWorld().provider.getDimension();
@@ -78,45 +79,39 @@ public class HostInfoPacket extends Packet<HostInfoPacket, IMessage> {
 
     @Override
     protected void read() throws IOException {
-        hostUUID = new UUID(readLong(), readLong()); 
-        
-        OpenGlassesHostClient clientHost = OCClientSurface.instance().getHost(hostUUID);
+        hostUUID = readUUID();
 
-        clientHost.data().terminalName = readString();
+        name = readString();
 
-        clientHost.renderEntity = null;
-        clientHost.isInternal = readBoolean();
-        clientHost.hostType = HostType.values()[readInt()];
-        clientHost.renderPosition = new Vec3d(readDouble(), readDouble(), readDouble());;
+        renderAbsolute = readBoolean();
+        isInternal = readBoolean();
+        hostType = HostType.values()[readInt()];
+        position = readVec3d();
 
-        switch(clientHost.hostType){
+        switch(hostType){
             case ROBOT:
-                clientHost.renderEntityDimension = readInt();
-                clientHost.renderEntityRobot = clientHost.getRobotEntity();
+                entityDimension = readInt();
                 break;
             case DRONE:
             case TABLET:
-                clientHost.renderEntityID = readInt();
-                clientHost.renderEntityDimension = readInt();
-                clientHost.renderEntityUUID = new UUID(readLong(), readLong());
+                entityID = readInt();
+                entityDimension = readInt();
+                entityUUID = readUUID();
                 break;
             case MICROCONTROLLER:
             case CASE:
-                clientHost.renderPosition = clientHost.renderPosition.subtract(renderOffsetRobotCaseMicroController);
                 break;
         }
     }
 
     @Override
     protected void write() throws IOException {
-        writeLong(hostUUID.getMostSignificantBits());
-        writeLong(hostUUID.getLeastSignificantBits());
-        writeString(name);        
+        writeUUID(hostUUID);
+        writeString(name);
+        writeBoolean(renderAbsolute);
         writeBoolean(isInternal);
         writeInt(hostType.ordinal());
-        writeDouble(x);
-        writeDouble(y);
-        writeDouble(z);
+        writeVec3d(position);
 
         switch(hostType){
             case ROBOT:
@@ -127,15 +122,42 @@ public class HostInfoPacket extends Packet<HostInfoPacket, IMessage> {
             case TABLET:
                 writeInt(entityID);
                 writeInt(entityDimension);
-                writeLong(entityUUID.getMostSignificantBits());
-                writeLong(entityUUID.getLeastSignificantBits());
+                writeUUID(entityUUID);
                 break;
         }
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    protected IMessage executeOnClient() { return null; }
+    protected IMessage executeOnClient() {
+        OpenGlassesHostClient clientHost = OCClientSurface.instance().getHost(hostUUID);
+
+        clientHost.data().terminalName = name;
+
+        clientHost.renderEntity = null;
+        clientHost.absoluteRenderPosition = renderAbsolute;
+        clientHost.isInternal = isInternal;
+        clientHost.hostType = hostType;
+        clientHost.renderPosition = position;
+
+        switch(clientHost.hostType){
+            case ROBOT:
+                clientHost.renderEntityDimension = entityDimension;
+                clientHost.renderEntityRobot = clientHost.getRobotEntity();
+                break;
+            case DRONE:
+            case TABLET:
+                clientHost.renderEntityID = entityID;
+                clientHost.renderEntityDimension = entityDimension;
+                clientHost.renderEntityUUID = entityUUID;
+                break;
+            case MICROCONTROLLER:
+            case CASE:
+                clientHost.renderPosition = clientHost.renderPosition.subtract(renderOffsetRobotCaseMicroController);
+                break;
+        }
+        return null;
+    }
 
     @Override
     protected IMessage executeOnServer() {

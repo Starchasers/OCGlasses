@@ -61,6 +61,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		upgrades.add(new UpgradeMotionSensor());
 		upgrades.add(new UpgradeNightvision());
 		upgrades.add(new UpgradeTank());
+		upgrades.add(new UpgradeNavigation());
 	}
 
 	public OpenGlassesItem() {
@@ -95,13 +96,12 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		creativeTag.setInteger("Energy", 5000000);
 		creativeTag.setInteger("EnergyCapacity", 5000000);
 		creativeTag.setInteger("widgetLimit", 255);
-		creativeTag.setInteger("upkeepCost", 0);
 		creativeTag.setInteger("radarRange", 128); //set the maximum radar range to 128
-		creativeTag.setBoolean("daylightDetector", true);
-		creativeTag.setBoolean("tankUpgrade", true);
-		creativeTag.setBoolean("motionsensor", true);
-		creativeTag.setBoolean("geolyzer", true);
-		creativeTag.setBoolean("nightvision", true);
+
+		for(UpgradeItem upgrade : upgrades)
+			creativeGlasses = upgrade.install(creativeGlasses);
+
+		creativeTag.setInteger("upkeepCost", 0);
 
 		subItems.add(DEFAULT_STACK);
 		subItems.add(creativeGlasses);
@@ -174,12 +174,10 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		if(player.world.isRemote)
 		    return;
 
-	    NBTTagCompound tag = glassesStack.getTagCompound();
-
 	    NBTTagCompound newTag = new NBTTagCompound();
 
 		newTag.setUniqueId("host", hostUUID);
-		newTag.setString("userUUID", player.getGameProfile().getId().toString());
+		newTag.setUniqueId("userUUID", player.getGameProfile().getId());
 		newTag.setString("user", player.getGameProfile().getName());
 
 		HashSet<NBTTagCompound> hosts = getHostsFromNBT(glassesStack);
@@ -187,6 +185,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		writeHostsToNBT(hosts, glassesStack);
 
 		syncStackNBT(glassesStack, (EntityPlayerMP) player);
+		OCServerSurface.instance().subscribePlayer((EntityPlayerMP) player, hostUUID);
 	}
 
 	public static void unlink(UUID uuid, ItemStack glassesStack, EntityPlayer player) {
@@ -198,6 +197,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		writeHostsToNBT(hosts, glassesStack);
 
 		syncStackNBT(glassesStack, (EntityPlayerMP) player);
+		OCServerSurface.instance().unsubscribePlayer(player.getUniqueID());
 	}
 
 	public static NBTTagCompound getHostFromNBT(UUID hostUUID, ItemStack glassesStack){
@@ -244,7 +244,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		return hosts;
 	}
 
-	public static void setConfigFlag(String flagName, boolean enabled, ItemStack glassesStack, EntityPlayer player){
+	public static void setConfigFlag(String flagName, boolean enabled, ItemStack glassesStack, EntityPlayerMP player){
 		if(player.world.isRemote)
 			return;
 
@@ -255,14 +255,11 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
     	else
 			glassesStack.getTagCompound().setBoolean(flagName, true);
 
-		syncStackNBT(glassesStack, (EntityPlayerMP) player);
+		syncStackNBT(glassesStack, player);
 	}
 
 	public static void syncStackNBT(ItemStack glassesStack, EntityPlayerMP player){
 		NetworkRegistry.packetHandler.sendTo(new GlassesStackNBT(glassesStack), player);
-
-		for(NBTTagCompound nbt : getHostsFromNBT(glassesStack))
-			OCServerSurface.instance().subscribePlayer(player, nbt.getUniqueId("host"));
 	}
 
 	// Forge Energy

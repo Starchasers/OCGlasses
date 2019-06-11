@@ -157,7 +157,7 @@ public class UpgradeNightvision extends UpgradeItem {
         if(!nightvisionModeKey.isPressed())
             return;
 
-        if(!hasUpgrade(OCClientSurface.instance().glassesStack))
+        if(!hasUpgrade(OCClientSurface.instance().glasses.get()))
             return;
 
         NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(null, GlassesEventPacket.EventType.TOGGLE_NIGHTVISION));

@@ -13,6 +13,7 @@ import com.bymarcin.openglasses.network.packet.GlassesStackNBT;
 import com.bymarcin.openglasses.network.packet.HostInfoPacket;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
 import com.bymarcin.openglasses.proxy.CommonProxy;
+import com.bymarcin.openglasses.surface.OCServerSurface;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 
 import li.cil.oc.api.driver.DriverItem;
@@ -30,9 +31,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -92,6 +91,9 @@ public class OpenGlasses
 	}
 
 	public static ItemStack getGlassesStack(EntityPlayer player){
+		if(player == null)
+			return ItemStack.EMPTY;
+
 		ItemStack glassesStack = player.inventory.armorItemInSlot(EntityEquipmentSlot.HEAD.getIndex());
 
 		if(isGlassesStack(glassesStack))
@@ -146,7 +148,14 @@ public class OpenGlasses
 		proxy.postInit();
 	}
 
-    public static CreativeTabs creativeTab = new CreativeTabs("openglasses"){
+
+	@EventHandler
+	public static void onServerStopped(FMLServerStoppedEvent event){
+		OCServerSurface.onServerStopped();
+	}
+
+
+	public static CreativeTabs creativeTab = new CreativeTabs("openglasses"){
         @Override
         public ItemStack getTabIconItem(){
             return new ItemStack(OpenGlasses.openTerminalItem);

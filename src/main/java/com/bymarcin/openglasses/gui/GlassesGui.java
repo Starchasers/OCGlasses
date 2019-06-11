@@ -3,12 +3,10 @@ package com.bymarcin.openglasses.gui;
 import ben_mkiv.guitoolkit.client.widget.*;
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.event.glasses.GlassesNotifications;
-import com.bymarcin.openglasses.event.glasses.LinkRequest;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.surface.OCClientSurface;
-import com.bymarcin.openglasses.utils.OpenGlassesHostClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -23,7 +21,7 @@ import java.util.HashSet;
 
 public class GlassesGui extends GuiScreen {
     public static final int WIDTH = 256;
-    public static final int HEIGHT = 146;
+    public static final int HEIGHT = 229; //144
 
     int xSize, ySize, guiLeft, guiTop;
 
@@ -33,10 +31,9 @@ public class GlassesGui extends GuiScreen {
     ItemStack glassesStack = ItemStack.EMPTY;
 
     TerminalHostsList list;
+    NotificationList notificationList;
 
     EnergyBar energyBar;
-
-    LinkRequest activeLinkRequest;
 
     public static boolean isNotification = false;
 
@@ -66,6 +63,7 @@ public class GlassesGui extends GuiScreen {
         denyLink.visible = false;
 
         list = new TerminalHostsList(245, 100, guiTop + 35, guiLeft + 5, 60, xSize, ySize);
+        notificationList = new NotificationList(245, 73, guiTop + 150, guiLeft + 5, 45, xSize, ySize);
         updateScreen();
     }
 
@@ -74,6 +72,9 @@ public class GlassesGui extends GuiScreen {
         drawBackground(0);
 
         list.drawScreen(mouseX, mouseY, partialTicks);
+
+        if(notificationList.getSize() > 0)
+            notificationList.drawScreen(mouseX, mouseY, partialTicks);
 
         super.drawScreen(mouseX, mouseY, partialTicks);
 
@@ -85,25 +86,9 @@ public class GlassesGui extends GuiScreen {
 
         String hosts = list.getSize() + " hosts";
         Minecraft.getMinecraft().fontRenderer.drawString(hosts, guiLeft - 5 + xSize - fontRenderer.getStringWidth(hosts), guiTop+25, 0x0);
-
-        if(activeLinkRequest != null){
-            drawLinkRequest(guiLeft, guiTop, activeLinkRequest);
-        }
     }
 
 
-    private void drawLinkRequest(int x, int y, LinkRequest linkRequest){
-        int distance = linkRequest.getDistance(Minecraft.getMinecraft().player.getPositionVector());
-        String text = "link request";
-
-        if(activeLinkRequest.hostName.length() > 0)
-            text+=" from '"+activeLinkRequest.hostName+"'";
-
-        text+=" (distance: "+ distance +" blocks)";
-
-        Minecraft.getMinecraft().fontRenderer.drawString(text, x+5, y+153, 0x0);
-        Minecraft.getMinecraft().fontRenderer.drawString(activeLinkRequest.host.toString(), x+5, y+165, 0x0);
-    }
 
     private String formatNumber(double number){
         return NumberFormat.getInstance().format(number);
@@ -114,17 +99,11 @@ public class GlassesGui extends GuiScreen {
         return false;
     }
 
-
-
     @Override
     @SideOnly(Side.CLIENT)
     protected void actionPerformed(GuiButton button) throws IOException {
         if(button instanceof prettyButton){
-            if(button.equals(acceptLink))
-                activeLinkRequest.submit();
-            else if(button.equals(denyLink))
-                activeLinkRequest.cancel();
-            else if(button.equals(enablePopupNotifications)) {
+            if(button.equals(enablePopupNotifications)) {
                 GlassesEventPacket.EventType eventType = enablePopupNotifications.isEnabled() ? GlassesEventPacket.EventType.DISABLE_NOTIFICATIONS : GlassesEventPacket.EventType.ENABLE_NOTIFICATIONS;
                 NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(null, eventType));
             }
@@ -135,8 +114,7 @@ public class GlassesGui extends GuiScreen {
 
     @Override
     public void updateScreen() {
-        ItemStack newGlassesStack = OCClientSurface.instance().glassesStack;
-
+        ItemStack newGlassesStack = OCClientSurface.instance().glasses.get();
 
         boolean glassesChanged = !ItemStack.areItemStackTagsEqual(glassesStack, newGlassesStack);
 
@@ -148,22 +126,6 @@ public class GlassesGui extends GuiScreen {
         }
 
         super.updateScreen();
-        activeLinkRequest = null;
-        HashSet<GlassesNotifications.GlassesNotification> notifications = new HashSet<>();
-        notifications.addAll(GlassesNotifications.notifications);
-
-        for(GlassesNotifications.GlassesNotification notification : notifications){
-            notification.update();
-
-            if(notification instanceof LinkRequest){
-                activeLinkRequest = (LinkRequest) notification;
-            }
-        }
-
-        ySize = activeLinkRequest != null ? HEIGHT + 55: HEIGHT;
-
-        acceptLink.visible = activeLinkRequest != null;
-        denyLink.visible = activeLinkRequest != null;
 
         if(glassesChanged) {
             enablePopupNotifications.setEnabled(!glassesStack.getTagCompound().hasKey("nopopups"));
@@ -171,6 +133,10 @@ public class GlassesGui extends GuiScreen {
             list.clear();
             list.add(OCClientSurface.instance().getHosts());
         }
+
+        notificationList.update();
+
+        ySize = notificationList.getSize() > 0 ? 229 : 144;
     }
 
     @Override

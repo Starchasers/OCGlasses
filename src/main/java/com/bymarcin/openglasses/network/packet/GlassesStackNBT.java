@@ -1,13 +1,11 @@
 package com.bymarcin.openglasses.network.packet;
 
-
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.network.Packet;
 import com.bymarcin.openglasses.surface.OCClientSurface;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -26,12 +24,12 @@ public class GlassesStackNBT extends Packet<GlassesStackNBT, IMessage> {
 
     @Override
     protected void read() throws IOException {
-        tagCompound = ByteBufUtils.readTag(read);
+        tagCompound = readNBT();
     }
 
     @Override
     protected void write() throws IOException {
-        ByteBufUtils.writeTag(write, tagCompound);
+        writeNBT(tagCompound);
     }
 
     @SideOnly(Side.CLIENT)

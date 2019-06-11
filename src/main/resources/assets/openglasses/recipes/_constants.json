@@ -52,5 +52,17 @@
     "ingredient": {
       "item": "opencomputers:cable", "data": 0
     }
+  },
+  {
+    "name": "opencomputers_componentbus2",
+    "ingredient": {
+      "item": "opencomputers:component", "data": 4
+    }
+  },
+  {
+    "name": "opencomputers_apu2",
+    "ingredient": {
+      "item": "opencomputers:component", "data": 17
+    }
   }
 ]

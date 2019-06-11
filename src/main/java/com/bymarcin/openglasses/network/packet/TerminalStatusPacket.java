@@ -23,15 +23,15 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 		LINK_REQUEST
 	}
 
-	TerminalEvent terminalEvent;
+	private TerminalEvent terminalEvent;
 
 	public float x, y;
 
-	String terminalName = "";
+	private String terminalName = "";
 
-	IOpenGlassesHost host;
-	UUID uuid;
-	BlockPos pos;
+	private IOpenGlassesHost host;
+	private UUID uuid;
+	private BlockPos pos;
 
 	public TerminalStatusPacket(TerminalEvent status) {
 		this.terminalEvent = status;
@@ -47,44 +47,35 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 
 	@Override
 	protected void read() throws IOException {
-		this.terminalEvent = TerminalEvent.values()[readInt()];
-		this.terminalName = readString();
+		terminalEvent = TerminalEvent.values()[readInt()];
+		terminalName = readString();
 
 		switch(this.terminalEvent){
 			case SET_RENDER_RESOLUTION:
-				this.x = readFloat();
-				this.y = readFloat();
-
-				if(this.x > 0 && this.y > 0) {
-					OCClientSurface.instances.renderResolution = new Vec3d(this.x, this.y, 0);
-				}
-				else
-					OCClientSurface.instances.renderResolution = null;
+				x = readFloat();
+				y = readFloat();
 				break;
 
 			case LINK_REQUEST:
-				uuid = new UUID(readLong(), readLong());
-				pos = new BlockPos(readInt(), readInt(), readInt());
+				uuid = readUUID();
+				pos = new BlockPos(readVec3d());
 		}
 	}
 
 	@Override
 	protected void write() throws IOException {
-		writeInt(this.terminalEvent.ordinal());
+		writeInt(terminalEvent.ordinal());
 		writeString(terminalName);
 
 		switch(this.terminalEvent){
 			case SET_RENDER_RESOLUTION:
-				writeFloat(this.x);
-				writeFloat(this.y);
+				writeFloat(x);
+				writeFloat(y);
 				break;
 
 			case LINK_REQUEST:
-				writeLong(host.getUUID().getMostSignificantBits());
-				writeLong(host.getUUID().getLeastSignificantBits());
-				writeInt((int) host.getRenderPosition().x);
-				writeInt((int) host.getRenderPosition().y);
-				writeInt((int) host.getRenderPosition().z);
+				writeUUID(host.getUUID());
+				writeVec3d(host.getRenderPosition());
 				break;
 		}
 	}
@@ -92,10 +83,15 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 	@SideOnly(Side.CLIENT)
 	@Override
 	protected IMessage executeOnClient() {
- 		switch(this.terminalEvent){
-			case ASYNC_SCREEN_SIZES:
-				(OCClientSurface.instance()).sendResolution();
+ 		switch(terminalEvent){
+			case SET_RENDER_RESOLUTION:
+				OCClientSurface.renderResolution = x > 0 && y > 0 ? new Vec3d(this.x, this.y, 0) : null;
 				return null;
+
+			case ASYNC_SCREEN_SIZES:
+				OCClientSurface.instance().sendResolution();
+				return null;
+
 			case LINK_REQUEST:
 				for(OpenGlassesHostClient host : OCClientSurface.instance().getHosts())
 					if(host.getUniqueId().equals(uuid))
