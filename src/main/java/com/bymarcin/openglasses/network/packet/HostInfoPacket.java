@@ -132,7 +132,7 @@ public class HostInfoPacket extends Packet<HostInfoPacket, IMessage> {
     protected IMessage executeOnClient() {
         OpenGlassesHostClient clientHost = OCClientSurface.instance().getHost(hostUUID);
 
-        clientHost.data().terminalName = name;
+        clientHost.terminalName = name;
 
         clientHost.renderEntity = null;
         clientHost.absoluteRenderPosition = renderAbsolute;

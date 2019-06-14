@@ -2,7 +2,6 @@ package com.bymarcin.openglasses.component;
 
 import com.bymarcin.openglasses.utils.IOpenGlassesHost;
 import li.cil.oc.api.network.*;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.Vec3d;
 
@@ -51,19 +50,8 @@ public class OpenGlassesHostItem implements IOpenGlassesHost, ManagedEnvironment
     }
 
     @Override
-    public String getName(){ return getComponent().getName(); }
-
-    @Override
-    public boolean renderAbsolute(){ return getComponent().renderAbsolute(); }
-
-    @Override
     public OpenGlassesHostComponent getComponent(){
         return component;
-    }
-
-    @Override
-    public void sync(EntityPlayerMP player){
-        getComponent().sync(player);
     }
 
     @Override

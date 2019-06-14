@@ -5,7 +5,10 @@ import java.util.UUID;
 
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.component.OpenGlassesHostComponent;
+import com.bymarcin.openglasses.item.GlassesNBT;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
+import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesHostsNBT;
+import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesNotificationsNBT;
 import com.bymarcin.openglasses.item.upgrades.UpgradeGeolyzer;
 import com.bymarcin.openglasses.item.upgrades.UpgradeNightvision;
 import com.bymarcin.openglasses.utils.IOpenGlassesHost;
@@ -28,7 +31,6 @@ import com.bymarcin.openglasses.surface.OCServerSurface;
 
 public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	public enum EventType{
-		EQUIPED_GLASSES, UNEQUIPED_GLASSES,
 		TOGGLE_NIGHTVISION,
 		ACTIVATE_OVERLAY, DEACTIVATE_OVERLAY,
 		INTERACT_WORLD_RIGHT, INTERACT_WORLD_LEFT, INTERACT_WORLD_BLOCK_RIGHT, INTERACT_WORLD_BLOCK_LEFT,
@@ -39,8 +41,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		ENABLE_WORLD_RENDER, DISABLE_WORLD_RENDER,
 		ENABLE_OVERLAY_RENDER, DISABLE_OVERLAY_RENDER,
 		DISABLE_WORLD_EVENTS, ENABLE_WORLD_EVENTS,
-		DISABLE_OVERLAY_EVENTS, ENABLE_OVERLAY_EVENTS,
-		REQUEST_WIDGETLIST
+		DISABLE_OVERLAY_EVENTS, ENABLE_OVERLAY_EVENTS
 	}
 
 	EventType eventType;
@@ -142,17 +143,6 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		PlayerStatsOC stats;
 		ItemStack glasses;
 
-		switch(eventType) {
-			case EQUIPED_GLASSES:
-				OCServerSurface.instance().subscribePlayer(playerUUID);
-				//request client resolution once the playerUUID puts glasses on
-				//UUID.getTerminal().requestResolutionEvent(OCServerSurface.instances.checkUUID(playerUUID));
-				return null;
-			case UNEQUIPED_GLASSES:
-				OCServerSurface.instance().unsubscribePlayer(playerUUID);
-				return null;
-		}
-
 		if(playerMP == null)
 			return null;
 
@@ -215,28 +205,31 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 
 			case ACCEPT_LINK:
 			case DENY_LINK:
-				if(eventType.equals(EventType.ACCEPT_LINK)){
-					if(OpenGlassesHostComponent.linkRequests.containsKey(playerMP))
-						OpenGlassesItem.link(getGlasses(playerMP), OpenGlassesHostComponent.linkRequests.get(playerMP), playerMP);
-				}
+				glasses = getGlasses(playerMP);
+				if(!glasses.isEmpty())
+					for(NBTTagCompound notification : OpenGlassesNotificationsNBT.getNotifications(getGlasses(playerMP))){
+						switch(OpenGlassesNotificationsNBT.NotifiactionType.values()[notification.getInteger("type")]){
+							case LINKREQUEST:
+								if(notification.getUniqueId("host").equals(hostUUID)){
+									if(eventType.equals(EventType.ACCEPT_LINK))
+										OpenGlassesHostsNBT.link(glasses, hostUUID, playerMP);
 
-				OpenGlassesHostComponent.linkRequests.remove(playerMP);
+									OpenGlassesNotificationsNBT.removeLinkRequest(glasses, hostUUID);
+									GlassesNBT.syncStackNBT(glasses, playerMP);
+									return null;
+								}
+								break;
+						}
+					}
 				return null;
 
 			case CLEAR_LINK:
-				OpenGlassesItem.unlink(hostUUID, getGlasses(playerMP), playerMP);
-				return null;
-
-			case REQUEST_WIDGETLIST:
-				host = OCServerSurface.getHost(hostUUID);
-				if (host != null)
-					host.sync(playerMP);
-
+				OpenGlassesHostsNBT.unlink(hostUUID, getGlasses(playerMP), playerMP);
 				return null;
 
 			case ENABLE_NOTIFICATIONS:
 			case DISABLE_NOTIFICATIONS:
-				OpenGlassesItem.setConfigFlag("nopopups", eventType.equals(EventType.ENABLE_NOTIFICATIONS), getGlasses(playerMP), playerMP);
+				GlassesNBT.setConfigFlag("nopopups", eventType.equals(EventType.ENABLE_NOTIFICATIONS), getGlasses(playerMP), playerMP);
 				return null;
 
 			case ENABLE_WORLD_RENDER:
@@ -248,7 +241,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 			case ENABLE_OVERLAY_EVENTS:
 			case ENABLE_WORLD_EVENTS:
 				glasses = getGlasses(playerMP);
-				NBTTagCompound hostNBT = OpenGlassesItem.getHostFromNBT(hostUUID, glasses);
+				NBTTagCompound hostNBT = OpenGlassesHostsNBT.getHostFromNBT(hostUUID, glasses);
 				switch(eventType) {
 					case ENABLE_WORLD_RENDER:
 						hostNBT.removeTag("noWorld");
@@ -276,8 +269,8 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 						break;
 				}
 
-				OpenGlassesItem.writeHostToNBT(glasses, hostNBT);
-				OpenGlassesItem.syncStackNBT(glasses, playerMP);
+				OpenGlassesHostsNBT.writeHostToNBT(glasses, hostNBT);
+				GlassesNBT.syncStackNBT(glasses, playerMP);
 				return null;
 		}
 

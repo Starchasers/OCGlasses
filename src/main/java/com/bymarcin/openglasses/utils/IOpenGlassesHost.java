@@ -14,15 +14,17 @@ import java.util.UUID;
 public interface IOpenGlassesHost extends Environment, ITickable, Persistable {
     OpenGlassesHostComponent getComponent();
 
-    void sync(EntityPlayerMP player);
-
     Vec3d getRenderPosition();
 
     EnvironmentHost getHost();
 
-    String getName();
+    default String getName(){
+        return getComponent().getName();
+    }
 
-    boolean renderAbsolute();
+    default boolean renderAbsolute(){
+        return getComponent().renderAbsolute();
+    }
 
     default TileEntity getTileEntity(){
         return null;
@@ -43,5 +45,10 @@ public interface IOpenGlassesHost extends Environment, ITickable, Persistable {
     default boolean isInternalComponent(){
         return true;
     }
+
+    default void sync(EntityPlayerMP player){
+        getComponent().sync(player);
+    }
+
 
 }

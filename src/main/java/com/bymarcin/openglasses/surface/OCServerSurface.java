@@ -2,8 +2,11 @@ package com.bymarcin.openglasses.surface;
 
 import com.bymarcin.openglasses.OpenGlasses;
 
-import com.bymarcin.openglasses.item.OpenGlassesItem;
-import com.bymarcin.openglasses.item.upgrades.UpgradeItem;
+import com.bymarcin.openglasses.event.minecraft.server.ServerEventHandler;
+import com.bymarcin.openglasses.item.GlassesNBT;
+import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesHostsNBT;
+import com.bymarcin.openglasses.network.NetworkRegistry;
+import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
 import com.bymarcin.openglasses.utils.IOpenGlassesHost;
 import com.bymarcin.openglasses.utils.PlayerStatsOC;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,8 +15,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,9 +28,28 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 		instances = new OCServerSurface();
 	}
 
-	static EventHandler eventHandler;
+	// player (UUID) to glasses (UUID) mapping
+	private static HashMap<UUID, UUID> playerGlasses = new HashMap<>();
 
-	public static HashMap<UUID, IOpenGlassesHost> components = new HashMap<>();
+	// hosts (UUID) to glassesComponent(terminal, card, upgrade) (IOpenGlassesHost) mapping
+	private static HashMap<UUID, IOpenGlassesHost> components = new HashMap<>();
+
+	public OCServerSurface(){
+		MinecraftForge.EVENT_BUS.register(new ServerEventHandler());
+	}
+
+	public static OCServerSurface instance(){
+		return (OCServerSurface) instances;
+	}
+
+	// flush static caches when server gets stopped, this is required so that no data is
+	// carried over from one singleplayer world to another
+	public static void onServerStopped(){
+		components.clear();
+		playerGlasses.clear();
+		instance().players.clear();
+		instance().playerStats.clear();
+	}
 
 	public static void removeHost(UUID hostUUID){
 		if(components.containsKey(hostUUID)) {
@@ -47,65 +67,8 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 		}
 	}
 
-	public static void onServerStopped(){
-		components.clear();
-		instance().players.clear();
-		instance().playerStats.clear();
-	}
-
-
-	int playerIndex = 0;
-
-	public OCServerSurface(){
-		eventHandler = new EventHandler();
-		MinecraftForge.EVENT_BUS.register(eventHandler);
-	}
-
-	public static OCServerSurface instance(){
-		return (OCServerSurface) instances;
-	}
-
-	public class EventHandler {
-		@SubscribeEvent
-		public void tickStart(TickEvent.WorldTickEvent event) {
-			int i=0;
-			for (UUID player : players.keySet()) {
-				if(i == playerIndex) {
-					updatePlayer(checkUUID(player));
-					break;
-				}
-				i++;
-			}
-
-			playerIndex++;
-
-			if (playerIndex >= players.size()) playerIndex = 0;
-		}
-
-		void updatePlayer(EntityPlayer player){
-			ItemStack glassesStack = OpenGlasses.getGlassesStack(player);
-
-			if(OpenGlasses.isGlassesStack(glassesStack))
-				for(UpgradeItem upgrade : OpenGlassesItem.upgrades)
-					upgrade.update(player, glassesStack);
-		}
-	}
-
 	public static IOpenGlassesHost getHost(UUID hostUUID){
 		return components.get(hostUUID);
-	}
-
-
-	//subscribePlayer to events when he puts glasses on
-	public void subscribePlayer(UUID playerUUID) {
-		subscribePlayer(checkUUID(playerUUID));
-	}
-
-	public void subscribePlayer(EntityPlayerMP player) {
-		if (player == null) return;
-
-		for(NBTTagCompound nbt : OpenGlassesItem.getHostsFromNBT(OpenGlasses.getGlassesStack(player)))
-			subscribePlayer(player, nbt.getUniqueId("host"));
 	}
 
 	boolean isSubscribedTo(UUID playerUUID, UUID hostUUID){
@@ -113,6 +76,16 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 	}
 
 	public void subscribePlayer(EntityPlayerMP player, UUID hostUUID) {
+		playerGlasses.remove(player.getUniqueID());
+
+		ItemStack glassesStack = OpenGlasses.getGlassesStack(player);
+
+		if(!glassesStack.isEmpty()) {
+			UUID glassesUUID = GlassesNBT.getUniqueId(glassesStack);
+			playerGlasses.put(player.getUniqueID(), glassesUUID);
+			getStats(player).conditions.bufferSensors(OpenGlasses.getGlassesStack(player));
+		}
+
 		if (isSubscribedTo(player.getUniqueID(), hostUUID))
 			return;
 
@@ -121,43 +94,63 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 
 		players.get(player.getUniqueID()).add(hostUUID);
 
-		if (!playerStats.containsKey(player.getUniqueID())){
-			PlayerStatsOC stats = new PlayerStatsOC(player);
-			stats.conditions.bufferSensors(OpenGlasses.getGlassesStack(player));
-			playerStats.put(player.getUniqueID(), stats);
+		if(!glassesStack.isEmpty()) {
+			IOpenGlassesHost host = getHost(hostUUID);
+			if (host != null)
+				host.getComponent().onGlassesPutOn(player);
+
+			requestResolutionEvent(player, hostUUID);
 		}
-
-		IOpenGlassesHost host = getHost(hostUUID);
-		if(host != null)
-			host.getComponent().onGlassesPutOn(player);
-
-		requestResolutionEvent(player);
 	}
 
 	//unsubscribePlayer from events when he puts glasses off
 	public void unsubscribePlayer(UUID playerUUID){
 		EntityPlayerMP player = checkUUID(playerUUID);
 
-		if(!players.containsKey(playerUUID))
-			return;
-
-		if (playerStats.get(player.getUniqueID()) != null && ((PlayerStatsOC) playerStats.get(player.getUniqueID())).nightVisionActive) {
+		if (getStats(player).nightVisionActive) {
 			player.removePotionEffect(potionNightvision);
 		}
+
+		if(!players.containsKey(playerUUID))
+			return;
 
 		for(UUID hostUUID : players.get(playerUUID)) {
 			IOpenGlassesHost host = getHost(hostUUID);
 			if (host != null)
 				host.getComponent().onGlassesPutOff(player);
-
 		}
 
-		removePlayerSubscription(player);
+		players.remove(player.getUniqueID());
+		playerGlasses.remove(playerUUID);
 	}
 
-	public void removePlayerSubscription(EntityPlayer player){
-		playerStats.remove(player.getUniqueID());
-		players.remove(player.getUniqueID());
+	public static void equipmentChanged(EntityPlayerMP player, ItemStack newStack){
+		UUID oldUUID = playerGlasses.getOrDefault(player.getUniqueID(), null);
+		UUID newUUID = null;
+
+		if(OpenGlasses.isGlassesStack(newStack)){
+			newUUID = GlassesNBT.getUniqueId(newStack);
+
+			if (newUUID.equals(oldUUID))
+				return;
+		}
+
+		if (oldUUID != null) {
+			// initialize with empty stack to force sending of unequipped network message
+			OCServerSurface.instance().unsubscribePlayer(player.getUniqueID());
+		}
+
+		if (newUUID != null) {
+			for(NBTTagCompound nbt : OpenGlassesHostsNBT.getHostsFromNBT(newStack))
+				instance().subscribePlayer(player, nbt.getUniqueId("host"));
+		}
+	}
+
+	public static PlayerStatsOC getStats(EntityPlayer player){
+		if(!OCServerSurface.instance().playerStats.containsKey(player.getUniqueID()))
+			OCServerSurface.instance().playerStats.put(player.getUniqueID(), new PlayerStatsOC(player));
+
+		return (PlayerStatsOC) OCServerSurface.instance().playerStats.get(player.getUniqueID());
 	}
 
 }

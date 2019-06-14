@@ -36,4 +36,9 @@ public class UpgradeBatteryTier1 extends UpgradeItem {
         return !stack.isEmpty() && stack.getItem().getRegistryName().equals(new ResourceLocation("opencomputers", "upgrade"))
                 && stack.getMetadata() == 1;
     }
+
+    @Override
+    public boolean isInstalled(ItemStack stack){
+        return true;
+    }
 }

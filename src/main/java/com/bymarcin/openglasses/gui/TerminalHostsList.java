@@ -2,8 +2,10 @@ package com.bymarcin.openglasses.gui;
 
 import ben_mkiv.guitoolkit.client.widget.prettyElement;
 import ben_mkiv.guitoolkit.client.widget.prettyGuiList;
+import com.bymarcin.openglasses.item.upgrades.UpgradeNavigation;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
-import com.bymarcin.openglasses.utils.OpenGlassesHostClient;
+import com.bymarcin.openglasses.surface.OCClientSurface;
+import com.bymarcin.openglasses.utils.GlassesInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.Tessellator;
@@ -20,25 +22,25 @@ public class TerminalHostsList extends prettyGuiList {
         super(width, height, top, top + height, left, entryHeight, screenWidth, screenHeight);
     }
 
-    class SortOpenGlassesHostClient implements Comparator<OpenGlassesHostClient> {
+    class SortHostClient implements Comparator<GlassesInstance.HostClient> {
         @Override
-        public int compare(OpenGlassesHostClient a, OpenGlassesHostClient b){
-            return a.getUniqueId().compareTo(b.getUniqueId());
+        public int compare(GlassesInstance.HostClient a, GlassesInstance.HostClient b){
+            return a.uuid.compareTo(b.uuid);
         }
     }
 
-    public void add(Collection<OpenGlassesHostClient> hosts){
-        ArrayList<OpenGlassesHostClient> list = new ArrayList<>(hosts);
-        Collections.sort(list, new SortOpenGlassesHostClient());
+    public void add(Collection<GlassesInstance.HostClient> hosts){
+        ArrayList<GlassesInstance.HostClient> list = new ArrayList<>(hosts);
+        Collections.sort(list, new SortHostClient());
 
-        for (OpenGlassesHostClient host : list)
+        for (GlassesInstance.HostClient host : list)
             add(host);
     }
 
-    public void add(OpenGlassesHostClient host){
+    public void add(GlassesInstance.HostClient host){
         HashSet<prettyElement> listElements = new HashSet<>();
 
-        listElements.add(new hostGuiElement.GlassesEventButton(host.getUniqueId(), 170, 10, 60, 20, "clear link", GlassesEventPacket.EventType.CLEAR_LINK));
+        listElements.add(new hostGuiElement.GlassesEventButton(host.uuid, 170, 10, 60, 20, "clear link", GlassesEventPacket.EventType.CLEAR_LINK));
         listElements.add(new renderWorldButton(host));
         listElements.add(new renderOverlayButton(host));
         listElements.add(new worldEventsButton(host));
@@ -46,14 +48,21 @@ public class TerminalHostsList extends prettyGuiList {
 
 
         ArrayList<String> text = new ArrayList<>();
-        if(host.data().terminalName.length() > 0)
-            text.add("host '" + host.data().terminalName + "' ("+host.getUniqueId().toString()+")");
+        if(host.getHost().terminalName.length() > 0)
+            text.add("'" + host.getHost().terminalName + "' ("+host.uuid.toString()+")");
         else
-            text.add("host " + host.getUniqueId().toString());
+            text.add(host.uuid.toString());
 
-        text.add("linked as " + host.data().ownerName);
+        text.add("linked as " + host.ownerName);
 
-        text.add("distance: " + (int) Math.round(host.getRenderPosition(0.5f).distanceTo(Minecraft.getMinecraft().player.getPositionVector())) + " blocks");
+        text.add("distance: " + (int) Math.round(host.getHost().getRenderPosition(0.5f).distanceTo(Minecraft.getMinecraft().player.getPositionVector())) + " blocks");
+
+        boolean renderAbsolute = host.getHost().absoluteRenderPosition;
+
+        text.add("renderposition: " + (renderAbsolute ? "absolute" : "relative"));
+
+        if(renderAbsolute && !UpgradeNavigation.hasUpgrade(OCClientSurface.instance().glasses.get()))
+            text.add("§cworld widgets require navigation upgrade");
 
         elements.put(elementCount, listElements);
         data.put(elementCount, text);
@@ -114,8 +123,8 @@ public class TerminalHostsList extends prettyGuiList {
 
 
     public static class worldEventsButton extends hostGuiElement.hostCheckbox implements hostGuiElement.hostAction {
-        worldEventsButton(OpenGlassesHostClient host){
-            super(host.getUniqueId(), 110, 25, "world events", host.data().sendWorldEvents);
+        worldEventsButton(GlassesInstance.HostClient host){
+            super(host.uuid, 110, 45, "world events", host.sendWorldEvents);
         }
 
         public void clicked() {
@@ -124,8 +133,8 @@ public class TerminalHostsList extends prettyGuiList {
     }
 
     public static class overlayEventsButton extends hostGuiElement.hostCheckbox implements hostGuiElement.hostAction {
-        overlayEventsButton(OpenGlassesHostClient host){
-            super(host.getUniqueId(), 110, 40, "overlay events", host.data().sendOverlayEvents);
+        overlayEventsButton(GlassesInstance.HostClient host){
+            super(host.uuid, 110, 60, "overlay events", host.sendOverlayEvents);
         }
 
         public void clicked() {
@@ -134,8 +143,8 @@ public class TerminalHostsList extends prettyGuiList {
     }
 
     public static class renderWorldButton extends hostGuiElement.hostCheckbox implements hostGuiElement.hostAction {
-        renderWorldButton(OpenGlassesHostClient host){
-            super(host.getUniqueId(), 3, 25, "render world", host.data().renderWorld);
+        renderWorldButton(GlassesInstance.HostClient host){
+            super(host.uuid, 3, 45, "render world", host.renderWorld);
         }
 
         public void clicked() {
@@ -144,8 +153,8 @@ public class TerminalHostsList extends prettyGuiList {
     }
 
     public static class renderOverlayButton extends hostGuiElement.hostCheckbox implements hostGuiElement.hostAction {
-        renderOverlayButton(OpenGlassesHostClient host){
-            super(host.getUniqueId(), 3, 40, "render overlay", host.data().renderOverlay);
+        renderOverlayButton(GlassesInstance.HostClient host){
+            super(host.uuid, 3, 60, "render overlay", host.renderOverlay);
         }
 
         public void clicked() {

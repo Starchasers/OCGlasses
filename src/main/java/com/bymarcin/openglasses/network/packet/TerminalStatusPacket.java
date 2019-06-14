@@ -3,13 +3,14 @@ package com.bymarcin.openglasses.network.packet;
 import java.io.IOException;
 import java.util.UUID;
 
-import com.bymarcin.openglasses.event.glasses.LinkRequest;
+import com.bymarcin.openglasses.OpenGlasses;
+import com.bymarcin.openglasses.gui.GlassesGui;
 import com.bymarcin.openglasses.network.Packet;
 
 import com.bymarcin.openglasses.surface.OCClientSurface;
 import com.bymarcin.openglasses.utils.IOpenGlassesHost;
-import com.bymarcin.openglasses.utils.OpenGlassesHostClient;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.relauncher.Side;
@@ -20,7 +21,7 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 		SYNC_SCREEN_SIZE,
 		ASYNC_SCREEN_SIZES,
 		SET_RENDER_RESOLUTION,
-		LINK_REQUEST
+		NOTIFICATION
 	}
 
 	private TerminalEvent terminalEvent;
@@ -30,8 +31,7 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 	private String terminalName = "";
 
 	private IOpenGlassesHost host;
-	private UUID uuid;
-	private BlockPos pos;
+	private UUID hostUUID;
 
 	public TerminalStatusPacket(TerminalEvent status) {
 		this.terminalEvent = status;
@@ -56,9 +56,8 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 				y = readFloat();
 				break;
 
-			case LINK_REQUEST:
-				uuid = readUUID();
-				pos = new BlockPos(readVec3d());
+			case NOTIFICATION:
+				hostUUID = readUUID();
 		}
 	}
 
@@ -73,9 +72,8 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 				writeFloat(y);
 				break;
 
-			case LINK_REQUEST:
+			case NOTIFICATION:
 				writeUUID(host.getUUID());
-				writeVec3d(host.getRenderPosition());
 				break;
 		}
 	}
@@ -85,19 +83,21 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 	protected IMessage executeOnClient() {
  		switch(terminalEvent){
 			case SET_RENDER_RESOLUTION:
-				OCClientSurface.renderResolution = x > 0 && y > 0 ? new Vec3d(this.x, this.y, 0) : null;
+				if(x > 0 && y > 0)
+					OCClientSurface.instance().setRenderResolution(new Vec3d(this.x, this.y, 0), hostUUID);
 				return null;
 
 			case ASYNC_SCREEN_SIZES:
 				OCClientSurface.instance().sendResolution();
 				return null;
 
-			case LINK_REQUEST:
-				for(OpenGlassesHostClient host : OCClientSurface.instance().getHosts())
-					if(host.getUniqueId().equals(uuid))
-						return null;
+			case NOTIFICATION:
+				ItemStack glassesStack = OpenGlasses.getGlassesStack(Minecraft.getMinecraft().player);
+				if(!glassesStack.isEmpty()) {
+					if(!glassesStack.getTagCompound().hasKey("nopopups") && !(Minecraft.getMinecraft().currentScreen instanceof GlassesGui))
+						Minecraft.getMinecraft().displayGuiScreen(new GlassesGui(true));
+				}
 
-				new LinkRequest(uuid, pos, terminalName);
 				return null;
 		}
 

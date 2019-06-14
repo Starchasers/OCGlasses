@@ -1,7 +1,10 @@
 package com.bymarcin.openglasses.proxy;
 
 import com.bymarcin.openglasses.OpenGlasses;
-import com.bymarcin.openglasses.event.ClientEventHandler;
+import com.bymarcin.openglasses.event.minecraft.client.ClientEventHandler;
+import com.bymarcin.openglasses.event.minecraft.client.ClientKeyboardEvents;
+import com.bymarcin.openglasses.event.minecraft.client.ClientRenderEvents;
+import com.bymarcin.openglasses.event.minecraft.client.ClientWorldInteractionEvents;
 import com.bymarcin.openglasses.manual.ManualPathProvider;
 import com.bymarcin.openglasses.render.BaublesRenderLayer;
 
@@ -18,7 +21,6 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -34,9 +36,13 @@ public class ClientProxy extends CommonProxy {
 	
 	@Override
 	public void init() {
-		OCClientSurface.eventHandler = new ClientEventHandler();
-		MinecraftForge.EVENT_BUS.register(OCClientSurface.eventHandler);
-		MinecraftForge.EVENT_BUS.register(OCClientSurface.instance());  //register client events
+		// 'dynamic' because it has to initialize the keybinds
+		MinecraftForge.EVENT_BUS.register(new ClientKeyboardEvents());
+
+		// static event classes
+		MinecraftForge.EVENT_BUS.register(ClientEventHandler.class);
+		MinecraftForge.EVENT_BUS.register(ClientRenderEvents.class);
+		MinecraftForge.EVENT_BUS.register(ClientWorldInteractionEvents.class);
 	}
 	
 	@Override

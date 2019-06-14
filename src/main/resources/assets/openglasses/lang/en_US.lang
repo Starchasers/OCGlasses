@@ -11,3 +11,4 @@ openglasses.infotext.nolink=NOT LINKED TO TERMINAL
 openglasses.infotext.noenergy=NO POWER
 openglasses.infotext.widgetlimitexhausted=WIDGET LIMIT REACHED, remove widgets to get rid of this message
 openglasses.infotext.linkrequest=accept Link Request from %s at %s
+openglasses.infotext.upgraderequired=upgrade '%s' required

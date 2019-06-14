@@ -6,7 +6,6 @@ import li.cil.oc.api.Network;
 import li.cil.oc.api.network.*;
 
 import li.cil.oc.api.prefab.TileEntityEnvironment;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.Vec3d;
@@ -63,17 +62,6 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 	public OpenGlassesHostComponent getComponent(){
 		return component;
 	}
-
-	@Override
-	public void sync(EntityPlayerMP player){
-		getComponent().sync(player);
-	}
-
-	@Override
-	public String getName(){ return getComponent().getName(); }
-
-	@Override
-	public boolean renderAbsolute(){ return getComponent().renderAbsolute(); }
 
 	@Override
 	public boolean isInternalComponent(){

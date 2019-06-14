@@ -2,7 +2,6 @@ package com.bymarcin.openglasses.gui;
 
 import ben_mkiv.guitoolkit.client.widget.*;
 import com.bymarcin.openglasses.OpenGlasses;
-import com.bymarcin.openglasses.event.glasses.GlassesNotifications;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
@@ -12,28 +11,24 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.IOException;
 import java.text.NumberFormat;
-import java.util.HashSet;
 
 public class GlassesGui extends GuiScreen {
-    public static final int WIDTH = 256;
-    public static final int HEIGHT = 229; //144
+    private static final int WIDTH = 256;
+    private static final int HEIGHT = 229; //144
 
-    int xSize, ySize, guiLeft, guiTop;
+    private int xSize, ySize, guiLeft, guiTop;
 
-    prettyButton acceptLink, denyLink;
-    prettyCheckbox enablePopupNotifications;
+    private prettyCheckbox enablePopupNotifications;
 
-    ItemStack glassesStack = ItemStack.EMPTY;
+    private ItemStack glassesStack = ItemStack.EMPTY;
 
-    TerminalHostsList list;
-    NotificationList notificationList;
+    private TerminalHostsList list;
+    private NotificationList notificationList;
 
-    EnergyBar energyBar;
+    private EnergyBar energyBar;
 
     public static boolean isNotification = false;
 
@@ -53,16 +48,11 @@ public class GlassesGui extends GuiScreen {
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
 
-        addButton(acceptLink = new prettyButton(buttonList.size(), guiLeft + 5, guiTop + 175, 70, 20, "accept"));
-        addButton(denyLink = new prettyButton(buttonList.size(), guiLeft + 80, guiTop + 175, 70, 20, "deny"));
         addButton(enablePopupNotifications = new prettyCheckbox(buttonList.size(), guiLeft + 5, guiTop + 15, "popup notifications", false));
-
         addButton(energyBar = new EnergyBar(buttonList.size(), guiLeft + xSize - 105, guiTop + 5, 100, 7));
 
-        acceptLink.visible = false;
-        denyLink.visible = false;
 
-        list = new TerminalHostsList(245, 100, guiTop + 35, guiLeft + 5, 60, xSize, ySize);
+        list = new TerminalHostsList(245, 100, guiTop + 35, guiLeft + 5, 80, xSize, ySize);
         notificationList = new NotificationList(245, 73, guiTop + 150, guiLeft + 5, 45, xSize, ySize);
         updateScreen();
     }
@@ -71,6 +61,9 @@ public class GlassesGui extends GuiScreen {
     public void drawScreen(int mouseX, int mouseY, float partialTicks){
         drawBackground(0);
 
+        // use the glassesStack from the inventory as the other one doesnt (and shouldnt!) upgrade when energy is used
+        ItemStack playerGlasses = OpenGlasses.getGlassesStack(Minecraft.getMinecraft().player);
+
         list.drawScreen(mouseX, mouseY, partialTicks);
 
         if(notificationList.getSize() > 0)
@@ -78,10 +71,10 @@ public class GlassesGui extends GuiScreen {
 
         super.drawScreen(mouseX, mouseY, partialTicks);
 
-        energyBar.drawBar(0, 0, 1-glassesStack.getItem().getDurabilityForDisplay(glassesStack), null);
+        energyBar.drawBar(0, 0, 1-glassesStack.getItem().getDurabilityForDisplay(playerGlasses), null);
 
         Minecraft.getMinecraft().fontRenderer.drawString("OpenGlasses", guiLeft+5, guiTop+5, 0x0);
-        String energyStored = formatNumber((int) OpenGlassesItem.getEnergyStored(glassesStack)) + " FE";
+        String energyStored = formatNumber((int) OpenGlassesItem.getEnergyStored(playerGlasses)) + " FE";
         Minecraft.getMinecraft().fontRenderer.drawString(energyStored, guiLeft - 5 + xSize - fontRenderer.getStringWidth(energyStored), guiTop+13, 0x0);
 
         String hosts = list.getSize() + " hosts";
@@ -100,7 +93,6 @@ public class GlassesGui extends GuiScreen {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     protected void actionPerformed(GuiButton button) throws IOException {
         if(button instanceof prettyButton){
             if(button.equals(enablePopupNotifications)) {
@@ -131,12 +123,13 @@ public class GlassesGui extends GuiScreen {
             enablePopupNotifications.setEnabled(!glassesStack.getTagCompound().hasKey("nopopups"));
 
             list.clear();
-            list.add(OCClientSurface.instance().getHosts());
+            list.add(OCClientSurface.instance().glasses.getHosts().values());
+
+            notificationList.update();
+
+            ySize = notificationList.getSize() > 0 ? 229 : 144;
         }
 
-        notificationList.update();
-
-        ySize = notificationList.getSize() > 0 ? 229 : 144;
     }
 
     @Override

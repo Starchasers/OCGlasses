@@ -1,6 +1,7 @@
 package com.bymarcin.openglasses.item.upgrades;
 
 import com.bymarcin.openglasses.OpenGlasses;
+import com.bymarcin.openglasses.item.GlassesNBT;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
@@ -9,6 +10,7 @@ import com.bymarcin.openglasses.surface.OCServerSurface;
 import com.bymarcin.openglasses.utils.PlayerStatsOC;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,7 +34,6 @@ public class UpgradeNightvision extends UpgradeItem {
 
         if(!tag.getBoolean("nightvision")) {
             tag.setBoolean("nightvision", true);
-            tag.setInteger("upkeepCost", tag.getInteger("upkeepCost") + getEnergyUsage()); //increase power usage by 1
         }
 
         return stack;
@@ -50,6 +51,11 @@ public class UpgradeNightvision extends UpgradeItem {
 
     public int getEnergyUsageCurrent(ItemStack stack){
         return stack.getTagCompound().getBoolean("nightVisionActive") ? getEnergyUsage() : 1;
+    }
+
+    @Override
+    public boolean isInstalled(ItemStack stack){
+        return hasUpgrade(stack);
     }
 
     @Override
@@ -96,8 +102,6 @@ public class UpgradeNightvision extends UpgradeItem {
             return;
 
         glassesStack.getTagCompound().setInteger("nightvisionMode", mode);
-
-        OpenGlassesItem.upgradeUpkeepCost(glassesStack);
     }
 
     private static boolean shouldEnableNightvision(EntityPlayer player, ItemStack glassesStack){
@@ -135,19 +139,30 @@ public class UpgradeNightvision extends UpgradeItem {
         if(!OpenGlasses.isGlassesStack(glassesStack))
             return;
 
-        PlayerStatsOC stats = (PlayerStatsOC) OCServerSurface.instance().playerStats.get(player.getUniqueID());
+        PlayerStatsOC stats = OCServerSurface.getStats(player);
 
-        if(stats == null)
-            return;
+        boolean wasActive = glassesStack.getTagCompound().getBoolean("nightVisionActive");
 
         if (shouldEnableNightvision(player, glassesStack)){
             player.addPotionEffect(new PotionEffect(potionNightvision, 500, 0, false, false));
             glassesStack.getTagCompound().setBoolean("nightVisionActive", true);
+
+            if(!wasActive) {
+                OpenGlassesItem.upgradeUpkeepCost(glassesStack);
+                GlassesNBT.syncStackNBT(glassesStack, (EntityPlayerMP) player);
+            }
+
             stats.nightVisionActive = true;
         }
         else if(stats.nightVisionActive){
             player.removePotionEffect(potionNightvision);
             glassesStack.getTagCompound().setBoolean("nightVisionActive", false);
+
+            if(wasActive) {
+                OpenGlassesItem.upgradeUpkeepCost(glassesStack);
+                GlassesNBT.syncStackNBT(glassesStack, (EntityPlayerMP) player);
+            }
+
             stats.nightVisionActive = false;
         }
     }

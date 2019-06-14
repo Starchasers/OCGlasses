@@ -15,7 +15,6 @@ public class UpgradeGeolyzer extends UpgradeItem {
 
         if (!tag.getBoolean("geolyzer") || tag.getInteger("radarRange") < 128) {
             tag.setBoolean("geolyzer", true);
-            tag.setInteger("upkeepCost", tag.getInteger("upkeepCost") + getEnergyUsage()); //increase power usage by 1
             tag.setInteger("radarRange", Math.min(tag.getInteger("radarRange") + 16, 128)); //increase radar range by 16 blocks
         }
 
@@ -30,6 +29,16 @@ public class UpgradeGeolyzer extends UpgradeItem {
     @Override
     public int getEnergyUsage(){
         return 1;
+    }
+
+    @Override
+    public int getEnergyUsageCurrent(ItemStack stack){
+        return stack.getTagCompound().getInteger("radarRange")/16 * getEnergyUsage();
+    }
+
+    @Override
+    public boolean isInstalled(ItemStack stack){
+        return hasUpgrade(stack);
     }
 
     @Override

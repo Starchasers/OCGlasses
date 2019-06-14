@@ -6,10 +6,9 @@ import java.util.UUID;
 
 import baubles.api.BaubleType;
 import baubles.api.IBauble;
+import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesHostsNBT;
 import com.bymarcin.openglasses.item.upgrades.*;
 import com.bymarcin.openglasses.manual.IItemWithDocumentation;
-import com.bymarcin.openglasses.network.NetworkRegistry;
-import com.bymarcin.openglasses.network.packet.GlassesStackNBT;
 import com.bymarcin.openglasses.surface.OCClientSurface;
 import com.bymarcin.openglasses.surface.OCServerSurface;
 import net.minecraft.client.Minecraft;
@@ -24,7 +23,6 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.fml.common.Optional;
@@ -84,6 +82,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		glassesTag.setInteger("upkeepCost", 1);  //default to upkeep cost of 1FE / tick
 		glassesTag.setInteger("radarRange", 0);
 		glassesTag.setInteger("Energy", 0);
+		glassesTag.setUniqueId("UUID", UUID.randomUUID());
 		glassesTag.setInteger("EnergyCapacity", 50000); //set the default EnergyBuffer to 50k FE
 	}
 
@@ -98,6 +97,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		creativeTag.setInteger("Energy", 5000000);
 		creativeTag.setInteger("EnergyCapacity", 5000000);
 		creativeTag.setInteger("widgetLimit", 255);
+		creativeTag.setBoolean("isCreative", true);
 		creativeTag.setInteger("radarRange", 128); //set the maximum radar range to 128
 
 		for(UpgradeItem upgrade : upgrades)
@@ -145,7 +145,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		else
 			tooltip.add("use at glassesterminal to link glasses");*/
 
-		tooltip.add("linked to "+getHostsFromNBT(stack).size()+" hosts");
+		tooltip.add("linked to "+ OpenGlassesHostsNBT.getHostsFromNBT(stack).size()+" hosts");
 
 		if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
 			for (UpgradeItem upgrade : upgrades)
@@ -165,8 +165,14 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 
 	public static void upgradeUpkeepCost(ItemStack stack){
 		int upkeepCost = 1;
-		for(UpgradeItem upgrade : upgrades)
-			upkeepCost+=upgrade.getEnergyUsageCurrent(stack);
+
+		if(stack.getTagCompound().getBoolean("isCreative"))
+			upkeepCost = 0;
+		else {
+			for (UpgradeItem upgrade : upgrades)
+				if(upgrade.isInstalled(stack))
+					upkeepCost += upgrade.getEnergyUsageCurrent(stack);
+		}
 
 		stack.getTagCompound().setInteger("upkeepCost", upkeepCost);
 	}
@@ -175,97 +181,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		return "Glasses";
 	}
 
-	public static void link(ItemStack glassesStack, UUID hostUUID, EntityPlayer player) {
-		if(player.world.isRemote)
-		    return;
 
-	    NBTTagCompound newTag = new NBTTagCompound();
-
-		newTag.setUniqueId("host", hostUUID);
-		newTag.setUniqueId("userUUID", player.getGameProfile().getId());
-		newTag.setString("user", player.getGameProfile().getName());
-
-		HashSet<NBTTagCompound> hosts = getHostsFromNBT(glassesStack);
-		hosts.add(newTag);
-		writeHostsToNBT(hosts, glassesStack);
-
-		syncStackNBT(glassesStack, (EntityPlayerMP) player);
-		OCServerSurface.instance().subscribePlayer((EntityPlayerMP) player, hostUUID);
-	}
-
-	public static void unlink(UUID uuid, ItemStack glassesStack, EntityPlayer player) {
-		if(player.world.isRemote)
-			return;
-
-		HashSet<NBTTagCompound> hosts = getHostsFromNBT(glassesStack);
-		hosts.remove(getHostFromNBT(uuid, glassesStack));
-		writeHostsToNBT(hosts, glassesStack);
-
-		syncStackNBT(glassesStack, (EntityPlayerMP) player);
-		OCServerSurface.instance().unsubscribePlayer(player.getUniqueID());
-	}
-
-	public static NBTTagCompound getHostFromNBT(UUID hostUUID, ItemStack glassesStack){
-		if(glassesStack.isEmpty())
-			return null;
-
-		HashSet<NBTTagCompound> hosts = getHostsFromNBT(glassesStack);
-		for(NBTTagCompound hostNBT : hosts)
-			if(hostNBT.getUniqueId("host").equals(hostUUID))
-				return hostNBT;
-
-		return null;
-	}
-
-	private static void writeHostsToNBT(HashSet<NBTTagCompound> hosts, ItemStack glassesStack){
-		int i=0;
-		NBTTagCompound hostsNBT = new NBTTagCompound();
-		for(NBTTagCompound tag : hosts)
-			hostsNBT.setTag("host"+i++, tag);
-		glassesStack.getTagCompound().setTag("hosts", hostsNBT);
-	}
-
-	public static void writeHostToNBT(ItemStack glassesStack, NBTTagCompound hostNBT){
-		HashSet<NBTTagCompound> hosts = getHostsFromNBT(glassesStack);
-		for(NBTTagCompound host : hosts)
-			if(host.getUniqueId("host").equals(hostNBT.getUniqueId("host"))) {
-				hosts.remove(host);
-				break;
-			}
-
-		hosts.add(hostNBT);
-		writeHostsToNBT(hosts, glassesStack);
-	}
-
-	public static HashSet<NBTTagCompound> getHostsFromNBT(ItemStack glassesStack){
-		HashSet<NBTTagCompound> hosts = new HashSet<>();
-
-		NBTTagCompound tag = glassesStack.getTagCompound();
-		if(tag.hasKey("hosts")) {
-			NBTTagCompound nbt = tag.getCompoundTag("hosts");
-			for (int i = 0; nbt.hasKey("host" + i); i++)
-				hosts.add(nbt.getCompoundTag("host" + i));
-		}
-		return hosts;
-	}
-
-	public static void setConfigFlag(String flagName, boolean enabled, ItemStack glassesStack, EntityPlayerMP player){
-		if(player.world.isRemote)
-			return;
-
-		// config flags default to true if the tag doesnt exist, so tags are only set to DISABLE features
-
-		if(enabled)
-    		glassesStack.getTagCompound().removeTag(flagName);
-    	else
-			glassesStack.getTagCompound().setBoolean(flagName, true);
-
-		syncStackNBT(glassesStack, player);
-	}
-
-	public static void syncStackNBT(ItemStack glassesStack, EntityPlayerMP player){
-		NetworkRegistry.packetHandler.sendTo(new GlassesStackNBT(glassesStack), player);
-	}
 
 	// Forge Energy
 	@Override
@@ -388,7 +304,32 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 	public boolean willAutoSync(ItemStack itemstack, EntityLivingBase player) { return true; }
 
 	@Override
-	@SideOnly(Side.SERVER)
+	@Optional.Method(modid="baubles")
+	public void onEquipped(ItemStack itemstack, EntityLivingBase player) {
+		if(player.getEntityWorld().isRemote) {
+			if(player.equals(Minecraft.getMinecraft().player))
+				OCClientSurface.instance().equipmentChanged(itemstack);
+			return;
+		}
+
+		if(player instanceof EntityPlayerMP)
+			OCServerSurface.equipmentChanged((EntityPlayerMP) player, itemstack);
+	}
+
+	@Override
+	@Optional.Method(modid="baubles")
+	public void onUnequipped(ItemStack itemstack, EntityLivingBase player) {
+		if(player.getEntityWorld().isRemote) {
+			if(player.equals(Minecraft.getMinecraft().player))
+				OCClientSurface.instance().equipmentChanged(itemstack);
+			return;
+		}
+
+		if(player instanceof EntityPlayerMP)
+			OCServerSurface.equipmentChanged((EntityPlayerMP) player, ItemStack.EMPTY);
+	}
+
+	@Override
 	@Optional.Method(modid="baubles")
 	public void onWornTick(ItemStack itemstack, EntityLivingBase player){ consumeEnergy(itemstack); }
 

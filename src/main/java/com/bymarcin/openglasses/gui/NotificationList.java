@@ -2,50 +2,47 @@ package com.bymarcin.openglasses.gui;
 
 import ben_mkiv.guitoolkit.client.widget.prettyElement;
 import ben_mkiv.guitoolkit.client.widget.prettyGuiList;
-import com.bymarcin.openglasses.event.glasses.GlassesNotifications;
-import com.bymarcin.openglasses.event.glasses.LinkRequest;
+import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesNotificationsNBT;
+import com.bymarcin.openglasses.network.NetworkRegistry;
+import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
+import com.bymarcin.openglasses.surface.OCClientSurface;
+import com.bymarcin.openglasses.utils.OpenGlassesHostClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-
-import static com.bymarcin.openglasses.event.glasses.GlassesNotifications.notifications;
+import java.util.UUID;
 
 public class NotificationList extends prettyGuiList {
 
-    ArrayList<GlassesNotifications.GlassesNotification> elements = new ArrayList<>();
     ArrayList<ArrayList<prettyElement>> guiElements = new ArrayList<>();
+    ArrayList<NBTTagCompound> elements = new ArrayList<>();
+
 
     public NotificationList(int width, int height, int top, int left, int entryHeight, int screenWidth, int screenHeight) {
         super(width, height, top, top + height, left, entryHeight, screenWidth, screenHeight);
     }
 
     public void update(){
-        //avoid concurrent modifications
-        HashSet<GlassesNotifications.GlassesNotification> tempList = new HashSet<>();
-        tempList.addAll(GlassesNotifications.notifications);
-
-        for(GlassesNotifications.GlassesNotification notification : tempList){
-            notification.update();
-        }
-
-        if(elements.equals(notifications))
+        if(elements.equals(OpenGlassesNotificationsNBT.getNotifications(OCClientSurface.instance().glasses.get())))
             return;
+
 
         elements.clear();
         guiElements.clear();
 
-        for(GlassesNotifications.GlassesNotification notification : notifications) {
-            elements.add(notification);
+        elements.addAll(OpenGlassesNotificationsNBT.getNotifications(OCClientSurface.instance().glasses.get()));
 
-
+        for(NBTTagCompound tag : elements) {
             ArrayList<prettyElement> listElements = new ArrayList<>();
 
-            if(notification instanceof LinkRequest) {
-                listElements.add(new LinkRequestButton((LinkRequest) notification,  0, 22, 60, 20, "accept link", true));
-                listElements.add(new LinkRequestButton((LinkRequest) notification, 60, 22, 60, 20, "deny link", false));
+            switch(OpenGlassesNotificationsNBT.NotifiactionType.values()[tag.getInteger("type")]) {
+                case LINKREQUEST:
+                    listElements.add(new LinkRequestButton(tag,  0, 22, 60, 20, "accept link", true));
+                    listElements.add(new LinkRequestButton(tag, 60, 22, 60, 20, "deny link", false));
+                    break;
             }
 
             guiElements.add(listElements);
@@ -54,12 +51,10 @@ public class NotificationList extends prettyGuiList {
 
     class LinkRequestButton extends hostGuiElement.hostButton implements hostGuiElement.hostAction {
         boolean acceptLinkRequest;
-        LinkRequest linkRequest;
 
-        public LinkRequestButton(LinkRequest linkRequest, int x, int y, int width, int height, String label, boolean acceptLink){
-            super(linkRequest.host, x, y, width, height, label);
+        public LinkRequestButton(NBTTagCompound tag, int x, int y, int width, int height, String label, boolean acceptLink){
+            super(tag.getUniqueId("host"), x, y, width, height, label);
             acceptLinkRequest = acceptLink;
-            this.linkRequest = linkRequest;
         }
 
         @Override
@@ -68,9 +63,9 @@ public class NotificationList extends prettyGuiList {
                 return;
 
             if(acceptLinkRequest)
-                linkRequest.submit();
+                NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(getUniqueId(), GlassesEventPacket.EventType.ACCEPT_LINK));
             else
-                linkRequest.cancel();
+                NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(getUniqueId(), GlassesEventPacket.EventType.DENY_LINK));
         }
     }
 
@@ -82,8 +77,12 @@ public class NotificationList extends prettyGuiList {
 
     @Override
     protected void drawSlot(int slotIdx, int entryRight, int slotTop, int slotBuffer, Tessellator tess) {
-        if(elements.get(slotIdx) instanceof LinkRequest)
-            drawLinkRequest((LinkRequest) elements.get(slotIdx), slotTop, isSelected(slotIdx));
+
+        switch(OpenGlassesNotificationsNBT.NotifiactionType.values()[elements.get(slotIdx).getInteger("type")]) {
+            case LINKREQUEST:
+                drawLinkRequest(elements.get(slotIdx), slotTop, isSelected(slotIdx));
+                break;
+        }
 
         Minecraft mc = Minecraft.getMinecraft();
 
@@ -109,18 +108,21 @@ public class NotificationList extends prettyGuiList {
     }
 
 
-    void drawLinkRequest(LinkRequest linkRequest, int slotTop, boolean isSelected){
-        int distance = linkRequest.getDistance(Minecraft.getMinecraft().player.getPositionVector());
+    void drawLinkRequest(NBTTagCompound tag, int slotTop, boolean isSelected){
+        UUID hostUUID = tag.getUniqueId("host");
+        OpenGlassesHostClient host = OCClientSurface.instance().getHost(hostUUID);
+        int distance = (int) Math.ceil(Minecraft.getMinecraft().player.getPositionVector().distanceTo(host.getRenderPosition(0.5f)));
+
         String text = "link request";
 
-        if(linkRequest.hostName.length() > 0)
-            text+=" from '"+linkRequest.hostName+"'";
+        if(host.terminalName.length() > 0)
+            text+=" from '"+host.terminalName+"'";
 
         text+=" (distance: "+ distance +" blocks)";
 
         int textColor = isSelected ? 0xFFFFFF : 0xDADADA;
 
         Minecraft.getMinecraft().fontRenderer.drawString(text, left + 3, slotTop + 2, textColor);
-        Minecraft.getMinecraft().fontRenderer.drawString(linkRequest.host.toString(), left + 3, slotTop + 13, textColor);
+        Minecraft.getMinecraft().fontRenderer.drawString(hostUUID.toString(), left + 3, slotTop + 13, textColor);
     }
 }

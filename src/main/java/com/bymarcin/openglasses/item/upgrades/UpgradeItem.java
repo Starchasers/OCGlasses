@@ -1,5 +1,6 @@
 package com.bymarcin.openglasses.item.upgrades;
 
+import com.bymarcin.openglasses.item.OpenGlassesItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.AnvilUpdateEvent;
@@ -13,8 +14,13 @@ public abstract class UpgradeItem {
 
     public void handleAnvilEvent(AnvilUpdateEvent evt) {
         if (isUpgradeItem(evt.getRight())) {
+            // add upgrade to the input item
+            ItemStack output = install(evt.getLeft().copy());
+            // update energy usage
+            OpenGlassesItem.upgradeUpkeepCost(output);
+            evt.setOutput(output);
+            // set anvil experience cost
             evt.setCost(getUpgradeExperienceCost());
-            evt.setOutput(install(evt.getLeft().copy()));
         }
     }
 
@@ -32,6 +38,8 @@ public abstract class UpgradeItem {
     public int getEnergyUsageCurrent(ItemStack stack){
         return getEnergyUsage();
     }
+
+    public abstract boolean isInstalled(ItemStack stack);
 
     public List<String> getTooltip(ItemStack stack){
         return new ArrayList<>();

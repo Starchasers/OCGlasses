@@ -15,7 +15,6 @@ public class UpgradeTank extends UpgradeItem {
 
         if(!tag.getBoolean("tankUpgrade")) {
             tag.setBoolean("tankUpgrade", true);
-            tag.setInteger("upkeepCost", tag.getInteger("upkeepCost") + getEnergyUsage()); //increase power usage by 1
         }
 
         return stack;
@@ -40,6 +39,11 @@ public class UpgradeTank extends UpgradeItem {
 
     public static boolean hasUpgrade(ItemStack stack){
         return stack.hasTagCompound() && stack.getTagCompound().getBoolean("tankUpgrade");
+    }
+
+    @Override
+    public boolean isInstalled(ItemStack stack){
+        return hasUpgrade(stack);
     }
 
     @Override

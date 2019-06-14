@@ -15,7 +15,6 @@ public class UpgradeMotionSensor extends UpgradeItem {
 
         if(!tag.getBoolean("motionsensor")){
             tag.setBoolean("motionsensor", true);
-            tag.setInteger("upkeepCost", tag.getInteger("upkeepCost")+getEnergyUsage()); //increase power usage by 1
         }
         return stack;
     }
@@ -37,6 +36,11 @@ public class UpgradeMotionSensor extends UpgradeItem {
 
     public static boolean hasUpgrade(ItemStack stack){
         return stack.hasTagCompound() && stack.getTagCompound().getBoolean("motionsensor");
+    }
+
+    @Override
+    public boolean isInstalled(ItemStack stack){
+        return hasUpgrade(stack);
     }
 
     @Override

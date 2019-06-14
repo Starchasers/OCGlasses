@@ -8,7 +8,9 @@ import ben_mkiv.rendertoolkit.common.widgets.core.attribute.IAttribute;
 import ben_mkiv.rendertoolkit.network.messages.WidgetUpdatePacket;
 import ben_mkiv.rendertoolkit.network.rTkNetwork;
 import com.bymarcin.openglasses.OpenGlasses;
-import com.bymarcin.openglasses.item.OpenGlassesItem;
+import com.bymarcin.openglasses.item.GlassesNBT;
+import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesHostsNBT;
+import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesNotificationsNBT;
 import com.bymarcin.openglasses.lib.McJty.font.TrueTypeFont;
 import com.bymarcin.openglasses.lua.AttributeRegistry;
 import com.bymarcin.openglasses.lua.LuaReference;
@@ -19,7 +21,6 @@ import com.bymarcin.openglasses.surface.OCServerSurface;
 import com.bymarcin.openglasses.utils.IOpenGlassesHost;
 import com.bymarcin.openglasses.utils.PlayerStatsOC;
 import li.cil.oc.api.API;
-import li.cil.oc.api.Network;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
@@ -140,6 +141,7 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
 
     public void onGlassesPutOff(EntityPlayerMP player){
         if(node() == null) return;
+        rTkNetwork.sendTo(new WidgetUpdatePacket(getUUID()), player);
         node().sendToReachable("computer.signal","glasses_off", player.getDisplayNameString());
     }
 
@@ -167,6 +169,7 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
     }
 
     private boolean requestLink(EntityPlayerMP player){
+        // check if player is in range of the terminal
         if(environmentHost.getRenderPosition().distanceTo(player.getPositionVector()) > 64)
             return false;
 
@@ -174,12 +177,19 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
         if(glasses.isEmpty())
             return false;
 
-        if(OpenGlassesItem.getHostFromNBT(getUUID(), glasses) != null)
+        // check if glasses are already linked to the host
+        if(OpenGlassesHostsNBT.getHostFromNBT(getUUID(), glasses) != null)
             return false;
 
-        linkRequests.put(player, environmentHost.getUUID());
+        // check if linkrequest was already send
+        if(OpenGlassesNotificationsNBT.getLinkRequest(glasses, environmentHost.getUUID()) != null)
+            return false;
 
-        NetworkRegistry.packetHandler.sendTo(new TerminalStatusPacket(TerminalStatusPacket.TerminalEvent.LINK_REQUEST, environmentHost), player);
+        // actually add the request to the glasses NBT, sync the stack to the client and notify the client about a new notification... (sounds weird... uhmmm probably is)
+        OpenGlassesNotificationsNBT.addLinkRequest(glasses, environmentHost.getUUID());
+        GlassesNBT.syncStackNBT(glasses, player);
+        NetworkRegistry.packetHandler.sendTo(new TerminalStatusPacket(TerminalStatusPacket.TerminalEvent.NOTIFICATION, environmentHost), player);
+
         return true;
     }
 
@@ -205,7 +215,7 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
                 continue;
 
 
-            OCServerSurface.instances.requestResolutionEvent(player);
+            OCServerSurface.instances.requestResolutionEvent(player, getUUID());
             i++;
         }
         return new Object[]{ i };
@@ -215,6 +225,8 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
     public Object[] setRenderResolution(Context context, Arguments args) {
         TerminalStatusPacket packet = new TerminalStatusPacket(TerminalStatusPacket.TerminalEvent.SET_RENDER_RESOLUTION);
         String user = "";
+
+        double x,y;
 
         if(args.count() == 3) {
             user = args.checkString(0).toLowerCase();
@@ -233,11 +245,13 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
         }
 
         int i=0;
-        for(EntityPlayerMP player : getConnectedPlayers()){
+        for(EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers()){
             if(user.length() > 0 && !user.equals(player.getDisplayNameString().toLowerCase()))
                 continue;
 
             NetworkRegistry.packetHandler.sendTo(packet, player);
+
+            OpenGlassesHostsNBT.setRenderResolution(new Vec3d(packet.x, packet.y, 0), OpenGlasses.getGlassesStack(player), getUUID());
             i++;
         }
         return new Object[]{ i };
@@ -453,6 +467,7 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
         nbt.setUniqueId("uuid", uuid);
         nbt.setBoolean("absoluteRenderPosition", absoluteRenderPosition);
 
+
         if(node() != null) {
             NBTTagCompound nodeTag = new NBTTagCompound();
             node().save(nodeTag);
@@ -481,18 +496,17 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
     public void remove() {
         widgets.clear();
 
-        if (!getHost().world().isRemote) {
-            if (!getHost().world().isRemote) {
-                for (Map.Entry<UUID, HashSet<UUID>> entry : OCServerSurface.instance().players.entrySet())
-                    if (entry.getValue().contains(getUUID())) {
-                        EntityPlayer player = OpenGlasses.proxy.getPlayer(entry.getKey());
-                        if (player instanceof EntityPlayerMP)
-                            syncWidgets((EntityPlayerMP) player);
-                    }
+        if (getHost() != null && !getHost().world().isRemote) {
+            for (Map.Entry<UUID, HashSet<UUID>> entry : OCServerSurface.instance().players.entrySet())
+                if (entry.getValue().contains(getUUID())) {
+                    EntityPlayer player = OpenGlasses.proxy.getPlayer(entry.getKey());
+                    if (player instanceof EntityPlayerMP)
+                        syncWidgets((EntityPlayerMP) player);
+                }
 
-                //OCServerSurface.removeHost(getUUID());
-                addedToServerSurface = false;
-            }
+            //OCServerSurface.removeHost(getUUID());
+            addedToServerSurface = false;
+
         }
 
         if (node() != null)
@@ -518,7 +532,7 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
     }
 
     private void syncHostInfo(){
-        for(EntityPlayerMP player : getConnectedPlayers())
+        for(EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers())
             syncHostInfo(player);
     }
 
@@ -530,4 +544,5 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
     public void syncWidgets(EntityPlayerMP player){
         OCServerSurface.instances.sendSync(getUUID(), player, widgets.list);
     }
+
 }

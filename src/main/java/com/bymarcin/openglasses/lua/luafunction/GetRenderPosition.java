@@ -20,7 +20,8 @@ public class GetRenderPosition extends LuaFunction{
             String playerName = arguments.checkString(0);
             EntityPlayer player = OpenGlasses.proxy.getPlayer(playerName);
             Conditions conditions = new Conditions();
-            conditions.getConditionStates(OpenGlasses.getGlassesStack(player), player);
+            conditions.getConditionStates(player);
+            conditions.bufferSensors(OpenGlasses.getGlassesStack(player));
             //widget.updateRenderPosition(conditions.get());
             //Vec3d renderPosition = widget.getRenderPosition(playerName);
             Vec3d renderPosition = new Vec3d(0, 0, 0);

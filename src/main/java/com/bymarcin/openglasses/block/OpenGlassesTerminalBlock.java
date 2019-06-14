@@ -1,7 +1,9 @@
 package com.bymarcin.openglasses.block;
 
 import com.bymarcin.openglasses.OpenGlasses;
+import com.bymarcin.openglasses.item.GlassesNBT;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
+import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesHostsNBT;
 import com.bymarcin.openglasses.manual.IBlockWithDocumentation;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 
@@ -64,7 +66,7 @@ public class OpenGlassesTerminalBlock extends BlockContainer implements IBlockWi
 		if (!glassesStack.isEmpty()) {
 			Item item = glassesStack.getItem();
 			if (item instanceof OpenGlassesItem) {
-				OpenGlassesItem.link(glassesStack, te.getUUID(), player);
+				OpenGlassesHostsNBT.link(glassesStack, te.getUUID(), player);
 				return true;
 			}
 		}

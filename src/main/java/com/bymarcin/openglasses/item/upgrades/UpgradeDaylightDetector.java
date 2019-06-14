@@ -16,7 +16,6 @@ public class UpgradeDaylightDetector  extends UpgradeItem {
 
         if(!tag.getBoolean("daylightDetector")) {
             tag.setBoolean("daylightDetector", true);
-            tag.setInteger("upkeepCost", tag.getInteger("upkeepCost") + getEnergyUsage()); //increase power usage by 1
         }
 
         return stack;
@@ -39,6 +38,11 @@ public class UpgradeDaylightDetector  extends UpgradeItem {
 
     public static boolean hasUpgrade(ItemStack stack){
         return stack.hasTagCompound() && stack.getTagCompound().getBoolean("daylightDetector");
+    }
+
+    @Override
+    public boolean isInstalled(ItemStack stack){
+        return hasUpgrade(stack);
     }
 
     @Override

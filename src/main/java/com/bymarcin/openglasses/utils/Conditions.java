@@ -2,31 +2,32 @@ package com.bymarcin.openglasses.utils;
 
 import ben_mkiv.commons0815.utils.utilsCommon;
 import ben_mkiv.rendertoolkit.common.widgets.WidgetModifierConditionType;
+import com.bymarcin.openglasses.item.upgrades.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 
 public class Conditions {
-    private boolean hasMotionSensor, hasGeolyzer, hasLightSensor, hasRainSensor;
+    private boolean hasMotionSensor;
+    private boolean hasGeolyzer;
+    private boolean hasLightSensor;
+    private boolean hasRainSensor;
+    public boolean hasNavigation;
     private boolean overlayActive = false;
 
     private long lastExtendedConditionCheck = 0;
     private long conditionStates = 0L;
 
     public void bufferSensors(ItemStack glassesStack){
-        NBTTagCompound tag = glassesStack.getTagCompound();
-        if(tag == null) return;
-
-        this.hasMotionSensor = tag.getBoolean("motionsensor");
-        this.hasGeolyzer = tag.getBoolean("geolyzer");
-        this.hasRainSensor = tag.getBoolean("tankUpgrade");
-        this.hasLightSensor = tag.getBoolean("daylightDetector");
+        hasMotionSensor = UpgradeMotionSensor.hasUpgrade(glassesStack);
+        hasGeolyzer = UpgradeGeolyzer.hasUpgrade(glassesStack);
+        hasRainSensor = UpgradeTank.hasUpgrade(glassesStack);
+        hasLightSensor = UpgradeDaylightDetector.hasUpgrade(glassesStack);
+        hasNavigation = UpgradeNavigation.hasUpgrade(glassesStack);
     }
 
-    public long getConditionStates(ItemStack glassesStack, EntityPlayer player){
+    public long getConditionStates(EntityPlayer player){
         long curConditionStates = 0;
         long checkConditions = ~0;
-        NBTTagCompound tag = glassesStack.getTagCompound();
 
         if(overlayActive)
             curConditionStates |= ((long) 1 << WidgetModifierConditionType.OVERLAY_ACTIVE);

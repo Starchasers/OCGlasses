@@ -36,4 +36,9 @@ public class UpgradeDatabase1 extends UpgradeItem {
         return !stack.isEmpty() && stack.getItem().getRegistryName().equals(new ResourceLocation("opencomputers", "upgrade"))
                 && stack.getMetadata() == 12;
     }
+
+    @Override
+    public boolean isInstalled(ItemStack stack){
+        return true;
+    }
 }
