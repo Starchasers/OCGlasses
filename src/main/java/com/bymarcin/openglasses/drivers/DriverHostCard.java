@@ -1,6 +1,6 @@
 package com.bymarcin.openglasses.drivers;
 
-import com.bymarcin.openglasses.component.OpenGlassesHostItem;
+import com.bymarcin.openglasses.component.OpenGlassesHostComponent;
 import com.bymarcin.openglasses.item.OpenGlassesHostCard;
 import li.cil.oc.api.driver.item.Slot;
 import li.cil.oc.api.network.EnvironmentHost;
@@ -17,7 +17,7 @@ public class DriverHostCard extends DriverItem {
 
     @Override
     public ManagedEnvironment createEnvironment(ItemStack stack, EnvironmentHost container) {
-        return new OpenGlassesHostItem(container);
+        return new OpenGlassesHostComponent(container);
     }
 
     @Override

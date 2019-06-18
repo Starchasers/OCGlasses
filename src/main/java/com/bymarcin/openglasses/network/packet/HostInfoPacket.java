@@ -1,8 +1,9 @@
 package com.bymarcin.openglasses.network.packet;
 
+import com.bymarcin.openglasses.component.OpenGlassesHostComponent;
 import com.bymarcin.openglasses.network.Packet;
 import com.bymarcin.openglasses.surface.OCClientSurface;
-import com.bymarcin.openglasses.utils.IOpenGlassesHost;
+import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
 import com.bymarcin.openglasses.utils.OpenGlassesHostClient;
 import li.cil.oc.api.internal.Case;
 import li.cil.oc.api.internal.Microcontroller;
@@ -21,7 +22,6 @@ import java.util.UUID;
 import static com.bymarcin.openglasses.utils.OpenGlassesHostClient.renderOffsetRobotCaseMicroController;
 
 public class HostInfoPacket extends Packet<HostInfoPacket, IMessage> {
-    private boolean isInternal;
     private Vec3d position;
     private int entityID = -1;
     private UUID hostUUID, entityUUID;
@@ -33,23 +33,18 @@ public class HostInfoPacket extends Packet<HostInfoPacket, IMessage> {
 
     private HostType hostType = HostType.TERMINAL;
 
-    public HostInfoPacket(IOpenGlassesHost host) {
-        isInternal = host.isInternalComponent();
+    public HostInfoPacket(OpenGlassesHostComponent host) {
         name = host.getName();
         hostUUID = host.getUUID();
         renderAbsolute = host.renderAbsolute();
 
-        if(!isInternal){
-            position = host.getRenderPosition();
-            hostType = HostType.TERMINAL;
-            return;
-        }
-
         EnvironmentHost realHost = host.getHost();
 
-        position = new Vec3d(realHost.xPosition(), realHost.yPosition(), realHost.zPosition());
+        position = host.getRenderPosition();
 
-        if(realHost instanceof Robot)
+        if(realHost instanceof OpenGlassesTerminalTileEntity)
+            hostType = HostType.TERMINAL;
+        else if(realHost instanceof Robot)
             hostType = HostType.ROBOT;
         else if(realHost instanceof Case)
             hostType = HostType.CASE;
@@ -84,7 +79,6 @@ public class HostInfoPacket extends Packet<HostInfoPacket, IMessage> {
         name = readString();
 
         renderAbsolute = readBoolean();
-        isInternal = readBoolean();
         hostType = HostType.values()[readInt()];
         position = readVec3d();
 
@@ -109,7 +103,6 @@ public class HostInfoPacket extends Packet<HostInfoPacket, IMessage> {
         writeUUID(hostUUID);
         writeString(name);
         writeBoolean(renderAbsolute);
-        writeBoolean(isInternal);
         writeInt(hostType.ordinal());
         writeVec3d(position);
 
@@ -136,7 +129,6 @@ public class HostInfoPacket extends Packet<HostInfoPacket, IMessage> {
 
         clientHost.renderEntity = null;
         clientHost.absoluteRenderPosition = renderAbsolute;
-        clientHost.isInternal = isInternal;
         clientHost.hostType = hostType;
         clientHost.renderPosition = position;
 

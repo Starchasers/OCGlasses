@@ -22,7 +22,6 @@ import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.HostInfoPacket;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
 import com.bymarcin.openglasses.surface.OCServerSurface;
-import com.bymarcin.openglasses.utils.IOpenGlassesHost;
 import com.bymarcin.openglasses.utils.PlayerStatsOC;
 import li.cil.oc.api.API;
 import li.cil.oc.api.machine.Arguments;
@@ -51,22 +50,27 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
     private boolean addedToServerSurface = false;
 
     private WidgetServer widgets;
-    private IOpenGlassesHost environmentHost;
+    private EnvironmentHost environmentHost;
 
 
     public static HashMap<EntityPlayer, UUID> linkRequests = new HashMap<>();
 
     public EnvironmentHost getHost(){
-        return environmentHost.getHost();
+        return environmentHost;
     }
 
-    public OpenGlassesHostComponent(IOpenGlassesHost openGlassesHost){
+    public OpenGlassesHostComponent(EnvironmentHost container){
         uuid = UUID.randomUUID();
         widgets = new WidgetServer(this);
-        environmentHost = openGlassesHost;
+        environmentHost = container;
 
         setupNode();
     }
+
+    public Vec3d getRenderPosition(){
+        return new Vec3d(environmentHost.xPosition(), environmentHost.yPosition(), environmentHost.zPosition());
+    }
+
 
     void setupNode(){
         if(this.node() == null || this.node().network() == null)
@@ -76,18 +80,18 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
     public void sendInteractEventWorldBlock(String eventType, String name, Vec3d playerPos, Vec3d look, double eyeh, BlockPos pos, EnumFacing face, double playerRotation, double playerPitch){
         if(node() == null) return;
         node().sendToReachable("computer.signal", eventType.toLowerCase(), name,
-                Math.round((playerPos.x - environmentHost.getRenderPosition().x)*1000)/1000d,
-                Math.round((playerPos.y - environmentHost.getRenderPosition().y)*1000)/1000d,
-                Math.round((playerPos.z - environmentHost.getRenderPosition().z)*1000)/1000d,
-                look.x, look.y, look.z, eyeh, pos.getX() - environmentHost.getRenderPosition().x, pos.getY() - environmentHost.getRenderPosition().y, pos.getZ() - environmentHost.getRenderPosition().z, face.getName(), playerRotation, playerPitch, EnumFacing.fromAngle(playerRotation).getName());
+                Math.round((playerPos.x - environmentHost.xPosition())*1000)/1000d,
+                Math.round((playerPos.y - environmentHost.yPosition())*1000)/1000d,
+                Math.round((playerPos.z - environmentHost.zPosition())*1000)/1000d,
+                look.x, look.y, look.z, eyeh, pos.getX() - environmentHost.xPosition(), pos.getY() - environmentHost.yPosition(), pos.getZ() - environmentHost.zPosition(), face.getName(), playerRotation, playerPitch, EnumFacing.fromAngle(playerRotation).getName());
     }
 
     public void sendInteractEventWorld(String eventType, String name, Vec3d playerPos, Vec3d look, double eyeh, double playerRotation, double playerPitch){
         if(node() == null) return;
         node().sendToReachable("computer.signal", eventType.toLowerCase(), name,
-                Math.round((playerPos.x - environmentHost.getRenderPosition().x)*1000)/1000d,
-                Math.round((playerPos.y - environmentHost.getRenderPosition().y)*1000)/1000d,
-                Math.round((playerPos.z - environmentHost.getRenderPosition().z)*1000)/1000d,
+                Math.round((playerPos.x - environmentHost.xPosition())*1000)/1000d,
+                Math.round((playerPos.y - environmentHost.yPosition())*1000)/1000d,
+                Math.round((playerPos.z - environmentHost.zPosition())*1000)/1000d,
                 look.x, look.y, look.z, eyeh, playerRotation, playerPitch, EnumFacing.fromAngle(playerRotation).getName());
     }
 
@@ -107,7 +111,7 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
 
     private void addToSurface(){
         if(!addedToServerSurface) {
-            OCServerSurface.addHost(environmentHost);
+            OCServerSurface.addHost(this);
             addedToServerSurface = true;
         }
     }
@@ -177,7 +181,7 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
 
     private boolean requestLink(EntityPlayerMP player){
         // check if player is in range of the terminal
-        if(environmentHost.getRenderPosition().distanceTo(player.getPositionVector()) > 64)
+        if(getRenderPosition().distanceTo(player.getPositionVector()) > 64)
             return false;
 
         ItemStack glasses = OpenGlasses.getGlassesStack(player);
@@ -189,11 +193,11 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
             return false;
 
         // check if linkrequest was already send
-        if(OpenGlassesNotificationsNBT.getLinkRequest(glasses, environmentHost.getUUID()) != null)
+        if(OpenGlassesNotificationsNBT.getLinkRequest(glasses, getUUID()) != null)
             return false;
 
         // actually add the request to the glasses NBT, sync the stack to the client and notify the client about a new notification... (sounds weird... uhmmm probably is)
-        OpenGlassesNotificationsNBT.addLinkRequest(glasses, environmentHost.getUUID());
+        OpenGlassesNotificationsNBT.addLinkRequest(glasses, getUUID());
         GlassesNBT.syncStackNBT(glasses, player);
         NetworkRegistry.packetHandler.sendTo(new TerminalStatusPacket(TerminalStatusPacket.TerminalEvent.NOTIFICATION, getUUID()), player);
 
@@ -236,12 +240,12 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
 
         if(args.count() == 3) {
             user = args.checkString(0).toLowerCase();
-            packet.x = (float) args.checkDouble(1);
-            packet.y = (float) args.checkDouble(2);
+            x = args.checkDouble(1);
+            y = args.checkDouble(2);
         }
         else if(args.count() == 2) {
-            packet.x = (float) args.checkDouble(0);
-            packet.y = (float) args.checkDouble(1);
+            x = args.checkDouble(0);
+            y = args.checkDouble(1);
         }
         else{
             if(args.count() < 2)
@@ -250,6 +254,9 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
                 return new Object[]{ false, "too many arguments specified" };
         }
 
+        packet.x = (float) x;
+        packet.y = (float) y;
+
         int i=0;
         for(EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers()){
             if(user.length() > 0 && !user.equals(player.getDisplayNameString().toLowerCase()))
@@ -257,7 +264,7 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
 
             if(OCServerSurface.instance().isSubscribedTo(player.getUniqueID(), getUUID())) {
                 ItemStack glassesStack = OpenGlasses.getGlassesStack(player);
-                OpenGlassesHostsNBT.setRenderResolution(new Vec3d(packet.x, packet.y, 0), glassesStack, getUUID());
+                OpenGlassesHostsNBT.setRenderResolution(new Vec3d(x, y, 0), glassesStack, getUUID());
 
                 NetworkRegistry.packetHandler.sendTo(packet, player);
             }
@@ -433,7 +440,7 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
         }
         OCServerSurface.components.remove(getUUID());
         uuid = UUID.randomUUID();
-        OCServerSurface.components.put(getUUID(), environmentHost);
+        OCServerSurface.components.put(getUUID(), this);
         return new Object[]{ getUUID() };
     }
 
@@ -605,7 +612,7 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
         if(renderAbsolute())
             return vec3D_to_map(player.getPositionVector());
         else {
-            Vec3d hostPosition = environmentHost.getRenderPosition();
+            Vec3d hostPosition = getRenderPosition();
             return vec3D_to_map(player.getPositionVector().subtract(hostPosition));
         }
     }
@@ -646,7 +653,7 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
                 pos = new Vec3d(result.getBlockPos());
 
                 if(!renderAbsolute())
-                    pos = pos.subtract(environmentHost.getRenderPosition());
+                    pos = pos.subtract(getRenderPosition());
 
                 IBlockState blockState = player.getEntityWorld().getBlockState(result.getBlockPos());
 
@@ -673,7 +680,7 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
 
     public void syncHostInfo(EntityPlayerMP player){
         if(player != null)
-            NetworkRegistry.packetHandler.sendTo(new HostInfoPacket(environmentHost), player);
+            NetworkRegistry.packetHandler.sendTo(new HostInfoPacket(this), player);
     }
 
     public void syncWidgets(EntityPlayerMP player){

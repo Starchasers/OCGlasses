@@ -31,6 +31,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -44,7 +45,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 @Mod(	modid = OpenGlasses.MODID,
 		version = OpenGlasses.VERSION,
-		dependencies = "required-after:opencomputers@[1.7.1,);required-after:guitoolkit@1.0.0;required-after:rendertoolkit@1.0.3;after:baubles;",
+		dependencies = "required-after:opencomputers@[1.7.1,);required-after:guitoolkit@1.0.3;required-after:rendertoolkit@1.0.3;after:baubles;before:openentity,ocdevices",
 		guiFactory = OpenGlasses.GUIFACTORY)
 public class OpenGlasses
 {
@@ -102,7 +103,7 @@ public class OpenGlasses
 		if(player == null)
 			return ItemStack.EMPTY;
 
-		ItemStack glassesStack = player.inventory.armorItemInSlot(EntityEquipmentSlot.HEAD.getIndex());
+		ItemStack glassesStack = player.inventory.armorInventory.get(EntityEquipmentSlot.HEAD.getIndex());
 
 		if(isGlassesStack(glassesStack))
 			return glassesStack;

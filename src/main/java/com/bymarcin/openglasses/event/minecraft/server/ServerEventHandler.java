@@ -8,24 +8,32 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class ServerEventHandler {
     private static int playerIndex = 0;
 
     @SubscribeEvent
-    public void onWorldJoin(EntityJoinWorldEvent event){
-        if(!(event.getEntity() instanceof EntityPlayerMP))
+    public void onWorldJoin(PlayerEvent.PlayerLoggedInEvent event){
+        if(!(event.player instanceof EntityPlayerMP))
             return;
 
-        ItemStack glassesStack = OpenGlasses.getGlassesStack((EntityPlayerMP) event.getEntity());
+        ItemStack glassesStack = OpenGlasses.getGlassesStack(event.player);
 
         if(!glassesStack.isEmpty())
-            OCServerSurface.equipmentChanged((EntityPlayerMP) event.getEntity(), glassesStack);
+            OCServerSurface.equipmentChanged((EntityPlayerMP) event.player, glassesStack);
+    }
+
+    @SubscribeEvent
+    public void onPlayerLeave(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (!(event.player instanceof EntityPlayerMP))
+            return;
+
+        OCServerSurface.instance().unsubscribePlayer(event.player.getUniqueID());
     }
 
     @SubscribeEvent

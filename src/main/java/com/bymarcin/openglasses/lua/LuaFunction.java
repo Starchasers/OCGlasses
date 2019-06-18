@@ -58,7 +58,7 @@ public abstract class LuaFunction implements Value{
 	public void dispose(Context context) {}
 
 	protected void updateWidget(){
-		getSelf().getHost().getComponent().updateWidget(getSelf().getWidgetRef());
+		getSelf().getHost().updateWidget(getSelf().getWidgetRef());
 	}
 
 	protected Widget getWidget(){

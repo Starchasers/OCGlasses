@@ -10,6 +10,8 @@ import org.lwjgl.input.Keyboard;
 
 import java.io.IOException;
 
+import static ben_mkiv.rendertoolkit.surface.ClientSurface.vec3d000;
+
 public class InteractGui extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks){}
@@ -26,9 +28,9 @@ public class InteractGui extends GuiScreen {
         for(GlassesInstance.HostClient host : OCClientSurface.glasses.getHosts().values())
             if(host.sendOverlayEvents) {
                 double x = mouseX, y = mouseY;
-                if(OCClientSurface.instances.getRenderResolution(host.uuid) != null){
-                    x*=(OCClientSurface.instances.getRenderResolution(host.uuid).x / OCClientSurface.resolution.getScaledWidth());
-                    y*=(OCClientSurface.instances.getRenderResolution(host.uuid).y / OCClientSurface.resolution.getScaledHeight());
+                if(!OCClientSurface.instance().getRenderResolution(host.uuid).equals(vec3d000)){
+                    x*=(OCClientSurface.instance().getRenderResolution(host.uuid).x / OCClientSurface.resolution.getScaledWidth());
+                    y*=(OCClientSurface.instance().getRenderResolution(host.uuid).y / OCClientSurface.resolution.getScaledHeight());
                 }
                 NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(host.uuid, GlassesEventPacket.EventType.INTERACT_OVERLAY, (int) Math.round(x), (int) Math.round(y), mouseButton));
             }

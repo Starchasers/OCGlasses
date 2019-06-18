@@ -38,7 +38,7 @@ public class ModifierLuaObject implements Value {
     }
 
     public OpenGlassesHostComponent getComponent(){
-        return OCServerSurface.getHost(host).getComponent();
+        return OCServerSurface.getHost(host);
     }
 
     public Object apply(Context var1, Arguments var2){

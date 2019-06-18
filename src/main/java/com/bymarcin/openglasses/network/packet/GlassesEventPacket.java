@@ -6,12 +6,10 @@ import java.util.UUID;
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.component.OpenGlassesHostComponent;
 import com.bymarcin.openglasses.item.GlassesNBT;
-import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesHostsNBT;
 import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesNotificationsNBT;
 import com.bymarcin.openglasses.item.upgrades.UpgradeGeolyzer;
 import com.bymarcin.openglasses.item.upgrades.UpgradeNightvision;
-import com.bymarcin.openglasses.utils.IOpenGlassesHost;
 import com.bymarcin.openglasses.utils.PlayerStatsOC;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -44,15 +42,15 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		DISABLE_OVERLAY_EVENTS, ENABLE_OVERLAY_EVENTS
 	}
 
-	EventType eventType;
-	UUID hostUUID;
-	UUID playerUUID;
-	BlockPos eventPos;
-	EnumFacing facing;
-	ItemStack glasses = ItemStack.EMPTY;
+	private EventType eventType;
+	private UUID hostUUID;
+	private UUID playerUUID;
+	private BlockPos eventPos;
+	private EnumFacing facing;
+	private ItemStack glasses = ItemStack.EMPTY;
 
-	int x, y;
-	double mb;
+	private int x, y;
+	private double mb;
 	
 	public GlassesEventPacket(UUID host, EventType eventType) {
 		this.playerUUID = Minecraft.getMinecraft().player.getUniqueID();
@@ -135,7 +133,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	@Override
 	protected IMessage executeOnServer() {
 		EntityPlayerMP playerMP = OCServerSurface.instance().checkUUID(playerUUID);
-		IOpenGlassesHost host;
+		OpenGlassesHostComponent host;
 		Vec3d look = new Vec3d(0, 0, 0);
 		double eyeHeight = 0;
 		double playerRotation = 0;
@@ -162,20 +160,20 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 				host = OCServerSurface.getHost(hostUUID);
 
 				if (host != null)
-					host.getComponent().sendInteractEventWorldBlock(eventType.name(), playerMP.getName(), playerPos, look, eyeHeight, this.eventPos, this.facing, playerRotation, playerPitch);
+					host.sendInteractEventWorldBlock(eventType.name(), playerMP.getName(), playerPos, look, eyeHeight, this.eventPos, this.facing, playerRotation, playerPitch);
 				return null;
 
 			case INTERACT_WORLD_LEFT:
 			case INTERACT_WORLD_RIGHT:
 				host = OCServerSurface.getHost(hostUUID);
 				if (host != null)
-					host.getComponent().sendInteractEventWorld(eventType.name(), playerMP.getName(), playerPos, look, eyeHeight, playerRotation, playerPitch);
+					host.sendInteractEventWorld(eventType.name(), playerMP.getName(), playerPos, look, eyeHeight, playerRotation, playerPitch);
 				return null;
 
 			case INTERACT_OVERLAY:
 				host = OCServerSurface.getHost(hostUUID);
 				if(host != null)
-					host.getComponent().sendInteractEventOverlay(eventType.name(), playerMP.getName(), mb, x, y, look, eyeHeight, playerRotation, playerPitch);
+					host.sendInteractEventOverlay(eventType.name(), playerMP.getName(), mb, x, y, look, eyeHeight, playerRotation, playerPitch);
 				return null;
 
 			case GLASSES_SCREEN_SIZE:
@@ -184,7 +182,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 				if(stats != null)
 					stats.setScreen(x, y, mb);
 				if(host != null)
-					host.getComponent().sendChangeSizeEvent(eventType.name(), playerMP.getName(), x, y, mb);
+					host.sendChangeSizeEvent(eventType.name(), playerMP.getName(), x, y, mb);
 
 				return null;
 

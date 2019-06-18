@@ -1,7 +1,7 @@
 package com.bymarcin.openglasses.drivers;
 
 import com.bymarcin.openglasses.block.OpenGlassesTerminalBlock;
-import com.bymarcin.openglasses.component.OpenGlassesHostItem;
+import com.bymarcin.openglasses.component.OpenGlassesHostComponent;
 import li.cil.oc.api.driver.DriverItem;
 import li.cil.oc.api.driver.EnvironmentProvider;
 import li.cil.oc.api.driver.item.HostAware;
@@ -32,12 +32,12 @@ public class DriverTerminal extends OpenGlassesTerminalBlock implements DriverIt
 
     @Override
     public Class<? extends Environment> getEnvironment(ItemStack stack) {
-        return worksWith(stack) ? OpenGlassesHostItem.class : null;
+        return worksWith(stack) ? OpenGlassesHostComponent.class : null;
     }
 
     @Override
     public ManagedEnvironment createEnvironment(ItemStack stack, EnvironmentHost container) {
-        return new OpenGlassesHostItem(container);
+        return new OpenGlassesHostComponent(container);
     }
 
     @Override

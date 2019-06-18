@@ -1,16 +1,15 @@
 package com.bymarcin.openglasses.tileentity;
 
 import com.bymarcin.openglasses.component.OpenGlassesHostComponent;
-import com.bymarcin.openglasses.utils.IOpenGlassesHost;
 import li.cil.oc.api.Network;
 import li.cil.oc.api.network.*;
 
 import li.cil.oc.api.prefab.TileEntityEnvironment;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
-public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment implements IOpenGlassesHost {
+public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment implements ManagedEnvironment, EnvironmentHost {
 	private OpenGlassesHostComponent component;
 
 	public OpenGlassesTerminalTileEntity() {
@@ -18,7 +17,6 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 		node = component.node();
 	}
 
-	@Override
 	public EnvironmentHost getHost(){
 		return null;
 	}
@@ -26,6 +24,11 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 	@Override
 	public void update(){
 		getComponent().update();
+	}
+
+	@Override
+	public boolean canUpdate(){
+		return true;
 	}
 
 	@Override
@@ -53,24 +56,12 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 		getComponent().onMessage(var1);
 	}
 
-	@Override
 	public Vec3d getRenderPosition(){
 		return new Vec3d(getPos());
 	}
 
-	@Override
 	public OpenGlassesHostComponent getComponent(){
 		return component;
-	}
-
-	@Override
-	public boolean isInternalComponent(){
-		return false;
-	}
-
-	@Override
-	public TileEntity getTileEntity(){
-		return this;
 	}
 
 	@Override
@@ -94,4 +85,30 @@ public class OpenGlassesTerminalTileEntity extends TileEntityEnvironment impleme
 		super.readFromNBT(nbt);
 		load(nbt);
 	}
+
+	@Override
+	public World world(){
+		return getWorld();
+	}
+
+	@Override
+	public double xPosition(){
+		return getPos().getX();
+	}
+
+	@Override
+	public double yPosition(){
+		return getPos().getY();
+	}
+
+	@Override
+	public double zPosition(){
+		return getPos().getZ();
+	}
+
+	@Override
+	public void markChanged(){
+		markDirty();
+	}
+
 }

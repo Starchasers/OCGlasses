@@ -21,7 +21,7 @@ public class TerminalHostsList extends prettyGuiList {
 
     private int elementCount = 0;
 
-    public TerminalHostsList(int width, int height, int top, int left, int entryHeight, int screenWidth, int screenHeight) {
+    TerminalHostsList(int width, int height, int top, int left, int entryHeight, int screenWidth, int screenHeight) {
         super(width, height, top, top + height, left, entryHeight, screenWidth, screenHeight);
     }
 
@@ -68,7 +68,7 @@ public class TerminalHostsList extends prettyGuiList {
 
         text.add("renderposition: " + (renderAbsolute ? "absolute" : "relative"));
 
-        if(renderAbsolute && !UpgradeNavigation.hasUpgrade(OCClientSurface.instance().glasses.get()))
+        if(renderAbsolute && !UpgradeNavigation.hasUpgrade(OCClientSurface.glasses.get()))
             text.add("§cworld widgets require navigation upgrade");
 
         elements.put(elementCount, listElements);
@@ -77,7 +77,7 @@ public class TerminalHostsList extends prettyGuiList {
         elementCount++;
     }
 
-    public void clear(){
+    void clear(){
         elementCount = 0;
         elements.clear();
         data.clear();
@@ -115,9 +115,9 @@ public class TerminalHostsList extends prettyGuiList {
     protected void elementClicked(int index, boolean doubleClick) {
         if(elements.containsKey(index)){
             for(prettyElement element : elements.get(index)) {
-                if(element instanceof hostGuiElement.hostAction && element.isMouseOver()) {
+                if(element instanceof hostGuiElement.hostAction) {
 
-                    if(element instanceof GuiButton && !((GuiButton) element).enabled)
+                    if(!(element instanceof GuiButton) || !((GuiButton) element).enabled || !((GuiButton) element).isMouseOver())
                         continue;
 
                     element.clicked();
@@ -129,7 +129,7 @@ public class TerminalHostsList extends prettyGuiList {
     }
 
 
-    public static class worldEventsButton extends hostGuiElement.hostCheckbox implements hostGuiElement.hostAction {
+    static class worldEventsButton extends hostGuiElement.hostCheckbox implements hostGuiElement.hostAction {
         worldEventsButton(GlassesInstance.HostClient host){
             super(host.uuid, 110, 45, "world events", host.sendWorldEvents);
         }
@@ -139,7 +139,7 @@ public class TerminalHostsList extends prettyGuiList {
         }
     }
 
-    public static class overlayEventsButton extends hostGuiElement.hostCheckbox implements hostGuiElement.hostAction {
+    static class overlayEventsButton extends hostGuiElement.hostCheckbox implements hostGuiElement.hostAction {
         overlayEventsButton(GlassesInstance.HostClient host){
             super(host.uuid, 110, 60, "overlay events", host.sendOverlayEvents);
         }
@@ -149,7 +149,7 @@ public class TerminalHostsList extends prettyGuiList {
         }
     }
 
-    public static class renderWorldButton extends hostGuiElement.hostCheckbox implements hostGuiElement.hostAction {
+    static class renderWorldButton extends hostGuiElement.hostCheckbox implements hostGuiElement.hostAction {
         renderWorldButton(GlassesInstance.HostClient host){
             super(host.uuid, 3, 45, "render world", host.renderWorld);
         }
@@ -159,7 +159,7 @@ public class TerminalHostsList extends prettyGuiList {
         }
     }
 
-    public static class renderOverlayButton extends hostGuiElement.hostCheckbox implements hostGuiElement.hostAction {
+    static class renderOverlayButton extends hostGuiElement.hostCheckbox implements hostGuiElement.hostAction {
         renderOverlayButton(GlassesInstance.HostClient host){
             super(host.uuid, 3, 60, "render overlay", host.renderOverlay);
         }

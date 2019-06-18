@@ -11,8 +11,6 @@ import net.minecraft.util.math.Vec3d;
 import java.util.HashSet;
 import java.util.UUID;
 
-import static ben_mkiv.rendertoolkit.surface.ClientSurface.vec3d000;
-
 public class OpenGlassesHostsNBT {
     public static void link(ItemStack glassesStack, UUID hostUUID, EntityPlayer player) {
         if(player.world.isRemote)
@@ -97,7 +95,7 @@ public class OpenGlassesHostsNBT {
     public static void setRenderResolution(Vec3d resolution, ItemStack glassesStack, UUID hostUUID){
         NBTTagCompound nbt = new NBTTagCompound();
 
-        if(resolution.equals(vec3d000)){
+        if(resolution.equals(new Vec3d(0, 0, 0))){ // dont import clientsurface static
             removeHostInformation(glassesStack, hostUUID, "resolution");
         }
         else {

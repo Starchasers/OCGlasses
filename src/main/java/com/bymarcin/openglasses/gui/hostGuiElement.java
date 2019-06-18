@@ -5,11 +5,10 @@ import ben_mkiv.guitoolkit.client.widget.prettyCheckbox;
 import ben_mkiv.guitoolkit.client.widget.prettyElement;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
-import com.bymarcin.openglasses.utils.OpenGlassesHostClient;
 
 import java.util.UUID;
 
-public class hostGuiElement {
+class hostGuiElement {
     public interface hostAction extends hostElement, prettyElement {
         default void sendEvent(GlassesEventPacket.EventType event){
             NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(getUniqueId(), event));

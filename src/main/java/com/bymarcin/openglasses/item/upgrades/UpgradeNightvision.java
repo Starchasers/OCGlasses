@@ -8,7 +8,6 @@ import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.surface.OCClientSurface;
 import com.bymarcin.openglasses.surface.OCServerSurface;
 import com.bymarcin.openglasses.utils.PlayerStatsOC;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
@@ -17,7 +16,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.text.TextComponentString;
-import org.lwjgl.input.Keyboard;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import java.util.List;
 
 public class UpgradeNightvision extends UpgradeItem {
     public static Potion potionNightvision = Potion.getPotionFromResourceLocation("night_vision");
-    public static KeyBinding nightvisionModeKey = new KeyBinding("key.nightvision", Keyboard.KEY_N, "key.categories." + OpenGlasses.MODID.toLowerCase());
+
     public enum nightVisionModes { OFF, AUTO, ON }
 
     @Override
@@ -168,8 +168,9 @@ public class UpgradeNightvision extends UpgradeItem {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void onKeyInput(){
-        if(!nightvisionModeKey.isPressed())
+        if(!com.bymarcin.openglasses.event.minecraft.client.ClientKeyboardEvents.nightvisionModeKey.isPressed())
             return;
 
         if(!hasUpgrade(OCClientSurface.instance().glasses.get()))

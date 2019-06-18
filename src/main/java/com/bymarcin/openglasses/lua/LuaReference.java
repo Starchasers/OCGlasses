@@ -1,8 +1,8 @@
 package com.bymarcin.openglasses.lua;
 
 import ben_mkiv.rendertoolkit.common.widgets.Widget;
+import com.bymarcin.openglasses.component.OpenGlassesHostComponent;
 import com.bymarcin.openglasses.surface.OCServerSurface;
-import com.bymarcin.openglasses.utils.IOpenGlassesHost;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.UUID;
@@ -20,14 +20,14 @@ public class LuaReference {
 		return widgetRef;
 	}
 	
-	public IOpenGlassesHost getHost(){
+	public OpenGlassesHostComponent getHost(){
 		return OCServerSurface.getHost(hostUUID);
 	}
 	
 	public Widget getWidget(){
-		IOpenGlassesHost host = getHost();
+		OpenGlassesHostComponent host = getHost();
 		if(host != null){
-			return host.getComponent().getWidget(widgetRef);
+			return host.getWidget(widgetRef);
 		}
 		return null;
 	}

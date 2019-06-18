@@ -18,11 +18,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
-import static com.bymarcin.openglasses.item.upgrades.UpgradeNightvision.nightvisionModeKey;
 
 @SideOnly(Side.CLIENT)
 public class ClientKeyboardEvents {
     public static KeyBinding interactGUIKey = new KeyBinding("key.interact", Keyboard.KEY_C, "key.categories." + OpenGlasses.MODID.toLowerCase());
+    public static KeyBinding nightvisionModeKey = new KeyBinding("key.nightvision", Keyboard.KEY_N, "key.categories." + OpenGlasses.MODID.toLowerCase());
 
     public ClientKeyboardEvents() {
         ClientRegistry.registerKeyBinding(interactGUIKey);

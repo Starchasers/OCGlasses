@@ -1,15 +1,13 @@
 package com.bymarcin.openglasses.surface;
 
-import ben_mkiv.rendertoolkit.network.messages.ClientRequest;
-import ben_mkiv.rendertoolkit.network.rTkNetwork;
 import com.bymarcin.openglasses.OpenGlasses;
 
+import com.bymarcin.openglasses.component.OpenGlassesHostComponent;
 import com.bymarcin.openglasses.event.minecraft.server.ServerEventHandler;
 import com.bymarcin.openglasses.item.GlassesNBT;
 import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesHostsNBT;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
-import com.bymarcin.openglasses.utils.IOpenGlassesHost;
 import com.bymarcin.openglasses.utils.PlayerStatsOC;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -35,7 +33,7 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 	public static HashMap<UUID, UUID> playerGlasses = new HashMap<>();
 
 	// hosts (UUID) to glassesComponent(terminal, card, upgrade) (IOpenGlassesHost) mapping
-	public static HashMap<UUID, IOpenGlassesHost> components = new HashMap<>();
+	public static HashMap<UUID, OpenGlassesHostComponent> components = new HashMap<>();
 
 	public OCServerSurface(){
 		MinecraftForge.EVENT_BUS.register(new ServerEventHandler());
@@ -61,16 +59,16 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 		}
 	}
 
-	public static void addHost(IOpenGlassesHost host){
-		if(!components.containsKey(host.getUUID())) {
-			components.put(host.getUUID(), host);
+	public static void addHost(OpenGlassesHostComponent component){
+		if(!components.containsKey(component.getUUID())) {
+			components.put(component.getUUID(), component);
 			for(Map.Entry<UUID, HashSet<UUID>> entry : instance().players.entrySet()){
-				host.sync(instance().checkUUID(entry.getKey()));
+				component.sync(instance().checkUUID(entry.getKey()));
 			}
 		}
 	}
 
-	public static IOpenGlassesHost getHost(UUID hostUUID){
+	public static OpenGlassesHostComponent getHost(UUID hostUUID){
 		return components.get(hostUUID);
 	}
 
@@ -98,9 +96,9 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 		players.get(player.getUniqueID()).add(hostUUID);
 
 		if(!glassesStack.isEmpty()) {
-			IOpenGlassesHost host = getHost(hostUUID);
+			OpenGlassesHostComponent host = getHost(hostUUID);
 			if (host != null)
-				host.getComponent().onGlassesPutOn(player);
+				host.onGlassesPutOn(player);
 
 			requestResolutionEvent(player, hostUUID);
 		}
@@ -118,9 +116,9 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 			return;
 
 		for(UUID hostUUID : players.get(playerUUID)) {
-			IOpenGlassesHost host = getHost(hostUUID);
+			OpenGlassesHostComponent host = getHost(hostUUID);
 			if (host != null)
-				host.getComponent().onGlassesPutOff(player);
+				host.onGlassesPutOff(player);
 		}
 
 		players.remove(player.getUniqueID());

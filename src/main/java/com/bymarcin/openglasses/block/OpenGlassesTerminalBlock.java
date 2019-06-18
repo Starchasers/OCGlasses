@@ -66,7 +66,7 @@ public class OpenGlassesTerminalBlock extends BlockContainer implements IBlockWi
 		if (!glassesStack.isEmpty()) {
 			Item item = glassesStack.getItem();
 			if (item instanceof OpenGlassesItem) {
-				OpenGlassesHostsNBT.link(glassesStack, te.getUUID(), player);
+				OpenGlassesHostsNBT.link(glassesStack, te.getComponent().getUUID(), player);
 				return true;
 			}
 		}
@@ -91,7 +91,7 @@ public class OpenGlassesTerminalBlock extends BlockContainer implements IBlockWi
 	public void onBlockPreDestroy(World world, BlockPos pos) {
 		OpenGlassesTerminalTileEntity te = getTileEntity(world, pos, OpenGlassesTerminalTileEntity.class);
 		if (te != null)
-			te.remove();
+			te.getComponent().remove();
 	}
 
 	@Override

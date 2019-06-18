@@ -1,2 +1,15 @@
 tile.openglassesterminal.name=Brillen-Terminal
 item.openglasses.name=AR-Brille
+item.openglasses_card.name=Glasses Terminal Karte
+key.nightvision=Nachtsicht (Modus)
+itemGroup.openglasses=OpenGlasses
+
+
+openglasses.infotext.nolink=Brille ist mit keinem Terminal verbunden
+openglasses.infotext.noenergy=unzureichende Energie
+openglasses.infotext.widgetlimitexhausted=Widget Limit erreicht, entferne Widgets
+openglasses.infotext.linkrequest=Link Anfrage von %s, %s akzeptieren
+openglasses.infotext.upgraderequired=upgrade '%s' benoetigt
+
+gui.config.title=OpenGlasses Konfiguration
+gui.config.absolute_rendering_allowed=absolute renderposition erlauben

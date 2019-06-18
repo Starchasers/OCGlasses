@@ -8,6 +8,8 @@ buttons = {}
 
 selectedWidget = false
 
+resolution = 500
+
 modifierList = {}
 toolsList = {}
 
@@ -152,11 +154,11 @@ function drawFrames()
 	fBr.addColor(0.1, 0.1, 0.1, 0.05)
 	fBr.setCondition(fBr.addColor(0.1, 0.1, 0.1, 0.1), "OVERLAY_ACTIVE", true)
 	fBr.setCondition(fBr.addColor(0, 0, 0, 0.2), "OVERLAY_ACTIVE", true)
-	fBr.addTranslation(resolution.x, 15, 0)
+	fBr.addTranslation(resolution, 15, 0)
 	fBr.setHorizontalAlign("left")
 
 	fMM = openglasses:addToOverlay("mainmenue", "Box2D")
-	fMM.setSize(resolution.x, 15)
+	fMM.setSize(resolution, 15)
 	fMM.addColor(0, 0, 0, 0.1)
 	fMM.addColor(0.01, 0.01, 0.01, 0.1)
 	fMM.setCondition(fMM.addColor(0.01, 0.01, 0.01, 0.2), "OVERLAY_ACTIVE", true)

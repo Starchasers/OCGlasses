@@ -1,5 +1,6 @@
 package com.bymarcin.openglasses.gui;
 
+import ben_mkiv.guitoolkit.client.widget.prettyButton;
 import ben_mkiv.guitoolkit.client.widget.prettyElement;
 import ben_mkiv.guitoolkit.client.widget.prettyGuiList;
 import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesNotificationsNBT;
@@ -14,29 +15,29 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.UUID;
 
 import static ben_mkiv.rendertoolkit.surface.ClientSurface.vec3d000;
 
-public class NotificationList extends prettyGuiList {
+class NotificationList extends prettyGuiList {
+    private ArrayList<ArrayList<prettyElement>> guiElements = new ArrayList<>();
+    private ArrayList<NBTTagCompound> elements = new ArrayList<>();
 
-    ArrayList<ArrayList<prettyElement>> guiElements = new ArrayList<>();
-    ArrayList<NBTTagCompound> elements = new ArrayList<>();
 
-
-    public NotificationList(int width, int height, int top, int left, int entryHeight, int screenWidth, int screenHeight) {
+    NotificationList(int width, int height, int top, int left, int entryHeight, int screenWidth, int screenHeight) {
         super(width, height, top, top + height, left, entryHeight, screenWidth, screenHeight);
     }
 
     public void update(){
-        if(elements.equals(OpenGlassesNotificationsNBT.getNotifications(OCClientSurface.instance().glasses.get())))
+        HashSet<NBTTagCompound> glassesNotifications = new HashSet<>(OpenGlassesNotificationsNBT.getNotifications(OCClientSurface.glasses.get()));
+        if(elements.size() == glassesNotifications.size() && elements.containsAll(glassesNotifications))
             return;
-
 
         elements.clear();
         guiElements.clear();
 
-        elements.addAll(OpenGlassesNotificationsNBT.getNotifications(OCClientSurface.instance().glasses.get()));
+        elements.addAll(glassesNotifications);
 
         for(NBTTagCompound tag : elements) {
             ArrayList<prettyElement> listElements = new ArrayList<>();
@@ -55,7 +56,7 @@ public class NotificationList extends prettyGuiList {
     class LinkRequestButton extends hostGuiElement.hostButton implements hostGuiElement.hostAction {
         boolean acceptLinkRequest;
 
-        public LinkRequestButton(NBTTagCompound tag, int x, int y, int width, int height, String label, boolean acceptLink){
+        LinkRequestButton(NBTTagCompound tag, int x, int y, int width, int height, String label, boolean acceptLink){
             super(tag.getUniqueId("host"), x, y, width, height, label);
             acceptLinkRequest = acceptLink;
         }
@@ -92,9 +93,9 @@ public class NotificationList extends prettyGuiList {
         for(prettyElement element : guiElements.get(slotIdx)) {
             element.setRenderY(slotTop);
             element.setRenderX(left);
-            if(element instanceof GuiButton) {
-                ((GuiButton) element).enabled = isSelected(slotIdx);
-                ((GuiButton) element).drawButton(mc, mouseX, mouseY, mc.getRenderPartialTicks());
+            if(element instanceof prettyButton) {
+                ((prettyButton) element).enabled = isSelected(slotIdx);
+                ((prettyButton) element).drawButton(mc, mouseX, mouseY, mc.getRenderPartialTicks());
             }
         }
     }
@@ -103,15 +104,18 @@ public class NotificationList extends prettyGuiList {
     @Override
     protected void elementClicked(int index, boolean doubleClick) {
         for(prettyElement element : guiElements.get(index)) {
-            if(element instanceof hostGuiElement.hostAction && element.isMouseOver())
-                element.clicked();
+            if(element instanceof hostGuiElement.hostAction && element instanceof GuiButton) {
+                if(((GuiButton) element).isMouseOver()) {
+                    element.clicked();
+                }
+            }
         }
 
         super.elementClicked(index, doubleClick);
     }
 
 
-    void drawLinkRequest(NBTTagCompound tag, int slotTop, boolean isSelected){
+    private void drawLinkRequest(NBTTagCompound tag, int slotTop, boolean isSelected){
         UUID hostUUID = tag.getUniqueId("host");
         OpenGlassesHostClient host = OCClientSurface.instance().getHost(hostUUID);
 
@@ -129,9 +133,6 @@ public class NotificationList extends prettyGuiList {
             int distance = (int) Math.ceil(Minecraft.getMinecraft().player.getPositionVector().distanceTo(renderPosition));
             text+=" (distance: "+ distance +" blocks)";
         }
-
-
-
 
         int textColor = isSelected ? 0xFFFFFF : 0xDADADA;
 

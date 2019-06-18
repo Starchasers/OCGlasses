@@ -30,7 +30,7 @@ public class GlassesGui extends GuiScreen {
 
     private EnergyBar energyBar;
 
-    public static boolean isNotification = false;
+    private static boolean isNotification = false;
 
     private static final ResourceLocation background = new ResourceLocation(OpenGlasses.MODID, "textures/gui/glasses.png");
 
@@ -106,7 +106,7 @@ public class GlassesGui extends GuiScreen {
 
     @Override
     public void updateScreen() {
-        ItemStack newGlassesStack = OCClientSurface.instance().glasses.get();
+        ItemStack newGlassesStack = OCClientSurface.glasses.get();
 
         boolean glassesChanged = !ItemStack.areItemStackTagsEqual(glassesStack, newGlassesStack);
 
@@ -123,7 +123,7 @@ public class GlassesGui extends GuiScreen {
             enablePopupNotifications.setEnabled(!glassesStack.getTagCompound().hasKey("nopopups"));
 
             list.clear();
-            list.add(OCClientSurface.instance().glasses.getHosts().values());
+            list.add(OCClientSurface.glasses.getHosts().values());
 
             notificationList.update();
 
