@@ -23,13 +23,19 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
 
-def simpleVersion = "2.0.8" // + System.getenv("BUILD_NUMBER")
+compileJava.options.encoding = 'UTF-8'
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+
+def simpleVersion = "2.1.0" // + System.getenv("BUILD_NUMBER")
 
 def openComputersVersion = "MC1.12.2-1.7.3.146"
 def baublesVersion = "1.12-1.5.2"
 
 
-def commons_version = "MC1.12.2-1.0.0-dev"
+def commons_version = "MC1.12.2-1.0.3-dev"
 
 group= "com.bymarcin.openglasses" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "OpenGlasses-MC1.12.2"
@@ -44,7 +50,6 @@ minecraft {
     mappings = "snapshot_20180130"
 
 }
-
 
 configurations {
     shade
@@ -63,6 +68,7 @@ repositories {
     maven { url = "http://maven.cil.li/" }          // OpenComputers
     maven { url = "https://maven.mcmoddev.com/" }   // Baubles
 }
+
 dependencies {
     provided "li.cil.oc:OpenComputers:${openComputersVersion}"
     compileOnly "com.azanor:Baubles:${baublesVersion}"
@@ -103,5 +109,16 @@ task syncGitWiki(type: com.palominolabs.gradle.task.git.clone.GitCloneTask) {
     treeish = "origin/master"
     forceFetch = true
 }
+
+jar {
+     configurations.shade.each { dep ->
+        from(project.zipTree(dep)){
+            exclude ('META-INF', 'META-INF/**', 'mcmod.info')
+
+        }
+    }
+}
+
+
 
 build.dependsOn(syncGitWiki)
