@@ -35,7 +35,7 @@ def openComputersVersion = "MC1.12.2-1.7.3.146"
 def baublesVersion = "1.12-1.5.2"
 
 
-def commons_version = "MC1.12.2-1.0.3-dev"
+def commons_version = "MC1.12.2-1.0.3"
 
 group= "com.bymarcin.openglasses" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "OpenGlasses-MC1.12.2"
@@ -51,11 +51,6 @@ minecraft {
 
 }
 
-configurations {
-    shade
-    compile.extendsFrom shade
-}
-
 runClient {
     jvmArgs '-Dfml.coreMods.load=li.cil.oc.common.launch.TransformerLoader'
 }
@@ -69,11 +64,16 @@ repositories {
     maven { url = "https://maven.mcmoddev.com/" }   // Baubles
 }
 
+configurations {
+    extraLibs
+    compileOnly.extendsFrom extraLibs
+}
+
 dependencies {
     provided "li.cil.oc:OpenComputers:${openComputersVersion}"
     compileOnly "com.azanor:Baubles:${baublesVersion}"
 
-    shade files("libs/commons0815/Commons0815-${commons_version}.jar")
+    extraLibs files("libs/commons0815/Commons0815-${commons_version}-dev.jar")
 
     provided ("mrtjp:ProjectRed:${projredVersion}:Base") {
         exclude module: "NotEnoughItems"
@@ -111,11 +111,16 @@ task syncGitWiki(type: com.palominolabs.gradle.task.git.clone.GitCloneTask) {
 }
 
 jar {
-     configurations.shade.each { dep ->
-        from(project.zipTree(dep)){
-            exclude ('META-INF', 'META-INF/**', 'mcmod.info')
+    manifest {
+        attributes([
+                "Maven-Artifact":"${project.group}:${project.archivesBaseName}:${project.version}",
+                'Timestamp': System.currentTimeMillis(),
+                'ContainedDeps': "Commons0815-${commons_version}.jar"
+        ])
+    }
 
-        }
+    from("libs/Commons0815-${commons_version}.jar"){
+        into ("META-INF/libraries")
     }
 }
 
