@@ -1,6 +1,7 @@
 package com.bymarcin.openglasses;
 
 import com.bymarcin.openglasses.block.OpenGlassesTerminalBlock;
+import com.bymarcin.openglasses.config.Config;
 import com.bymarcin.openglasses.drivers.DriverHostCard;
 import com.bymarcin.openglasses.drivers.DriverTerminal;
 import com.bymarcin.openglasses.event.minecraft.AnvilEvent;
@@ -41,11 +42,16 @@ import baubles.api.cap.IBaublesItemHandler;
 
 import net.minecraft.entity.player.EntityPlayer;
 
-@Mod(modid = OpenGlasses.MODID, version = OpenGlasses.VERSION, dependencies = "required-after:opencomputers@[1.7.1,);required-after:guitoolkit@1.0.0;required-after:rendertoolkit@1.0.3;after:baubles;")
+@Mod(	modid = OpenGlasses.MODID,
+		version = OpenGlasses.VERSION,
+		dependencies = "required-after:opencomputers@[1.7.1,);required-after:guitoolkit@1.0.0;required-after:rendertoolkit@1.0.3;after:baubles;",
+		guiFactory = OpenGlasses.GUIFACTORY)
 public class OpenGlasses
 {
 	public static final String MODID = "openglasses";
 	public static final String VERSION = "@VERSION@";
+
+	public static final String GUIFACTORY = "com.bymarcin.openglasses.config.ConfigGUI";
 
 	@SidedProxy(clientSide = "com.bymarcin.openglasses.proxy.ClientProxy", serverSide = "com.bymarcin.openglasses.proxy.CommonProxy")
 	public static CommonProxy proxy;
@@ -56,11 +62,13 @@ public class OpenGlasses
 
 	public static boolean baubles = false;
 
+	public static boolean absoluteRenderingAllowed = true;
+
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event){
 		if(Loader.isModLoaded("baubles")) OpenGlasses.baubles = true;
 
-		//Config.preInit();
+		Config.preInit();
 
 		NetworkRegistry.initialize();
 		MinecraftForge.EVENT_BUS.register(this);
@@ -124,6 +132,8 @@ public class OpenGlasses
 
 		li.cil.oc.api.Driver.add((EnvironmentProvider) DriverTerminal.driver);
 		li.cil.oc.api.Driver.add((DriverItem) DriverTerminal.driver);
+
+		absoluteRenderingAllowed = Config.getConfig().getCategory("general").get("absolute_rendering_allowed").getBoolean();
 	}
 
 	@SubscribeEvent

@@ -9,7 +9,6 @@ import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.surface.OCClientSurface;
 import com.bymarcin.openglasses.utils.GlassesInstance;
-import com.bymarcin.openglasses.utils.OpenGlassesHostClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -32,7 +31,7 @@ public class ClientKeyboardEvents {
 
     @SubscribeEvent
     public void onKeyInput(InputEvent.KeyInputEvent event) {
-        if(OCClientSurface.instance().glasses.get().isEmpty())
+        if(OCClientSurface.glasses.get().isEmpty())
             return;
 
         if(interactGUIKey.isPressed()) {
@@ -40,9 +39,9 @@ public class ClientKeyboardEvents {
                 Minecraft.getMinecraft().displayGuiScreen(new GlassesGui(false));
             }
             else {
-                OCClientSurface.instance().glasses.conditions.setOverlay(true);
+                OCClientSurface.glasses.getConditions().setOverlay(true);
                 Minecraft.getMinecraft().displayGuiScreen(new InteractGui());
-                for(GlassesInstance.HostClient host : OCClientSurface.instance().glasses.getHosts().values())
+                for(GlassesInstance.HostClient host : OCClientSurface.glasses.getHosts().values())
                     if(host.sendOverlayEvents)
                         NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(host.uuid, GlassesEventPacket.EventType.ACTIVATE_OVERLAY));
             }

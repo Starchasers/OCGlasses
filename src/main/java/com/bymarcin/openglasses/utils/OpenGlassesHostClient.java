@@ -10,7 +10,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 import static com.bymarcin.openglasses.surface.OCClientSurface.getEntityLocation;
@@ -48,14 +47,14 @@ public class OpenGlassesHostClient extends WidgetCollection {
     }
 
     private Entity getRenderEntity(){
-        ArrayList<Entity> entityArrayList = new ArrayList<>();
+        //ArrayList<Entity> entityArrayList = new ArrayList<>();
         switch(hostType){
             case TABLET:
             case DRONE:
                 if(renderEntity == null && renderEntityID != -1
                         && renderEntityDimension == Minecraft.getMinecraft().player.world.provider.getDimension()){
                     renderEntity = Minecraft.getMinecraft().world.getEntityByID(renderEntityID);
-                    entityArrayList.addAll(Minecraft.getMinecraft().world.getLoadedEntityList());
+                    //entityArrayList.addAll(Minecraft.getMinecraft().world.getLoadedEntityList());
                 }
                 return renderEntity;
 
@@ -64,7 +63,7 @@ public class OpenGlassesHostClient extends WidgetCollection {
         }
     }
 
-    Vec3d getRobotLocation(Robot robot, float partialTicks){
+    private Vec3d getRobotLocation(Robot robot, float partialTicks){
         if(robot == null)
             return renderPosition;
 

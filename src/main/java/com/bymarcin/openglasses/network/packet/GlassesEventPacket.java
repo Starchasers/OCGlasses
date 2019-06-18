@@ -194,7 +194,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 
 			case ACTIVATE_OVERLAY:
 			case DEACTIVATE_OVERLAY:
-				stats = (PlayerStatsOC) OCServerSurface.instances.playerStats.get(playerMP.getUniqueID());
+				stats = OCServerSurface.getStats(playerMP);
 				if(stats != null) {
 					if(eventType.equals(EventType.ACTIVATE_OVERLAY))
 						stats.conditions.setOverlay(true);

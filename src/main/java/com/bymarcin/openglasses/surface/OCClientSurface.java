@@ -20,7 +20,6 @@ import com.bymarcin.openglasses.utils.OpenGlassesHostClient;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -41,13 +40,13 @@ public class OCClientSurface extends ClientSurface {
 		instances = new OCClientSurface();
 	}
 
-	public GlassesInstance glasses = new GlassesInstance(ItemStack.EMPTY);
+	public static GlassesInstance glasses = new GlassesInstance(ItemStack.EMPTY);
 
 	public static OCClientSurface instance(){
 		return (OCClientSurface) instances;
 	}
 
-	private HashMap<UUID, OpenGlassesHostClient> hosts = new HashMap<>();
+	private static HashMap<UUID, OpenGlassesHostClient> hosts = new HashMap<>();
 
 	public OpenGlassesHostClient getHost(UUID hostUUID){
 		if(!hosts.containsKey(hostUUID)){
@@ -74,6 +73,7 @@ public class OCClientSurface extends ClientSurface {
 	}
 
 	public void onLeave(){
+		hosts.clear();
 		initLocalGlasses(ItemStack.EMPTY);
 	}
 
@@ -102,8 +102,10 @@ public class OCClientSurface extends ClientSurface {
 
 			GlStateManager.pushMatrix();
 
-			if(!getRenderResolution(host.uuid).equals(vec3d000))
-				GlStateManager.scale(OCClientSurface.resolution.getScaledWidth() / getRenderResolution(host.uuid).x, OCClientSurface.resolution.getScaledHeight() / getRenderResolution(host.uuid).y, 1);
+			Vec3d renderResolution = getRenderResolution(host.uuid);
+
+			if(!renderResolution.equals(vec3d000))
+				GlStateManager.scale(OCClientSurface.resolution.getScaledWidth() / renderResolution.x, OCClientSurface.resolution.getScaledHeight() / renderResolution.y, 1);
 
 			renderWidgets(host.getHost().getWidgetsOverlay().values(), partialTicks, vec3d000, host.getHost());
 			GlStateManager.popMatrix();
@@ -122,8 +124,7 @@ public class OCClientSurface extends ClientSurface {
 			if(!host.renderWorld)
 				continue;
 
-			//todo: show user a warning that this hosts widgets cant be rendered without navigation upgrade
-			if(host.getHost().absoluteRenderPosition && !glasses.conditions.hasNavigation)
+			if(host.getHost().absoluteRenderPosition && !glasses.getConditions().hasNavigation)
 				continue;
 
 			GlStateManager.pushMatrix();
@@ -155,8 +156,8 @@ public class OCClientSurface extends ClientSurface {
 
 
 
-	void renderWidgets(Collection<IRenderableWidget> widgets, float partialTicks, Vec3d renderPos, OpenGlassesHostClient host){
-		long renderConditions = glasses.conditions.get();
+	private void renderWidgets(Collection<IRenderableWidget> widgets, float partialTicks, Vec3d renderPos, OpenGlassesHostClient host){
+		long renderConditions = glasses.getConditions().get();
 
 		Vector3f offset = new Vector3f((float) renderPos.x, (float) renderPos.y, (float) renderPos.z);
 
@@ -178,7 +179,7 @@ public class OCClientSurface extends ClientSurface {
 		}
 	}
 
-	public boolean shouldAbsoluteWidgetBeRendered(EntityPlayer player, Vector3f offset, IRenderableWidget renderable) {
+	private boolean shouldAbsoluteWidgetBeRendered(EntityPlayer player, Vector3f offset, IRenderableWidget renderable) {
 		if(!utilsCommon.inRange(Minecraft.getMinecraft().player, new Vec3d(offset.x, offset.y, offset.z), viewDistance))
 			return false;
 
@@ -196,7 +197,7 @@ public class OCClientSurface extends ClientSurface {
 		if(getWidgetCount(null, renderEvent) < 1)
 			return false;
 
-		ItemStack renderGlasses = this.glasses.get().copy();
+		ItemStack renderGlasses = glasses.get().copy();
 
 		if(renderGlasses.isEmpty())
 			return false;
@@ -272,14 +273,14 @@ public class OCClientSurface extends ClientSurface {
 				initLocalGlasses(ItemStack.EMPTY);
 		}
 		else if(OpenGlasses.isGlassesStack(newStack)){
-			if(!GlassesNBT.getUniqueId(newStack).equals(glasses.glassesUUID))
+			if(!GlassesNBT.getUniqueId(newStack).equals(glasses.getUniqueId()))
 				initLocalGlasses(newStack);
 		}
 	}
 
 	private int updateTicks = 10;
 	public void update(EntityPlayer player){
-		instance().glasses.refreshConditions();
+		glasses.refreshConditions();
 
 		if(updateTicks % 20 == 0) {
 			// force checking of equipment ~30 seconds after joining the world
@@ -292,6 +293,7 @@ public class OCClientSurface extends ClientSurface {
 
 		updateTicks++;
 	}
+
 
 
 }

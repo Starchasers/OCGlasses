@@ -14,7 +14,7 @@ public class LoadOBJ extends LuaFunction{
         super.call(context, arguments);
         Widget widget = getWidget();
         if(widget instanceof IOBJModel){
-            ((IOBJModel) widget).loadOBJ(arguments.checkString(0));
+            ((IOBJModel) widget).loadOBJ(arguments.optString(0, ""));
             updateWidget();
             return null;
         }

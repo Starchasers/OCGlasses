@@ -6,7 +6,6 @@ import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesHostsNBT;
 import com.bymarcin.openglasses.surface.OCClientSurface;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.Vec3d;
@@ -14,13 +13,11 @@ import net.minecraft.util.math.Vec3d;
 import java.util.HashMap;
 import java.util.UUID;
 
-import static ben_mkiv.rendertoolkit.surface.ClientSurface.vec3d000;
-
 public class GlassesInstance {
     private ItemStack stack;
-    public Conditions conditions = new Conditions();
+    private Conditions conditions = new Conditions();
 
-    public UUID glassesUUID = null;
+    private UUID glassesUUID = null;
 
     private HashMap<UUID, HostClient> hosts = new HashMap<>();
 
@@ -50,6 +47,14 @@ public class GlassesInstance {
         return hosts;
     }
 
+    public UUID getUniqueId(){
+        return glassesUUID;
+    }
+
+    public Conditions getConditions(){
+        return conditions;
+    }
+
     public HostClient getHost(UUID hostUUID){
         return hosts.get(hostUUID);
     }
@@ -69,11 +74,11 @@ public class GlassesInstance {
             ownerName = owner.getDisplayNameString();
         }
 
-        public HostClient(NBTTagCompound nbt){
+        HostClient(NBTTagCompound nbt){
             updateFromNBT(nbt);
         }
 
-        public void updateFromNBT(NBTTagCompound nbt){
+        void updateFromNBT(NBTTagCompound nbt){
             uuid = nbt.getUniqueId("host");
             ownerName = nbt.getString("user");
             ownerUUID = nbt.getUniqueId("ownerUUID");
@@ -82,32 +87,10 @@ public class GlassesInstance {
             sendOverlayEvents = !nbt.hasKey("noOverlayEvents");
             sendWorldEvents = !nbt.hasKey("noWorldEvents");
 
-            if(nbt.hasKey("resolutionX") && nbt.hasKey("resolutionY"))
-                renderResolution = new Vec3d(nbt.getDouble("resolutionX"), nbt.getDouble("resolutionY"), 0);
-            //terminalName = nbt.getString("name");
-        }
-
-        public NBTTagCompound writeToNBT(NBTTagCompound tag){
-            tag.setUniqueId("host", uuid);
-            //tag.setString("name", terminalName);
-            if(!renderWorld)
-                tag.setBoolean("noWorld", true);
-            if(!renderOverlay)
-                tag.setBoolean("noOverlay", true);
-            if(!sendOverlayEvents)
-                tag.setBoolean("noOverlayEvents", true);
-            if(!sendWorldEvents)
-                tag.setBoolean("noWorldEvents", true);
-            if(!renderResolution.equals(vec3d000)){
-                tag.setDouble("resolutionX", renderResolution.x);
-                tag.setDouble("resolutionY", renderResolution.y);
+            if(nbt.hasKey("resolution")) {
+                NBTTagCompound resolutionTag = nbt.getCompoundTag("resolution");
+                renderResolution = new Vec3d(resolutionTag.getDouble("x"), resolutionTag.getDouble("y"), 0);
             }
-
-            tag.setUniqueId("userUUID", ownerUUID);
-
-            tag.setString("user", ownerName);
-
-            return tag;
         }
 
         public OpenGlassesHostClient getHost(){

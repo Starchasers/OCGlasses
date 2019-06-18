@@ -5,7 +5,6 @@ import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.surface.OCClientSurface;
 import com.bymarcin.openglasses.utils.GlassesInstance;
-import com.bymarcin.openglasses.utils.OpenGlassesHostClient;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
 
@@ -22,23 +21,25 @@ public class InteractGui extends GuiScreen {
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        if(OCClientSurface.instance().glasses.get().isEmpty()) return;
-        if(OCClientSurface.instances.getRenderResolution(null) != null){
-            mouseX*=(OCClientSurface.instances.getRenderResolution(null).x / OCClientSurface.instances.resolution.getScaledWidth());
-            mouseY*=(OCClientSurface.instances.getRenderResolution(null).y / OCClientSurface.instances.resolution.getScaledHeight());
-        }
+        if(OCClientSurface.glasses.get().isEmpty()) return;
 
-        for(GlassesInstance.HostClient host : OCClientSurface.instance().glasses.getHosts().values())
-            if(host.sendOverlayEvents)
-                NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(host.uuid, GlassesEventPacket.EventType.INTERACT_OVERLAY, mouseX, mouseY, mouseButton));
+        for(GlassesInstance.HostClient host : OCClientSurface.glasses.getHosts().values())
+            if(host.sendOverlayEvents) {
+                double x = mouseX, y = mouseY;
+                if(OCClientSurface.instances.getRenderResolution(host.uuid) != null){
+                    x*=(OCClientSurface.instances.getRenderResolution(host.uuid).x / OCClientSurface.resolution.getScaledWidth());
+                    y*=(OCClientSurface.instances.getRenderResolution(host.uuid).y / OCClientSurface.resolution.getScaledHeight());
+                }
+                NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(host.uuid, GlassesEventPacket.EventType.INTERACT_OVERLAY, (int) Math.round(x), (int) Math.round(y), mouseButton));
+            }
     }
 
     @Override
     public void updateScreen() {
         if(!Keyboard.isKeyDown(ClientKeyboardEvents.interactGUIKey.getKeyCode())){
-            OCClientSurface.instance().glasses.conditions.setOverlay(false);
+            OCClientSurface.glasses.getConditions().setOverlay(false);
 
-            for(GlassesInstance.HostClient host : OCClientSurface.instance().glasses.getHosts().values())
+            for(GlassesInstance.HostClient host : OCClientSurface.glasses.getHosts().values())
                 if(host.sendOverlayEvents)
                     NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(host.uuid, GlassesEventPacket.EventType.DEACTIVATE_OVERLAY));
 

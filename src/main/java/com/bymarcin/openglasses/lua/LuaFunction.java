@@ -1,7 +1,6 @@
 package com.bymarcin.openglasses.lua;
 
 import ben_mkiv.rendertoolkit.common.widgets.Widget;
-import com.bymarcin.openglasses.component.OpenGlassesHostComponent;
 import net.minecraft.nbt.NBTTagCompound;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Context;

@@ -8,7 +8,6 @@ import com.bymarcin.openglasses.gui.GlassesGui;
 import com.bymarcin.openglasses.network.Packet;
 
 import com.bymarcin.openglasses.surface.OCClientSurface;
-import com.bymarcin.openglasses.utils.IOpenGlassesHost;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
@@ -28,19 +27,11 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 
 	public float x, y;
 
-	private String terminalName = "";
-
-	private IOpenGlassesHost host;
 	private UUID hostUUID;
 
-	public TerminalStatusPacket(TerminalEvent status) {
+	public TerminalStatusPacket(TerminalEvent status, UUID hostUUID) {
 		this.terminalEvent = status;
-	}
-
-	public TerminalStatusPacket(TerminalEvent status, IOpenGlassesHost host) {
-		this(status);
-		this.host = host;
-		this.terminalName = host.getName();
+		this.hostUUID = hostUUID;
 	}
 
 	public TerminalStatusPacket() {}  //dont remove, in use by NetworkRegistry.registerPacket in OpenGlasses.java
@@ -48,32 +39,25 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 	@Override
 	protected void read() throws IOException {
 		terminalEvent = TerminalEvent.values()[readInt()];
-		terminalName = readString();
+		hostUUID = readUUID();
 
-		switch(this.terminalEvent){
+		switch(terminalEvent){
 			case SET_RENDER_RESOLUTION:
 				x = readFloat();
 				y = readFloat();
 				break;
-
-			case NOTIFICATION:
-				hostUUID = readUUID();
 		}
 	}
 
 	@Override
 	protected void write() throws IOException {
 		writeInt(terminalEvent.ordinal());
-		writeString(terminalName);
+		writeUUID(hostUUID);
 
-		switch(this.terminalEvent){
+		switch(terminalEvent){
 			case SET_RENDER_RESOLUTION:
 				writeFloat(x);
 				writeFloat(y);
-				break;
-
-			case NOTIFICATION:
-				writeUUID(host.getUUID());
 				break;
 		}
 	}
@@ -85,6 +69,8 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 			case SET_RENDER_RESOLUTION:
 				if(x > 0 && y > 0)
 					OCClientSurface.instance().setRenderResolution(new Vec3d(this.x, this.y, 0), hostUUID);
+				else
+					OCClientSurface.instance().setRenderResolution(null, hostUUID);
 				return null;
 
 			case ASYNC_SCREEN_SIZES:

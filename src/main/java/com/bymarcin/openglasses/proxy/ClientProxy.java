@@ -76,7 +76,7 @@ public class ClientProxy extends CommonProxy {
 	public PlayerStatsOC getPlayerStats(UUID uuid) {
 		PlayerStatsOC s = new PlayerStatsOC(getPlayer(""));
 		s.setScreen(OCClientSurface.resolution.getScaledWidth(), OCClientSurface.resolution.getScaledHeight(), (double) OCClientSurface.resolution.getScaleFactor());
-		s.conditions = (OCClientSurface.instance()).glasses.conditions;
+		s.conditions = OCClientSurface.glasses.getConditions();
 		return s;
 	}
 

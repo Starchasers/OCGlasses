@@ -9,8 +9,11 @@ import com.bymarcin.openglasses.utils.GlassesInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.*;
+
+import static ben_mkiv.rendertoolkit.surface.ClientSurface.vec3d000;
 
 public class TerminalHostsList extends prettyGuiList {
     private HashMap<Integer, ArrayList<String>> data = new HashMap<>();
@@ -55,7 +58,11 @@ public class TerminalHostsList extends prettyGuiList {
 
         text.add("linked as " + host.ownerName);
 
-        text.add("distance: " + (int) Math.round(host.getHost().getRenderPosition(0.5f).distanceTo(Minecraft.getMinecraft().player.getPositionVector())) + " blocks");
+        Vec3d renderPosition = host.getHost().getRenderPosition(0.5f);
+        if(renderPosition.equals(vec3d000))
+            text.add("distance: unknown");
+        else
+            text.add("distance: " + (int) Math.round(renderPosition.distanceTo(Minecraft.getMinecraft().player.getPositionVector())) + " blocks");
 
         boolean renderAbsolute = host.getHost().absoluteRenderPosition;
 

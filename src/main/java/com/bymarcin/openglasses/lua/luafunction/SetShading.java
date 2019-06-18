@@ -18,8 +18,11 @@ public class SetShading extends LuaFunction{
         if(widget instanceof CustomShape){
             if(arguments.checkString(0).toUpperCase().equals("SMOOTH"))
                 ((CustomShape) widget).smooth_shading = true;
-            if(arguments.checkString(0).toUpperCase().equals("FLAT"))
+            else if(arguments.checkString(0).toUpperCase().equals("FLAT"))
                 ((CustomShape) widget).smooth_shading = false;
+            else
+                return null;
+
             updateWidget();
             return null;
         }

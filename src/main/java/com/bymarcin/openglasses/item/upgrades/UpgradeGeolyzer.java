@@ -21,6 +21,10 @@ public class UpgradeGeolyzer extends UpgradeItem {
         return stack;
     }
 
+    public static int getRange(ItemStack stack){
+        return hasUpgrade(stack) ? stack.getTagCompound().getInteger("radarRange") : 0;
+    }
+
     @Override
     public int getUpgradeExperienceCost(){
         return 20;

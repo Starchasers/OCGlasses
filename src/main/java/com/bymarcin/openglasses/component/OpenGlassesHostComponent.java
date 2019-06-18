@@ -1,6 +1,7 @@
 package com.bymarcin.openglasses.component;
 
 import ben_mkiv.commons0815.utils.PlayerStats;
+import ben_mkiv.commons0815.utils.utilsCommon;
 import ben_mkiv.rendertoolkit.common.widgets.Widget;
 import ben_mkiv.rendertoolkit.common.widgets.component.face.*;
 import ben_mkiv.rendertoolkit.common.widgets.component.world.*;
@@ -11,8 +12,11 @@ import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.item.GlassesNBT;
 import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesHostsNBT;
 import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesNotificationsNBT;
+import com.bymarcin.openglasses.item.upgrades.UpgradeGeolyzer;
+import com.bymarcin.openglasses.item.upgrades.UpgradeNavigation;
 import com.bymarcin.openglasses.lib.McJty.font.TrueTypeFont;
 import com.bymarcin.openglasses.lua.AttributeRegistry;
+import com.bymarcin.openglasses.lua.LuaObject;
 import com.bymarcin.openglasses.lua.LuaReference;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.HostInfoPacket;
@@ -25,12 +29,14 @@ import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.*;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
@@ -46,6 +52,7 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
 
     private WidgetServer widgets;
     private IOpenGlassesHost environmentHost;
+
 
     public static HashMap<EntityPlayer, UUID> linkRequests = new HashMap<>();
 
@@ -111,21 +118,21 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
     }
 
     @Override
-    public void onConnect(Node var1){
-        if(var1.equals(node())) {
+    public void onConnect(Node connectingNode){
+        if(connectingNode.equals(node())) {
             addToSurface();
         }
     }
 
     @Override
-    public void onDisconnect(Node var1){
-        if(var1.equals(node())) {
+    public void onDisconnect(Node disconnectingNode){
+        if(disconnectingNode.equals(node())) {
             removeFromSurface();
         }
     }
 
     @Override
-    public void onMessage(Message var1){}
+    public void onMessage(Message nodeSender){}
 
     public boolean canUpdate(){ return true; }
 
@@ -188,7 +195,7 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
         // actually add the request to the glasses NBT, sync the stack to the client and notify the client about a new notification... (sounds weird... uhmmm probably is)
         OpenGlassesNotificationsNBT.addLinkRequest(glasses, environmentHost.getUUID());
         GlassesNBT.syncStackNBT(glasses, player);
-        NetworkRegistry.packetHandler.sendTo(new TerminalStatusPacket(TerminalStatusPacket.TerminalEvent.NOTIFICATION, environmentHost), player);
+        NetworkRegistry.packetHandler.sendTo(new TerminalStatusPacket(TerminalStatusPacket.TerminalEvent.NOTIFICATION, getUUID()), player);
 
         return true;
     }
@@ -210,12 +217,11 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
     public Object[] requestResolutionEvents(Context context, Arguments args) {
         String user = args.optString(0, "").toLowerCase();
         int i=0;
-        for(EntityPlayerMP player : getConnectedPlayers()){
+        for(EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers()){
             if(user.length() > 0 && !user.equals(player.getDisplayNameString().toLowerCase()))
                 continue;
 
-
-            OCServerSurface.instances.requestResolutionEvent(player, getUUID());
+            OCServerSurface.instance().requestResolutionEvent(player, getUUID());
             i++;
         }
         return new Object[]{ i };
@@ -223,7 +229,7 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
 
     @Callback(direct = true)
     public Object[] setRenderResolution(Context context, Arguments args) {
-        TerminalStatusPacket packet = new TerminalStatusPacket(TerminalStatusPacket.TerminalEvent.SET_RENDER_RESOLUTION);
+        TerminalStatusPacket packet = new TerminalStatusPacket(TerminalStatusPacket.TerminalEvent.SET_RENDER_RESOLUTION, getUUID());
         String user = "";
 
         double x,y;
@@ -249,9 +255,13 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
             if(user.length() > 0 && !user.equals(player.getDisplayNameString().toLowerCase()))
                 continue;
 
-            NetworkRegistry.packetHandler.sendTo(packet, player);
+            if(OCServerSurface.instance().isSubscribedTo(player.getUniqueID(), getUUID())) {
+                ItemStack glassesStack = OpenGlasses.getGlassesStack(player);
+                OpenGlassesHostsNBT.setRenderResolution(new Vec3d(packet.x, packet.y, 0), glassesStack, getUUID());
 
-            OpenGlassesHostsNBT.setRenderResolution(new Vec3d(packet.x, packet.y, 0), OpenGlasses.getGlassesStack(player), getUUID());
+                NetworkRegistry.packetHandler.sendTo(packet, player);
+            }
+
             i++;
         }
         return new Object[]{ i };
@@ -269,10 +279,6 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
 
         int id = args.checkInteger(0);
         return new Object[]{ widgets.remove(id)};
-    }
-
-    public boolean removeWidget(int id){
-        return widgets.remove(id);
     }
 
     @Callback(direct = true)
@@ -343,11 +349,12 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
         return addWidget(w);
     }
 
-    @Callback(direct = true)
+    @Callback(direct = false)
     public Object[] getFonts(Context context, Arguments args){
         ArrayList<String> fonts = new ArrayList<>();
 
-        fonts.add("THIS IS A CLIENT LIST");
+        fonts.add("this method only returns fonts that are available on the server side");
+        fonts.add("client fonts probably differ");
 
         for(Font font : TrueTypeFont.getFonts())
             fonts.add(font.getFontName());
@@ -379,6 +386,10 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
     @Callback(direct = true)
     public Object[] setRenderPosition(Context context, Arguments args) {
         if (args.count() > 0 && args.checkString(0).toLowerCase().equals("absolute")) {
+
+            if(!OpenGlasses.absoluteRenderingAllowed)
+                return new Object[]{ false, "absolute render position is disabled in the mod config" };
+
             if (!absoluteRenderPosition){
                 absoluteRenderPosition = true;
                 syncHostInfo();
@@ -398,32 +409,84 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
 
     @Callback(direct = true)
     public Object[] getRenderPosition(Context context, Arguments args) {
-        return new Object[]{ absoluteRenderPosition ? "absolute" : "relative" };
+        return new Object[]{ renderAbsolute() ? "absolute" : "relative" };
     }
-    /* User interaction */
 
-    /**
-     * @return Position relative to terminal position
-     * (make this available through upgrading)
-     */
-//	@Callback
-//	@Optional.Method(modid = "opencomputers")
-//	public Object[] getUserPosition(Context context, Arguments args){
-//		return new Object[]{};
-//	}
-//
-//	@Callback
-//	@Optional.Method(modid = "opencomputers")
-//	public Object[] getUserLookingAt(Context context, Arguments args){
-//		return new Object[]{};
-//	}
+    @Callback(direct = true)
+    public Object[] widgets(Context context, Arguments args) {
+
+        HashMap<String, Object> widgetRefs = new HashMap<>();
+
+        int i = 0;
+        for(Map.Entry<Integer, Widget> widget : widgets.list.entrySet()){
+            widgetRefs.put("widget" + i++, new LuaObject(widget.getKey(), widget.getValue(), getUUID()));
+        }
+
+        return new Object[]{ widgetRefs };
+    }
+
+    @Callback(direct = true)
+    public Object[] newUniqueKey(Context context, Arguments args){
+        for(EntityPlayerMP player: FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers()){
+            if(OCServerSurface.instance().isSubscribedTo(player.getUniqueID(), getUUID()))
+                onGlassesPutOff(player);
+        }
+        OCServerSurface.components.remove(getUUID());
+        uuid = UUID.randomUUID();
+        OCServerSurface.components.put(getUUID(), environmentHost);
+        return new Object[]{ getUUID() };
+    }
+
+	@Callback
+	public Object[] getUserPosition(Context context, Arguments args){
+		if(args.isString(0)) {
+            EntityPlayerMP player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(args.checkString(0));
+            if(player == null)
+                return new Object[]{ false, "player not found" };
+            Object position = getUserPosition(player);
+
+            if(position == null)
+                position = false;
+
+            return new Object[] { position };
+        }
+        else {
+            HashSet<Object> positions = new HashSet<>();
+            for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers()) {
+                Object position = getUserPosition(player);
+                if(position instanceof HashMap) {
+                    ((HashMap<String, Object>) position).put("user", player.getDisplayNameString());
+                    positions.add(position);
+                }
+            }
+
+            return new Object[]{positions};
+        }
+	}
+
+	@Callback
+	public Object[] getUserLookingAt(Context context, Arguments args){
+		if(!args.isString(0))
+		    return new Object[]{ false, "first argument has to be a username"};
+
+        EntityPlayerMP player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(args.checkString(0));
+        if(player == null)
+            return new Object[]{ false, "player not found" };
+
+        Object lookingAt = getUserLookingAt(player);
+
+        if(lookingAt == null)
+            lookingAt = false;
+
+        return new Object[]{ lookingAt };
+	}
 
     public String getName(){
         return terminalName;
     }
 
     public boolean renderAbsolute(){
-        return absoluteRenderPosition;
+        return OpenGlasses.absoluteRenderingAllowed && absoluteRenderPosition;
     }
 
     public UUID getUUID(){
@@ -431,23 +494,12 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
     }
 
     public Object[] addWidget(Widget widget){
-        int id = widgets.add(widget);
-        return getLuaObject(widget, new LuaReference(id, uuid));
+        int widgetId = widgets.add(widget);
+        return new Object[] { new LuaObject(widgetId, widget, getUUID()).call(null, null)[0] };
     }
 
-    public Object[] getLuaObject(Widget widget, LuaReference ref) {
-        HashMap<String, Object> luaObject = new HashMap<String, Object>();
-        Class<?> current = widget.getClass();
-        do {
-            for (Class<?> a : current.getInterfaces()) {
-                if (IAttribute.class.isAssignableFrom(a)) {
-                    luaObject.putAll(AttributeRegistry.getFunctions(a.asSubclass(IAttribute.class), ref));
-                }
-            }
-            current = current.getSuperclass();
-        } while (!current.equals(Object.class));
-
-        return new Object[] { luaObject };
+    public boolean removeWidget(int id){
+        return widgets.remove(id);
     }
 
     public void updateWidget(int id){
@@ -467,7 +519,6 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
         nbt.setUniqueId("uuid", uuid);
         nbt.setBoolean("absoluteRenderPosition", absoluteRenderPosition);
 
-
         if(node() != null) {
             NBTTagCompound nodeTag = new NBTTagCompound();
             node().save(nodeTag);
@@ -479,7 +530,7 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
     public void load(NBTTagCompound nbt) {
         widgets.readFromNBT(nbt);
         terminalName = nbt.getString("name");
-        absoluteRenderPosition = nbt.getBoolean("absoluteRenderPosition");
+        absoluteRenderPosition = OpenGlasses.absoluteRenderingAllowed && nbt.getBoolean("absoluteRenderPosition");
         if(nbt.hasUniqueId("uuid")) //check required as we would end up with 0000000... uuid for new items
             uuid = nbt.getUniqueId("uuid");
 
@@ -515,15 +566,99 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
 
     public HashSet<EntityPlayerMP> getConnectedPlayers(){
         HashSet<EntityPlayerMP> players = new HashSet<>();
-        for(Map.Entry<UUID, HashSet<UUID>> e: OCServerSurface.instances.players.entrySet()){
-            if(e.getValue().contains(getUUID())){
-                EntityPlayerMP player = (EntityPlayerMP) OpenGlasses.proxy.getEntity(e.getKey());
-                if(player != null)
-                    players.add(player);
-            }
+        for(UUID playerUUID : getPlayers()){
+            EntityPlayerMP player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(playerUUID);
+            if(player != null)
+               players.add(player);
         }
 
         return players;
+    }
+
+    public HashSet<UUID> getPlayers(){
+        HashSet<UUID> players = new HashSet<>();
+        for(UUID player : OCServerSurface.instances.players.keySet()){
+            if(OCServerSurface.instance().isSubscribedTo(player, getUUID()))
+                players.add(player);
+        }
+
+        return players;
+    }
+
+    private static HashMap<String, Object> vec3D_to_map(Vec3d vector){
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("x", vector.x);
+        result.put("y", vector.y);
+        result.put("z", vector.z);
+        return result;
+    }
+
+    private Object getUserPosition(EntityPlayer player){
+        ItemStack glassesStack = OpenGlasses.getGlassesStack(player);
+
+        if (glassesStack.isEmpty())
+            return null;
+
+        if (!UpgradeNavigation.hasUpgrade(glassesStack))
+            return new Object[]{false, "glasses haven't navigation upgrade installed"};
+
+        if(renderAbsolute())
+            return vec3D_to_map(player.getPositionVector());
+        else {
+            Vec3d hostPosition = environmentHost.getRenderPosition();
+            return vec3D_to_map(player.getPositionVector().subtract(hostPosition));
+        }
+    }
+
+    private Object getUserLookingAt(EntityPlayerMP player){
+        ItemStack glassesStack = OpenGlasses.getGlassesStack(player);
+
+        if (glassesStack.isEmpty())
+            return null;
+
+        if (!UpgradeNavigation.hasUpgrade(glassesStack))
+            return new Object[]{false, "glasses haven't navigation upgrade installed"};
+
+        double range = UpgradeGeolyzer.getRange(glassesStack);
+
+        if (range == 0)
+            return new Object[]{false, "glasses haven't geolyzer upgrade installed"};
+
+        RayTraceResult result = utilsCommon.rayTrace(player, range, 0);
+
+        HashMap<String, Object> hitInfo = new HashMap<>();
+        Vec3d pos;
+        if(result != null && !result.typeOfHit.equals(RayTraceResult.Type.MISS)) {
+            //todo: figure out entity raytracing on server side, probably did that already in OpenEntity
+            /*if (result.entityHit != null) {
+                pos = result.entityHit.getPositionVector();
+
+                if (!renderAbsolute())
+                    pos = pos.subtract(environmentHost.getRenderPosition());
+
+                hitInfo.put("type", "entity");
+                hitInfo.putAll(vec3D_to_map(pos));
+                hitInfo.put("name", result.entityHit.getDisplayName().toString());
+                return hitInfo;
+            }
+            else*/
+            if(result.getBlockPos() != null){
+                pos = new Vec3d(result.getBlockPos());
+
+                if(!renderAbsolute())
+                    pos = pos.subtract(environmentHost.getRenderPosition());
+
+                IBlockState blockState = player.getEntityWorld().getBlockState(result.getBlockPos());
+
+                hitInfo.put("type", "block");
+                hitInfo.putAll(vec3D_to_map(pos));
+                hitInfo.put("name", blockState.getBlock().getRegistryName().toString());
+                hitInfo.put("meta", blockState.getBlock().getMetaFromState(blockState));
+                return hitInfo;
+            }
+        }
+        hitInfo.put("type", "air");
+        return hitInfo;
     }
 
     public void sync(EntityPlayerMP player){
@@ -543,6 +678,11 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
 
     public void syncWidgets(EntityPlayerMP player){
         OCServerSurface.instances.sendSync(getUUID(), player, widgets.list);
+    }
+
+    public void syncWidgets(){
+        for(EntityPlayerMP player : getConnectedPlayers())
+            OCServerSurface.instances.sendSync(getUUID(), player, widgets.list);
     }
 
 }

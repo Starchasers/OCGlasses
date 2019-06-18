@@ -1,8 +1,6 @@
 package com.bymarcin.openglasses.component;
 
 import ben_mkiv.rendertoolkit.common.widgets.Widget;
-import ben_mkiv.rendertoolkit.network.messages.WidgetUpdatePacket;
-import com.bymarcin.openglasses.surface.OCServerSurface;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.HashMap;

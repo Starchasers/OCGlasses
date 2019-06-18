@@ -1,5 +1,7 @@
 package com.bymarcin.openglasses.surface;
 
+import ben_mkiv.rendertoolkit.network.messages.ClientRequest;
+import ben_mkiv.rendertoolkit.network.rTkNetwork;
 import com.bymarcin.openglasses.OpenGlasses;
 
 import com.bymarcin.openglasses.event.minecraft.server.ServerEventHandler;
@@ -22,6 +24,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.bymarcin.openglasses.item.upgrades.UpgradeNightvision.potionNightvision;
+import static com.bymarcin.openglasses.network.packet.TerminalStatusPacket.TerminalEvent.ASYNC_SCREEN_SIZES;
 
 public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurface {
 	static {
@@ -29,10 +32,10 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 	}
 
 	// player (UUID) to glasses (UUID) mapping
-	private static HashMap<UUID, UUID> playerGlasses = new HashMap<>();
+	public static HashMap<UUID, UUID> playerGlasses = new HashMap<>();
 
 	// hosts (UUID) to glassesComponent(terminal, card, upgrade) (IOpenGlassesHost) mapping
-	private static HashMap<UUID, IOpenGlassesHost> components = new HashMap<>();
+	public static HashMap<UUID, IOpenGlassesHost> components = new HashMap<>();
 
 	public OCServerSurface(){
 		MinecraftForge.EVENT_BUS.register(new ServerEventHandler());
@@ -71,7 +74,7 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 		return components.get(hostUUID);
 	}
 
-	boolean isSubscribedTo(UUID playerUUID, UUID hostUUID){
+	public boolean isSubscribedTo(UUID playerUUID, UUID hostUUID){
 		return players.containsKey(playerUUID) && players.get(playerUUID).contains(hostUUID);
 	}
 
@@ -136,7 +139,7 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 		}
 
 		if (oldUUID != null) {
-			// initialize with empty stack to force sending of unequipped network message
+			// initialize with empty stack to force unequipped signal and to flush the caches
 			OCServerSurface.instance().unsubscribePlayer(player.getUniqueID());
 		}
 
@@ -152,6 +155,12 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 
 		return (PlayerStatsOC) OCServerSurface.instance().playerStats.get(player.getUniqueID());
 	}
+
+	@Override
+    public void requestResolutionEvent(EntityPlayerMP player, UUID instanceUUID){
+        if(player != null)
+            NetworkRegistry.packetHandler.sendTo(new TerminalStatusPacket(ASYNC_SCREEN_SIZES, instanceUUID), player);
+    }
 
 }
 

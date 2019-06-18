@@ -8,101 +8,102 @@ import com.bymarcin.openglasses.lua.luafunction.*;
 
 
 public class AttributeRegistry {
+    private static HashMap<Class<? extends IAttribute>, LinkedList<Class<? extends LuaFunction>>> attributes = new HashMap<>();
+
 	static{
-		attributes = new HashMap<Class<? extends IAttribute>, LinkedList<Class<? extends LuaFunction>>>();
+		addAttribute(IAttribute.class, GetID.class);
+		addAttribute(IAttribute.class, IsVisible.class);
+		addAttribute(IAttribute.class, SetVisible.class);
+
+		addAttribute(IAttribute.class, Modifiers.class);
 		
-		addAtribute(IAttribute.class, GetID.class);
-		addAtribute(IAttribute.class, IsVisible.class);
-		addAtribute(IAttribute.class, SetVisible.class);
+		addAttribute(IAttribute.class, RemoveWidget.class);
 		
-		addAtribute(IAttribute.class, RemoveWidget.class);
+		addAttribute(IAttribute.class, AddColor.class);
+		addAttribute(IAttribute.class, AddTranslation.class);
+		addAttribute(IAttribute.class, AddRotation.class);
+		addAttribute(IAttribute.class, AddScale.class);
+		addAttribute(IAttribute.class, RemoveModifier.class);
+		addAttribute(IAttribute.class, GetModifiers.class);
+		addAttribute(IAttribute.class, SetCondition.class);
+		addAttribute(IAttribute.class, SetEasing.class);
+		addAttribute(IAttribute.class, RemoveEasing.class);
+		addAttribute(IAttribute.class, GetColor.class);
+		addAttribute(IAttribute.class, UpdateModifier.class);
+		addAttribute(IAttribute.class, GetRenderPosition.class);
+
+		addAttribute(IAutoTranslateable.class, AddAutoTranslation.class);
+		addAttribute(IAlignable.class, SetHorizontalAlign.class);
+		addAttribute(IAlignable.class, SetVerticalAlign.class);
+
+		addAttribute(ITracker.class, SetTrackingType.class);
+		addAttribute(ITracker.class, SetTrackingFilter.class);
+		addAttribute(ITracker.class, SetTrackingEntity.class);
+
+		addAttribute(ICustomShape.class, SetGLMODE.class);
+		addAttribute(ICustomShape.class, SetShading.class);
+		addAttribute(ICustomShape.class, SetVertex.class);
+		addAttribute(ICustomShape.class, AddVertex.class);
+		addAttribute(ICustomShape.class, RemoveVertex.class);
+		addAttribute(ICustomShape.class, GetVertexCount.class);
+
+		addAttribute(IOBJModel.class, LoadOBJ.class);
+
+		addAttribute(IResizable.class, GetSize.class);
+		addAttribute(IResizable.class, SetSize.class);
+
+		addAttribute(ITextable.class, SetFont.class);
+		addAttribute(ITextable.class, SetText.class);
+		addAttribute(ITextable.class, GetText.class);
+		addAttribute(ITextable.class, GetSize.class);
+		addAttribute(ITextable.class, SetAntialias.class);
+		addAttribute(ITextable.class, SetFontSize.class);
+
+		addAttribute(IItem.class, SetItem.class);
+		addAttribute(IItem.class, GetItem.class);
+
+		addAttribute(IThroughVisibility.class, SetVisibleThroughObjects.class);
+		addAttribute(IThroughVisibility.class, IsVisibleThroughObjects.class);
 		
-		addAtribute(IAttribute.class, AddColor.class);
-		addAtribute(IAttribute.class, AddTranslation.class);
-		addAtribute(IAttribute.class, AddRotation.class);
-		addAtribute(IAttribute.class, AddScale.class);
-		addAtribute(IAttribute.class, RemoveModifier.class);
-		addAtribute(IAttribute.class, GetModifiers.class);
-		addAtribute(IAttribute.class, SetCondition.class);
-		addAtribute(IAttribute.class, SetEasing.class);
-		addAtribute(IAttribute.class, RemoveEasing.class);
-		addAtribute(IAttribute.class, GetColor.class);
-		addAtribute(IAttribute.class, UpdateModifier.class);
-		addAtribute(IAttribute.class, GetRenderPosition.class);
+		addAttribute(IViewDistance.class, SetViewDistance.class);
+		addAttribute(IViewDistance.class, GetViewDistance.class);
 
-		addAtribute(IAutoTranslateable.class, AddAutoTranslation.class);
-		addAtribute(IAlignable.class, SetHorizontalAlign.class);
-		addAtribute(IAlignable.class, SetVerticalAlign.class);
+		addAttribute(IViewDistance.class, SetFaceWidgetToPlayer.class);
 
-		addAtribute(ITracker.class, SetTrackingType.class);
-		addAtribute(ITracker.class, SetTrackingFilter.class);
-		addAtribute(ITracker.class, SetTrackingEntity.class);
-
-		addAtribute(ICustomShape.class, SetGLMODE.class);
-		addAtribute(ICustomShape.class, SetShading.class);
-		addAtribute(ICustomShape.class, SetVertex.class);
-		addAtribute(ICustomShape.class, AddVertex.class);
-		addAtribute(ICustomShape.class, RemoveVertex.class);
-		addAtribute(ICustomShape.class, GetVertexCount.class);
-
-		addAtribute(IOBJModel.class, LoadOBJ.class);
-
-		addAtribute(IResizable.class, GetSize.class);
-		addAtribute(IResizable.class, SetSize.class);
-
-		addAtribute(ITextable.class, SetFont.class);
-		addAtribute(ITextable.class, SetText.class);
-		addAtribute(ITextable.class, GetText.class);
-		addAtribute(ITextable.class, GetSize.class);
-		addAtribute(ITextable.class, SetAntialias.class);
-		addAtribute(ITextable.class, SetFontSize.class);
-
-		addAtribute(IItem.class, SetItem.class);
-		addAtribute(IItem.class, GetItem.class);
-
-		addAtribute(IThroughVisibility.class, SetVisibleThroughObjects.class);
-		addAtribute(IThroughVisibility.class, IsVisibleThroughObjects.class);
-		
-		addAtribute(IViewDistance.class, SetViewDistance.class);
-		addAtribute(IViewDistance.class, GetViewDistance.class);
-
-		addAtribute(IViewDistance.class, SetFaceWidgetToPlayer.class);
-
-		addAtribute(ILookable.class, SetLookingAt.class);
-		addAtribute(ILookable.class, GetLookingAt.class);
+		addAttribute(ILookable.class, SetLookingAt.class);
+		addAttribute(ILookable.class, GetLookingAt.class);
 				
-		addAtribute(IPrivate.class, SetOwner.class);
-		addAtribute(IPrivate.class, GetOwner.class);
-		addAtribute(IPrivate.class, GetOwnerUUID.class);		
+		addAttribute(IPrivate.class, SetOwner.class);
+		addAttribute(IPrivate.class, GetOwner.class);
+		addAttribute(IPrivate.class, GetOwnerUUID.class);
 	}
 	
-	static HashMap<Class<? extends IAttribute>, LinkedList<Class<? extends LuaFunction>>> attributes;
-	
-	public static void addAtribute(Class<? extends IAttribute> atribute, Class<? extends LuaFunction> luaFunction){
-		LinkedList<Class<? extends LuaFunction>> a = attributes.get(atribute);
-		if(a!=null){
+	public static void addAttribute(Class<? extends IAttribute> attribute, Class<? extends LuaFunction> luaFunction){
+		LinkedList<Class<? extends LuaFunction>> a = attributes.get(attribute);
+		if(a != null){
 			a.push(luaFunction);
 		}else{
-			LinkedList<Class<? extends LuaFunction>> f = new LinkedList<Class<? extends LuaFunction>>();
+			LinkedList<Class<? extends LuaFunction>> f = new LinkedList<>();
 			f.add(luaFunction);
-			attributes.put(atribute, f);
+			attributes.put(attribute, f);
 		}	
 	}
 	
-	public static HashMap<String, Object> getFunctions(Class<? extends IAttribute> atribute, LuaReference ref){
-		LinkedList<Class<? extends LuaFunction>> functions = attributes.get(atribute);
-		HashMap<String, Object> luaObject = new HashMap<String, Object>();
-		for(Class<? extends LuaFunction> f: functions){
+	public static HashMap<String, Object> getFunctions(Class<? extends IAttribute> attribute, LuaReference reference){
+		HashMap<String, Object> luaObject = new HashMap<>();
+
+
+		for(Class<? extends LuaFunction> function : attributes.get(attribute)){
 			try {
-				LuaFunction lf = f.newInstance();
-				lf.setRef(ref);
-				luaObject.put(lf.getName(), lf);
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
+				LuaFunction luaFunction = function.newInstance();
+				luaFunction.setRef(reference);
+				luaObject.put(luaFunction.getName(), luaFunction);
+			} catch (InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
 		}
+
+
 		return luaObject;
 	}
 	

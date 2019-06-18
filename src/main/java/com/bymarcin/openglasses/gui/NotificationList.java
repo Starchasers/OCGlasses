@@ -11,9 +11,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
 import java.util.UUID;
+
+import static ben_mkiv.rendertoolkit.surface.ClientSurface.vec3d000;
 
 public class NotificationList extends prettyGuiList {
 
@@ -111,14 +114,24 @@ public class NotificationList extends prettyGuiList {
     void drawLinkRequest(NBTTagCompound tag, int slotTop, boolean isSelected){
         UUID hostUUID = tag.getUniqueId("host");
         OpenGlassesHostClient host = OCClientSurface.instance().getHost(hostUUID);
-        int distance = (int) Math.ceil(Minecraft.getMinecraft().player.getPositionVector().distanceTo(host.getRenderPosition(0.5f)));
+
+        Vec3d renderPosition = host.getRenderPosition(0.5f);
 
         String text = "link request";
 
         if(host.terminalName.length() > 0)
             text+=" from '"+host.terminalName+"'";
 
-        text+=" (distance: "+ distance +" blocks)";
+
+        if(renderPosition.equals(vec3d000))
+            text+=" (distance: unknown)";
+        else {
+            int distance = (int) Math.ceil(Minecraft.getMinecraft().player.getPositionVector().distanceTo(renderPosition));
+            text+=" (distance: "+ distance +" blocks)";
+        }
+
+
+
 
         int textColor = isSelected ? 0xFFFFFF : 0xDADADA;
 
