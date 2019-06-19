@@ -21,7 +21,7 @@ public class ManualPathProvider implements PathProvider {
         Manual.addProvider(new ManualPathProvider());
         Manual.addProvider(new ManualContentProvider());
         Manual.addTab(new TextureTabIconRenderer(new ResourceLocation(OpenGlasses.MODID, "textures/blocks/glasses_side.png")),
-                "openGlasses", "_Sidebar");
+                "OpenGlasses", "assets/" + OpenGlasses.MODID + "/doc/_Sidebar");
     }
 
     @Override

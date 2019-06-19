@@ -43,6 +43,8 @@ public class ClientProxy extends CommonProxy {
 		MinecraftForge.EVENT_BUS.register(ClientEventHandler.class);
 		MinecraftForge.EVENT_BUS.register(ClientRenderEvents.class);
 		MinecraftForge.EVENT_BUS.register(ClientWorldInteractionEvents.class);
+
+		ManualPathProvider.initialize();
 	}
 	
 	@Override
@@ -55,8 +57,6 @@ public class ClientProxy extends CommonProxy {
 			render = skinMap.get("slim");
 			render.addLayer(new BaublesRenderLayer());
 		}
-
-		ManualPathProvider.initialize();
 	}
 
 	@Override
