@@ -18,7 +18,7 @@ public class Manual {
     public static void preInit(){
         if(Loader.isModLoaded("rtfm")) {
             new ManualPathProviderRTFM().initialize(iconResourceLocation, tooltip, homepage);
-            items.add(ManualPathProviderRTFM.getManualItem().setUnlocalizedName("manual").setRegistryName("manual"));
+            items.add(ManualPathProviderRTFM.getManualItem().setUnlocalizedName("manual").setRegistryName("manual").setCreativeTab(OpenGlasses.creativeTab));
         }
 
         if(Loader.isModLoaded("opencomputers"))
