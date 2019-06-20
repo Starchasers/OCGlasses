@@ -8,6 +8,7 @@ import com.bymarcin.openglasses.event.minecraft.AnvilEvent;
 import com.bymarcin.openglasses.integration.opencomputers.ocProgramDisks;
 import com.bymarcin.openglasses.item.OpenGlassesHostCard;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
+import com.bymarcin.openglasses.manual.Manual;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.network.packet.GlassesStackNBT;
@@ -31,7 +32,6 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -45,7 +45,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 @Mod(	modid = OpenGlasses.MODID,
 		version = OpenGlasses.VERSION,
-		dependencies = "required-after:opencomputers@[1.7.1,);required-after:guitoolkit@1.0.3;required-after:rendertoolkit@1.0.3;after:baubles;before:openentity,ocdevices",
+		dependencies = "required-after:opencomputers@[1.7.1,);required-after:guitoolkit@1.0.3;required-after:rendertoolkit@1.0.3;after:baubles;after:rtfm;before:openentity;before:ocdevices",
 		guiFactory = OpenGlasses.GUIFACTORY)
 public class OpenGlasses
 {
@@ -71,6 +71,8 @@ public class OpenGlasses
 
 		Config.preInit();
 
+		Manual.preInit();
+
 		NetworkRegistry.initialize();
 		MinecraftForge.EVENT_BUS.register(this);
 
@@ -93,6 +95,9 @@ public class OpenGlasses
 		proxy.registermodel(OpenGlassesHostCardItem, 0);
 		proxy.registermodel(openTerminalItem, 0);
 		proxy.registermodel(openGlasses, 0);
+
+		for(Item manualItem : Manual.items)
+			proxy.registermodel(manualItem, 0);
 	}
 
 	public static boolean isGlassesStack(ItemStack stack){
@@ -142,6 +147,9 @@ public class OpenGlasses
 		event.getRegistry().register(OpenGlassesHostCardItem);
 		event.getRegistry().register(openTerminalItem);
 		event.getRegistry().register(openGlasses);
+
+		for(Item manualItem : Manual.items)
+			event.getRegistry().register(manualItem);
 	}
 
 	@SubscribeEvent

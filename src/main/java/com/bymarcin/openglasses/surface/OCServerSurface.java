@@ -137,7 +137,7 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 		}
 
 		if (oldUUID != null) {
-			// initialize with empty stack to force unequipped signal and to flush the caches
+			// preInit with empty stack to force unequipped signal and to flush the caches
 			OCServerSurface.instance().unsubscribePlayer(player.getUniqueID());
 		}
 

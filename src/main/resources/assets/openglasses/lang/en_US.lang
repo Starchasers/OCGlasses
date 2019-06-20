@@ -1,4 +1,5 @@
 tile.openglassesterminal.name=Glasses Terminal
+item.manual.name=OpenGlasses Manual
 item.openglasses.name=AR Glasses
 item.openglasses_card.name=Glasses Terminal Card
 key.categories.openglasses=OpenGlasses

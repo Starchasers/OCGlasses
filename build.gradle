@@ -33,7 +33,7 @@ def simpleVersion = "2.1.0" // + System.getenv("BUILD_NUMBER")
 
 def openComputersVersion = "MC1.12.2-1.7.3.146"
 def baublesVersion = "1.12-1.5.2"
-
+def rtfmVersion = "MC1.12-1.0.1.4"
 
 def commons_version = "MC1.12.2-1.0.3"
 
@@ -71,7 +71,9 @@ configurations {
 
 dependencies {
     provided "li.cil.oc:OpenComputers:${openComputersVersion}"
+
     compileOnly "com.azanor:Baubles:${baublesVersion}"
+    compileOnly "li.cil.manual:RTFM:${rtfmVersion}"
 
     extraLibs files("libs/commons0815/Commons0815-${commons_version}-dev.jar")
 

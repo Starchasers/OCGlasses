@@ -5,7 +5,7 @@ import com.bymarcin.openglasses.event.minecraft.client.ClientEventHandler;
 import com.bymarcin.openglasses.event.minecraft.client.ClientKeyboardEvents;
 import com.bymarcin.openglasses.event.minecraft.client.ClientRenderEvents;
 import com.bymarcin.openglasses.event.minecraft.client.ClientWorldInteractionEvents;
-import com.bymarcin.openglasses.manual.ManualPathProvider;
+import com.bymarcin.openglasses.manual.Manual;
 import com.bymarcin.openglasses.render.BaublesRenderLayer;
 
 import com.bymarcin.openglasses.surface.OCClientSurface;
@@ -36,7 +36,7 @@ public class ClientProxy extends CommonProxy {
 	
 	@Override
 	public void init() {
-		// 'dynamic' because it has to initialize the keybinds
+		// 'dynamic' because it has to preInit the keybinds
 		MinecraftForge.EVENT_BUS.register(new ClientKeyboardEvents());
 
 		// static event classes
@@ -44,7 +44,6 @@ public class ClientProxy extends CommonProxy {
 		MinecraftForge.EVENT_BUS.register(ClientRenderEvents.class);
 		MinecraftForge.EVENT_BUS.register(ClientWorldInteractionEvents.class);
 
-		ManualPathProvider.initialize();
 	}
 	
 	@Override
