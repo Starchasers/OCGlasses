@@ -10,6 +10,8 @@ import com.bymarcin.openglasses.lua.LuaFunction;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
 
+import static com.bymarcin.openglasses.component.OpenGlassesHostComponent.vec3D_to_map;
+
 public class GetRenderPosition extends LuaFunction{
 
     @Override
@@ -18,15 +20,17 @@ public class GetRenderPosition extends LuaFunction{
         WidgetGLOverlay widget = (WidgetGLOverlay) getSelf().getWidget();
         if(widget != null){
             String playerName = arguments.checkString(0);
+            int width = arguments.checkInteger(1);
+            int height = arguments.checkInteger(2);
+
             EntityPlayer player = OpenGlasses.proxy.getPlayer(playerName);
             Conditions conditions = new Conditions();
-            conditions.getConditionStates(player);
             conditions.bufferSensors(OpenGlasses.getGlassesStack(player));
-            //widget.updateRenderPosition(conditions.get());
-            //Vec3d renderPosition = widget.getRenderPosition(playerName);
-            Vec3d renderPosition = new Vec3d(0, 0, 0);
 
-            return new Object[] { renderPosition.x, renderPosition.y, renderPosition.z };
+            Vec3d offset = new Vec3d(0, 0, 0);
+            Vec3d renderPosition = widget.WidgetModifierList.getRenderPosition(conditions.getConditionStates(player), offset, width, height, 0);
+
+            return new Object[] { vec3D_to_map(renderPosition) };
         }
         throw new RuntimeException("Component does not exists!");
     }

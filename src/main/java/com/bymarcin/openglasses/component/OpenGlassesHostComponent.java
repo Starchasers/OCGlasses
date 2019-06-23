@@ -592,7 +592,7 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
         return players;
     }
 
-    private static HashMap<String, Object> vec3D_to_map(Vec3d vector){
+    public static HashMap<String, Object> vec3D_to_map(Vec3d vector){
         HashMap<String, Object> result = new HashMap<>();
         result.put("x", vector.x);
         result.put("y", vector.y);
