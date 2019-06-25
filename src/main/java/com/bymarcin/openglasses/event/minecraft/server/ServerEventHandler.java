@@ -33,7 +33,7 @@ public class ServerEventHandler {
         if (!(event.player instanceof EntityPlayerMP))
             return;
 
-        OCServerSurface.instance().unsubscribePlayer(event.player.getUniqueID());
+        OCServerSurface.instance().unsubscribePlayer((EntityPlayerMP) event.player);
     }
 
     @SubscribeEvent

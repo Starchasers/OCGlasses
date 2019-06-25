@@ -139,7 +139,7 @@ public class UpgradeNightvision extends UpgradeItem {
         if(!OpenGlasses.isGlassesStack(glassesStack))
             return;
 
-        PlayerStatsOC stats = OCServerSurface.getStats(player);
+        PlayerStatsOC stats = OCServerSurface.getStats((EntityPlayerMP) player);
 
         boolean wasActive = glassesStack.getTagCompound().getBoolean("nightVisionActive");
 

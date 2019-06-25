@@ -105,24 +105,23 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 	}
 
 	//unsubscribePlayer from events when he puts glasses off
-	public void unsubscribePlayer(UUID playerUUID){
-		EntityPlayerMP player = checkUUID(playerUUID);
-
+	public void unsubscribePlayer(EntityPlayerMP player){
 		if (getStats(player).nightVisionActive) {
 			player.removePotionEffect(potionNightvision);
 		}
 
-		if(!players.containsKey(playerUUID))
+		if(!players.containsKey(player.getUniqueID()))
 			return;
 
-		for(UUID hostUUID : players.get(playerUUID)) {
+		for(UUID hostUUID : players.get(player.getUniqueID())) {
 			OpenGlassesHostComponent host = getHost(hostUUID);
-			if (host != null)
+			if (host != null) {
 				host.onGlassesPutOff(player);
+			}
 		}
 
 		players.remove(player.getUniqueID());
-		playerGlasses.remove(playerUUID);
+		playerGlasses.remove(player.getUniqueID());
 	}
 
 	public static void equipmentChanged(EntityPlayerMP player, ItemStack newStack){
@@ -138,7 +137,7 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 
 		if (oldUUID != null) {
 			// preInit with empty stack to force unequipped signal and to flush the caches
-			OCServerSurface.instance().unsubscribePlayer(player.getUniqueID());
+			OCServerSurface.instance().unsubscribePlayer(player);
 		}
 
 		if (newUUID != null) {
@@ -147,7 +146,7 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 		}
 	}
 
-	public static PlayerStatsOC getStats(EntityPlayer player){
+	public static PlayerStatsOC getStats(EntityPlayerMP player){
 		if(!OCServerSurface.instance().playerStats.containsKey(player.getUniqueID()))
 			OCServerSurface.instance().playerStats.put(player.getUniqueID(), new PlayerStatsOC(player));
 

@@ -156,6 +156,11 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
         node().sendToReachable("computer.signal","glasses_off", player.getDisplayNameString());
     }
 
+    public void onPlayerLoggedOut(String playerName){
+        if(node() == null) return;
+        node().sendToReachable("computer.signal","glasses_off", playerName);
+    }
+
     @Callback
     public Object[] startLinking(Context context, Arguments args) {
         String playerName = args.optString(0, "");

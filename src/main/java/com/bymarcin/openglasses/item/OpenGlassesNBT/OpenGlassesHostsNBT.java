@@ -39,7 +39,7 @@ public class OpenGlassesHostsNBT {
         writeHostsToNBT(hosts, glassesStack);
 
         GlassesNBT.syncStackNBT(glassesStack, (EntityPlayerMP) player);
-        OCServerSurface.instance().unsubscribePlayer(player.getUniqueID());
+        OCServerSurface.instance().unsubscribePlayer((EntityPlayerMP) player);
     }
 
     public static NBTTagCompound getHostFromNBT(UUID hostUUID, ItemStack glassesStack){
