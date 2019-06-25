@@ -28,27 +28,36 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
+version = modVersion
+group = modGroup
+archivesBaseName = modBaseName
 
-def simpleVersion = "2.1.1" // + System.getenv("BUILD_NUMBER")
+def getGitRef() {
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'rev-parse', '--short', 'HEAD'
+            standardOutput = stdout
+        }
+        return stdout.toString().trim()
+    } catch (Throwable e) {
+        return "unknown"
+    }
+}
 
-def openComputersVersion = "MC1.12.2-1.7.3.146"
-def baublesVersion = "1.12-1.5.2"
-def rtfmVersion = "MC1.12-1.0.1.4"
-
-def commons_version = "MC1.12.2-1.0.3"
-
-group= "com.bymarcin.openglasses" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "OpenGlasses-MC1.12.2"
-version = simpleVersion
-def projredVersion="1.12.2-4.9.0.86"
+if (System.getenv("PROMOTED_NUMBER") != null)
+    buildNumber = "${System.getenv("PROMOTED_NUMBER")}"
+else if (System.getenv("BUILD_NUMBER") != null)
+    buildNumber = "${System.getenv("BUILD_NUMBER")}"
+else
+    buildNumber = "+" + getGitRef()
 
 minecraft {
-    replaceIn "com/bymarcin/openglasses/OpenGlasses.java"
-    replace "@VERSION@", simpleVersion
+    replace "@VERSION@", version
+    replace "@BUILD@", project.buildNumber
+    version = "${minecraftVersion}-${forge_version}"
     runDir = "run"
-    version = "1.12.2-14.23.2.2611"
-    mappings = "snapshot_20180130"
-
+    mappings = mcp_mappings
 }
 
 runClient {
@@ -96,7 +105,7 @@ processResources
                 include 'mcmod.info'
 
                 // replace version and mcversion
-                expand 'version':project.version, 'mcversion':project.minecraft.version
+                expand 'version':project.version + "-" + project.ext.buildNumber, 'mcversion':project.minecraftVersion
             }
 
             // copy everything else, thats not the mcmod.info
@@ -119,6 +128,8 @@ task syncGitWiki(type: com.palominolabs.gradle.task.git.clone.GitCloneTask) {
 }
 
 jar {
+    classifier = project.buildNumber
+    
     manifest {
         attributes([
                 "Maven-Artifact":"${project.group}:${project.archivesBaseName}:${project.version}",

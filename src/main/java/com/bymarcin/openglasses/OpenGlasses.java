@@ -44,12 +44,12 @@ import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.entity.player.EntityPlayer;
 
 @Mod(	modid = OpenGlasses.MODID,
-		version = OpenGlasses.VERSION,
+		version = BuildInfo.versionNumber + "-" + BuildInfo.buildNumber,
 		dependencies = "required-after:opencomputers@[1.7.1,);required-after:guitoolkit@1.0.3;required-after:rendertoolkit@1.0.3;after:baubles;after:rtfm;before:openentity;before:ocdevices",
 		guiFactory = OpenGlasses.GUIFACTORY)
 public class OpenGlasses
 {
-	public static final String MODID = "openglasses";
+	public static final String MODID = BuildInfo.modID;
 	public static final String VERSION = "@VERSION@";
 
 	public static final String GUIFACTORY = "com.bymarcin.openglasses.config.ConfigGUI";
