@@ -11,7 +11,6 @@ import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesNotificationsNBT;
 import com.bymarcin.openglasses.item.upgrades.UpgradeGeolyzer;
 import com.bymarcin.openglasses.item.upgrades.UpgradeNightvision;
 import com.bymarcin.openglasses.utils.PlayerStatsOC;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -44,7 +43,6 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 
 	private EventType eventType;
 	private UUID hostUUID;
-	private UUID playerUUID;
 	private BlockPos eventPos;
 	private EnumFacing facing;
 	private ItemStack glasses = ItemStack.EMPTY;
@@ -53,7 +51,6 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	private double mb;
 	
 	public GlassesEventPacket(UUID host, EventType eventType) {
-		this.playerUUID = Minecraft.getMinecraft().player.getUniqueID();
 		this.eventType = eventType;
 		this.hostUUID = host;
 	}
@@ -79,7 +76,6 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		if(readBoolean())
 			this.hostUUID = readUUID();
 
-		this.playerUUID = readUUID();
 		this.eventType = EventType.values()[readInt()];
 
 		switch(eventType){
@@ -103,7 +99,6 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 		if(hostUUID != null) {
 			writeUUID(hostUUID);
 		}
-		writeUUID(playerUUID);
 	    writeInt(eventType.ordinal());
 	    
 		switch(eventType){
@@ -131,8 +126,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	}
 
 	@Override
-	protected IMessage executeOnServer() {
-		EntityPlayerMP playerMP = OCServerSurface.instance().checkUUID(playerUUID);
+	protected IMessage executeOnServer(EntityPlayerMP playerMP) {
 		OpenGlassesHostComponent host;
 		Vec3d look = new Vec3d(0, 0, 0);
 		double eyeHeight = 0;

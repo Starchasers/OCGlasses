@@ -9,6 +9,8 @@ import java.lang.reflect.Type;
 import java.util.UUID;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IThreadListener;
@@ -39,7 +41,7 @@ public abstract class Packet<T extends Packet<T, RES>, RES extends IMessage> imp
 
 	abstract protected RES executeOnClient();
 
-	abstract protected RES executeOnServer();
+	abstract protected RES executeOnServer(EntityPlayerMP player);
 
 	public Packet() {
 		this.write = Unpooled.buffer();
@@ -278,7 +280,7 @@ public abstract class Packet<T extends Packet<T, RES>, RES extends IMessage> imp
 
 	private RES executePacket(T message, MessageContext ctx){
 		if (ctx.side == Side.SERVER) {
-			return message.executeOnServer();
+			return message.executeOnServer(ctx.getServerHandler().player);
 		}
 		else {
 			return message.executeOnClient();

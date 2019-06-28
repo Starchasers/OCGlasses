@@ -9,6 +9,7 @@ import com.bymarcin.openglasses.network.Packet;
 
 import com.bymarcin.openglasses.surface.OCClientSurface;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -91,7 +92,7 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 	}
 
 	@Override
-	protected IMessage executeOnServer() {
+	protected IMessage executeOnServer(EntityPlayerMP player) {
 		return null;
 	}
 

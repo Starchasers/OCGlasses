@@ -11,6 +11,7 @@ import li.cil.oc.api.internal.Robot;
 import li.cil.oc.api.internal.Tablet;
 import li.cil.oc.api.network.EnvironmentHost;
 import li.cil.oc.common.entity.Drone;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.relauncher.Side;
@@ -152,7 +153,7 @@ public class HostInfoPacket extends Packet<HostInfoPacket, IMessage> {
     }
 
     @Override
-    protected IMessage executeOnServer() {
+    protected IMessage executeOnServer(EntityPlayerMP player) {
         return null;
     }
 }

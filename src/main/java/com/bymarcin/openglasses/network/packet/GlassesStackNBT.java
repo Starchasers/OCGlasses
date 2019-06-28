@@ -4,6 +4,7 @@ import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.network.Packet;
 import com.bymarcin.openglasses.surface.OCClientSurface;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -45,7 +46,7 @@ public class GlassesStackNBT extends Packet<GlassesStackNBT, IMessage> {
     }
 
     @Override
-    protected IMessage executeOnServer() {
+    protected IMessage executeOnServer(EntityPlayerMP player) {
         return null;
     }
 }
