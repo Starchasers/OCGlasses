@@ -128,6 +128,13 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 		UUID oldUUID = playerGlasses.getOrDefault(player.getUniqueID(), null);
 		UUID newUUID = null;
 
+		if(!OpenGlasses.isGlassesStack(newStack) && playerGlasses.containsKey(player.getUniqueID())) {
+			// avoid unsubscribing if the player wears a helmet, while he has glasses on the baubles slot
+			ItemStack glassesStackBaubles = OpenGlasses.getGlassesStack(player);
+			if(!glassesStackBaubles.isEmpty())
+				newStack = glassesStackBaubles;
+		}
+
 		if(OpenGlasses.isGlassesStack(newStack)){
 			newUUID = GlassesNBT.getUniqueId(newStack);
 

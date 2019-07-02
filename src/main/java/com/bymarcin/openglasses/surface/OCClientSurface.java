@@ -268,6 +268,13 @@ public class OCClientSurface extends ClientSurface {
 	}
 
 	public void equipmentChanged(ItemStack newStack){
+		if(!OpenGlasses.isGlassesStack(newStack) && !glasses.get().isEmpty()){
+			// avoid unsubscribing if the player wears a helmet, while he has glasses on the baubles slot
+			ItemStack glassesStackBaubles = OpenGlasses.getGlassesStack(Minecraft.getMinecraft().player);
+			if(!glassesStackBaubles.isEmpty())
+				newStack = glassesStackBaubles;
+		}
+
 		if(newStack.isEmpty()){
 			if(!glasses.get().isEmpty())
 				initLocalGlasses(ItemStack.EMPTY);
