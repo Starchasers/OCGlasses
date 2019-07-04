@@ -9,6 +9,7 @@ import com.bymarcin.openglasses.item.GlassesNBT;
 import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesHostsNBT;
 import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesNotificationsNBT;
 import com.bymarcin.openglasses.item.upgrades.UpgradeGeolyzer;
+import com.bymarcin.openglasses.item.upgrades.UpgradeInfrared;
 import com.bymarcin.openglasses.item.upgrades.UpgradeNightvision;
 import com.bymarcin.openglasses.utils.PlayerStatsOC;
 import net.minecraft.entity.player.EntityPlayer;
@@ -186,7 +187,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 				return null;
 
 			case TOGGLE_INFRARED:
-				//UpgradeInfrared.toggleInfraredMode(playerMP);
+				UpgradeInfrared.toggleInfraredMode(playerMP);
 				return null;
 
 			case ACTIVATE_OVERLAY:
@@ -213,6 +214,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 
 									OpenGlassesNotificationsNBT.removeLinkRequest(glasses, hostUUID);
 									GlassesNBT.syncStackNBT(glasses, playerMP);
+									OCServerSurface.instance().subscribePlayer(playerMP, hostUUID);
 									return null;
 								}
 								break;

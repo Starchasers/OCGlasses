@@ -27,7 +27,7 @@ public class OpenGlassesHostsNBT {
         writeHostsToNBT(hosts, glassesStack);
 
         GlassesNBT.syncStackNBT(glassesStack, (EntityPlayerMP) player);
-        OCServerSurface.instance().subscribePlayer((EntityPlayerMP) player, hostUUID);
+        //OCServerSurface.instance().subscribePlayer((EntityPlayerMP) player, hostUUID);
     }
 
     public static void unlink(UUID uuid, ItemStack glassesStack, EntityPlayer player) {
