@@ -1,6 +1,7 @@
 package com.bymarcin.openglasses.network.packet;
 
 import com.bymarcin.openglasses.OpenGlasses;
+import com.bymarcin.openglasses.item.GlassesNBT;
 import com.bymarcin.openglasses.network.Packet;
 import com.bymarcin.openglasses.surface.OCClientSurface;
 import net.minecraft.client.Minecraft;
@@ -12,6 +13,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public class GlassesStackNBT extends Packet<GlassesStackNBT, IMessage> {
 
@@ -36,13 +38,38 @@ public class GlassesStackNBT extends Packet<GlassesStackNBT, IMessage> {
     @SideOnly(Side.CLIENT)
     @Override
     protected IMessage executeOnClient() {
-        ItemStack glasses = OpenGlasses.getGlassesStack(Minecraft.getMinecraft().player);
+        UUID tagUUID = tagCompound.getUniqueId("uuid");
+
+        // try to find the glasses stack that should be updated
+        ItemStack glasses = findGlassesStack(tagUUID);
+
 
         if(!glasses.isEmpty()) {
             glasses.setTagCompound(tagCompound);
-            OCClientSurface.instance().initLocalGlasses(glasses);
+
+            if(GlassesNBT.getUniqueId(OCClientSurface.glasses.get()).equals(tagUUID))
+                OCClientSurface.instance().initLocalGlasses(glasses);
         }
         return null;
+    }
+
+    @SideOnly(Side.CLIENT)
+    // 1. check helmet/baubles slot, if this fails check the main/off hand
+    private ItemStack findGlassesStack(UUID uniqueId){
+        ItemStack glassesStack = OpenGlasses.getGlassesStack(Minecraft.getMinecraft().player);
+
+        if(!glassesStack.isEmpty() && GlassesNBT.getUniqueId(glassesStack).equals(uniqueId))
+            return glassesStack;
+
+        ItemStack mainHand = Minecraft.getMinecraft().player.getHeldItemMainhand();
+        if(OpenGlasses.isGlassesStack(mainHand) && GlassesNBT.getUniqueId(mainHand).equals(uniqueId))
+            return mainHand;
+
+        ItemStack offHand = Minecraft.getMinecraft().player.getHeldItemOffhand();
+        if(OpenGlasses.isGlassesStack(offHand) && GlassesNBT.getUniqueId(offHand).equals(uniqueId))
+            return offHand;
+
+        return ItemStack.EMPTY;
     }
 
     @Override
