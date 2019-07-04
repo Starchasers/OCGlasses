@@ -22,7 +22,6 @@ public class ClientEventHandler {
     }
 
     @SubscribeEvent
-    @SideOnly(Side.CLIENT)
     public static void onLeave(FMLNetworkEvent.ClientDisconnectionFromServerEvent event){
         OCClientSurface.instance().onLeave();
     }
@@ -35,14 +34,4 @@ public class ClientEventHandler {
             OCClientSurface.instance().sendResolution();
         }
     }
-
-    @SubscribeEvent
-    public static void equipmentChanged(LivingEquipmentChangeEvent event){
-        if(!event.getEntityLiving().equals(Minecraft.getMinecraft().player))
-            return;
-
-        if(event.getSlot().equals(EntityEquipmentSlot.HEAD))
-            OCClientSurface.instance().equipmentChanged(event.getTo());
-    }
-
 }

@@ -21,7 +21,8 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 		SYNC_SCREEN_SIZE,
 		ASYNC_SCREEN_SIZES,
 		SET_RENDER_RESOLUTION,
-		NOTIFICATION
+		NOTIFICATION,
+		GLASSES_EQUIPPED, GLASSES_UNEQUIPPED
 	}
 
 	private TerminalEvent terminalEvent;
@@ -86,6 +87,15 @@ public class TerminalStatusPacket extends Packet<TerminalStatusPacket, IMessage>
 				}
 
 				return null;
+
+			case GLASSES_UNEQUIPPED:
+				OCClientSurface.instance().equipmentChanged(ItemStack.EMPTY);
+				return null;
+
+			case GLASSES_EQUIPPED:
+				OCClientSurface.instance().equipmentChanged(OpenGlasses.getGlassesStack(Minecraft.getMinecraft().player));
+				return null;
+
 		}
 
 		return null;

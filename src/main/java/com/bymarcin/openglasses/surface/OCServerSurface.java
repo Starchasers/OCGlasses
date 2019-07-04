@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.bymarcin.openglasses.item.upgrades.UpgradeNightvision.potionNightvision;
-import static com.bymarcin.openglasses.network.packet.TerminalStatusPacket.TerminalEvent.ASYNC_SCREEN_SIZES;
+import static com.bymarcin.openglasses.network.packet.TerminalStatusPacket.TerminalEvent.*;
 
 public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurface {
 	static {
@@ -77,6 +77,8 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 	}
 
 	public void subscribePlayer(EntityPlayerMP player, UUID hostUUID) {
+		NetworkRegistry.packetHandler.sendTo(new TerminalStatusPacket(GLASSES_EQUIPPED, UUID.randomUUID()), player);
+
 		playerGlasses.remove(player.getUniqueID());
 
 		ItemStack glassesStack = OpenGlasses.getGlassesStack(player);
@@ -106,6 +108,8 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 
 	//unsubscribePlayer from events when he puts glasses off
 	public void unsubscribePlayer(EntityPlayerMP player){
+		NetworkRegistry.packetHandler.sendTo(new TerminalStatusPacket(GLASSES_UNEQUIPPED, UUID.randomUUID()), player);
+
 		if (getStats(player).nightVisionActive) {
 			player.removePotionEffect(potionNightvision);
 		}

@@ -307,8 +307,8 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 	@Optional.Method(modid="baubles")
 	public void onEquipped(ItemStack itemstack, EntityLivingBase player) {
 		if(player.getEntityWorld().isRemote) {
-			if(player.equals(Minecraft.getMinecraft().player))
-				OCClientSurface.instance().equipmentChanged(itemstack);
+			//if(player.equals(Minecraft.getMinecraft().player))
+			//	OCClientSurface.instance().equipmentChanged(itemstack);
 			return;
 		}
 
@@ -320,8 +320,8 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 	@Optional.Method(modid="baubles")
 	public void onUnequipped(ItemStack itemstack, EntityLivingBase player) {
 		if(player.getEntityWorld().isRemote) {
-			if(player.equals(Minecraft.getMinecraft().player))
-				OCClientSurface.instance().equipmentChanged(itemstack);
+			//if(player.equals(Minecraft.getMinecraft().player))
+			//	OCClientSurface.instance().equipmentChanged(itemstack);
 			return;
 		}
 
