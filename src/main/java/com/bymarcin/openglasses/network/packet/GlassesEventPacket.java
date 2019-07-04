@@ -187,7 +187,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 				return null;
 
 			case TOGGLE_INFRARED:
-				UpgradeInfrared.toggleInfraredMode(playerMP);
+				//UpgradeInfrared.toggleInfraredMode(playerMP);
 				return null;
 
 			case ACTIVATE_OVERLAY:
