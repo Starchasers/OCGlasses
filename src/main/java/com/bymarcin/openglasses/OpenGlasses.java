@@ -45,7 +45,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 @Mod(	modid = OpenGlasses.MODID,
 		version = BuildInfo.versionNumber + "-" + BuildInfo.buildNumber,
-		dependencies = "required-after:opencomputers@[1.7.1,);required-after:guitoolkit@1.0.4;required-after:rendertoolkit@1.0.3;after:baubles;after:rtfm;before:openentity;before:ocdevices",
+		dependencies = "required-after:opencomputers@[1.7.1,);required-after:guitoolkit@1.0.4;required-after:rendertoolkit@1.0.4;after:baubles;after:rtfm;before:openentity;before:ocdevices",
 		guiFactory = OpenGlasses.GUIFACTORY)
 public class OpenGlasses
 {
