@@ -15,7 +15,12 @@ public class AddColor extends LuaFunction{
 		super.call(context, arguments);
 		Widget widget = getWidget();
 		if(widget != null){
-			int index = widget.WidgetModifierList.addColor((float) arguments.checkDouble(0), (float) arguments.checkDouble(1), (float) arguments.checkDouble(2), (float) arguments.optDouble(3, 1));
+			float r = Math.max(0, Math.min(1, (float) arguments.checkDouble(0)));
+			float g = Math.max(0, Math.min(1, (float) arguments.checkDouble(1)));
+			float b = Math.max(0, Math.min(1, (float) arguments.checkDouble(2)));
+			float alpha = Math.max(0, Math.min(1, (float) arguments.optDouble(3, 1)));
+
+			int index = widget.WidgetModifierList.addColor(r, g, b, alpha);
 			updateWidget();
 			return new Object[]{ index+1 };
 		}
