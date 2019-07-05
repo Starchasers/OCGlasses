@@ -9,6 +9,7 @@ import li.cil.oc.api.machine.Context;
 import com.bymarcin.openglasses.lua.LuaFunction;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import static com.bymarcin.openglasses.component.OpenGlassesHostComponent.vec3D_to_map;
 
@@ -23,7 +24,7 @@ public class GetRenderPosition extends LuaFunction{
             int width = arguments.checkInteger(1);
             int height = arguments.checkInteger(2);
 
-            EntityPlayer player = OpenGlasses.proxy.getPlayer(playerName);
+            EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(playerName);
             Conditions conditions = new Conditions();
             conditions.bufferSensors(OpenGlasses.getGlassesStack(player));
 

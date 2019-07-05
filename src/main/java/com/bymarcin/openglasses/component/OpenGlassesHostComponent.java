@@ -5,7 +5,6 @@ import ben_mkiv.commons0815.utils.utilsCommon;
 import ben_mkiv.rendertoolkit.common.widgets.Widget;
 import ben_mkiv.rendertoolkit.common.widgets.component.face.*;
 import ben_mkiv.rendertoolkit.common.widgets.component.world.*;
-import ben_mkiv.rendertoolkit.common.widgets.core.attribute.IAttribute;
 import ben_mkiv.rendertoolkit.network.messages.WidgetUpdatePacket;
 import ben_mkiv.rendertoolkit.network.rTkNetwork;
 import com.bymarcin.openglasses.OpenGlasses;
@@ -15,9 +14,7 @@ import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesNotificationsNBT;
 import com.bymarcin.openglasses.item.upgrades.UpgradeGeolyzer;
 import com.bymarcin.openglasses.item.upgrades.UpgradeNavigation;
 import com.bymarcin.openglasses.lib.McJty.font.TrueTypeFont;
-import com.bymarcin.openglasses.lua.AttributeRegistry;
 import com.bymarcin.openglasses.lua.LuaObject;
-import com.bymarcin.openglasses.lua.LuaReference;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.HostInfoPacket;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
@@ -29,6 +26,7 @@ import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.*;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -168,7 +166,7 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
         HashSet<String> players = new HashSet<>();
 
         if(playerName.length() > 0){
-            EntityPlayerMP player = (EntityPlayerMP) OpenGlasses.proxy.getPlayer(playerName);
+            EntityPlayerMP player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(playerName);
             if(requestLink(player))
                 players.add(player.getDisplayName().getUnformattedText());
 
