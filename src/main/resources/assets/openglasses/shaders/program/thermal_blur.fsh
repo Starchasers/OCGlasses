@@ -28,7 +28,12 @@ void main() {
 		// Accumulate smoothed blur
         float strength = 1.0 - abs(r / Radius);
         totalStrength = totalStrength + strength;
-        blurred = blurred + sample;
+
+        blurred.rgb = blurred.rgb + sample.rgb*sample.a;
+        blurred.a = blurred.a + sample.a;
     }
-    gl_FragColor = vec4(blurred.rgb / (Radius * 2.0 + 1.0), sampleRef.a);
+
+    gl_FragColor = vec4(blurred.rgb / totalAlpha, totalAlpha / (Radius * 2.0 + 1.0));
+    //gl_FragColor = vec4(blurred.rgb / (Radius * 2.0 + 1.0), blurred.a);
+    //gl_FragColor = blurred.rgba / (Radius * 2.0 + 1.0);
 }

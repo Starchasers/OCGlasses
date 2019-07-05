@@ -4,10 +4,21 @@
         "final"
     ],
     "passes": [
+
         {
-            "name": "entity_outline",
+            "name": "openglasses:thermal_blur",
             "intarget": "final",
-            "outtarget": "swap"
+            "outtarget": "swap",
+            "uniforms": [
+                {
+                    "name": "BlurDir",
+                    "values": [ 0.0, 1.0 ]
+                },
+                {
+                    "name": "Radius",
+                    "values": [ 15.0 ]
+                }
+            ]
         },
         {
             "name": "openglasses:thermal_blur",
@@ -20,29 +31,10 @@
                 },
                 {
                     "name": "Radius",
-                    "values": [ 5.0 ]
+                    "values": [ 15.0 ]
                 }
             ]
-        },
-        {
-            "name": "openglasses:thermal_blur",
-            "intarget": "final",
-            "outtarget": "swap",
-            "uniforms": [
-                {
-                    "name": "BlurDir",
-                    "values": [ 0.0, 1.0 ]
-                },
-                {
-                    "name": "Radius",
-                    "values": [ 5.0 ]
-                }
-            ]
-        },
-        {
-            "name": "blit",
-            "intarget": "swap",
-            "outtarget": "final"
         }
+
     ]
 }
