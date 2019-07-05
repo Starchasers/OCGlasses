@@ -14,6 +14,7 @@ import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.network.packet.GlassesStackNBT;
 import com.bymarcin.openglasses.network.packet.HostInfoPacket;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
+import com.bymarcin.openglasses.proxy.ClientProxy;
 import com.bymarcin.openglasses.proxy.CommonProxy;
 import com.bymarcin.openglasses.surface.OCServerSurface;
 import com.bymarcin.openglasses.tileentity.OpenGlassesTerminalTileEntity;
@@ -43,6 +44,8 @@ import baubles.api.cap.IBaublesItemHandler;
 
 import net.minecraft.entity.player.EntityPlayer;
 
+import java.util.HashSet;
+
 @Mod(	modid = OpenGlasses.MODID,
 		version = BuildInfo.versionNumber + "-" + BuildInfo.buildNumber,
 		dependencies = "required-after:opencomputers@[1.7.1,);required-after:guitoolkit@1.0.4;required-after:rendertoolkit@1.0.4;after:baubles;after:rtfm;before:openentity;before:ocdevices",
@@ -50,20 +53,17 @@ import net.minecraft.entity.player.EntityPlayer;
 public class OpenGlasses
 {
 	public static final String MODID = BuildInfo.modID;
-	public static final String VERSION = "@VERSION@";
 
-	public static final String GUIFACTORY = "com.bymarcin.openglasses.config.ConfigGUI";
+	static final String GUIFACTORY = "com.bymarcin.openglasses.config.ConfigGUI";
 
 	@SidedProxy(clientSide = "com.bymarcin.openglasses.proxy.ClientProxy", serverSide = "com.bymarcin.openglasses.proxy.CommonProxy")
 	public static CommonProxy proxy;
 
-	public static Item openGlasses;
-	public static Item openTerminalItem;
-	public static Item OpenGlassesHostCardItem;
-
 	public static boolean baubles = false;
 
 	public static boolean absoluteRenderingAllowed = true;
+
+	private HashSet<Item> modItems = new HashSet<>();
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event){
@@ -77,27 +77,29 @@ public class OpenGlasses
 		MinecraftForge.EVENT_BUS.register(this);
 
 		OpenGlassesTerminalBlock.DEFAULT_BLOCK = new OpenGlassesTerminalBlock();
-		openTerminalItem = new ItemBlock(OpenGlassesTerminalBlock.DEFAULT_BLOCK).setRegistryName(OpenGlassesTerminalBlock.DEFAULT_BLOCK.getRegistryName());
+
+		modItems.add(new ItemBlock(OpenGlassesTerminalBlock.DEFAULT_BLOCK).setRegistryName(OpenGlassesTerminalBlock.DEFAULT_BLOCK.getRegistryName()));
+
 
 		GameRegistry.registerTileEntity(OpenGlassesTerminalTileEntity.class, "openglassesterminalte");
 
-		openGlasses = new OpenGlassesItem();
-		OpenGlassesItem.DEFAULT_STACK = new ItemStack(openGlasses);
+		OpenGlassesItem.DEFAULT_STACK = new ItemStack(new OpenGlassesItem());
 		OpenGlassesItem.initGlassesStack(OpenGlassesItem.DEFAULT_STACK);
+		modItems.add(OpenGlassesItem.DEFAULT_STACK.getItem());
 
-		OpenGlassesHostCard.DEFAULTSTACK = new ItemStack(OpenGlassesHostCardItem = new OpenGlassesHostCard());
+		OpenGlassesHostCard.DEFAULTSTACK = new ItemStack(new OpenGlassesHostCard());
+		modItems.add(OpenGlassesHostCard.DEFAULTSTACK.getItem());
 
 		proxy.init();
 	}
 
 	@SubscribeEvent
 	public void registerModels(ModelRegistryEvent event) {
-		proxy.registermodel(OpenGlassesHostCardItem, 0);
-		proxy.registermodel(openTerminalItem, 0);
-		proxy.registermodel(openGlasses, 0);
+		for(Item item : modItems)
+			ClientProxy.registermodel(item, 0);
 
 		for(Item manualItem : Manual.items)
-			proxy.registermodel(manualItem, 0);
+			ClientProxy.registermodel(manualItem, 0);
 	}
 
 	public static boolean isGlassesStack(ItemStack stack){
@@ -144,9 +146,8 @@ public class OpenGlasses
 
 	@SubscribeEvent
 	public void registerItems(RegistryEvent.Register<Item> event) {
-		event.getRegistry().register(OpenGlassesHostCardItem);
-		event.getRegistry().register(openTerminalItem);
-		event.getRegistry().register(openGlasses);
+		for(Item item : modItems)
+			event.getRegistry().register(item);
 
 		for(Item manualItem : Manual.items)
 			event.getRegistry().register(manualItem);
@@ -167,17 +168,16 @@ public class OpenGlasses
 		proxy.postInit();
 	}
 
-
 	@EventHandler
 	public static void onServerStopped(FMLServerStoppedEvent event){
 		OCServerSurface.onServerStopped();
 	}
 
 
-	public static CreativeTabs creativeTab = new CreativeTabs("openglasses"){
+	public static CreativeTabs creativeTab = new CreativeTabs(MODID){
         @Override
         public ItemStack getTabIconItem(){
-            return new ItemStack(OpenGlasses.openTerminalItem);
+            return new ItemStack(OpenGlassesTerminalBlock.DEFAULT_BLOCK);
         }
     };
 

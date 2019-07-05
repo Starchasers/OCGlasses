@@ -1,7 +1,7 @@
 {
     "blend": {
         "func": "add",
-        "srcrgb": "srcalpha",
+        "srcrgb": "one",
         "dstrgb": "1-srcalpha"
     },
     "vertex": "openglasses:thermal_sobel",

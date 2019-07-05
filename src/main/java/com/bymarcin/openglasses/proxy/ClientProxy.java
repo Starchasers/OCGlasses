@@ -5,15 +5,17 @@ import com.bymarcin.openglasses.event.minecraft.client.ClientEventHandler;
 import com.bymarcin.openglasses.event.minecraft.client.ClientKeyboardEvents;
 import com.bymarcin.openglasses.event.minecraft.client.ClientRenderEvents;
 import com.bymarcin.openglasses.event.minecraft.client.ClientWorldInteractionEvents;
-import com.bymarcin.openglasses.manual.Manual;
 import com.bymarcin.openglasses.render.BaublesRenderLayer;
 
-import com.bymarcin.openglasses.surface.OCClientSurface;
-import com.bymarcin.openglasses.utils.PlayerStatsOC;
+import com.bymarcin.openglasses.render.InfraredRenderLayer;
+import com.bymarcin.openglasses.render.ThermalEntityRender;
+import com.bymarcin.openglasses.utils.VazkiiShaderHelper;
 import com.google.common.util.concurrent.ListenableFuture;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.renderer.entity.RenderLivingBase;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -21,16 +23,17 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
-	@Override
-	public void registermodel(Item item, int meta){
+	public static void registermodel(Item item, int meta){
 		ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(item.getRegistryName(), "inventory"));
 	}
 	
@@ -56,34 +59,41 @@ public class ClientProxy extends CommonProxy {
 			render = skinMap.get("slim");
 			render.addLayer(new BaublesRenderLayer());
 		}
+
+		//MinecraftForge.EVENT_BUS.register(new RenderEventHandler());
+
+		VazkiiShaderHelper.initShaders();
+
+		MinecraftForge.EVENT_BUS.register(ThermalEntityRender.class);
+	}
+
+
+	public static HashMap<Class<? extends EntityLivingBase>, ModelBase> entityClassModels = new HashMap<>();
+
+	public static class RenderEventHandler{
+		@SubscribeEvent
+		public void onJoin(EntityJoinWorldEvent event) {
+			if(event.getWorld().isRemote && event.getEntity() instanceof EntityLiving){
+				Class<? extends EntityLivingBase> entityClass = ((EntityLivingBase) event.getEntity()).getClass();
+				if(entityClassModels.containsKey(entityClass))
+					return;
+
+				RenderLivingBase<?> rm = (RenderLivingBase<?>) Minecraft.getMinecraft().getRenderManager().getEntityClassRenderObject(entityClass);
+
+				rm.addLayer(new InfraredRenderLayer());
+
+				entityClassModels.put(entityClass, rm.getMainModel());
+			}
+		}
 	}
 
 	@Override
 	public World getWorld(int dimensionId) {
-		if (getCurrentClientDimension() != dimensionId) {
+		if (Minecraft.getMinecraft().world.provider.getDimension() != dimensionId) {
 			return null;
 		} else
 			return Minecraft.getMinecraft().world;
 	}
-
-	@Override
-	public EntityPlayer getPlayer(String username) {
-		return Minecraft.getMinecraft().player;
-	}
-
-	@Override
-	public PlayerStatsOC getPlayerStats(UUID uuid) {
-		PlayerStatsOC s = new PlayerStatsOC(getPlayer(""));
-		s.setScreen(OCClientSurface.resolution.getScaledWidth(), OCClientSurface.resolution.getScaledHeight(), (double) OCClientSurface.resolution.getScaleFactor());
-		s.conditions = OCClientSurface.glasses.getConditions();
-		return s;
-	}
-
-	@Override
-	public int getCurrentClientDimension() {
-		return Minecraft.getMinecraft().world.provider.getDimension();
-	}
-
 
 	@Override
 	public boolean isCallingFromMinecraftThread() {
@@ -94,18 +104,4 @@ public class ClientProxy extends CommonProxy {
 	public ListenableFuture<Object> addScheduledTask(Runnable runnable) {
 		return Minecraft.getMinecraft().addScheduledTask(runnable);
 	}
-
-	@Override
-	public Entity getEntity(UUID uuid){
-		for(Entity entity : Minecraft.getMinecraft().world.getLoadedEntityList())
-			if(entity.getUniqueID().equals(uuid))
-				return entity;
-
-		return null;
-	}
-
-	public EntityPlayer getPlayer(UUID uuid){
-		return Minecraft.getMinecraft().world.getPlayerEntityByUUID(uuid);
-	}
-
 }

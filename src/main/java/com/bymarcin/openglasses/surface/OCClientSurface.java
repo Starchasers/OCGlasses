@@ -17,8 +17,12 @@ import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 
 import com.bymarcin.openglasses.utils.GlassesInstance;
 import com.bymarcin.openglasses.utils.OpenGlassesHostClient;
+import com.bymarcin.openglasses.utils.ShaderHelper;
+import net.minecraft.block.BlockFlowerPot;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -88,7 +92,6 @@ public class OCClientSurface extends ClientSurface {
 			NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(hostUUID, GlassesEventPacket.EventType.GLASSES_SCREEN_SIZE, resolution.getScaledWidth(), resolution.getScaledHeight(), resolution.getScaleFactor()));
 	}
 
-
 	public void renderOverlay(float partialTicks) {
 		if(!shouldRenderStart(RenderType.GameOverlayLocated)) return;
 
@@ -115,6 +118,7 @@ public class OCClientSurface extends ClientSurface {
 	}
 
 	public void renderWorld(float partialTicks)	{
+
 		if(!shouldRenderStart(RenderType.WorldLocated)) return;
 
 		preRender(RenderType.WorldLocated, partialTicks);
@@ -142,9 +146,11 @@ public class OCClientSurface extends ClientSurface {
 		postRender(RenderType.WorldLocated);
 
 		//GlStateManager.depthMask(false);
+
+		//renderEntities(partialTicks);
+		ShaderHelper.makeEntityOutlineShader(true);
 		GlStateManager.enableDepth();
 	}
-
 
 	public static Vec3d getEntityLocation(Entity entityIn, float partialTicks){
 		if(entityIn == null)
@@ -153,8 +159,6 @@ public class OCClientSurface extends ClientSurface {
 		double[] location = getEntityPlayerLocation(entityIn, partialTicks);
 		return new Vec3d(location[0], location[1], location[2]);
 	}
-
-
 
 	private void renderWidgets(Collection<IRenderableWidget> widgets, float partialTicks, Vec3d renderPos, OpenGlassesHostClient host){
 		long renderConditions = glasses.getConditions().get();

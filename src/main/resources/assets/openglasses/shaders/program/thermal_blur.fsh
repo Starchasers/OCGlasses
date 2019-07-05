@@ -19,21 +19,14 @@ void main() {
     vec4 sampleRef = texture2D(DiffuseSampler, texCoord);
 
     for(float r = -Radius; r <= Radius; r += 1.0) {
-        vec4 sample = texture2D(DiffuseSampler, texCoord + oneTexel * r * BlurDir);
+           vec4 sample = texture2D(DiffuseSampler, texCoord + oneTexel * r * BlurDir);
 
-		// Accumulate average alpha
-        totalAlpha = totalAlpha + sample.a;
-        totalSamples = totalSamples + 1.0;
+   		   totalAlpha = totalAlpha + sample.a;
+           totalSamples = totalSamples + 1.0;
 
-		// Accumulate smoothed blur
-        float strength = 1.0 - abs(r / Radius);
-        totalStrength = totalStrength + strength;
-
-        blurred.rgb = blurred.rgb + sample.rgb*sample.a;
-        blurred.a = blurred.a + sample.a;
+           blurred.rgb = blurred.rgb + sample.rgb*sample.a;
+           blurred.a = blurred.a + sample.a;
     }
 
-    gl_FragColor = vec4(blurred.rgb / totalAlpha, totalAlpha / (Radius * 2.0 + 1.0));
-    //gl_FragColor = vec4(blurred.rgb / (Radius * 2.0 + 1.0), blurred.a);
-    //gl_FragColor = blurred.rgba / (Radius * 2.0 + 1.0);
+    gl_FragColor = vec4(blurred.rgb / totalAlpha, totalAlpha / totalSamples);
 }

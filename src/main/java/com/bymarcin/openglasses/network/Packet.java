@@ -18,6 +18,7 @@ import net.minecraft.util.math.BlockPos;
 
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -62,7 +63,9 @@ public abstract class Packet<T extends Packet<T, RES>, RES extends IMessage> imp
 		int x = readInt();
 		int y = readInt();
 		int z = readInt();
-		return Utils.getTileEntityServer(dimensionId, new BlockPos(x, y, z));
+
+		World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dimensionId);
+		return world != null ? world.getTileEntity(new BlockPos(x, y, z)) : null;
 	}
 
 	public byte[] readByteArray() throws IOException {

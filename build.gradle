@@ -134,7 +134,8 @@ jar {
         attributes([
                 "Maven-Artifact":"${project.group}:${project.archivesBaseName}:${project.version}",
                 'Timestamp': System.currentTimeMillis(),
-                'ContainedDeps': "Commons0815-${commons_version}.jar"
+                'ContainedDeps': "Commons0815-${commons_version}.jar",
+                'FMLAT': 'openglasses_at.cfg'
         ])
     }
 

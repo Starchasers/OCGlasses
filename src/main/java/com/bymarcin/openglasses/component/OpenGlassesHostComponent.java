@@ -560,7 +560,7 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
         if (getHost() != null && !getHost().world().isRemote) {
             for (Map.Entry<UUID, HashSet<UUID>> entry : OCServerSurface.instance().players.entrySet())
                 if (entry.getValue().contains(getUUID())) {
-                    EntityPlayer player = OpenGlasses.proxy.getPlayer(entry.getKey());
+                    EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(entry.getKey());
                     if (player instanceof EntityPlayerMP)
                         syncWidgets((EntityPlayerMP) player);
                 }
