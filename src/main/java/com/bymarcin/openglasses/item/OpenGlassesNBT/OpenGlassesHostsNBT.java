@@ -21,6 +21,7 @@ public class OpenGlassesHostsNBT {
         newTag.setUniqueId("host", hostUUID);
         newTag.setUniqueId("userUUID", player.getGameProfile().getId());
         newTag.setString("user", player.getGameProfile().getName());
+        newTag.setUniqueId("ownerUUID", player.getUniqueID());
 
         HashSet<NBTTagCompound> hosts = getHostsFromNBT(glassesStack);
         hosts.add(newTag);
