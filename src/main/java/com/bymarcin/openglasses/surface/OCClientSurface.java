@@ -169,7 +169,7 @@ public class OCClientSurface extends ClientSurface {
 			else if(!renderable.shouldWidgetBeRendered(Minecraft.getMinecraft().player, offset))
 				continue;
 
-			if(!renderable.isWidgetOwner(glasses.getHost(host.hostUUID).ownerUUID.toString()))
+			if(!renderable.isWidgetOwner(Minecraft.getMinecraft().player.getUniqueID().toString()))
 				continue;
 
 			if(renderable instanceof EntityTracker3D.RenderEntityTracker)
