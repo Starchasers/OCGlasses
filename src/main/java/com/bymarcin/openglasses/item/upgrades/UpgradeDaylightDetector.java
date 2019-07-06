@@ -53,7 +53,7 @@ public class UpgradeDaylightDetector  extends UpgradeItem {
         }
 		else {
 		    tooltip.add("lightsensor: not installed");
-            tooltip.add("§8(install on anvil with minecraft daylight sensor)§7");
+            tooltip.add("§8requires minecraft daylight sensor§7");
         }
 
         return tooltip;
