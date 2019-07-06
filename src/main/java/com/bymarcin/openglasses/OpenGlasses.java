@@ -46,12 +46,18 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.HashSet;
 
-@Mod(	modid = OpenGlasses.MODID,
-		version = BuildInfo.versionNumber + "-" + BuildInfo.buildNumber,
-		dependencies = "required-after:opencomputers@[1.7.1,);required-after:guitoolkit@1.0.4;required-after:rendertoolkit@1.0.4;after:baubles;after:rtfm;before:openentity;before:ocdevices",
-		guiFactory = OpenGlasses.GUIFACTORY)
-public class OpenGlasses
-{
+@Mod(
+	modid = OpenGlasses.MODID,
+	version = BuildInfo.versionNumber + "-" + BuildInfo.buildNumber,
+	guiFactory = OpenGlasses.GUIFACTORY,
+	dependencies =
+			"required-after:opencomputers@[1.7.1,);" +
+			"required-after:guitoolkit@1.1.0;" +
+			"required-after:rendertoolkit@1.1.0;" +
+			"after:baubles;after:rtfm;"
+)
+
+public class OpenGlasses {
 	public static final String MODID = BuildInfo.modID;
 
 	static final String GUIFACTORY = "com.bymarcin.openglasses.config.ConfigGUI";

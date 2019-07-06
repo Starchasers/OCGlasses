@@ -63,6 +63,6 @@ public class ServerEventHandler {
 
         if(OpenGlasses.isGlassesStack(glassesStack))
             for(UpgradeItem upgrade : OpenGlassesItem.upgrades)
-                upgrade.update(player, glassesStack);
+                upgrade.updateServer(player, glassesStack);
     }
 }

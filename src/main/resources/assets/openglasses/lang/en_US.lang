@@ -5,6 +5,7 @@ item.openglasses_card.name=Glasses Terminal Card
 key.categories.openglasses=OpenGlasses
 key.interact=Overlay Cursor
 key.nightvision=Nightvision (Mode)
+key.thermalvision=Thermalvision (Mode)
 itemGroup.openglasses=OpenGlasses
 
 

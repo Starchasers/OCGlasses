@@ -45,7 +45,9 @@ public abstract class UpgradeItem {
         return new ArrayList<>();
     }
 
-    public void update(EntityPlayer player, ItemStack stack){}
+    public void updateServer(EntityPlayer player, ItemStack stack){}
+
+    public void updateClient(EntityPlayer player, ItemStack stack){}
 
     // handles keyboard inputs
     public void onKeyInput(){}

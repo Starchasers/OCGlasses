@@ -62,6 +62,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		upgrades.add(new UpgradeNightvision());
 		upgrades.add(new UpgradeTank());
 		upgrades.add(new UpgradeNavigation());
+		upgrades.add(new UpgradeThermalVision());
 	}
 
 	public OpenGlassesItem() {

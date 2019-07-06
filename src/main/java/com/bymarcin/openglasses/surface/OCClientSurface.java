@@ -3,6 +3,7 @@ package com.bymarcin.openglasses.surface;
 import java.util.*;
 
 import ben_mkiv.commons0815.utils.utilsCommon;
+import ben_mkiv.rendertoolkit.client.thermalvision.ShaderHelper;
 import ben_mkiv.rendertoolkit.common.widgets.IRenderableWidget;
 import ben_mkiv.rendertoolkit.common.widgets.RenderType;
 import ben_mkiv.rendertoolkit.common.widgets.Widget;
@@ -12,17 +13,15 @@ import ben_mkiv.rendertoolkit.surface.ClientSurface;
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.item.GlassesNBT;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
+import com.bymarcin.openglasses.item.upgrades.UpgradeItem;
+import com.bymarcin.openglasses.item.upgrades.UpgradeThermalVision;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 
 import com.bymarcin.openglasses.utils.GlassesInstance;
 import com.bymarcin.openglasses.utils.OpenGlassesHostClient;
-import com.bymarcin.openglasses.utils.ShaderHelper;
-import net.minecraft.block.BlockFlowerPot;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -36,11 +35,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.vecmath.Vector3f;
 
+import static ben_mkiv.rendertoolkit.client.thermalvision.ShaderHelper.loadOutlineShader;
 import static com.bymarcin.openglasses.surface.StaticWidgets.*;
 
 @SideOnly(Side.CLIENT)
 public class OCClientSurface extends ClientSurface {
-	static{
+    public static boolean thermalActive = false;
+
+    static{
 		instances = new OCClientSurface();
 	}
 
@@ -119,6 +121,8 @@ public class OCClientSurface extends ClientSurface {
 
 	public void renderWorld(float partialTicks)	{
 
+		updateThermalVision();
+
 		if(!shouldRenderStart(RenderType.WorldLocated)) return;
 
 		preRender(RenderType.WorldLocated, partialTicks);
@@ -144,12 +148,21 @@ public class OCClientSurface extends ClientSurface {
 		}
 
 		postRender(RenderType.WorldLocated);
-
-		//GlStateManager.depthMask(false);
-
-		//renderEntities(partialTicks);
-		ShaderHelper.makeEntityOutlineShader(true);
 		GlStateManager.enableDepth();
+	}
+
+	private void updateThermalVision(){
+		if(updateTicks % 10 != 0 || glasses.get().isEmpty())
+			return;
+
+		if(glasses.thermalVisionActive != thermalActive) {
+			if (glasses.thermalVisionActive)
+				loadOutlineShader(ShaderHelper.ShaderType.THERMAL_VISION);
+			else
+				loadOutlineShader(ShaderHelper.ShaderType.VANILLA_GLOW);
+
+			thermalActive = glasses.thermalVisionActive;
+		}
 	}
 
 	public static Vec3d getEntityLocation(Entity entityIn, float partialTicks){
@@ -294,17 +307,19 @@ public class OCClientSurface extends ClientSurface {
 		glasses.refreshConditions();
 
 		if(updateTicks % 20 == 0) {
-			// force checking of equipment ~30 seconds after joining the world
-			// because the equipment changed event wont fire onJoin, and the equipment isnt synced in the worldJoinedEvents
-			if (player.ticksExisted < 600 && glasses.get().isEmpty())
+			ItemStack glassesStack = OpenGlasses.getGlassesStack(player);
+
+			if (!glasses.get().equals(glassesStack))
 				equipmentChanged(OpenGlasses.getGlassesStack(player));
 
 			updateTicks = 0;
 		}
 
+		if(!glasses.get().isEmpty())
+			for(UpgradeItem upgrade : OpenGlassesItem.upgrades)
+				upgrade.updateClient(player, glasses.get());
+
 		updateTicks++;
 	}
-
-
 
 }

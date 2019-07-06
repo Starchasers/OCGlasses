@@ -23,12 +23,12 @@ import org.lwjgl.input.Keyboard;
 public class ClientKeyboardEvents {
     public static KeyBinding interactGUIKey = new KeyBinding("key.interact", Keyboard.KEY_C, "key.categories." + OpenGlasses.MODID.toLowerCase());
     public static KeyBinding nightvisionModeKey = new KeyBinding("key.nightvision", Keyboard.KEY_N, "key.categories." + OpenGlasses.MODID.toLowerCase());
-    public static KeyBinding infraredModeKey = new KeyBinding("key.infrared", Keyboard.KEY_B, "key.categories." + OpenGlasses.MODID.toLowerCase());
+    public static KeyBinding thermalvisionModeKey = new KeyBinding("key.thermalvision", Keyboard.KEY_B, "key.categories." + OpenGlasses.MODID.toLowerCase());
 
     public ClientKeyboardEvents() {
         ClientRegistry.registerKeyBinding(interactGUIKey);
         ClientRegistry.registerKeyBinding(nightvisionModeKey);
-        ClientRegistry.registerKeyBinding(infraredModeKey);
+        ClientRegistry.registerKeyBinding(thermalvisionModeKey);
     }
 
     @SubscribeEvent

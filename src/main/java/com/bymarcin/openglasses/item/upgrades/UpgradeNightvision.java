@@ -135,7 +135,7 @@ public class UpgradeNightvision extends UpgradeItem {
     }
 
     @Override
-    public void update(EntityPlayer player, ItemStack glassesStack){
+    public void updateServer(EntityPlayer player, ItemStack glassesStack){
         if(player.world.isRemote)
             return;
 

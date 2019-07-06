@@ -18,6 +18,7 @@ public class GlassesInstance {
     private Conditions conditions = new Conditions();
 
     private UUID glassesUUID = null;
+    public boolean thermalVisionActive = false;
 
     private HashMap<UUID, HostClient> hosts = new HashMap<>();
 
@@ -25,9 +26,13 @@ public class GlassesInstance {
         stack = OpenGlasses.isGlassesStack(glassesStack) ? glassesStack : ItemStack.EMPTY;
 
         if(!get().isEmpty()) {
+            NBTTagCompound nbt = get().getTagCompound();
+
             conditions.bufferSensors(get());
 
             glassesUUID = GlassesNBT.getUniqueId(get());
+
+            thermalVisionActive = nbt.hasKey("thermalActive") && nbt.getBoolean("thermalActive");
 
             for(NBTTagCompound tag : OpenGlassesHostsNBT.getHostsFromNBT(stack))
                 hosts.put(tag.getUniqueId("host"), new HostClient(tag));
