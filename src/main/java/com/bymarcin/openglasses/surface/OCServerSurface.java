@@ -95,14 +95,16 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 		if (!players.containsKey(player.getUniqueID()))
 			players.put(player.getUniqueID(), new HashSet<>());
 
-		players.get(player.getUniqueID()).add(hostUUID);
+		if(hostUUID != null) {
+			players.get(player.getUniqueID()).add(hostUUID);
 
-		if(!glassesStack.isEmpty()) {
-			OpenGlassesHostComponent host = getHost(hostUUID);
-			if (host != null)
-				host.onGlassesPutOn(player);
+			if (!glassesStack.isEmpty()) {
+				OpenGlassesHostComponent host = getHost(hostUUID);
+				if (host != null)
+					host.onGlassesPutOn(player);
 
-			requestResolutionEvent(player, hostUUID);
+				requestResolutionEvent(player, hostUUID);
+			}
 		}
 	}
 
@@ -152,6 +154,8 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 		}
 
 		if (newUUID != null) {
+			instance().subscribePlayer(player, null);
+
 			for(NBTTagCompound nbt : OpenGlassesHostsNBT.getHostsFromNBT(newStack))
 				instance().subscribePlayer(player, nbt.getUniqueId("host"));
 		}

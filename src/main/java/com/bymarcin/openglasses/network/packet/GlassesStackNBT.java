@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -47,9 +48,10 @@ public class GlassesStackNBT extends Packet<GlassesStackNBT, IMessage> {
         if(!glasses.isEmpty()) {
             glasses.setTagCompound(tagCompound);
 
-            if(GlassesNBT.getUniqueId(OCClientSurface.glasses.get()).equals(tagUUID))
+            if(!OCClientSurface.glasses.get().isEmpty() && GlassesNBT.getUniqueId(OCClientSurface.glasses.get()).equals(tagUUID))
                 OCClientSurface.instance().initLocalGlasses(glasses);
         }
+
         return null;
     }
 

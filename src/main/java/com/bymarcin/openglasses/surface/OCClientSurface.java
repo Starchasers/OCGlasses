@@ -152,7 +152,7 @@ public class OCClientSurface extends ClientSurface {
 	}
 
 	private void updateThermalVision(){
-		if(updateTicks % 10 != 0 || glasses.get().isEmpty())
+		if(updateTicks % 10 != 0 || (glasses.get().isEmpty() && !thermalActive))
 			return;
 
 		if(glasses.thermalVisionActive != thermalActive) {
@@ -318,6 +318,7 @@ public class OCClientSurface extends ClientSurface {
 		if(!glasses.get().isEmpty())
 			for(UpgradeItem upgrade : OpenGlassesItem.upgrades)
 				upgrade.updateClient(player, glasses.get());
+
 
 		updateTicks++;
 	}
