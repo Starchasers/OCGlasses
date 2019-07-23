@@ -176,14 +176,12 @@ public class OCClientSurface extends ClientSurface {
 	private void renderWidgets(Collection<IRenderableWidget> widgets, float partialTicks, Vec3d renderPos, OpenGlassesHostClient host){
 		long renderConditions = glasses.getConditions().get();
 
-		Vector3f offset = new Vector3f((float) renderPos.x, (float) renderPos.y, (float) renderPos.z);
-
 		for(IRenderableWidget renderable : widgets) {
 			if(host.absoluteRenderPosition) {
-				if(!shouldAbsoluteWidgetBeRendered(Minecraft.getMinecraft().player, offset, renderable))
+				if(!shouldAbsoluteWidgetBeRendered(Minecraft.getMinecraft().player, new Vector3f((float) renderPos.x, (float) renderPos.y, (float) renderPos.z), renderable)) //pass a unique vec3f as its value might change by shouldAbsoluteWidgetBeRendered()
 					continue;
 			}
-			else if(!renderable.shouldWidgetBeRendered(Minecraft.getMinecraft().player, offset))
+			else if(!renderable.shouldWidgetBeRendered(Minecraft.getMinecraft().player, new Vector3f((float) renderPos.x, (float) renderPos.y, (float) renderPos.z))) //pass a unique vec3f as its value might change by shouldAbsoluteWidgetBeRendered()
 				continue;
 
 			if(!renderable.isWidgetOwner(glasses.getHost(host.hostUUID).ownerUUID.toString()))
