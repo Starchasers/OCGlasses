@@ -54,7 +54,6 @@ public class ServerEventHandler {
         }
 
         playerIndex++;
-
         if (playerIndex >= OCServerSurface.instance().players.size()) playerIndex = 0;
     }
 

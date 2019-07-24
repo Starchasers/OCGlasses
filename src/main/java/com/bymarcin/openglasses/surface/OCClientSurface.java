@@ -3,7 +3,6 @@ package com.bymarcin.openglasses.surface;
 import java.util.*;
 
 import ben_mkiv.commons0815.utils.utilsCommon;
-import ben_mkiv.rendertoolkit.client.thermalvision.ShaderHelper;
 import ben_mkiv.rendertoolkit.common.widgets.IRenderableWidget;
 import ben_mkiv.rendertoolkit.common.widgets.RenderType;
 import ben_mkiv.rendertoolkit.common.widgets.Widget;
@@ -14,7 +13,6 @@ import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.item.GlassesNBT;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.item.upgrades.UpgradeItem;
-import com.bymarcin.openglasses.item.upgrades.UpgradeThermalVision;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 
@@ -157,9 +155,9 @@ public class OCClientSurface extends ClientSurface {
 
 		if(glasses.thermalVisionActive != thermalActive) {
 			if (glasses.thermalVisionActive)
-				loadOutlineShader(ShaderHelper.ShaderType.THERMAL_VISION);
+				loadOutlineShader(true);
 			else
-				loadOutlineShader(ShaderHelper.ShaderType.VANILLA_GLOW);
+				loadOutlineShader(false);
 
 			thermalActive = glasses.thermalVisionActive;
 		}
