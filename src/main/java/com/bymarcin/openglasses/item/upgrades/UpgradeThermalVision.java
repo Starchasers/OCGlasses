@@ -58,7 +58,9 @@ public class UpgradeThermalVision extends UpgradeItem {
     }
 
     public static boolean hasUpgrade(ItemStack stack){
-        return stack.hasTagCompound() && stack.getTagCompound().getBoolean("thermalvision");
+        return UpgradeGeolyzer.hasUpgrade(stack)
+            && UpgradeNightvision.hasUpgrade(stack)
+            && UpgradeDaylightDetector.hasUpgrade(stack);
     }
 
     @Override
