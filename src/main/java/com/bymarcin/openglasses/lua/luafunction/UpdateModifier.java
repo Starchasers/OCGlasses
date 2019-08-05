@@ -31,7 +31,7 @@ public class UpdateModifier extends LuaFunction{
                 f[3] = (float) arguments.checkDouble(4);
             
             // clamp values if target is a color modifier
-            if(widget.WidgetModifierList.getType(modifierIndex)== WidgetModifier.WidgetModifierType.COLOR)
+            if(widget.WidgetModifierList.getType(modifierIndex).equals(WidgetModifier.WidgetModifierType.COLOR))
                 for(int i=0; i < f.length; i++)
                     f[i] = Math.max(0, Math.min(f[i], 1));
 
