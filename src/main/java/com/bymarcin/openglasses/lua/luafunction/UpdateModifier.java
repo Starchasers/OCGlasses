@@ -27,6 +27,13 @@ public class UpdateModifier extends LuaFunction{
 
             if(arguments.count() >= 5)
                 f[3] = (float) arguments.checkDouble(4);
+            
+            if(widget.WidgetModifierList.getType(modifierIndex)==COLOR){//COLOR might need to be prefixed (class WidgetModifier; enum WidgetModifierType)
+                for(int i=0;i<arguments.count()-1;i++){
+                    if(f[i]<0.0) f[i]=0.0;
+                    if(f[i]>1.0) f[i]=1.0;
+                }
+            }
 
             widget.WidgetModifierList.update(modifierIndex, f);
 
