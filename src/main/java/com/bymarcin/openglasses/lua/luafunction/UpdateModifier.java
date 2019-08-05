@@ -1,11 +1,13 @@
 package com.bymarcin.openglasses.lua.luafunction;
 
+import ben_mkiv.rendertoolkit.common.widgets.WidgetModifier;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Callback;
 import li.cil.oc.api.machine.Context;
 
 import com.bymarcin.openglasses.lua.LuaFunction;
 import ben_mkiv.rendertoolkit.common.widgets.Widget;
+
 
 public class UpdateModifier extends LuaFunction{
 
@@ -28,12 +30,10 @@ public class UpdateModifier extends LuaFunction{
             if(arguments.count() >= 5)
                 f[3] = (float) arguments.checkDouble(4);
             
-            if(widget.WidgetModifierList.getType(modifierIndex)==COLOR){//COLOR might need to be prefixed (class WidgetModifier; enum WidgetModifierType)
-                for(int i=0;i<arguments.count()-1;i++){
-                    if(f[i]<0.0) f[i]=0.0;
-                    if(f[i]>1.0) f[i]=1.0;
-                }
-            }
+            // clamp values if target is a color modifier
+            if(widget.WidgetModifierList.getType(modifierIndex)== WidgetModifier.WidgetModifierType.COLOR)
+                for(int i=0; i < f.length; i++)
+                    f[i] = Math.max(0, Math.min(f[i], 1));
 
             widget.WidgetModifierList.update(modifierIndex, f);
 
