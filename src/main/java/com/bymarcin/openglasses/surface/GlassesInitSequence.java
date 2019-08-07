@@ -71,10 +71,10 @@ public class GlassesInitSequence {
 
         initSequenceLines.add("");
 
-
-        int widgetCount = OCClientSurface.instance().getWidgetCount(null, null);
-        initSequenceLines.add("# Widget Cache " + widgetCount + "/" + tag.getInteger("widgetLimit") + " widgets");
-        initSequenceLines.add("");
+        //widgets arent cached when we run this, so nope :(
+        //int widgetCount = OCClientSurface.instance().getWidgetCount(null, null);
+        //initSequenceLines.add("# Widget Cache " + widgetCount + "/" + tag.getInteger("widgetLimit") + " widgets");
+        //initSequenceLines.add("");
 
         initSequenceLines.add("# initializing "+OCClientSurface.glasses.getHosts().size()+" hosts");
         for (GlassesInstance.HostClient host : OCClientSurface.glasses.getHosts().values()) {
@@ -83,8 +83,8 @@ public class GlassesInitSequence {
                 initSequenceLines.add(":: "+hc.terminalName);
             initSequenceLines.add(":: uuid "+host.uuid.toString());
             initSequenceLines.add(":: type: "+hc.hostType);
-            initSequenceLines.add("(i) overlay widgets: " + hc.renderables.size());
-            initSequenceLines.add("(i) world widgets: " + hc.renderablesWorld.size());
+            //initSequenceLines.add("(i) overlay widgets: " + hc.renderables.size());
+            //initSequenceLines.add("(i) world widgets: " + hc.renderablesWorld.size());
         }
 
         for(String line : initSequenceLines)

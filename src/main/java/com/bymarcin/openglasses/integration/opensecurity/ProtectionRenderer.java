@@ -1,7 +1,6 @@
 package com.bymarcin.openglasses.integration.opensecurity;
 
 import ben_mkiv.rendertoolkit.client.ModelCube;
-import ben_mkiv.rendertoolkit.client.ModelCubeTESR;
 import ben_mkiv.rendertoolkit.common.widgets.RenderType;
 import com.bymarcin.openglasses.surface.OCClientSurface;
 import net.minecraft.client.Minecraft;
@@ -22,7 +21,6 @@ public class ProtectionRenderer {
     public static void renderOpenSecurityProtections(float partialTicks){
         if(OCClientSurface.glasses.energyStored == 0)
             return;
-
 
         GlStateManager.pushMatrix();
         OCClientSurface.preRender(RenderType.WorldLocated, partialTicks);

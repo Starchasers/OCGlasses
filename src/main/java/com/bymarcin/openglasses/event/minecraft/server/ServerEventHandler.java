@@ -44,6 +44,9 @@ public class ServerEventHandler {
 
     @SubscribeEvent
     public void tickStart(TickEvent.PlayerTickEvent event) {
+        if(FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+            return;
+
         int i=0;
         for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers()) {
             if(i == playerIndex) {

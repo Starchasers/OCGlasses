@@ -7,6 +7,7 @@ import com.bymarcin.openglasses.drivers.DriverTerminal;
 import com.bymarcin.openglasses.event.minecraft.AnvilEvent;
 import com.bymarcin.openglasses.event.minecraft.server.ServerEventHandler;
 import com.bymarcin.openglasses.integration.opencomputers.ocProgramDisks;
+import com.bymarcin.openglasses.integration.opensecurity.OpenSecurity;
 import com.bymarcin.openglasses.item.OpenGlassesHostCard;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.manual.Manual;
@@ -28,6 +29,7 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -70,7 +72,7 @@ public class OpenGlasses {
 
 	public static boolean absoluteRenderingAllowed = true;
 
-	public static boolean opensecurity = true;
+	public static boolean opensecurity = false;
 
 	private HashSet<Item> modItems = new HashSet<>();
 
@@ -78,7 +80,7 @@ public class OpenGlasses {
 	public void preInit(FMLPreInitializationEvent event){
 
 		OpenGlasses.baubles = Loader.isModLoaded("baubles");
-		OpenGlasses.opensecurity = Loader.isModLoaded("opensecurity");
+		OpenGlasses.opensecurity = Loader.isModLoaded("opensecurity") && OpenSecurity.isCompatible();
 
 		Config.preInit();
 
@@ -91,8 +93,7 @@ public class OpenGlasses {
 
 		modItems.add(new ItemBlock(OpenGlassesTerminalBlock.DEFAULT_BLOCK).setRegistryName(OpenGlassesTerminalBlock.DEFAULT_BLOCK.getRegistryName()));
 
-
-		GameRegistry.registerTileEntity(OpenGlassesTerminalTileEntity.class, "openglassesterminalte");
+		GameRegistry.registerTileEntity(OpenGlassesTerminalTileEntity.class, new ResourceLocation(MODID, "openglassesterminalte"));
 
 		OpenGlassesItem.DEFAULT_STACK = new ItemStack(new OpenGlassesItem());
 		OpenGlassesItem.initGlassesStack(OpenGlassesItem.DEFAULT_STACK);

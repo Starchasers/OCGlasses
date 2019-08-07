@@ -124,6 +124,7 @@ public class OCClientSurface extends ClientSurface {
 	}
 
 	public void renderWorld(float partialTicks)	{
+
 		if(glasses.openSecurityOverlayActive)
 			ProtectionRenderer.renderOpenSecurityProtections(partialTicks);
 
@@ -156,13 +157,16 @@ public class OCClientSurface extends ClientSurface {
 
 		postRender(RenderType.WorldLocated);
 		GlStateManager.enableDepth();
-
 	}
 
 	private static int thermalTicks = 0;
 	private void updateThermalVision(){
-		if(!glasses.getConditions().hasThermalVision)
+		if(!glasses.getConditions().hasThermalVision) {
+			if (ShaderHelper.isActive())
+				setupThermalShader(false);
+			
 			return;
+		}
 
 		if(thermalTicks++ % 10 != 0 || (glasses.get().isEmpty() && !thermalActive))
 			return;
