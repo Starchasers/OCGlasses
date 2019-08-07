@@ -19,20 +19,25 @@ import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 
 import com.bymarcin.openglasses.utils.GlassesInstance;
 import com.bymarcin.openglasses.utils.OpenGlassesHostClient;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.*;
 
 import net.minecraft.client.Minecraft;
 
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.vecmath.Vector3f;
 
 import static ben_mkiv.rendertoolkit.client.thermalvision.ShaderHelper.setupThermalShader;
+import static com.bymarcin.openglasses.item.OpenGlassesItem.upgrades;
 import static com.bymarcin.openglasses.render.OpenSecurityProtection.renderOpenSecurityProtections;
 import static com.bymarcin.openglasses.surface.StaticWidgets.*;
 
@@ -92,8 +97,41 @@ public class OCClientSurface extends ClientSurface {
 			NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(hostUUID, GlassesEventPacket.EventType.GLASSES_SCREEN_SIZE, resolution.getScaledWidth(), resolution.getScaledHeight(), resolution.getScaleFactor()));
 	}
 
+	ArrayList<String> initSequenceLines = new ArrayList<>();
+	int initSequenceChars = 0;
+
+	private boolean renderInitSequence(){
+		if(OpenGlassesItem.getEnergyStored(glasses.get()) == 0 || wornTicks > initSequenceChars + 80)
+			return false;
+
+		GlStateManager.pushMatrix();
+
+		FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+		GlStateManager.enableBlend();
+		GlStateManager.enableAlpha();
+		int i=0;
+		int charsPrinted = 0;
+		for(String line : initSequenceLines){
+			if(wornTicks < charsPrinted+line.length()) {
+				int chars = (int) wornTicks - charsPrinted;
+				fontRenderer.drawString(line.substring(0, chars) + " #", 10, ++i * 10, 0xCCFFFFFF);
+				break;
+			}
+
+			fontRenderer.drawString(line, 10, ++i * 10, 0xCCFFFFFF);
+			charsPrinted+=line.length();
+		}
+
+		GlStateManager.popMatrix();
+		return true;
+	}
+
+
 	public void renderOverlay(float partialTicks) {
 		updateThermalVision();
+
+		if(renderInitSequence())
+			return;
 
 		if(!shouldRenderStart(RenderType.GameOverlayLocated)) return;
 
@@ -299,30 +337,72 @@ public class OCClientSurface extends ClientSurface {
 				initLocalGlasses(ItemStack.EMPTY);
 		}
 		else if(OpenGlasses.isGlassesStack(newStack)){
-			if(!GlassesNBT.getUniqueId(newStack).equals(glasses.getUniqueId()))
+			if(!GlassesNBT.getUniqueId(newStack).equals(glasses.getUniqueId())) {
 				initLocalGlasses(newStack);
+
+
+				wornTicks = 10;
+
+				initSequenceLines.clear();
+				initSequenceChars = 0;
+
+				initSequenceLines.add("");
+				initSequenceLines.add("# initializing upgrades");
+				for (UpgradeItem upgrade : upgrades)
+					initSequenceLines.addAll(upgrade.getTooltip(glasses.get()));
+
+				initSequenceLines.add("");
+
+				NBTTagCompound tag = glasses.get().getTagCompound();
+				int energyUsage = tag.getInteger("upkeepCost");
+				IEnergyStorage storage = glasses.get().getCapability(CapabilityEnergy.ENERGY, null);
+				initSequenceLines.add("# Energy Buffer");
+				initSequenceLines.add(String.format("%s/%s FE", storage.getEnergyStored(), storage.getMaxEnergyStored()));
+				initSequenceLines.add("usage " + energyUsage + " FE/tick");
+
+				initSequenceLines.add("");
+
+
+				int widgetCount = getWidgetCount(null, null);
+				initSequenceLines.add("# Widget Cache " + widgetCount + "/" + tag.getInteger("widgetLimit") + " widgets");
+				initSequenceLines.add("");
+
+				initSequenceLines.add("# initializing "+glasses.getHosts().size()+" hosts");
+				for (GlassesInstance.HostClient host : glasses.getHosts().values()) {
+					OpenGlassesHostClient hc = getHost(host.uuid);
+					if(hc.terminalName.length() > 0)
+						initSequenceLines.add(":: "+hc.terminalName);
+					initSequenceLines.add(":: uuid "+host.uuid.toString());
+					initSequenceLines.add(":: type: "+hc.hostType);
+					initSequenceLines.add("(i) overlay widgets: " + hc.renderables.size());
+					initSequenceLines.add("(i) world widgets: " + hc.renderablesWorld.size());
+				}
+
+				for(String line : initSequenceLines)
+					initSequenceChars+=line.length();
+
+			}
+
 		}
 	}
 
-	private int updateTicks = 10;
+	private long wornTicks = 10;
 	public void update(EntityPlayer player){
 		glasses.refreshConditions();
 
-		if(updateTicks % 20 == 0) {
+		if(wornTicks % 20 == 0) {
 			ItemStack glassesStack = OpenGlasses.getGlassesStack(player);
 
 			if (!glasses.get().equals(glassesStack))
 				equipmentChanged(OpenGlasses.getGlassesStack(player));
-
-			updateTicks = 0;
 		}
 
 		if(!glasses.get().isEmpty())
-			for(UpgradeItem upgrade : OpenGlassesItem.upgrades)
+			for(UpgradeItem upgrade : upgrades)
 				upgrade.updateClient(player, glasses.get());
 
 
-		updateTicks++;
+		wornTicks++;
 	}
 
 }
