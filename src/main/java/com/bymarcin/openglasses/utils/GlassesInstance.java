@@ -2,7 +2,9 @@ package com.bymarcin.openglasses.utils;
 
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.item.GlassesNBT;
+import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesHostsNBT;
+import com.bymarcin.openglasses.item.upgrades.UpgradeOpenSecurity;
 import com.bymarcin.openglasses.surface.OCClientSurface;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,7 +20,8 @@ public class GlassesInstance {
     private Conditions conditions = new Conditions();
 
     private UUID glassesUUID = null;
-    public boolean thermalVisionActive = false;
+    public boolean thermalVisionActive = false, openSecurityOverlayActive = false;
+    public double energyStored = 0;
 
     private HashMap<UUID, HostClient> hosts = new HashMap<>();
 
@@ -34,9 +37,18 @@ public class GlassesInstance {
 
             thermalVisionActive = nbt.hasKey("thermalActive") && nbt.getBoolean("thermalActive");
 
+            energyStored = OpenGlassesItem.getEnergyStored(get());
+
             for(NBTTagCompound tag : OpenGlassesHostsNBT.getHostsFromNBT(stack))
                 hosts.put(tag.getUniqueId("host"), new HostClient(tag));
         }
+    }
+
+    public void refresh(){
+        refreshConditions();
+        energyStored = OpenGlassesItem.getEnergyStored(get());
+
+        openSecurityOverlayActive = OpenGlasses.opensecurity && conditions.hasOpenSecurity && UpgradeOpenSecurity.getMode(get());
     }
 
     public ItemStack get(){

@@ -11,6 +11,8 @@ public class Conditions {
     private boolean hasGeolyzer;
     private boolean hasLightSensor;
     private boolean hasRainSensor;
+    public boolean hasThermalVision;
+    public boolean hasOpenSecurity;
     public boolean hasNavigation;
     private boolean overlayActive = false;
 
@@ -23,6 +25,8 @@ public class Conditions {
         hasRainSensor = UpgradeTank.hasUpgrade(glassesStack);
         hasLightSensor = UpgradeDaylightDetector.hasUpgrade(glassesStack);
         hasNavigation = UpgradeNavigation.hasUpgrade(glassesStack);
+        hasOpenSecurity = UpgradeOpenSecurity.hasUpgrade(glassesStack);
+        hasThermalVision = UpgradeThermalVision.hasUpgrade(glassesStack);
     }
 
     public long getConditionStates(EntityPlayer player){

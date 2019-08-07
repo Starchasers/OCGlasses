@@ -82,17 +82,6 @@ public class UpgradeThermalVision extends UpgradeItem {
         return tooltip;
     }
 
-    private static boolean toggle(ItemStack glassesStack){
-        if(!OpenGlasses.isGlassesStack(glassesStack))
-            return false;
-
-        boolean mode = !getMode(glassesStack);
-
-        setMode(glassesStack, mode);
-
-        return mode;
-    }
-
     private static void setMode(ItemStack glassesStack, boolean active){
         if(!OpenGlasses.isGlassesStack(glassesStack))
             return;
@@ -114,7 +103,7 @@ public class UpgradeThermalVision extends UpgradeItem {
         return glassesStack.getTagCompound().getBoolean("thermalActive");
     }
 
-    public static void toggleInfraredMode(EntityPlayer player){
+    public static void toggleMode(EntityPlayer player){
         ItemStack stack = OpenGlasses.getGlassesStack(player);
         if(OpenGlasses.isGlassesStack(stack)) {
             setMode(stack, !getMode(stack));

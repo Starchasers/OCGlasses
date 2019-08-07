@@ -1,6 +1,7 @@
 package com.bymarcin.openglasses.item.upgrades;
 
 import com.bymarcin.openglasses.OpenGlasses;
+import com.bymarcin.openglasses.event.minecraft.client.ClientKeyboardEvents;
 import com.bymarcin.openglasses.item.GlassesNBT;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
 import com.bymarcin.openglasses.network.NetworkRegistry;
@@ -126,7 +127,7 @@ public class UpgradeNightvision extends UpgradeItem {
         return nightVisionModes.values()[glassesStack.getTagCompound().getInteger("nightvisionMode")];
     }
 
-    public static void toggleNightvisionMode(EntityPlayer player){
+    public static void toggleMode(EntityPlayer player){
         ItemStack stack = OpenGlasses.getGlassesStack(player);
         if(OpenGlasses.isGlassesStack(stack)) {
             int mode = UpgradeNightvision.toggle(stack);
@@ -173,7 +174,7 @@ public class UpgradeNightvision extends UpgradeItem {
     @Override
     @SideOnly(Side.CLIENT)
     public void onKeyInput(){
-        if(!com.bymarcin.openglasses.event.minecraft.client.ClientKeyboardEvents.nightvisionModeKey.isPressed())
+        if(!ClientKeyboardEvents.nightvisionModeKey.isPressed())
             return;
 
         if(!hasUpgrade(OCClientSurface.glasses.get()))

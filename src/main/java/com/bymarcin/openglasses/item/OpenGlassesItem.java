@@ -63,6 +63,9 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		upgrades.add(new UpgradeTank());
 		upgrades.add(new UpgradeNavigation());
 		upgrades.add(new UpgradeThermalVision());
+
+		if(OpenGlasses.opensecurity)
+			upgrades.add(new UpgradeOpenSecurity());
 	}
 
 	public OpenGlassesItem() {
@@ -135,24 +138,13 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 
 		NBTTagCompound tag = stack.getTagCompound();
 
-		/*if(tag.hasUniqueId("host")){
-			UUID host = tag.getUniqueId("host");
-
-			//if(!FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0).getGameRules().getBoolean("reducedDebugInfo"))
-			//	tooltip.add("linked to: X: " + location.pos.getX() + ", Y: " + location.pos.getY() + ", Z: " + location.pos.getZ() + " (DIM: " + location.dimID +")");
-			tooltip.add("host: " + host.toString());
-			tooltip.add("user: " + tag.getString("user"));
-		}
-		else
-			tooltip.add("use at glassesterminal to link glasses");*/
-
 		tooltip.add("linked to "+ OpenGlassesHostsNBT.getHostsFromNBT(stack).size()+" hosts");
 
-		if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+		if(!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
+			tooltip.add("hold [§fLSHIFT§7] to show upgrades");
+		else
 			for (UpgradeItem upgrade : upgrades)
 				tooltip.addAll(upgrade.getTooltip(stack));
-		}
-		else tooltip.add("hold [§fLSHIFT§7] to show upgrades");
 
 		int widgetCount = OCClientSurface.instances.getWidgetCount(null, null);
 		tooltip.add("§3using " + widgetCount + "/" + tag.getInteger("widgetLimit") + " widgets§7");
@@ -307,11 +299,8 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 	@Override
 	@Optional.Method(modid="baubles")
 	public void onEquipped(ItemStack itemstack, EntityLivingBase player) {
-		if(player.getEntityWorld().isRemote) {
-			//if(player.equals(Minecraft.getMinecraft().player))
-			//	OCClientSurface.instance().equipmentChanged(itemstack);
+		if(player.getEntityWorld().isRemote)
 			return;
-		}
 
 		if(player instanceof EntityPlayerMP)
 			OCServerSurface.equipmentChanged((EntityPlayerMP) player, itemstack);
@@ -320,11 +309,8 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 	@Override
 	@Optional.Method(modid="baubles")
 	public void onUnequipped(ItemStack itemstack, EntityLivingBase player) {
-		if(player.getEntityWorld().isRemote) {
-			//if(player.equals(Minecraft.getMinecraft().player))
-			//	OCClientSurface.instance().equipmentChanged(itemstack);
+		if(player.getEntityWorld().isRemote)
 			return;
-		}
 
 		if(player instanceof EntityPlayerMP)
 			OCServerSurface.equipmentChanged((EntityPlayerMP) player, ItemStack.EMPTY);

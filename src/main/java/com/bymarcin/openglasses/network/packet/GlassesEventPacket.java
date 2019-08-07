@@ -9,6 +9,7 @@ import com.bymarcin.openglasses.item.GlassesNBT;
 import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesHostsNBT;
 import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesNotificationsNBT;
 import com.bymarcin.openglasses.item.upgrades.UpgradeGeolyzer;
+import com.bymarcin.openglasses.item.upgrades.UpgradeOpenSecurity;
 import com.bymarcin.openglasses.item.upgrades.UpgradeThermalVision;
 import com.bymarcin.openglasses.item.upgrades.UpgradeNightvision;
 import com.bymarcin.openglasses.utils.PlayerStatsOC;
@@ -31,6 +32,7 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 	public enum EventType{
 		TOGGLE_NIGHTVISION,
 		TOGGLE_INFRARED,
+		TOGGLE_OPENSECURITY,
 		ACTIVATE_OVERLAY, DEACTIVATE_OVERLAY,
 		INTERACT_WORLD_RIGHT, INTERACT_WORLD_LEFT, INTERACT_WORLD_BLOCK_RIGHT, INTERACT_WORLD_BLOCK_LEFT,
 		INTERACT_OVERLAY,
@@ -184,13 +186,19 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 
 			case TOGGLE_NIGHTVISION:
 				glasses = getGlasses(playerMP);
-				UpgradeNightvision.toggleNightvisionMode(playerMP);
+				UpgradeNightvision.toggleMode(playerMP);
 				GlassesNBT.syncStackNBT(glasses, playerMP);
 				return null;
 
 			case TOGGLE_INFRARED:
 				glasses = getGlasses(playerMP);
-				UpgradeThermalVision.toggleInfraredMode(playerMP);
+				UpgradeThermalVision.toggleMode(playerMP);
+				GlassesNBT.syncStackNBT(glasses, playerMP);
+				return null;
+
+			case TOGGLE_OPENSECURITY:
+				glasses = getGlasses(playerMP);
+				UpgradeOpenSecurity.toggleMode(playerMP);
 				GlassesNBT.syncStackNBT(glasses, playerMP);
 				return null;
 
