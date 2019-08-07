@@ -43,7 +43,7 @@ public class ServerEventHandler {
     }
 
     @SubscribeEvent
-    public void tickStart(TickEvent.WorldTickEvent event) {
+    public void tickStart(TickEvent.PlayerTickEvent event) {
         int i=0;
         for (EntityPlayerMP player : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers()) {
             if(i == playerIndex) {
@@ -54,7 +54,8 @@ public class ServerEventHandler {
         }
 
         playerIndex++;
-        if (playerIndex >= OCServerSurface.instance().players.size()) playerIndex = 0;
+        if (playerIndex >= FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers().size())
+            playerIndex = 0;
     }
 
     private static void updatePlayer(EntityPlayer player){

@@ -25,6 +25,9 @@ public class GlassesNBT {
     }
 
     public static void syncStackNBT(ItemStack glassesStack, EntityPlayerMP player){
+        if(glassesStack.isEmpty() || !glassesStack.hasTagCompound())
+            return;
+
         NetworkRegistry.packetHandler.sendTo(new GlassesStackNBT(glassesStack), player);
     }
 

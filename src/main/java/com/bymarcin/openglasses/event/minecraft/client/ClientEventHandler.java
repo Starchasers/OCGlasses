@@ -2,9 +2,7 @@ package com.bymarcin.openglasses.event.minecraft.client;
 
 import com.bymarcin.openglasses.surface.OCClientSurface;
 import net.minecraft.client.Minecraft;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;

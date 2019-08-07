@@ -183,11 +183,15 @@ public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
 				return null;
 
 			case TOGGLE_NIGHTVISION:
+				glasses = getGlasses(playerMP);
 				UpgradeNightvision.toggleNightvisionMode(playerMP);
+				GlassesNBT.syncStackNBT(glasses, playerMP);
 				return null;
 
 			case TOGGLE_INFRARED:
+				glasses = getGlasses(playerMP);
 				UpgradeThermalVision.toggleInfraredMode(playerMP);
+				GlassesNBT.syncStackNBT(glasses, playerMP);
 				return null;
 
 			case ACTIVATE_OVERLAY:

@@ -5,6 +5,7 @@ import com.bymarcin.openglasses.config.Config;
 import com.bymarcin.openglasses.drivers.DriverHostCard;
 import com.bymarcin.openglasses.drivers.DriverTerminal;
 import com.bymarcin.openglasses.event.minecraft.AnvilEvent;
+import com.bymarcin.openglasses.event.minecraft.server.ServerEventHandler;
 import com.bymarcin.openglasses.integration.opencomputers.ocProgramDisks;
 import com.bymarcin.openglasses.item.OpenGlassesHostCard;
 import com.bymarcin.openglasses.item.OpenGlassesItem;
@@ -52,9 +53,9 @@ import java.util.HashSet;
 	guiFactory = OpenGlasses.GUIFACTORY,
 	dependencies =
 			"required-after:opencomputers@[1.7.1,);" +
-			"required-after:guitoolkit@1.1.0;" +
-			"required-after:rendertoolkit@1.1.0;" +
-			"after:baubles;after:rtfm;"
+			"required-after:guitoolkit@1.1.2,;" +
+			"required-after:rendertoolkit@1.1.2,;" +
+			"after:baubles;after:rtfm;after:opensecurity"
 )
 
 public class OpenGlasses {
@@ -69,11 +70,15 @@ public class OpenGlasses {
 
 	public static boolean absoluteRenderingAllowed = true;
 
+	public static boolean opensecurity = true;
+
 	private HashSet<Item> modItems = new HashSet<>();
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event){
-		if(Loader.isModLoaded("baubles")) OpenGlasses.baubles = true;
+
+		OpenGlasses.baubles = Loader.isModLoaded("baubles");
+		OpenGlasses.opensecurity = Loader.isModLoaded("opensecurity");
 
 		Config.preInit();
 
@@ -170,6 +175,8 @@ public class OpenGlasses {
 		//ocAssembler.register();
 
 		MinecraftForge.EVENT_BUS.register(AnvilEvent.instances);  //register anvil event
+
+		MinecraftForge.EVENT_BUS.register(new ServerEventHandler());
 
 		proxy.postInit();
 	}

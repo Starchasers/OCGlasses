@@ -35,10 +35,6 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 	// hosts (UUID) to glassesComponent(terminal, card, upgrade) (IOpenGlassesHost) mapping
 	public static HashMap<UUID, OpenGlassesHostComponent> components = new HashMap<>();
 
-	public OCServerSurface(){
-		MinecraftForge.EVENT_BUS.register(new ServerEventHandler());
-	}
-
 	public static OCServerSurface instance(){
 		return (OCServerSurface) instances;
 	}

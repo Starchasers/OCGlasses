@@ -3,6 +3,7 @@ package com.bymarcin.openglasses.surface;
 import java.util.*;
 
 import ben_mkiv.commons0815.utils.utilsCommon;
+import ben_mkiv.rendertoolkit.client.thermalvision.ShaderHelper;
 import ben_mkiv.rendertoolkit.common.widgets.IRenderableWidget;
 import ben_mkiv.rendertoolkit.common.widgets.RenderType;
 import ben_mkiv.rendertoolkit.common.widgets.Widget;
@@ -22,9 +23,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 
 import net.minecraft.client.Minecraft;
 
@@ -33,7 +32,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.vecmath.Vector3f;
 
-import static ben_mkiv.rendertoolkit.client.thermalvision.ShaderHelper.loadOutlineShader;
+import static ben_mkiv.rendertoolkit.client.thermalvision.ShaderHelper.setupThermalShader;
+import static com.bymarcin.openglasses.render.OpenSecurityProtection.renderOpenSecurityProtections;
 import static com.bymarcin.openglasses.surface.StaticWidgets.*;
 
 @SideOnly(Side.CLIENT)
@@ -93,11 +93,12 @@ public class OCClientSurface extends ClientSurface {
 	}
 
 	public void renderOverlay(float partialTicks) {
+		updateThermalVision();
+
 		if(!shouldRenderStart(RenderType.GameOverlayLocated)) return;
 
 		preRender(RenderType.GameOverlayLocated, partialTicks);
 
-		GlStateManager.depthMask(false);
 
 		for(GlassesInstance.HostClient host : glasses.getHosts().values()) {
 			if(!host.renderOverlay)
@@ -119,7 +120,8 @@ public class OCClientSurface extends ClientSurface {
 
 	public void renderWorld(float partialTicks)	{
 
-		updateThermalVision();
+		if(false && OpenGlasses.opensecurity)
+			renderOpenSecurityProtections(partialTicks);
 
 		if(!shouldRenderStart(RenderType.WorldLocated)) return;
 
@@ -147,17 +149,21 @@ public class OCClientSurface extends ClientSurface {
 
 		postRender(RenderType.WorldLocated);
 		GlStateManager.enableDepth();
+
 	}
 
+	private static int thermalTicks = 0;
 	private void updateThermalVision(){
-		if(updateTicks % 10 != 0 || (glasses.get().isEmpty() && !thermalActive))
+		if(thermalTicks++ % 10 != 0 || (glasses.get().isEmpty() && !thermalActive))
 			return;
 
-		if(glasses.thermalVisionActive != thermalActive) {
+		thermalTicks = 0;
+
+		if(glasses.thermalVisionActive != ShaderHelper.isActive()) {
 			if (glasses.thermalVisionActive)
-				loadOutlineShader(true);
+				setupThermalShader(true);
 			else
-				loadOutlineShader(false);
+				setupThermalShader(false);
 
 			thermalActive = glasses.thermalVisionActive;
 		}
