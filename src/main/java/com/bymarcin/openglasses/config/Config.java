@@ -40,7 +40,7 @@ public class Config extends PermissionAPI {
         //boolean isClient = FMLCommonHandler.instance().getEffectiveSide().isClient();
 
         Property absolute_rendering_allowed = config.get("general", "absolute_rendering_allowed", true);
-        absolute_rendering_allowed.setLanguageKey("gui.config.general.absolute_rendering_allowed");
+        absolute_rendering_allowed.setLanguageKey("gui.openglasses.config.general.absolute_rendering_allowed");
         absolute_rendering_allowed.setComment("allow setting the glasses terminal to absolute (world coordinates) render position");
         absolute_rendering_allowed.setRequiresMcRestart(true);
 

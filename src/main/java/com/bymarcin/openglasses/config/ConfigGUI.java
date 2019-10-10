@@ -50,12 +50,12 @@ public class ConfigGUI implements IModGuiFactory {
         public OpenGlassesConfigGUI(GuiScreen parentScreen){
             //I18n function basically "translates" or localizes the given key using the appropriate .lang file
             super(parentScreen, getConfigElements(), OpenGlasses.MODID,
-                    false, false, I18n.format("gui.config.title"));
+                    false, false, I18n.format("gui.openglasses.config.title"));
         }
 
         private static List<IConfigElement> getConfigElements() {
             List<IConfigElement> list = new ArrayList<>();
-            list.add(new DummyConfigElement.DummyCategoryElement("general", "gui.config.general", CategoryEntryCustom.class));
+            list.add(new DummyConfigElement.DummyCategoryElement("general", "gui.openglasses.config.general", CategoryEntryCustom.class));
             return list;
         }
     }

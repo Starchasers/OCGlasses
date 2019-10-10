@@ -23,11 +23,11 @@ import org.lwjgl.input.Keyboard;
 
 @SideOnly(Side.CLIENT)
 public class ClientKeyboardEvents {
-    public static KeyBinding interactGUIKey = new KeyBinding("key.interact", KeyConflictContext.IN_GAME, Keyboard.KEY_C, "key.categories." + OpenGlasses.MODID.toLowerCase());
-    public static KeyBinding glassesConfigKey = new KeyBinding("key.config", KeyConflictContext.IN_GAME, KeyModifier.SHIFT, Keyboard.KEY_C, "key.categories." + OpenGlasses.MODID.toLowerCase());
-    public static KeyBinding nightvisionModeKey = new KeyBinding("key.nightvision", KeyConflictContext.IN_GAME, Keyboard.KEY_N, "key.categories." + OpenGlasses.MODID.toLowerCase());
-    public static KeyBinding thermalvisionModeKey = new KeyBinding("key.thermalvision", KeyConflictContext.IN_GAME, Keyboard.KEY_B, "key.categories." + OpenGlasses.MODID.toLowerCase());
-    public static KeyBinding openSecurityModeKey = new KeyBinding("key.opensecurity", KeyConflictContext.IN_GAME, Keyboard.KEY_O, "key.categories." + OpenGlasses.MODID.toLowerCase());
+    public static KeyBinding interactGUIKey = new KeyBinding("key.openglasses.interact", KeyConflictContext.IN_GAME, Keyboard.KEY_C, "key.categories." + OpenGlasses.MODID.toLowerCase());
+    public static KeyBinding glassesConfigKey = new KeyBinding("key.openglasses.config", KeyConflictContext.IN_GAME, KeyModifier.SHIFT, Keyboard.KEY_C, "key.categories." + OpenGlasses.MODID.toLowerCase());
+    public static KeyBinding nightvisionModeKey = new KeyBinding("key.openglasses.nightvision", KeyConflictContext.IN_GAME, Keyboard.KEY_N, "key.categories." + OpenGlasses.MODID.toLowerCase());
+    public static KeyBinding thermalvisionModeKey = new KeyBinding("key.openglasses.thermalvision", KeyConflictContext.IN_GAME, Keyboard.KEY_B, "key.categories." + OpenGlasses.MODID.toLowerCase());
+    public static KeyBinding openSecurityModeKey = new KeyBinding("key.openglasses.opensecurity", KeyConflictContext.IN_GAME, Keyboard.KEY_O, "key.categories." + OpenGlasses.MODID.toLowerCase());
 
     public ClientKeyboardEvents() {
         ClientRegistry.registerKeyBinding(interactGUIKey);

@@ -1,13 +1,13 @@
 tile.openglassesterminal.name=Glasses Terminal
-item.manual.name=OpenGlasses Manual
+item.openglasses_manual.name=OpenGlasses Manual
 item.openglasses.name=AR Glasses
 item.openglasses_card.name=Glasses Terminal Card
-key.categories.openglasses=OpenGlasses
-key.interact=Overlay Cursor
-key.config=Glasses Config
-key.opensecurity=OpenSecurity (Mode)
-key.nightvision=Nightvision (Mode)
-key.thermalvision=Thermalvision (Mode)
+key.openglasses.categories.openglasses=OpenGlasses
+key.openglasses.interact=Overlay Cursor
+key.openglasses.config=Glasses Config
+key.openglasses.opensecurity=OpenSecurity (Mode)
+key.openglasses.nightvision=Nightvision (Mode)
+key.openglasses.thermalvision=Thermalvision (Mode)
 itemGroup.openglasses=OpenGlasses
 
 
@@ -17,5 +17,5 @@ openglasses.infotext.widgetlimitexhausted=WIDGET LIMIT REACHED, remove widgets t
 openglasses.infotext.linkrequest=accept Link Request from %s at %s
 openglasses.infotext.upgraderequired=upgrade '%s' required
 
-gui.config.title=OpenGlasses Config
-gui.config.absolute_rendering_allowed=absolute rendering allowed
+gui.openglasses.config.title=OpenGlasses Config
+gui.openglasses.config.absolute_rendering_allowed=absolute rendering allowed
