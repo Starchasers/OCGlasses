@@ -11,15 +11,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ClientRenderEvents {
 
     @SubscribeEvent
-    public static void onRenderGameOverlay(RenderGameOverlayEvent evt) {
-        if (evt.getType() != RenderGameOverlayEvent.ElementType.HELMET) return;
-        if (!(evt instanceof RenderGameOverlayEvent.Post)) return;
+    public static void onRenderGameOverlay(RenderGameOverlayEvent.Pre evt) {
+        if(!evt.getType().equals(RenderGameOverlayEvent.ElementType.HELMET)) return;
 
         OCClientSurface.instance().renderOverlay(evt.getPartialTicks());
     }
 
     @SubscribeEvent
     public static void renderWorldLastEvent(RenderWorldLastEvent event) {
+
         OCClientSurface.instance().renderWorld(event.getPartialTicks());
     }
 }

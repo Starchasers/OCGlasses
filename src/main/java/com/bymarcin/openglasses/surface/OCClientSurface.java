@@ -93,6 +93,10 @@ public class OCClientSurface extends ClientSurface {
 	}
 
 	public void renderOverlay(float partialTicks) {
+		GlassesFramebuffer.renderWorldFramebuffer(partialTicks);
+		if(true)
+			return;
+
 		updateThermalVision();
 
 		if(GlassesInitSequence.renderInitSequence(glasses.get()))
@@ -124,39 +128,38 @@ public class OCClientSurface extends ClientSurface {
 	}
 
 	public void renderWorld(float partialTicks)	{
+		GlassesFramebuffer.init();
+		GlassesFramebuffer.bindFramebuffer(partialTicks);
 
 		if(glasses.openSecurityOverlayActive)
 			ProtectionRenderer.renderOpenSecurityProtections(partialTicks);
 
-		if(!shouldRenderStart(RenderType.WorldLocated)) return;
+		if(shouldRenderStart(RenderType.WorldLocated) && getWidgetCount(null, RenderType.WorldLocated) > 0){
+			preRender(RenderType.WorldLocated, partialTicks);
 
-		if(getWidgetCount(null, RenderType.WorldLocated) < 1)
-			return;
+			for(GlassesInstance.HostClient host : glasses.getHosts().values()) {
+				if(!host.renderWorld)
+					continue;
 
-		preRender(RenderType.WorldLocated, partialTicks);
-		GlStateManager.depthMask(true);
+				if(host.getHost().absoluteRenderPosition && !glasses.getConditions().hasNavigation)
+					continue;
 
-		for(GlassesInstance.HostClient host : glasses.getHosts().values()) {
-			if(!host.renderWorld)
-				continue;
+				GlStateManager.pushMatrix();
+				Vec3d renderPos = host.getHost().getRenderPosition(partialTicks);
 
-			if(host.getHost().absoluteRenderPosition && !glasses.getConditions().hasNavigation)
-				continue;
+				if(!host.getHost().absoluteRenderPosition) {
+					GlStateManager.translate(renderPos.x, renderPos.y, renderPos.z);
+				}
 
-			GlStateManager.pushMatrix();
-			Vec3d renderPos = host.getHost().getRenderPosition(partialTicks);
+				renderWidgets(host.getHost().getWidgetsWorld().values(), partialTicks, renderPos, host.getHost());
 
-			if(!host.getHost().absoluteRenderPosition) {
-				GlStateManager.translate(renderPos.x, renderPos.y, renderPos.z);
+				GlStateManager.popMatrix();
 			}
 
-			renderWidgets(host.getHost().getWidgetsWorld().values(), partialTicks, renderPos, host.getHost());
-
-			GlStateManager.popMatrix();
+			postRender(RenderType.WorldLocated);
 		}
 
-		postRender(RenderType.WorldLocated);
-		GlStateManager.enableDepth();
+		GlassesFramebuffer.releaseFramebuffer();
 	}
 
 	private static int thermalTicks = 0;
@@ -164,7 +167,7 @@ public class OCClientSurface extends ClientSurface {
 		if(!glasses.getConditions().hasThermalVision) {
 			if (ShaderHelper.isActive())
 				setupThermalShader(false);
-			
+
 			return;
 		}
 

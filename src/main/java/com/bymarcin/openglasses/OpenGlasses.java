@@ -55,8 +55,8 @@ import java.util.HashSet;
 	guiFactory = OpenGlasses.GUIFACTORY,
 	dependencies =
 			"required-after:opencomputers@[1.7.1,);" +
-			"required-after:guitoolkit@1.1.2,;" +
-			"required-after:rendertoolkit@1.1.2,;" +
+			"required-after:guitoolkit;" +
+			"required-after:rendertoolkit;" +
 			"after:baubles;after:rtfm;after:opensecurity"
 )
 

@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.bundling.Jar
+
 buildscript {
     repositories {
         mavenCentral()
@@ -143,6 +145,19 @@ jar {
     }
 }
 
+
+task devJar(type: Jar) {
+    from sourceSets.main.output
+    from sourceSets.main.allJava
+    classifier = 'dev'
+    manifest {
+        attributes 'FMLAT': 'openglasses_at.cfg'
+    }
+}
+
+artifacts {
+    archives devJar
+}
 
 syncGitWiki.dependsOn(flushWiki)
 build.dependsOn(syncGitWiki)

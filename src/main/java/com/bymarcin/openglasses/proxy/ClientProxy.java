@@ -1,6 +1,5 @@
 package com.bymarcin.openglasses.proxy;
 
-import ben_mkiv.rendertoolkit.client.thermalvision.ThermalEntityRender;
 import com.bymarcin.openglasses.OpenGlasses;
 import com.bymarcin.openglasses.event.minecraft.client.ClientEventHandler;
 import com.bymarcin.openglasses.event.minecraft.client.ClientKeyboardEvents;
