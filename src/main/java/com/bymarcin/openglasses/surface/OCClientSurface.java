@@ -8,7 +8,6 @@ import ben_mkiv.rendertoolkit.common.widgets.IRenderableWidget;
 import ben_mkiv.rendertoolkit.common.widgets.RenderType;
 import ben_mkiv.rendertoolkit.common.widgets.Widget;
 import ben_mkiv.rendertoolkit.common.widgets.component.world.EntityTracker3D;
-import ben_mkiv.rendertoolkit.renderToolkit;
 import ben_mkiv.rendertoolkit.surface.ClientSurface;
 
 import com.bymarcin.openglasses.OpenGlasses;
@@ -35,7 +34,6 @@ import javax.vecmath.Vector3f;
 import static ben_mkiv.rendertoolkit.client.thermalvision.ShaderHelper.setupThermalShader;
 import static com.bymarcin.openglasses.item.OpenGlassesItem.upgrades;
 import com.bymarcin.openglasses.integration.opensecurity.ProtectionRenderer;
-import org.lwjgl.opengl.GL11;
 
 import static com.bymarcin.openglasses.surface.StaticWidgets.*;
 
