@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.shader.Framebuffer;
-import java.nio.IntBuffer;
 
 class GlassesFramebuffer extends Framebuffer {
     private static GlassesFramebuffer fb;
@@ -39,7 +38,15 @@ class GlassesFramebuffer extends Framebuffer {
             init();
 
         fb.bindFramebuffer(false);
-        OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_DEPTH_ATTACHMENT, OpenGlHelper.GL_RENDERBUFFER, Minecraft.getMinecraft().getFramebuffer().depthBuffer);
+
+        bindDepthBuffer();
+    }
+
+    static void bindDepthBuffer(){
+        if(isOptifineSpecialCase)
+            OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_DEPTH_ATTACHMENT, OpenGlHelper.GL_RENDERBUFFER, OptifineHelper.getOptifineDepthBufferLocation());
+        else
+            OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_DEPTH_ATTACHMENT, OpenGlHelper.GL_RENDERBUFFER, Minecraft.getMinecraft().getFramebuffer().depthBuffer);
     }
 
     static void bindFramebuffer(float partialTicks){
@@ -78,7 +85,7 @@ class GlassesFramebuffer extends Framebuffer {
     }
 
     static void renderWorldFramebuffer(float partialTicks){
-        if(renderToolkit.Optifine)
+        if(isOptifineSpecialCase)
             renderWorldFramebufferOptifine(partialTicks);
         else
             renderWorldFramebufferVanilla(partialTicks);
