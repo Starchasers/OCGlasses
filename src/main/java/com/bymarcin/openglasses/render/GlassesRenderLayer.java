@@ -30,8 +30,16 @@ public class BaublesRenderLayer implements IRenderBauble, LayerRenderer<EntityLi
 	
 	@Override
 	public void doRenderLayer(EntityLivingBase living, float limbSwing, float prevLimbSwing, float partialTicks, float rotation, float yaw, float pitch, float scale){
+
 		ItemStack glasses = OpenGlasses.getGlassesStackBaubles((EntityPlayer) living);
-		if(glasses.isEmpty()) return;
+
+		if(glasses.isEmpty() && OpenGlasses.techguns)
+			glasses = OpenGlasses.getGlassesStackTechguns((EntityPlayer) living);
+
+		if(glasses.isEmpty())
+			return;
+
+
 		boolean sneaky = living.isSneaking();
 		
 		if(sneaky){
@@ -55,7 +63,8 @@ public class BaublesRenderLayer implements IRenderBauble, LayerRenderer<EntityLi
 		GlStateManager.popMatrix();
 		
 		if(sneaky) model.bipedHead.offsetY-=0.2F;
-	}	
+	}
+
 
     @Override
 	public boolean shouldCombineTextures() {
