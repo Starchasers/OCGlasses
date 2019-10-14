@@ -18,4 +18,4 @@ openglasses.infotext.linkrequest=Link Anfrage von %s, %s akzeptieren
 openglasses.infotext.upgraderequired=upgrade '%s' benoetigt
 
 gui.openglasses.config.title=OpenGlasses Konfiguration
-gui.openglasses.config.absolute_rendering_allowed=absolute render-Position erlauben
+gui.openglasses.config.general.absolute_rendering_allowed=absolute render-Position erlauben

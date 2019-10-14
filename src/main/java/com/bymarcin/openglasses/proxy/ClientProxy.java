@@ -5,7 +5,7 @@ import com.bymarcin.openglasses.event.minecraft.client.ClientEventHandler;
 import com.bymarcin.openglasses.event.minecraft.client.ClientKeyboardEvents;
 import com.bymarcin.openglasses.event.minecraft.client.ClientRenderEvents;
 import com.bymarcin.openglasses.event.minecraft.client.ClientWorldInteractionEvents;
-import com.bymarcin.openglasses.render.BaublesRenderLayer;
+import com.bymarcin.openglasses.render.GlassesRenderLayer;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import net.minecraft.client.Minecraft;
@@ -45,9 +45,9 @@ public class ClientProxy extends CommonProxy {
 			Map<String, RenderPlayer> skinMap = Minecraft.getMinecraft().getRenderManager().getSkinMap();
 			RenderPlayer render;
 			render = skinMap.get("default");
-			render.addLayer(new BaublesRenderLayer());
+			render.addLayer(new GlassesRenderLayer());
 			render = skinMap.get("slim");
-			render.addLayer(new BaublesRenderLayer());
+			render.addLayer(new GlassesRenderLayer());
 		}
 	}
 

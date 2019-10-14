@@ -73,6 +73,7 @@ runServer {
 repositories {
     maven { url = "http://maven.cil.li/" }          // OpenComputers
     maven { url = "https://maven.mcmoddev.com/" }   // Baubles
+    maven { url = "https://minecraft.curseforge.com/api/maven/" } // curseForge
 }
 
 configurations {
@@ -86,7 +87,13 @@ dependencies {
     compileOnly "com.azanor:Baubles:${baublesVersion}"
     compileOnly "li.cil.manual:RTFM:${rtfmVersion}"
 
-    extraLibs files("libs/commons0815/Commons0815-${commons_version}-dev.jar")
+    //extraLibs files("libs/commons0815/Commons0815-${commons_version}-dev.jar")
+
+    provided "commons0815:Commons0815:1.12.2:${commons_version}"
+
+    compileOnly 'opensecurity:OpenSecurity-1.12.2:1.0:38' // curse    
+
+    compileOnly group: 'techguns', name: 'Techguns', version: '1.12.2', classifier: '2.0.2.0_pre3.1', ext: 'jar'
 
     provided ("mrtjp:ProjectRed:${projredVersion}:Base") {
         exclude module: "NotEnoughItems"
@@ -135,13 +142,8 @@ jar {
     manifest {
         attributes([
                 "Maven-Artifact":"${project.group}:${project.archivesBaseName}:${project.version}",
-                'Timestamp': System.currentTimeMillis(),
-                'ContainedDeps': "Commons0815-${commons_version}.jar",
+                'Timestamp': System.currentTimeMillis()
         ])
-    }
-
-    from("libs/Commons0815-${commons_version}.jar"){
-        into ("META-INF/libraries")
     }
 }
 

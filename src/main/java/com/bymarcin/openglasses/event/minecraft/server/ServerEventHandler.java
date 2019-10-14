@@ -64,8 +64,14 @@ public class ServerEventHandler {
     private static void updatePlayer(EntityPlayer player){
         ItemStack glassesStack = OpenGlasses.getGlassesStack(player);
 
-        if(OpenGlasses.isGlassesStack(glassesStack))
-            for(UpgradeItem upgrade : OpenGlassesItem.upgrades)
+        if(OpenGlasses.isGlassesStack(glassesStack)) {
+            for (UpgradeItem upgrade : OpenGlassesItem.upgrades)
                 upgrade.updateServer(player, glassesStack);
+        }
+        else {
+            if(OCServerSurface.playerGlasses.containsKey(player.getUniqueID()))
+                OCServerSurface.equipmentChanged((EntityPlayerMP) player, glassesStack);
+        }
+
     }
 }

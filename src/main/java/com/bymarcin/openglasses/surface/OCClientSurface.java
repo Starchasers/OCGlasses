@@ -318,7 +318,7 @@ public class OCClientSurface extends ClientSurface {
 				initLocalGlasses(newStack);
 
 				wornTicks = 10;
-				GlassesInitSequence.initalize();
+				GlassesInitSequence.initialize();
 			}
 
 		}

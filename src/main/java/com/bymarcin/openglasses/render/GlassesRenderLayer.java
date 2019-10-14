@@ -16,11 +16,11 @@ import baubles.api.render.IRenderBauble;
 import net.minecraftforge.fml.common.Optional;
 
 @Optional.Interface(iface="baubles.api.render.IRenderBauble",modid="baubles")
-public class BaublesRenderLayer implements IRenderBauble, LayerRenderer<EntityLivingBase> {
+public class GlassesRenderLayer implements IRenderBauble, LayerRenderer<EntityLivingBase> {
 	static ModelBiped model;
 	static ResourceLocation texture;
 	
-	public BaublesRenderLayer(){
+	public GlassesRenderLayer(){
 		model = ForgeHooksClient.getArmorModel(Minecraft.getMinecraft().player, new ItemStack(new OpenGlassesItem()), EntityEquipmentSlot.HEAD, new ModelBiped());
 		texture = new ResourceLocation("openglasses:textures/models/glasses.png");
 	}
@@ -31,14 +31,16 @@ public class BaublesRenderLayer implements IRenderBauble, LayerRenderer<EntityLi
 	@Override
 	public void doRenderLayer(EntityLivingBase living, float limbSwing, float prevLimbSwing, float partialTicks, float rotation, float yaw, float pitch, float scale){
 
-		ItemStack glasses = OpenGlasses.getGlassesStackBaubles((EntityPlayer) living);
+		ItemStack glasses = ItemStack.EMPTY;
+
+		if(OpenGlasses.baubles)
+			OpenGlasses.getGlassesStackBaubles((EntityPlayer) living);
 
 		if(glasses.isEmpty() && OpenGlasses.techguns)
 			glasses = OpenGlasses.getGlassesStackTechguns((EntityPlayer) living);
 
 		if(glasses.isEmpty())
 			return;
-
 
 		boolean sneaky = living.isSneaking();
 		

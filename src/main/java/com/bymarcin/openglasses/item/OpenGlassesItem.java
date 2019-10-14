@@ -11,7 +11,6 @@ import com.bymarcin.openglasses.item.upgrades.*;
 import com.bymarcin.openglasses.manual.IItemWithDocumentation;
 import com.bymarcin.openglasses.surface.OCClientSurface;
 import com.bymarcin.openglasses.surface.OCServerSurface;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -26,6 +25,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -39,12 +39,15 @@ import net.minecraft.util.EnumFacing;
 
 import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
+import techguns.api.tginventory.ITGSpecialSlot;
+import techguns.api.tginventory.TGSlotType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @Optional.Interface(iface="baubles.api.IBauble",modid="baubles")
-public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation, IBauble {
+//@Optional.Interface(iface="techguns.api.tginventory.ITGSpecialSlot",modid="techguns")
+public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation, IBauble { //ITGSpecialSlot
 	public static ItemStack DEFAULT_STACK;
 
 	public static HashSet<UpgradeItem> upgrades = new HashSet<>();
@@ -273,6 +276,38 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 		}
 	}
 
+
+	/* Techguns2 integration */
+	@Optional.Method(modid="techguns")
+	public TGSlotType getSlot(ItemStack var1){
+		return TGSlotType.FACESLOT;
+	}
+
+	@Optional.Method(modid="techguns")
+	public void onPlayerTick(ItemStack item, TickEvent.PlayerTickEvent event) {
+		consumeEnergy(item);
+	}
+
+	//@Override
+	@Optional.Method(modid="techguns")
+	public void onEquipped(ItemStack itemstack, EntityPlayer player) {
+		if(player.getEntityWorld().isRemote)
+			return;
+
+		if(player instanceof EntityPlayerMP)
+			OCServerSurface.equipmentChanged((EntityPlayerMP) player, itemstack);
+	}
+
+	//@Override
+	@Optional.Method(modid="techguns")
+	public void onUnequipped(ItemStack itemstack, EntityPlayer player) {
+		if(player.getEntityWorld().isRemote)
+			return;
+
+		if(player instanceof EntityPlayerMP)
+			OCServerSurface.equipmentChanged((EntityPlayerMP) player, ItemStack.EMPTY);
+	}
+
 	/* Baubles integration */
 	@Override
 	@Optional.Method(modid="baubles")
@@ -318,6 +353,10 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 
 	@Override
 	@Optional.Method(modid="baubles")
-	public void onWornTick(ItemStack itemstack, EntityLivingBase player){ consumeEnergy(itemstack); }
+	public void onWornTick(ItemStack itemstack, EntityLivingBase player){
+		consumeEnergy(itemstack);
+	}
+
+
 
 }

@@ -17,8 +17,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import techguns.capabilities.TGExtendedPlayer;
+import techguns.capabilities.TGExtendedPlayerCapProvider;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -119,8 +122,16 @@ public class UpgradeNightvision extends UpgradeItem {
                 return (player.getBrightness() < 0.3F);
             case OFF:
             default:
+                if(OpenGlasses.techguns)
+                    return shouldEnableNightVisionTG(player);
+
                 return false;
         }
+    }
+
+    @Optional.Method(modid="techguns")
+    private static boolean shouldEnableNightVisionTG(EntityPlayer player){
+        return !OpenGlasses.getGlassesStackTechguns(player).isEmpty() && TGExtendedPlayer.get(player).enableNightVision;
     }
 
     private static nightVisionModes getMode(ItemStack glassesStack){

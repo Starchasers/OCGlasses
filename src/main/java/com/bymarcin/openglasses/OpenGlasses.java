@@ -46,6 +46,12 @@ import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
 
 import net.minecraft.entity.player.EntityPlayer;
+import techguns.api.tginventory.ITGSpecialSlot;
+import techguns.api.tginventory.TGSlotType;
+import techguns.capabilities.TGExtendedPlayer;
+import techguns.capabilities.TGExtendedPlayerCapProvider;
+import techguns.gui.player.TGPlayerInventory;
+import techguns.items.additionalslots.ItemTGSpecialSlot;
 
 import java.util.HashSet;
 
@@ -68,7 +74,7 @@ public class OpenGlasses {
 	@SidedProxy(clientSide = "com.bymarcin.openglasses.proxy.ClientProxy", serverSide = "com.bymarcin.openglasses.proxy.CommonProxy")
 	public static CommonProxy proxy;
 
-	public static boolean baubles = false;
+	public static boolean baubles = false, techguns = false;
 
 	public static boolean absoluteRenderingAllowed = true;
 
@@ -80,6 +86,7 @@ public class OpenGlasses {
 	public void preInit(FMLPreInitializationEvent event){
 
 		OpenGlasses.baubles = Loader.isModLoaded("baubles");
+		OpenGlasses.techguns = Loader.isModLoaded("techguns");
 		OpenGlasses.opensecurity = Loader.isModLoaded("opensecurity") && OpenSecurity.isCompatible();
 
 		Config.preInit();
@@ -126,8 +133,19 @@ public class OpenGlasses {
 
 		if(isGlassesStack(glassesStack))
 			return glassesStack;
-		else if(OpenGlasses.baubles)
-			return getGlassesStackBaubles(player);
+
+
+		if(OpenGlasses.baubles) {
+			glassesStack = getGlassesStackBaubles(player);
+			if(!glassesStack.isEmpty())
+				return glassesStack;
+		}
+
+		if(OpenGlasses.techguns) {
+			glassesStack = getGlassesStackTechguns(player);
+			if(!glassesStack.isEmpty())
+				return glassesStack;
+		}
 
 		return ItemStack.EMPTY;
 	}
@@ -139,6 +157,17 @@ public class OpenGlasses {
 		ItemStack baublesStack = handler.getStackInSlot(4);
 
 		return isGlassesStack(baublesStack) ? baublesStack : ItemStack.EMPTY;
+	}
+
+	public static ItemStack getGlassesStackTechguns(EntityPlayer e){
+		if(!e.hasCapability(TGExtendedPlayerCapProvider.TG_EXTENDED_PLAYER, null))
+			return null;
+
+		TGExtendedPlayer tgExtendedPlayer = TGExtendedPlayer.get(e);
+
+		ItemStack techgunsStack = tgExtendedPlayer.getTGInventory().getStackInSlot(TGPlayerInventory.SLOT_FACE);
+
+		return isGlassesStack(techgunsStack) ? techgunsStack : ItemStack.EMPTY;
 	}
 
 	@EventHandler

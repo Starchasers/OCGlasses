@@ -51,7 +51,7 @@ public class GlassesInitSequence {
         return true;
     }
 
-    static void initalize(){
+    static void initialize(){
         initSequenceLines.clear();
         initSequenceChars = 0;
 

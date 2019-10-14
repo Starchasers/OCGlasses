@@ -43,14 +43,13 @@ class GlassesFramebuffer extends Framebuffer {
     }
 
     static void bindDepthBuffer(){
-        if(isOptifineSpecialCase)
+        if(renderToolkit.Optifine)
             OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_DEPTH_ATTACHMENT, OpenGlHelper.GL_RENDERBUFFER, OptifineHelper.getOptifineDepthBufferLocation());
         else
             OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_DEPTH_ATTACHMENT, OpenGlHelper.GL_RENDERBUFFER, Minecraft.getMinecraft().getFramebuffer().depthBuffer);
     }
 
     static void bindFramebuffer(float partialTicks){
-
         isOptifineSpecialCase = renderToolkit.Optifine && OptifineHelper.isShaderActive();
 
         if(isOptifineSpecialCase)
@@ -76,7 +75,9 @@ class GlassesFramebuffer extends Framebuffer {
     }
 
     static void releaseFramebufferVanilla() {
+
         Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
+        Minecraft.getMinecraft().entityRenderer.setupOverlayRendering();
     }
 
 
@@ -85,13 +86,6 @@ class GlassesFramebuffer extends Framebuffer {
     }
 
     static void renderWorldFramebuffer(float partialTicks){
-        if(isOptifineSpecialCase)
-            renderWorldFramebufferOptifine(partialTicks);
-        else
-            renderWorldFramebufferVanilla(partialTicks);
-    }
-
-    static void renderWorldFramebufferOptifine(float partialTicks){
         if(fb == null)
             init();
 
@@ -110,34 +104,7 @@ class GlassesFramebuffer extends Framebuffer {
         GlStateManager.popAttrib();
 
         // reinit overlay renderer
-        //releaseFramebuffer();
-
-        Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
-        mc.entityRenderer.setupOverlayRendering();
-    }
-
-    static void renderWorldFramebufferVanilla(float partialTicks){
-        if(fb == null)
-            init();
-
-        Minecraft mc = Minecraft.getMinecraft();
-        GlStateManager.pushAttrib();
-        GlStateManager.pushMatrix();
-        GlStateManager.enableDepth();
-        GlStateManager.depthMask(true);
-        GlStateManager.enableAlpha();
-        GlStateManager.enableBlend();
-        //framebuffer.bindFramebufferTexture();
-        fb.render(mc.displayWidth, mc.displayHeight);
-        fb.framebufferClear();
-
-        GlStateManager.popMatrix();
-        GlStateManager.popAttrib();
-
-        // reinit overlay renderer
-        releaseFramebuffer();
-
-        mc.entityRenderer.setupOverlayRendering();
+        releaseFramebufferVanilla();
     }
 
     public void render(int width, int height)
