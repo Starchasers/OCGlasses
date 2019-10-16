@@ -3,18 +3,15 @@ package com.bymarcin.openglasses.surface;
 import com.bymarcin.openglasses.OpenGlasses;
 
 import com.bymarcin.openglasses.component.OpenGlassesHostComponent;
-import com.bymarcin.openglasses.event.minecraft.server.ServerEventHandler;
 import com.bymarcin.openglasses.item.GlassesNBT;
 import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesHostsNBT;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
 import com.bymarcin.openglasses.utils.PlayerStatsOC;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.MinecraftForge;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -164,8 +161,7 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 		return (PlayerStatsOC) OCServerSurface.instance().playerStats.get(player.getUniqueID());
 	}
 
-	@Override
-    public void requestResolutionEvent(EntityPlayerMP player, UUID instanceUUID){
+	public void requestResolutionEvent(EntityPlayerMP player, UUID instanceUUID){
         if(player != null)
             NetworkRegistry.packetHandler.sendTo(new TerminalStatusPacket(ASYNC_SCREEN_SIZES, instanceUUID), player);
     }

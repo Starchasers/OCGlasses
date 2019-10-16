@@ -13,7 +13,7 @@ import net.minecraft.client.shader.Framebuffer;
 class GlassesFramebuffer extends Framebuffer {
     private static GlassesFramebuffer fb;
 
-    static boolean isOptifineSpecialCase = false;
+    static boolean isOptifineSpecialCase = false, isOptifineFastRender = false;
 
     private GlassesFramebuffer(int width, int height){
         super(width, height, true);
@@ -43,14 +43,17 @@ class GlassesFramebuffer extends Framebuffer {
     }
 
     static void bindDepthBuffer(){
-        if(renderToolkit.Optifine)
+        if(isOptifineFastRender)
+            return;
+        if(isOptifineSpecialCase)
             OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_DEPTH_ATTACHMENT, OpenGlHelper.GL_RENDERBUFFER, OptifineHelper.getOptifineDepthBufferLocation());
         else
             OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_DEPTH_ATTACHMENT, OpenGlHelper.GL_RENDERBUFFER, Minecraft.getMinecraft().getFramebuffer().depthBuffer);
     }
 
     static void bindFramebuffer(float partialTicks){
-        isOptifineSpecialCase = renderToolkit.Optifine && OptifineHelper.isShaderActive();
+        isOptifineFastRender = renderToolkit.Optifine && OptifineHelper.isFastRenderEnabled();
+        isOptifineSpecialCase = !isOptifineFastRender && renderToolkit.Optifine && OptifineHelper.isShaderActive();
 
         if(isOptifineSpecialCase)
             bindFramebufferOptifine(partialTicks);
@@ -98,7 +101,15 @@ class GlassesFramebuffer extends Framebuffer {
         GlStateManager.enableBlend();
         //framebuffer.bindFramebufferTexture();
         fb.render(mc.displayWidth, mc.displayHeight);
-        fb.framebufferClear();
+
+        if(isOptifineFastRender){
+            GlStateManager.clearColor(fb.framebufferColor[0], fb.framebufferColor[1], fb.framebufferColor[2], fb.framebufferColor[3]);
+            if (fb.useDepth){
+                GlStateManager.clearDepth(1.0D);
+            }
+        }
+        else
+            fb.framebufferClear();
 
         GlStateManager.popMatrix();
         GlStateManager.popAttrib();

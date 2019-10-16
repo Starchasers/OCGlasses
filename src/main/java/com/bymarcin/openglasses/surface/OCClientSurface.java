@@ -94,6 +94,7 @@ public class OCClientSurface extends ClientSurface {
 	}
 
 	public void renderOverlay(float partialTicks) {
+
 		GlassesFramebuffer.renderWorldFramebuffer(partialTicks);
 
 		updateThermalVision();
