@@ -12,17 +12,14 @@ buildscript {
             name = "sonatype"
             url = "https://oss.sonatype.org/content/repositories/snapshots/"
         }
-        maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
         classpath 'com.palominolabs.gradle.task:gradle-git-clone-task:0.0.3'
-        classpath 'com.wynprice.cursemaven:CurseMaven:1.2.+'
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: 'com.wynprice.cursemaven'
 
 // java version
 sourceCompatibility = "1.8"
@@ -90,12 +87,8 @@ dependencies {
     compileOnly "com.azanor:Baubles:${baublesVersion}"
     compileOnly "li.cil.manual:RTFM:${rtfmVersion}"
 
-    //extraLibs files("libs/commons0815/Commons0815-${commons_version}-dev.jar")
-
-    //provided "commons0815:Commons0815:1.12.2:${commons_version}"
+    extraLibs files("libs/commons0815/Commons0815-${commons_version}-dev.jar")
     
-    provided curse.resolve('commons0815', "${commons_file}")
-
     compileOnly 'opensecurity:OpenSecurity-1.12.2:1.0:38' // curse    
 
     compileOnly group: 'techguns', name: 'Techguns', version: '1.12.2', classifier: '2.0.2.0_pre3.1', ext: 'jar'
