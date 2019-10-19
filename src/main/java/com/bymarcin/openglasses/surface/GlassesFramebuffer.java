@@ -61,11 +61,11 @@ class GlassesFramebuffer extends Framebuffer {
             bindFramebufferVanilla(partialTicks);
     }
 
-    static void releaseFramebuffer(){
+    static void releaseFramebuffer(boolean isOverlayRendering){
         if(isOptifineSpecialCase)
             releaseFramebufferOptifine();
         else
-            releaseFramebufferVanilla();
+            releaseFramebufferVanilla(isOverlayRendering);
     }
 
     static void bindFramebufferOptifine(float partialTicks) {
@@ -77,10 +77,11 @@ class GlassesFramebuffer extends Framebuffer {
         OptifineHelper.bindOptifineDepthBuffer();
     }
 
-    static void releaseFramebufferVanilla() {
-
+    static void releaseFramebufferVanilla(boolean isOverlayRendering) {
         Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
-        Minecraft.getMinecraft().entityRenderer.setupOverlayRendering();
+
+        if(isOverlayRendering)
+            Minecraft.getMinecraft().entityRenderer.setupOverlayRendering();
     }
 
 
@@ -115,7 +116,7 @@ class GlassesFramebuffer extends Framebuffer {
         GlStateManager.popAttrib();
 
         // reinit overlay renderer
-        releaseFramebufferVanilla();
+        releaseFramebufferVanilla(true);
     }
 
     public void render(int width, int height)

@@ -94,7 +94,6 @@ public class OCClientSurface extends ClientSurface {
 	}
 
 	public void renderOverlay(float partialTicks) {
-
 		GlassesFramebuffer.renderWorldFramebuffer(partialTicks);
 
 		updateThermalVision();
@@ -125,9 +124,13 @@ public class OCClientSurface extends ClientSurface {
 		}
 
 		postRender(RenderType.GameOverlayLocated);
+
 	}
 
 	public void renderWorld(float partialTicks)	{
+		if(glasses.get().isEmpty())
+			return;
+
 		GlassesFramebuffer.init();
 		GlassesFramebuffer.bindFramebuffer(partialTicks);
 
@@ -159,7 +162,7 @@ public class OCClientSurface extends ClientSurface {
 			postRender(RenderType.WorldLocated);
 		}
 
-		GlassesFramebuffer.releaseFramebuffer();
+		GlassesFramebuffer.releaseFramebuffer(false);
 
 		GlStateManager.enableDepth();
 	}
