@@ -42,6 +42,11 @@ public class GlassesInstance {
             for(NBTTagCompound tag : OpenGlassesHostsNBT.getHostsFromNBT(stack))
                 hosts.put(tag.getUniqueId("host"), new HostClient(tag));
         }
+        else {
+            conditions = new Conditions();
+            thermalVisionActive = false;
+            energyStored = 0;
+        }
     }
 
     public void refresh(){

@@ -94,9 +94,16 @@ public class OCClientSurface extends ClientSurface {
 	}
 
 	public void renderOverlay(float partialTicks) {
-		GlassesFramebuffer.renderWorldFramebuffer(partialTicks);
+		if(glasses.get().isEmpty()) {
+			if(thermalActive)
+				updateThermalVision();
+
+			return;
+		}
 
 		updateThermalVision();
+
+		GlassesFramebuffer.renderWorldFramebuffer(partialTicks);
 
 		if(GlassesInitSequence.renderInitSequence(glasses.get()))
 			return;
@@ -314,8 +321,9 @@ public class OCClientSurface extends ClientSurface {
 		}
 
 		if(newStack.isEmpty()){
-			if(!glasses.get().isEmpty())
+			if(!glasses.get().isEmpty()) {
 				initLocalGlasses(ItemStack.EMPTY);
+			}
 		}
 		else if(OpenGlasses.isGlassesStack(newStack)){
 			if(!GlassesNBT.getUniqueId(newStack).equals(glasses.getUniqueId())) {
