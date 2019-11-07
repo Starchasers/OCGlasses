@@ -13,8 +13,16 @@ import java.io.IOException;
 import static ben_mkiv.rendertoolkit.surface.ClientSurface.vec3d000;
 
 public class InteractGui extends GuiScreen {
+    private final boolean stableOpen;
+
+    public InteractGui(boolean stableOpen) {
+
+        this.stableOpen = stableOpen;
+    }
+
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks){}
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+    }
 
     @Override
     public boolean doesGuiPauseGame() {
@@ -22,30 +30,48 @@ public class InteractGui extends GuiScreen {
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        if(OCClientSurface.glasses.get().isEmpty()) return;
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+        if (OCClientSurface.glasses.get().isEmpty()) return;
 
-        for(GlassesInstance.HostClient host : OCClientSurface.glasses.getHosts().values())
-            if(host.sendOverlayEvents) {
+        for (GlassesInstance.HostClient host : OCClientSurface.glasses.getHosts().values())
+            if (host.sendOverlayEvents) {
                 double x = mouseX, y = mouseY;
-                if(!OCClientSurface.instance().getRenderResolution(host.uuid).equals(vec3d000)){
-                    x*=(OCClientSurface.instance().getRenderResolution(host.uuid).x / OCClientSurface.resolution.getScaledWidth());
-                    y*=(OCClientSurface.instance().getRenderResolution(host.uuid).y / OCClientSurface.resolution.getScaledHeight());
+                if (!OCClientSurface.instance().getRenderResolution(host.uuid).equals(vec3d000)) {
+                    x *= (OCClientSurface.instance().getRenderResolution(host.uuid).x / OCClientSurface.resolution.getScaledWidth());
+                    y *= (OCClientSurface.instance().getRenderResolution(host.uuid).y / OCClientSurface.resolution.getScaledHeight());
                 }
                 NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(host.uuid, GlassesEventPacket.EventType.INTERACT_OVERLAY, (int) Math.round(x), (int) Math.round(y), mouseButton));
             }
     }
 
     @Override
+    protected void keyTyped(char typedChar, int keyCode) {
+        if (stableOpen) {
+            for (GlassesInstance.HostClient host : OCClientSurface.glasses.getHosts().values())
+                if (host.sendOverlayEvents)
+                    NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(host.uuid, GlassesEventPacket.EventType.KEYBOARD_INTERACT_OVERLAY, keyCode, typedChar));
+
+        }
+        if (keyCode == 1)
+            closeOverlay();
+    }
+
+    @Override
     public void updateScreen() {
-        if(!Keyboard.isKeyDown(ClientKeyboardEvents.interactGUIKey.getKeyCode())){
-            OCClientSurface.glasses.getConditions().setOverlay(false);
+        if (!stableOpen && !Keyboard.isKeyDown(ClientKeyboardEvents.interactGUIKey.getKeyCode()))
+            closeOverlay();
+    }
 
-            for(GlassesInstance.HostClient host : OCClientSurface.glasses.getHosts().values())
-                if(host.sendOverlayEvents)
-                    NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(host.uuid, GlassesEventPacket.EventType.DEACTIVATE_OVERLAY));
+    private void closeOverlay() {
+        OCClientSurface.glasses.getConditions().setOverlay(false);
 
-            mc.displayGuiScreen(null);
+        for (GlassesInstance.HostClient host : OCClientSurface.glasses.getHosts().values())
+            if (host.sendOverlayEvents)
+                NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(host.uuid, GlassesEventPacket.EventType.DEACTIVATE_OVERLAY));
+
+        mc.displayGuiScreen(null);
+        if (mc.currentScreen == null) {
+            mc.setIngameFocus();
         }
     }
 }

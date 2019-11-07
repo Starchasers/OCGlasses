@@ -24,6 +24,7 @@ import org.lwjgl.input.Keyboard;
 @SideOnly(Side.CLIENT)
 public class ClientKeyboardEvents {
     public static KeyBinding interactGUIKey = new KeyBinding("key.openglasses.interact", KeyConflictContext.IN_GAME, Keyboard.KEY_C, "key.categories." + OpenGlasses.MODID.toLowerCase());
+    public static KeyBinding stableInteractGUIKey = new KeyBinding("key.openglasses.stable_interact", KeyConflictContext.IN_GAME, KeyModifier.ALT, Keyboard.KEY_C, "key.categories." + OpenGlasses.MODID.toLowerCase());
     public static KeyBinding glassesConfigKey = new KeyBinding("key.openglasses.config", KeyConflictContext.IN_GAME, KeyModifier.SHIFT, Keyboard.KEY_C, "key.categories." + OpenGlasses.MODID.toLowerCase());
     public static KeyBinding nightvisionModeKey = new KeyBinding("key.openglasses.nightvision", KeyConflictContext.IN_GAME, Keyboard.KEY_N, "key.categories." + OpenGlasses.MODID.toLowerCase());
     public static KeyBinding thermalvisionModeKey = new KeyBinding("key.openglasses.thermalvision", KeyConflictContext.IN_GAME, Keyboard.KEY_B, "key.categories." + OpenGlasses.MODID.toLowerCase());
@@ -31,6 +32,7 @@ public class ClientKeyboardEvents {
 
     public ClientKeyboardEvents() {
         ClientRegistry.registerKeyBinding(interactGUIKey);
+        ClientRegistry.registerKeyBinding(stableInteractGUIKey);
         ClientRegistry.registerKeyBinding(nightvisionModeKey);
         ClientRegistry.registerKeyBinding(thermalvisionModeKey);
         ClientRegistry.registerKeyBinding(glassesConfigKey);
@@ -50,16 +52,24 @@ public class ClientKeyboardEvents {
         }
 
         if(interactGUIKey.isPressed()) {
-            OCClientSurface.glasses.getConditions().setOverlay(true);
-            Minecraft.getMinecraft().displayGuiScreen(new InteractGui());
-            for(GlassesInstance.HostClient host : OCClientSurface.glasses.getHosts().values())
-                if(host.sendOverlayEvents)
-                    NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(host.uuid, GlassesEventPacket.EventType.ACTIVATE_OVERLAY));
+            openOverlay(false);
+            return;
+        }
 
+        if(stableInteractGUIKey.isPressed()) {
+            openOverlay(true);
             return;
         }
 
         for(UpgradeItem upgrade : OpenGlassesItem.upgrades)
             upgrade.onKeyInput();
+    }
+
+    private void openOverlay(boolean stable) {
+        OCClientSurface.glasses.getConditions().setOverlay(true);
+        Minecraft.getMinecraft().displayGuiScreen(new InteractGui(stable));
+        for(GlassesInstance.HostClient host : OCClientSurface.glasses.getHosts().values())
+            if(host.sendOverlayEvents)
+                NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(host.uuid, GlassesEventPacket.EventType.ACTIVATE_OVERLAY));
     }
 }
