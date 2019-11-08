@@ -1,6 +1,7 @@
 package com.bymarcin.openglasses.gui;
 
 import com.bymarcin.openglasses.event.minecraft.client.ClientKeyboardEvents;
+import com.bymarcin.openglasses.item.upgrades.UpgradeKeyboard;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.GlassesEventPacket;
 import com.bymarcin.openglasses.surface.OCClientSurface;
@@ -8,16 +9,15 @@ import com.bymarcin.openglasses.utils.GlassesInstance;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
 
-import java.io.IOException;
-
 import static ben_mkiv.rendertoolkit.surface.ClientSurface.vec3d000;
 
 public class InteractGui extends GuiScreen {
     private final boolean stableOpen;
+    private final boolean enableKeyboard;
 
     public InteractGui(boolean stableOpen) {
-
         this.stableOpen = stableOpen;
+        this.enableKeyboard = UpgradeKeyboard.hasUpgrade(OCClientSurface.glasses.get());
     }
 
     @Override
@@ -46,11 +46,10 @@ public class InteractGui extends GuiScreen {
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) {
-        if (stableOpen) {
+        if (stableOpen && enableKeyboard) {
             for (GlassesInstance.HostClient host : OCClientSurface.glasses.getHosts().values())
                 if (host.sendOverlayEvents)
                     NetworkRegistry.packetHandler.sendToServer(new GlassesEventPacket(host.uuid, GlassesEventPacket.EventType.KEYBOARD_INTERACT_OVERLAY, keyCode, typedChar));
-
         }
         if (keyCode == 1)
             closeOverlay();
