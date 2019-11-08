@@ -4,6 +4,7 @@ item.openglasses.name=AR Glasses
 item.openglasses_card.name=Glasses Terminal Card
 key.categories.openglasses=OpenGlasses
 key.openglasses.interact=Overlay Cursor
+key.openglasses.stable_interact=Stable Overlay
 key.openglasses.config=Glasses Config
 key.openglasses.opensecurity=OpenSecurity (Mode)
 key.openglasses.nightvision=Nightvision (Mode)

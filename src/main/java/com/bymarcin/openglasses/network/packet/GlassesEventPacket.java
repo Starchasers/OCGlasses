@@ -28,264 +28,289 @@ import com.bymarcin.openglasses.network.Packet;
 import com.bymarcin.openglasses.surface.OCServerSurface;
 
 
-public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage>{
-	public enum EventType{
-		TOGGLE_NIGHTVISION,
-		TOGGLE_INFRARED,
-		TOGGLE_OPENSECURITY,
-		ACTIVATE_OVERLAY, DEACTIVATE_OVERLAY,
-		INTERACT_WORLD_RIGHT, INTERACT_WORLD_LEFT, INTERACT_WORLD_BLOCK_RIGHT, INTERACT_WORLD_BLOCK_LEFT,
-		INTERACT_OVERLAY,
-		GLASSES_SCREEN_SIZE,
-		ACCEPT_LINK, DENY_LINK, CLEAR_LINK,
-		ENABLE_NOTIFICATIONS, DISABLE_NOTIFICATIONS,
-		ENABLE_WORLD_RENDER, DISABLE_WORLD_RENDER,
-		ENABLE_OVERLAY_RENDER, DISABLE_OVERLAY_RENDER,
-		DISABLE_WORLD_EVENTS, ENABLE_WORLD_EVENTS,
-		DISABLE_OVERLAY_EVENTS, ENABLE_OVERLAY_EVENTS
-	}
+public class GlassesEventPacket extends Packet<GlassesEventPacket, IMessage> {
 
-	private EventType eventType;
-	private UUID hostUUID;
-	private BlockPos eventPos;
-	private EnumFacing facing;
-	private ItemStack glasses = ItemStack.EMPTY;
+    public enum EventType {
+        TOGGLE_NIGHTVISION,
+        TOGGLE_INFRARED,
+        TOGGLE_OPENSECURITY,
+        ACTIVATE_OVERLAY, DEACTIVATE_OVERLAY,
+        INTERACT_WORLD_RIGHT, INTERACT_WORLD_LEFT, INTERACT_WORLD_BLOCK_RIGHT, INTERACT_WORLD_BLOCK_LEFT,
+        INTERACT_OVERLAY,
+        KEYBOARD_INTERACT_OVERLAY,
+        GLASSES_SCREEN_SIZE,
+        ACCEPT_LINK, DENY_LINK, CLEAR_LINK,
+        ENABLE_NOTIFICATIONS, DISABLE_NOTIFICATIONS,
+        ENABLE_WORLD_RENDER, DISABLE_WORLD_RENDER,
+        ENABLE_OVERLAY_RENDER, DISABLE_OVERLAY_RENDER,
+        DISABLE_WORLD_EVENTS, ENABLE_WORLD_EVENTS,
+        DISABLE_OVERLAY_EVENTS, ENABLE_OVERLAY_EVENTS
+    }
 
-	private int x, y;
-	private double mb;
-	
-	public GlassesEventPacket(UUID host, EventType eventType) {
-		this.eventType = eventType;
-		this.hostUUID = host;
-	}
+    private EventType eventType;
+    private UUID hostUUID;
+    private BlockPos eventPos;
+    private EnumFacing facing;
+    private ItemStack glasses = ItemStack.EMPTY;
+
+    private int x, y;
+    private double mb;
+    private int key;
+    private char symbol;
+
+    public GlassesEventPacket(UUID host, EventType eventType) {
+        this.eventType = eventType;
+        hostUUID = host;
+    }
 
 
-	public GlassesEventPacket(UUID host, EventType eventType, BlockPos eventPosition, EnumFacing face) {
-		this(host, eventType);
-		this.eventPos = eventPosition;
-		this.facing = face;
-	}
+    public GlassesEventPacket(UUID host, EventType eventType, BlockPos eventPosition, EnumFacing face) {
+        this(host, eventType);
+        eventPos = eventPosition;
+        facing = face;
+    }
 
-	public GlassesEventPacket(UUID host, EventType eventType, int x, int y, int mb) {
-		this(host, eventType);
-		this.x = x;
-		this.y = y;
-		this.mb = mb;
-	}
+    public GlassesEventPacket(UUID host, EventType eventType, int x, int y, int mb) {
+        this(host, eventType);
+        this.x = x;
+        this.y = y;
+        this.mb = mb;
+    }
 
-	public GlassesEventPacket(){} //dont remove, in use by NetworkRegistry.registerPacket in OpenGlasses.java
+    public GlassesEventPacket(UUID host, EventType eventType, int key, char symbol) {
+        this(host, eventType);
+        this.key = key;
+        this.symbol = symbol;
+    }
 
-	@Override
-	protected void read() throws IOException {
-		if(readBoolean())
-			this.hostUUID = readUUID();
+    public GlassesEventPacket() {
+    } //dont remove, in use by NetworkRegistry.registerPacket in OpenGlasses.java
 
-		this.eventType = EventType.values()[readInt()];
+    @Override
+    protected void read() throws IOException {
+        if (readBoolean())
+            hostUUID = readUUID();
 
-		switch(eventType){
-			case INTERACT_OVERLAY:
-			case GLASSES_SCREEN_SIZE:
-				this.x = readInt();
-				this.y = readInt();
-				this.mb = readDouble();
-				return;
-			case INTERACT_WORLD_BLOCK_LEFT:
-			case INTERACT_WORLD_BLOCK_RIGHT:
-				this.eventPos = new BlockPos(readVec3i());
-				this.facing = EnumFacing.values()[readInt()];
-				return;
-		}
-	}
+        eventType = EventType.values()[readInt()];
 
-	@Override
-	protected void write() throws IOException {
-		writeBoolean(hostUUID != null);
-		if(hostUUID != null) {
-			writeUUID(hostUUID);
-		}
-	    writeInt(eventType.ordinal());
-	    
-		switch(eventType){
-			case GLASSES_SCREEN_SIZE:
-			case INTERACT_OVERLAY:
-				writeInt(x);
-				writeInt(y);
-				writeDouble(mb);
-				break;
-			case INTERACT_WORLD_BLOCK_LEFT:
-			case INTERACT_WORLD_BLOCK_RIGHT:
-				writeVec3i(this.eventPos);
-				writeInt(this.facing.ordinal());
-				break;
-		}
-	}
+        switch (eventType) {
+            case INTERACT_OVERLAY:
+            case GLASSES_SCREEN_SIZE:
+                x = readInt();
+                y = readInt();
+                mb = readDouble();
+                return;
+            case KEYBOARD_INTERACT_OVERLAY:
+                key = readInt();
+                symbol = (char) readInt();
+                return;
+            case INTERACT_WORLD_BLOCK_LEFT:
+            case INTERACT_WORLD_BLOCK_RIGHT:
+                eventPos = new BlockPos(readVec3i());
+                facing = EnumFacing.values()[readInt()];
+                return;
+        }
+    }
 
-	@Override
-	protected IMessage executeOnClient() {
-		return null;
-	}
+    @Override
+    protected void write() throws IOException {
+        writeBoolean(hostUUID != null);
+        if (hostUUID != null) {
+            writeUUID(hostUUID);
+        }
+        writeInt(eventType.ordinal());
 
-	private ItemStack getGlasses(EntityPlayer player){
-		return glasses.isEmpty() ? glasses = OpenGlasses.getGlassesStack(player) : glasses;
-	}
+        switch (eventType) {
+            case GLASSES_SCREEN_SIZE:
+            case INTERACT_OVERLAY:
+                writeInt(x);
+                writeInt(y);
+                writeDouble(mb);
+                break;
+            case KEYBOARD_INTERACT_OVERLAY:
+                writeInt(key);
+                writeInt(symbol);
+                break;
+            case INTERACT_WORLD_BLOCK_LEFT:
+            case INTERACT_WORLD_BLOCK_RIGHT:
+                writeVec3i(eventPos);
+                writeInt(facing.ordinal());
+                break;
+        }
+    }
 
-	@Override
-	protected IMessage executeOnServer(EntityPlayerMP playerMP) {
-		OpenGlassesHostComponent host;
-		Vec3d look = new Vec3d(0, 0, 0);
-		double eyeHeight = 0;
-		double playerRotation = 0;
-		double playerPitch = 0;
-		PlayerStatsOC stats;
-		ItemStack glasses;
+    @Override
+    protected IMessage executeOnClient() {
+        return null;
+    }
 
-		if(playerMP == null)
-			return null;
+    private ItemStack getGlasses(EntityPlayer player) {
+        return glasses.isEmpty() ? glasses = OpenGlasses.getGlassesStack(player) : glasses;
+    }
 
-		Vec3d playerPos = new Vec3d(playerMP.posX, playerMP.posY, playerMP.posZ);
+    @Override
+    protected IMessage executeOnServer(EntityPlayerMP playerMP) {
+        OpenGlassesHostComponent host;
+        Vec3d look = new Vec3d(0, 0, 0);
+        double eyeHeight = 0;
+        double playerRotation = 0;
+        double playerPitch = 0;
+        PlayerStatsOC stats;
+        ItemStack glasses;
 
-		if(UpgradeGeolyzer.hasUpgrade(getGlasses(playerMP))) {
-			Vec3d lookVector = playerMP.getLookVec();
-			look = new Vec3d(Math.round(lookVector.x*1000)/1000d, Math.round(lookVector.y*1000)/1000d, Math.round(lookVector.z*1000)/1000d);
-			eyeHeight = Math.round(playerMP.getEyeHeight()*1000)/1000d;
-			playerRotation = Math.round(playerMP.rotationYaw*1000)/1000d;
-			playerPitch = Math.round(playerMP.rotationPitch*1000)/1000d;
-		}
+        if (playerMP == null)
+            return null;
 
-		switch(eventType){
-			case INTERACT_WORLD_BLOCK_LEFT:
-			case INTERACT_WORLD_BLOCK_RIGHT:
-				host = OCServerSurface.getHost(hostUUID);
+        Vec3d playerPos = new Vec3d(playerMP.posX, playerMP.posY, playerMP.posZ);
 
-				if (host != null)
-					host.sendInteractEventWorldBlock(eventType.name(), playerMP.getName(), playerPos, look, eyeHeight, this.eventPos, this.facing, playerRotation, playerPitch);
-				return null;
+        if (UpgradeGeolyzer.hasUpgrade(getGlasses(playerMP))) {
+            Vec3d lookVector = playerMP.getLookVec();
+            look = new Vec3d(Math.round(lookVector.x * 1000) / 1000d, Math.round(lookVector.y * 1000) / 1000d, Math.round(lookVector.z * 1000) / 1000d);
+            eyeHeight = Math.round(playerMP.getEyeHeight() * 1000) / 1000d;
+            playerRotation = Math.round(playerMP.rotationYaw * 1000) / 1000d;
+            playerPitch = Math.round(playerMP.rotationPitch * 1000) / 1000d;
+        }
 
-			case INTERACT_WORLD_LEFT:
-			case INTERACT_WORLD_RIGHT:
-				host = OCServerSurface.getHost(hostUUID);
-				if (host != null)
-					host.sendInteractEventWorld(eventType.name(), playerMP.getName(), playerPos, look, eyeHeight, playerRotation, playerPitch);
-				return null;
+        switch (eventType) {
+            case INTERACT_WORLD_BLOCK_LEFT:
+            case INTERACT_WORLD_BLOCK_RIGHT:
+                host = OCServerSurface.getHost(hostUUID);
 
-			case INTERACT_OVERLAY:
-				host = OCServerSurface.getHost(hostUUID);
-				if(host != null)
-					host.sendInteractEventOverlay(eventType.name(), playerMP.getName(), mb, x, y, look, eyeHeight, playerRotation, playerPitch);
-				return null;
+                if (host != null)
+                    host.sendInteractEventWorldBlock(eventType.name(), playerMP.getName(), playerPos, look, eyeHeight, eventPos, facing, playerRotation, playerPitch);
+                return null;
 
-			case GLASSES_SCREEN_SIZE:
-				stats = (PlayerStatsOC) OCServerSurface.instances.playerStats.get(playerMP.getUniqueID());
-				host = OCServerSurface.getHost(hostUUID);
-				if(stats != null)
-					stats.setScreen(x, y, mb);
-				if(host != null)
-					host.sendChangeSizeEvent(eventType.name(), playerMP.getName(), x, y, mb);
+            case INTERACT_WORLD_LEFT:
+            case INTERACT_WORLD_RIGHT:
+                host = OCServerSurface.getHost(hostUUID);
+                if (host != null)
+                    host.sendInteractEventWorld(eventType.name(), playerMP.getName(), playerPos, look, eyeHeight, playerRotation, playerPitch);
+                return null;
 
-				return null;
+            case INTERACT_OVERLAY:
+                host = OCServerSurface.getHost(hostUUID);
+                if (host != null)
+                    host.sendInteractEventOverlay(eventType.name(), playerMP.getName(), mb, x, y, look, eyeHeight, playerRotation, playerPitch);
+                return null;
 
-			case TOGGLE_NIGHTVISION:
-				glasses = getGlasses(playerMP);
-				UpgradeNightvision.toggleMode(playerMP);
-				GlassesNBT.syncStackNBT(glasses, playerMP);
-				return null;
+            case KEYBOARD_INTERACT_OVERLAY:
+                host = OCServerSurface.getHost(hostUUID);
+                if (host != null)
+                    host.sendKeyboardInteractEventOverlay(eventType.name(), playerMP.getName(), key, symbol, look, eyeHeight, playerRotation, playerPitch);
+                return null;
 
-			case TOGGLE_INFRARED:
-				glasses = getGlasses(playerMP);
-				UpgradeThermalVision.toggleMode(playerMP);
-				GlassesNBT.syncStackNBT(glasses, playerMP);
-				return null;
+            case GLASSES_SCREEN_SIZE:
+                stats = (PlayerStatsOC) OCServerSurface.instances.playerStats.get(playerMP.getUniqueID());
+                host = OCServerSurface.getHost(hostUUID);
+                if (stats != null)
+                    stats.setScreen(x, y, mb);
+                if (host != null)
+                    host.sendChangeSizeEvent(eventType.name(), playerMP.getName(), x, y, mb);
 
-			case TOGGLE_OPENSECURITY:
-				glasses = getGlasses(playerMP);
-				UpgradeOpenSecurity.toggleMode(playerMP);
-				GlassesNBT.syncStackNBT(glasses, playerMP);
-				return null;
+                return null;
 
-			case ACTIVATE_OVERLAY:
-			case DEACTIVATE_OVERLAY:
-				stats = OCServerSurface.getStats(playerMP);
-				if(stats != null) {
-					if(eventType.equals(EventType.ACTIVATE_OVERLAY))
-						stats.conditions.setOverlay(true);
-					if(eventType.equals(EventType.DEACTIVATE_OVERLAY))
-						stats.conditions.setOverlay(false);
-				}
-				return null;
+            case TOGGLE_NIGHTVISION:
+                glasses = getGlasses(playerMP);
+                UpgradeNightvision.toggleMode(playerMP);
+                GlassesNBT.syncStackNBT(glasses, playerMP);
+                return null;
 
-			case ACCEPT_LINK:
-			case DENY_LINK:
-				glasses = getGlasses(playerMP);
-				if(!glasses.isEmpty())
-					for(NBTTagCompound notification : OpenGlassesNotificationsNBT.getNotifications(getGlasses(playerMP))){
-						switch(OpenGlassesNotificationsNBT.NotifiactionType.values()[notification.getInteger("type")]){
-							case LINKREQUEST:
-								if(notification.getUniqueId("host").equals(hostUUID)){
-									if(eventType.equals(EventType.ACCEPT_LINK))
-										OpenGlassesHostsNBT.link(glasses, hostUUID, playerMP);
+            case TOGGLE_INFRARED:
+                glasses = getGlasses(playerMP);
+                UpgradeThermalVision.toggleMode(playerMP);
+                GlassesNBT.syncStackNBT(glasses, playerMP);
+                return null;
 
-									OpenGlassesNotificationsNBT.removeLinkRequest(glasses, hostUUID);
-									GlassesNBT.syncStackNBT(glasses, playerMP);
-									OCServerSurface.instance().subscribePlayer(playerMP, hostUUID);
-									return null;
-								}
-								break;
-						}
-					}
-				return null;
+            case TOGGLE_OPENSECURITY:
+                glasses = getGlasses(playerMP);
+                UpgradeOpenSecurity.toggleMode(playerMP);
+                GlassesNBT.syncStackNBT(glasses, playerMP);
+                return null;
 
-			case CLEAR_LINK:
-				OpenGlassesHostsNBT.unlink(hostUUID, getGlasses(playerMP), playerMP);
-				return null;
+            case ACTIVATE_OVERLAY:
+            case DEACTIVATE_OVERLAY:
+                stats = OCServerSurface.getStats(playerMP);
+                if (stats != null) {
+                    if (eventType.equals(EventType.ACTIVATE_OVERLAY))
+                        stats.conditions.setOverlay(true);
+                    if (eventType.equals(EventType.DEACTIVATE_OVERLAY))
+                        stats.conditions.setOverlay(false);
+                }
+                return null;
 
-			case ENABLE_NOTIFICATIONS:
-			case DISABLE_NOTIFICATIONS:
-				GlassesNBT.setConfigFlag("nopopups", eventType.equals(EventType.ENABLE_NOTIFICATIONS), getGlasses(playerMP), playerMP);
-				return null;
+            case ACCEPT_LINK:
+            case DENY_LINK:
+                glasses = getGlasses(playerMP);
+                if (!glasses.isEmpty())
+                    for (NBTTagCompound notification : OpenGlassesNotificationsNBT.getNotifications(getGlasses(playerMP))) {
+                        switch (OpenGlassesNotificationsNBT.NotifiactionType.values()[notification.getInteger("type")]) {
+                            case LINKREQUEST:
+                                if (notification.getUniqueId("host").equals(hostUUID)) {
+                                    if (eventType.equals(EventType.ACCEPT_LINK))
+                                        OpenGlassesHostsNBT.link(glasses, hostUUID, playerMP);
 
-			case ENABLE_WORLD_RENDER:
-			case DISABLE_WORLD_RENDER:
-			case ENABLE_OVERLAY_RENDER:
-			case DISABLE_OVERLAY_RENDER:
-			case DISABLE_OVERLAY_EVENTS:
-			case DISABLE_WORLD_EVENTS:
-			case ENABLE_OVERLAY_EVENTS:
-			case ENABLE_WORLD_EVENTS:
-				glasses = getGlasses(playerMP);
-				NBTTagCompound hostNBT = OpenGlassesHostsNBT.getHostFromNBT(hostUUID, glasses);
-				switch(eventType) {
-					case ENABLE_WORLD_RENDER:
-						hostNBT.removeTag("noWorld");
-						break;
-					case DISABLE_WORLD_RENDER:
-						hostNBT.setBoolean("noWorld", true);
-						break;
-					case ENABLE_OVERLAY_RENDER:
-						hostNBT.removeTag("noOverlay");
-						break;
-					case DISABLE_OVERLAY_RENDER:
-						hostNBT.setBoolean("noOverlay", true);
-						break;
-					case DISABLE_OVERLAY_EVENTS:
-						hostNBT.setBoolean("noOverlayEvents", true);
-						break;
-					case DISABLE_WORLD_EVENTS:
-						hostNBT.setBoolean("noWorldEvents", true);
-						break;
-					case ENABLE_OVERLAY_EVENTS:
-						hostNBT.removeTag("noOverlayEvents");
-						break;
-					case ENABLE_WORLD_EVENTS:
-						hostNBT.removeTag("noWorldEvents");
-						break;
-				}
+                                    OpenGlassesNotificationsNBT.removeLinkRequest(glasses, hostUUID);
+                                    GlassesNBT.syncStackNBT(glasses, playerMP);
+                                    OCServerSurface.instance().subscribePlayer(playerMP, hostUUID);
+                                    return null;
+                                }
+                                break;
+                        }
+                    }
+                return null;
 
-				OpenGlassesHostsNBT.writeHostToNBT(glasses, hostNBT);
-				GlassesNBT.syncStackNBT(glasses, playerMP);
-				return null;
-		}
+            case CLEAR_LINK:
+                OpenGlassesHostsNBT.unlink(hostUUID, getGlasses(playerMP), playerMP);
+                return null;
 
-		return null;
-	}
+            case ENABLE_NOTIFICATIONS:
+            case DISABLE_NOTIFICATIONS:
+                GlassesNBT.setConfigFlag("nopopups", eventType.equals(EventType.ENABLE_NOTIFICATIONS), getGlasses(playerMP), playerMP);
+                return null;
+
+            case ENABLE_WORLD_RENDER:
+            case DISABLE_WORLD_RENDER:
+            case ENABLE_OVERLAY_RENDER:
+            case DISABLE_OVERLAY_RENDER:
+            case DISABLE_OVERLAY_EVENTS:
+            case DISABLE_WORLD_EVENTS:
+            case ENABLE_OVERLAY_EVENTS:
+            case ENABLE_WORLD_EVENTS:
+                glasses = getGlasses(playerMP);
+                NBTTagCompound hostNBT = OpenGlassesHostsNBT.getHostFromNBT(hostUUID, glasses);
+                switch (eventType) {
+                    case ENABLE_WORLD_RENDER:
+                        hostNBT.removeTag("noWorld");
+                        break;
+                    case DISABLE_WORLD_RENDER:
+                        hostNBT.setBoolean("noWorld", true);
+                        break;
+                    case ENABLE_OVERLAY_RENDER:
+                        hostNBT.removeTag("noOverlay");
+                        break;
+                    case DISABLE_OVERLAY_RENDER:
+                        hostNBT.setBoolean("noOverlay", true);
+                        break;
+                    case DISABLE_OVERLAY_EVENTS:
+                        hostNBT.setBoolean("noOverlayEvents", true);
+                        break;
+                    case DISABLE_WORLD_EVENTS:
+                        hostNBT.setBoolean("noWorldEvents", true);
+                        break;
+                    case ENABLE_OVERLAY_EVENTS:
+                        hostNBT.removeTag("noOverlayEvents");
+                        break;
+                    case ENABLE_WORLD_EVENTS:
+                        hostNBT.removeTag("noWorldEvents");
+                        break;
+                }
+
+                OpenGlassesHostsNBT.writeHostToNBT(glasses, hostNBT);
+                GlassesNBT.syncStackNBT(glasses, playerMP);
+                return null;
+        }
+
+        return null;
+    }
 }
 
