@@ -16,9 +16,9 @@ public class AddVertex extends LuaFunction{
         super.call(context, arguments);
         Widget widget = getWidget();
         if(widget instanceof ICustomShape){
-           ((ICustomShape) widget).addVertex((float) arguments.checkDouble(0), (float) arguments.checkDouble(1), (float) arguments.checkDouble(2));
+           int index = ((ICustomShape) widget).addVertex((float) arguments.checkDouble(0), (float) arguments.checkDouble(1), (float) arguments.checkDouble(2));
             updateWidget();
-           return null;
+           return new Object[]{ index };
         }
         throw new RuntimeException("Component does not exists!");
     }
