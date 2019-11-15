@@ -16,12 +16,9 @@ public class SetVertex extends LuaFunction{
 		super.call(context, arguments);
 		Widget widget = getWidget();
 		if(widget instanceof ICustomShape){
-			if(arguments.checkInteger(0)>0 && arguments.checkInteger(0)<=((ICustomShape) widget).getVertexCount()){
-				((ICustomShape) widget).setVertex(arguments.checkInteger(0)-1, (float) arguments.checkDouble(1), (float) arguments.checkDouble(2), (float) arguments.checkDouble(3));
-				updateWidget();
-				return null;
-			}
-			throw new RuntimeException("Vertex not exist!");
+			((ICustomShape) widget).setVertex(arguments.checkInteger(0), (float) arguments.checkDouble(1), (float) arguments.checkDouble(2), (float) arguments.checkDouble(3));
+			updateWidget();
+			return null;
 		}
 		throw new RuntimeException("Component does not exists!");
 	}
