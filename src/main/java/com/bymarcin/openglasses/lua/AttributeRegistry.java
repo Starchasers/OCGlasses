@@ -15,6 +15,8 @@ public class AttributeRegistry {
 		addAttribute(IAttribute.class, IsVisible.class);
 		addAttribute(IAttribute.class, SetVisible.class);
 
+		addAttribute(IAttribute.class, SetCulling.class);
+
 		addAttribute(IAttribute.class, Modifiers.class);
 		
 		addAttribute(IAttribute.class, RemoveWidget.class);
