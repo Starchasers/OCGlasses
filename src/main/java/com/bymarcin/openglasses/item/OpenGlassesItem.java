@@ -120,7 +120,7 @@ public class OpenGlassesItem extends ItemArmor implements IItemWithDocumentation
 	@Override
 	public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt){
 		if(stack.getTagCompound() == null)
-			stack.setTagCompound(new NBTTagCompound());
+			initGlassesStack(stack);
 
 		if(nbt != null) {
 			NBTTagCompound stackNBT = stack.getTagCompound();
