@@ -161,7 +161,7 @@ public class OCClientSurface extends ClientSurface {
 					GlStateManager.translate(renderPos.x, renderPos.y, renderPos.z);
 				}
 
-				renderWidgets(host.getHost().getWidgetsWorld().values(), partialTicks, renderPos, host.getHost(), RenderType.GameOverlayLocated);
+				renderWidgets(host.getHost().getWidgetsWorld().values(), partialTicks, renderPos, host.getHost(), RenderType.WorldLocated);
 
 				GlStateManager.popMatrix();
 			}
