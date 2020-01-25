@@ -126,7 +126,7 @@ public class OCClientSurface extends ClientSurface {
 			if(!renderResolution.equals(vec3d000))
 				GlStateManager.scale(OCClientSurface.resolution.getScaledWidth() / renderResolution.x, OCClientSurface.resolution.getScaledHeight() / renderResolution.y, 1);
 
-			renderWidgets(host.getHost().getWidgetsOverlay().values(), partialTicks, vec3d000, host.getHost());
+			renderWidgets(host.getHost().getWidgetsOverlay().values(), partialTicks, vec3d000, host.getHost(), RenderType.GameOverlayLocated);
 			GlStateManager.popMatrix();
 		}
 
@@ -161,7 +161,7 @@ public class OCClientSurface extends ClientSurface {
 					GlStateManager.translate(renderPos.x, renderPos.y, renderPos.z);
 				}
 
-				renderWidgets(host.getHost().getWidgetsWorld().values(), partialTicks, renderPos, host.getHost());
+				renderWidgets(host.getHost().getWidgetsWorld().values(), partialTicks, renderPos, host.getHost(), RenderType.GameOverlayLocated);
 
 				GlStateManager.popMatrix();
 			}
@@ -213,11 +213,11 @@ public class OCClientSurface extends ClientSurface {
 		return new Vec3d(location[0], location[1], location[2]);
 	}
 
-	private void renderWidgets(Collection<IRenderableWidget> widgets, float partialTicks, Vec3d renderPos, OpenGlassesHostClient host){
+	private void renderWidgets(Collection<IRenderableWidget> widgets, float partialTicks, Vec3d renderPos, OpenGlassesHostClient host, RenderType renderType){
 		long renderConditions = glasses.getConditions().get();
 
 		for(IRenderableWidget renderable : widgets) {
-			if(host.absoluteRenderPosition) {
+			if(host.absoluteRenderPosition && renderType.equals(RenderType.WorldLocated)) {
 				if(!shouldAbsoluteWidgetBeRendered(Minecraft.getMinecraft().player, new Vector3f((float) renderPos.x, (float) renderPos.y, (float) renderPos.z), renderable)) //pass a unique vec3f as its value might change by shouldAbsoluteWidgetBeRendered()
 					continue;
 			}
