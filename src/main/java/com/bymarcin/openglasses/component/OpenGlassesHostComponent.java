@@ -77,19 +77,25 @@ public class OpenGlassesHostComponent implements ManagedEnvironment {
 
     public void sendInteractEventWorldBlock(String eventType, String name, Vec3d playerPos, Vec3d look, double eyeh, BlockPos pos, EnumFacing face, double playerRotation, double playerPitch) {
         if (node() == null) return;
+
+        BlockPos interactOffset = renderAbsolute() ? new BlockPos(0, 0, 0) : new BlockPos(environmentHost.xPosition(), environmentHost.yPosition(),environmentHost.zPosition());
+
         node().sendToReachable("computer.signal", eventType.toLowerCase(), name,
-                Math.round((playerPos.x - environmentHost.xPosition()) * 1000) / 1000d,
-                Math.round((playerPos.y - environmentHost.yPosition()) * 1000) / 1000d,
-                Math.round((playerPos.z - environmentHost.zPosition()) * 1000) / 1000d,
-                look.x, look.y, look.z, eyeh, pos.getX() - environmentHost.xPosition(), pos.getY() - environmentHost.yPosition(), pos.getZ() - environmentHost.zPosition(), face.getName(), playerRotation, playerPitch, EnumFacing.fromAngle(playerRotation).getName());
+                Math.round((playerPos.x - interactOffset.getX()) * 1000) / 1000d,
+                Math.round((playerPos.y - interactOffset.getY()) * 1000) / 1000d,
+                Math.round((playerPos.z - interactOffset.getZ()) * 1000) / 1000d,
+                look.x, look.y, look.z, eyeh, pos.getX() - interactOffset.getX(), pos.getY() - interactOffset.getY(), pos.getZ() - interactOffset.getZ(), face.getName(), playerRotation, playerPitch, EnumFacing.fromAngle(playerRotation).getName());
     }
 
     public void sendInteractEventWorld(String eventType, String name, Vec3d playerPos, Vec3d look, double eyeh, double playerRotation, double playerPitch) {
         if (node() == null) return;
+
+        BlockPos interactOffset = renderAbsolute() ? new BlockPos(0, 0, 0) : new BlockPos(environmentHost.xPosition(), environmentHost.yPosition(),environmentHost.zPosition());
+
         node().sendToReachable("computer.signal", eventType.toLowerCase(), name,
-                Math.round((playerPos.x - environmentHost.xPosition()) * 1000) / 1000d,
-                Math.round((playerPos.y - environmentHost.yPosition()) * 1000) / 1000d,
-                Math.round((playerPos.z - environmentHost.zPosition()) * 1000) / 1000d,
+                Math.round((playerPos.x - interactOffset.getX()) * 1000) / 1000d,
+                Math.round((playerPos.y - interactOffset.getY()) * 1000) / 1000d,
+                Math.round((playerPos.z - interactOffset.getZ()) * 1000) / 1000d,
                 look.x, look.y, look.z, eyeh, playerRotation, playerPitch, EnumFacing.fromAngle(playerRotation).getName());
     }
 
