@@ -78,6 +78,7 @@ public class OpenGlasses {
 	public static boolean baubles = false, techguns = false;
 
 	public static boolean absoluteRenderingAllowed = true;
+	public static int widgetLimit = 255;
 
 	public static boolean opensecurity = false;
 
@@ -184,6 +185,7 @@ public class OpenGlasses {
 		li.cil.oc.api.Driver.add((DriverItem) DriverTerminal.driver);
 
 		absoluteRenderingAllowed = Config.getConfig().getCategory("general").get("absolute_rendering_allowed").getBoolean();
+		widgetLimit = Config.getConfig().getCategory("general").get("widgetlimit").getInt();
 	}
 
 	@SubscribeEvent

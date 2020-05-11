@@ -44,7 +44,9 @@ public class Config extends PermissionAPI {
         absolute_rendering_allowed.setComment("allow setting the glasses terminal to absolute (world coordinates) render position");
         absolute_rendering_allowed.setRequiresMcRestart(true);
 
-
+        Property total_widget_limit = config.get("general", "widgetlimit", 255);
+        total_widget_limit.setLanguageKey("gui.openglasses.config.general.widgetlimit");
+        total_widget_limit.setComment("sets the maximal allowed amount of widgets per glasses instance");
 
 
         if (config.hasChanged())

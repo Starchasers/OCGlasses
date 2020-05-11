@@ -1,5 +1,6 @@
 package com.bymarcin.openglasses.item.upgrades;
 
+import com.bymarcin.openglasses.OpenGlasses;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -12,11 +13,10 @@ public class UpgradeDatabase1 extends UpgradeItem {
         NBTTagCompound tag = stack.getTagCompound();
 
         int newWidgetLimit = tag.getInteger("widgetLimit");
-        int widgetsTotalLimit = 255;
 
-        if (newWidgetLimit < widgetsTotalLimit){
+        if (newWidgetLimit < OpenGlasses.widgetLimit){
             newWidgetLimit += getCapacity();
-            tag.setInteger("widgetLimit", Math.min(newWidgetLimit, widgetsTotalLimit));
+            tag.setInteger("widgetLimit", Math.min(newWidgetLimit, OpenGlasses.widgetLimit));
         }
 
         return stack;
