@@ -184,8 +184,7 @@ public class OpenGlasses {
 		li.cil.oc.api.Driver.add((EnvironmentProvider) DriverTerminal.driver);
 		li.cil.oc.api.Driver.add((DriverItem) DriverTerminal.driver);
 
-		absoluteRenderingAllowed = Config.getConfig().getCategory("general").get("absolute_rendering_allowed").getBoolean();
-		widgetLimit = Config.getConfig().getCategory("general").get("widgetlimit").getInt();
+		Config.load();
 	}
 
 	@SubscribeEvent

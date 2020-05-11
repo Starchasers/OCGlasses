@@ -20,3 +20,4 @@ openglasses.infotext.upgraderequired=upgrade '%s' required
 
 gui.openglasses.config.title=OpenGlasses Config
 gui.openglasses.config.general.absolute_rendering_allowed=absolute rendering allowed
+gui.openglasses.config.general.widgetlimit=widget limit

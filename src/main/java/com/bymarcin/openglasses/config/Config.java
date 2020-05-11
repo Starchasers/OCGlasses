@@ -11,12 +11,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.server.permission.PermissionAPI;
 
 import java.io.File;
-import java.util.HashMap;
 
 public class Config extends PermissionAPI {
     private static Configuration config = null;
-
-    static HashMap<String, Property> configOptions = new HashMap<>();
 
     public static void preInit(){
         File configFile = new File(Loader.instance().getConfigDir(), OpenGlasses.MODID + ".cfg");
@@ -37,17 +34,13 @@ public class Config extends PermissionAPI {
         if (loadConfigFromFile)
             config.load();
 
-        //boolean isClient = FMLCommonHandler.instance().getEffectiveSide().isClient();
-
         Property absolute_rendering_allowed = config.get("general", "absolute_rendering_allowed", true);
         absolute_rendering_allowed.setLanguageKey("gui.openglasses.config.general.absolute_rendering_allowed");
         absolute_rendering_allowed.setComment("allow setting the glasses terminal to absolute (world coordinates) render position");
-        absolute_rendering_allowed.setRequiresMcRestart(true);
 
         Property total_widget_limit = config.get("general", "widgetlimit", 255);
         total_widget_limit.setLanguageKey("gui.openglasses.config.general.widgetlimit");
         total_widget_limit.setComment("sets the maximal allowed amount of widgets per glasses instance");
-
 
         if (config.hasChanged())
             config.save();
@@ -60,6 +53,12 @@ public class Config extends PermissionAPI {
                 return;
 
             syncConfig(false);
+            load();
         }
+    }
+
+    public static void load(){
+        OpenGlasses.absoluteRenderingAllowed = Config.getConfig().getCategory("general").get("absolute_rendering_allowed").getBoolean();
+        OpenGlasses.widgetLimit = Config.getConfig().getCategory("general").get("widgetlimit").getInt();
     }
 }

@@ -1,6 +1,7 @@
 package com.bymarcin.openglasses.proxy;
 
 import com.bymarcin.openglasses.OpenGlasses;
+import com.bymarcin.openglasses.config.Config;
 import com.bymarcin.openglasses.event.minecraft.client.ClientEventHandler;
 import com.bymarcin.openglasses.event.minecraft.client.ClientKeyboardEvents;
 import com.bymarcin.openglasses.event.minecraft.client.ClientRenderEvents;
@@ -37,6 +38,7 @@ public class ClientProxy extends CommonProxy {
 		MinecraftForge.EVENT_BUS.register(ClientRenderEvents.class);
 		MinecraftForge.EVENT_BUS.register(ClientWorldInteractionEvents.class);
 
+		Config.clientPreInit();
 	}
 	
 	@Override
