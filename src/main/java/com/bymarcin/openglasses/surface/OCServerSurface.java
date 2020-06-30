@@ -8,15 +8,15 @@ import com.bymarcin.openglasses.item.OpenGlassesNBT.OpenGlassesHostsNBT;
 import com.bymarcin.openglasses.network.NetworkRegistry;
 import com.bymarcin.openglasses.network.packet.TerminalStatusPacket;
 import com.bymarcin.openglasses.utils.PlayerStatsOC;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.server.FMLServerHandler;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.logging.Logger;
 
 import static com.bymarcin.openglasses.item.upgrades.UpgradeNightvision.potionNightvision;
 import static com.bymarcin.openglasses.network.packet.TerminalStatusPacket.TerminalEvent.*;
@@ -101,8 +101,37 @@ public class OCServerSurface extends ben_mkiv.rendertoolkit.surface.ServerSurfac
 		}
 	}
 
+	private static HashSet<UUID> getOnlinePlayers(){
+		HashSet<UUID> uuidsOnline = new HashSet<>();
+		try {
+			for(GameProfile profile : FMLServerHandler.instance().getServer().getPlayerList().getOnlinePlayerProfiles()){
+				uuidsOnline.add(profile.getId());
+			}
+		} catch(Exception ex){
+			Logger.getLogger(OpenGlasses.MODID).warning("OCServerSurface->getOnlinePlayers() failfish ;(");
+		}
+
+
+
+		return uuidsOnline;
+
+	}
+
 	//unsubscribePlayer from events when he puts glasses off
 	public void unsubscribePlayer(EntityPlayerMP player){
+		if(player == null){
+			Logger.getLogger(OpenGlasses.MODID).warning("unknown player logged out, EntityPlayerMP is NULL, unsubscribe canceled...");
+			return;
+			/*
+			HashSet<UUID> playersOnline = getOnlinePlayers();
+
+			for(UUID uuid : players.keySet()){
+				if(!playersOnline.contains(uuid)){
+
+				}
+			}*/
+		}
+
 		NetworkRegistry.packetHandler.sendTo(new TerminalStatusPacket(GLASSES_UNEQUIPPED, UUID.randomUUID()), player);
 
 		if (getStats(player).nightVisionActive) {

@@ -82,7 +82,7 @@ public class OCClientSurface extends ClientSurface {
 		initLocalGlasses(ItemStack.EMPTY);
 	}
 
-	public void initLocalGlasses(ItemStack glassesStack){
+	synchronized public void initLocalGlasses(ItemStack glassesStack){
 		glasses = new GlassesInstance(glassesStack.copy());
 	}
 
@@ -249,9 +249,7 @@ public class OCClientSurface extends ClientSurface {
 
 
 	public boolean shouldRenderStart(RenderType renderEvent){
-		ItemStack renderGlasses = glasses.get().copy();
-
-		if(renderGlasses.isEmpty())
+		if(glasses.get().isEmpty())
 			return false;
 
 		if(glasses.energyStored == 0){
@@ -264,7 +262,7 @@ public class OCClientSurface extends ClientSurface {
 			return false;
 		}
 
-		if(getWidgetCount(null, renderEvent) > renderGlasses.getTagCompound().getInteger("widgetLimit")){
+		if(getWidgetCount(null, renderEvent) > glasses.get().getTagCompound().getInteger("widgetLimit")){
 			if(renderEvent.equals(RenderType.GameOverlayLocated) && widgetLimitRender != null) {
 				preRender(renderEvent, ~0);
 				GlStateManager.depthMask(false);
