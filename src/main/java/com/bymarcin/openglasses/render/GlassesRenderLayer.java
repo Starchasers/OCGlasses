@@ -34,7 +34,7 @@ public class GlassesRenderLayer implements IRenderBauble, LayerRenderer<EntityLi
 		ItemStack glasses = ItemStack.EMPTY;
 
 		if(OpenGlasses.baubles)
-			OpenGlasses.getGlassesStackBaubles((EntityPlayer) living);
+			glasses = OpenGlasses.getGlassesStackBaubles((EntityPlayer) living);
 
 		if(glasses.isEmpty() && OpenGlasses.techguns)
 			glasses = OpenGlasses.getGlassesStackTechguns((EntityPlayer) living);

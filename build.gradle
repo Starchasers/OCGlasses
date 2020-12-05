@@ -89,7 +89,7 @@ dependencies {
 
     extraLibs files("libs/commons0815/Commons0815-${commons_version}-dev.jar")
     
-    compileOnly 'opensecurity:OpenSecurity-1.12.2:1.0:38' // curse    
+    compileOnly 'opensecurity:OpenSecurity-1.12.2:1.0:62' // curse
 
     compileOnly group: 'techguns', name: 'Techguns', version: '1.12.2', classifier: '2.0.2.0_pre3.1', ext: 'jar'
 
