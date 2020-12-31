@@ -10,6 +10,5 @@ mod for minecraft and addon for Open Computers
 
 ### build informations
 
+required library:
 [commons0815 (includes renderToolkit)](https://github.com/ben-mkiv/commons0815)
-
-lib .jar and -dev.jar have to be placed in libs path to get shaded into the mod file
