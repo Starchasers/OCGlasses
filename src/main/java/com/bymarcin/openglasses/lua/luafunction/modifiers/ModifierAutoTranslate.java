@@ -23,10 +23,10 @@ public class ModifierAutoTranslate extends ModifierLuaBase {
         return mappedValues;
     }
 
-    @Callback(doc = "function(Double:x, Double:y, Double:z):boolean -- sets new values", direct = true)
+    @Callback(doc = "function(Double:x, Double:y):boolean -- sets new values", direct = true)
     public Object[] set(Context context, Arguments args){
-        if(!args.isDouble(0) || !args.isDouble(1) || !args.isDouble(2))
-            return new Object[]{ false, "3 values(Double) required! x,y,z" };
+        if(!args.isDouble(0) || !args.isDouble(1))
+            return new Object[]{ false, "2 values(Double) required! x,y" };
 
         get().update(new float[]{ (float) args.checkDouble(0), (float) args.checkDouble(1) });
 
