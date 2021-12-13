@@ -8,7 +8,6 @@ import com.bymarcin.openglasses.OpenGlasses;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
-import org.apache.logging.log4j.LogManager;
 
 
 public class NetworkRegistry {
